@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
+import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.serialization.Config;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -13,12 +14,14 @@ public class HMCWraps extends JavaPlugin {
 
     public static final Path PLUGIN_PATH = Path.of("plugins", "HMCWraps");
     public static final Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");
+    public static final Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
 
     private static final YamlConfigurationLoader LOADER = YamlConfigurationLoader.builder()
             .path(CONFIG_PATH)
             .build();
 
     private Config config;
+    private MessageHandler handler;
 
     @Override
     public void onEnable() {
@@ -31,15 +34,39 @@ public class HMCWraps extends JavaPlugin {
         checkDependency("ItemsAdder", false);
         checkDependency("Oraxen", false);
 
-        saveResource("config.yml", false);
+        if (!loadConfig()) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        if (!loadMessages()) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+    }
+
+    private boolean loadMessages() {
+        saveResource(MESSAGES_PATH.getFileName().toString(), false);
+        handler = new MessageHandler(this);
+        return handler.load(MESSAGES_PATH);
+    }
+
+    private boolean loadConfig() {
+        saveResource(CONFIG_PATH.getFileName().toString(), false);
         try {
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items.DIAMOND_SWORD", "inventory.items");
             config = LOADER.load().get(Config.class);
         } catch (IOException exception) {
-            getLogger().severe(
-                    "An error occurred while trying to load the config.yml (please report this to the developers):");
+            getLogger().severe("""
+                    =============================
+                    Could not load the configuration (please report this to the developers)! The plugin will shut down now.
+                    =============================
+                    """
+            );
             exception.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     private boolean checkDependency(String name, boolean needed) {
@@ -64,6 +91,11 @@ public class HMCWraps extends JavaPlugin {
     @NotNull
     public Config getConfiguration() {
         return config;
+    }
+
+    @NotNull
+    public MessageHandler getHandler() {
+        return handler;
     }
 
 }
