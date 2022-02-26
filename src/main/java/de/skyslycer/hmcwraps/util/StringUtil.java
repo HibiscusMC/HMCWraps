@@ -15,6 +15,11 @@ public class StringUtil {
 
     public static final MiniMessage miniMessage = MiniMessage.builder().build();
 
+    public static Component parse(String message, Single... placeholders) {
+        String string = ChatColor.translateAlternateColorCodes('&', message);
+        return miniMessage.deserialize(string, placeholders);
+    }
+
     public static BaseComponent[] parse(CommandSender sender, String message, Single... placeholders) {
         String string = ChatColor.translateAlternateColorCodes('&', message);
         Component component = miniMessage.deserialize(replacePlaceholders(sender, string), placeholders);
