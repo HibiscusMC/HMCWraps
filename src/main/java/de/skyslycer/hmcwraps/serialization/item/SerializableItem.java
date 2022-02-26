@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.serialization.item;
 
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.inventory.Action;
 import de.skyslycer.hmcwraps.util.EnumUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -34,12 +35,10 @@ public class SerializableItem {
     Action action;
 
     @Nullable
-    public ItemStack toItem() {
-        ItemStack origin;
-        if (Material.getMaterial(id) == null) {
-            return null;
-        } else {
-            origin = new ItemStack(Material.getMaterial(id)); // TODO: Add ItemsAdder & Oraxen
+    public ItemStack toItem(HMCWraps plugin) {
+        ItemStack origin = plugin.getItemFromHook(getId());
+        if (origin == null) {
+            origin = new ItemStack(Material.STRUCTURE_VOID);
         }
         ItemBuilder builder = ItemBuilder.from(origin);
         builder.name(StringUtil.parse(getName())).amount(getAmount() == null ? 1 : getAmount());

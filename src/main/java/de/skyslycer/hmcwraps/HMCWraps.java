@@ -1,11 +1,16 @@
 package de.skyslycer.hmcwraps;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
+import de.skyslycer.hmcwraps.itemhook.ItemHook;
+import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
+import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.serialization.Config;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -23,6 +28,8 @@ public class HMCWraps extends JavaPlugin {
     private Config config;
     private MessageHandler handler;
 
+    private final HashSet<ItemHook> hooks = new HashSet<>();
+
     @Override
     public void onEnable() {
         if (!checkDependency("ProtocolLib", true)) {
@@ -31,8 +38,12 @@ public class HMCWraps extends JavaPlugin {
         }
 
         checkDependency("PlaceholderAPI", false);
-        checkDependency("ItemsAdder", false);
-        checkDependency("Oraxen", false);
+        if (checkDependency("ItemsAdder", false)) {
+            hooks.add(new ItemsAdderItemHook());
+        }
+        if (checkDependency("Oraxen", false)) {
+            hooks.add(new OraxenItemHook());
+        }
 
         if (!loadConfig()) {
             Bukkit.getPluginManager().disablePlugin(this);
@@ -43,6 +54,11 @@ public class HMCWraps extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+    }
+
+    @Override
+    public void onDisable() {
+        hooks.clear();
     }
 
     private boolean loadMessages() {
@@ -86,6 +102,15 @@ public class HMCWraps extends JavaPlugin {
             return false;
         }
         return true;
+    }
+
+    public ItemStack getItemFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        if (possible.isEmpty()) {
+            return ItemHook.defaultHook.get(id);
+        } else {
+            return possible.get().get(id.replace(possible.get().getPrefix(), ""));
+        }
     }
 
     @NotNull

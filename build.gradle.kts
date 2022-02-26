@@ -18,12 +18,15 @@ repositories {
     maven("https://jitpack.io")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.mattstudios.me/artifactory/public/")
+    maven("https://repo.jeff-media.de/maven2/")
 }
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     implementation("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
     implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
