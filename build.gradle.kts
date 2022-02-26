@@ -17,6 +17,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://jitpack.io")
     maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.mattstudios.me/artifactory/public/")
 }
 
 dependencies {
@@ -28,6 +29,8 @@ dependencies {
     implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
     implementation("com.github.Revxrsal.Lamp:common:2.9.4")
     implementation("com.github.Revxrsal.Lamp:bukkit:2.9.4")
+    implementation("dev.triumphteam:triumph-gui:3.1.2")
+    implementation("org.spongepowered:configurate-hocon:4.1.2")
 }
 
 java {
@@ -39,6 +42,8 @@ tasks {
         relocate("net.kyori.adventure", "$shadePattern.adventure")
         relocate("com.tchristofferson.configupdater", "$shadePattern.configupdater")
         relocate("revxrsal.commands", "$shadePattern.config")
+        relocate("dev.triumphteam.gui", "$shadePattern.gui")
+        relocate("org.spongepowered.configurate", "$shadePattern.gui")
         val nullClassifier: String? = null
         archiveClassifier.set(nullClassifier)
         minimize()
@@ -55,4 +60,5 @@ bukkit {
     description = "The best choice to make your items prettier."
     authors = listOf("Skyslycer")
     softDepend = listOf("PlaceholderAPI", "ProtocolLib")
+    apiVersion = "1.16"
 }
