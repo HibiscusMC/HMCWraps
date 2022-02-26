@@ -12,4 +12,16 @@ public class Config {
     private SerializableItem unwrapper;
     private Map<String, WrappableItem> items;
 
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public SerializableItem getUnwrapper() {
+        return unwrapper;
+    }
+
+    public Map<String, WrappableItem> getItems() {
+        return items;
+    }
+
 }

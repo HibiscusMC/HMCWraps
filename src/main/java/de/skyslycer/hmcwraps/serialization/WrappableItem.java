@@ -8,4 +8,8 @@ public class WrappableItem {
 
     private Map<String, Wrap> wraps;
 
+    public Map<String, Wrap> getWraps() {
+        return wraps;
+    }
+
 }

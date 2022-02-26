@@ -4,8 +4,10 @@ import com.tchristofferson.configupdater.ConfigUpdater;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
+import de.skyslycer.hmcwraps.listener.PlayerInteractListener;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.serialization.Config;
+import io.th0rgal.oraxen.compatibilities.provided.placeholderapi.PlaceholderAPICompatibility;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -54,6 +56,8 @@ public class HMCWraps extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+
+        Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
     }
 
     @Override
@@ -111,6 +115,11 @@ public class HMCWraps extends JavaPlugin {
         } else {
             return possible.get().get(id.replace(possible.get().getPrefix(), ""));
         }
+    }
+
+    public int getModellIdFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getModellId(id)).orElse(-1);
     }
 
     @NotNull

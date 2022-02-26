@@ -15,4 +15,13 @@ public class OraxenItemHook implements ItemHook {
         return OraxenItems.getItemById(id).build();
     }
 
+    @Override
+    public int getModellId(String id) {
+        var stack = get(id);
+        if (stack != null && stack.getItemMeta().hasCustomModelData()) {
+            return stack.getItemMeta().getCustomModelData();
+        }
+        return -1;
+    }
+
 }

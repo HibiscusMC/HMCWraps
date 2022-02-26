@@ -5,6 +5,7 @@ items:
         permission: 'hmcwraps.coolwrap'
         id: '6942'
         name: '<red>Very Cool <gray>Wrapping'
+        glow: true
         lore:
           - '<gray>This is a very cool wrapping!'
         physical:

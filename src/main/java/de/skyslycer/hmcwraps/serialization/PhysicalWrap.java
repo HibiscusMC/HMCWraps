@@ -8,4 +8,8 @@ public class PhysicalWrap extends SerializableItem {
 
     private boolean keepAfterUnwrap;
 
+    public boolean isKeepAfterUnwrap() {
+        return keepAfterUnwrap;
+    }
+
 }
