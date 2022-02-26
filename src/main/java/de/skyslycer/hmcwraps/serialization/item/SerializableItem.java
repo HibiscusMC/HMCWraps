@@ -13,17 +13,25 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+@ConfigSerializable
 public class SerializableItem {
 
     private String id;
     private String name;
-    private @Nullable List<String> lore;
-    private @Nullable List<String> flags;
-    private @Nullable Integer modellId;
-    private @Nullable Map<String, Integer> enchantments;
-    private @Nullable Integer amount;
-    private @Nullable Action action;
+    private @Nullable
+    List<String> lore;
+    private @Nullable
+    List<String> flags;
+    private @Nullable
+    Integer modellId;
+    private @Nullable
+    Map<String, Integer> enchantments;
+    private @Nullable
+    Integer amount;
+    private @Nullable
+    Action action;
 
     @Nullable
     public ItemStack toItem() {

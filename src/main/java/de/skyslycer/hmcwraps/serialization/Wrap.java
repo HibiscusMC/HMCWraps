@@ -2,7 +2,9 @@ package de.skyslycer.hmcwraps.serialization;
 
 import java.util.List;
 import javax.annotation.Nullable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+@ConfigSerializable
 public class Wrap {
 
     private String permission;
@@ -10,6 +12,7 @@ public class Wrap {
     private String name;
     private List<String> lore;
     private boolean preview;
-    private @Nullable PhysicalWrap physical;
+    private @Nullable
+    PhysicalWrap physical;
 
 }

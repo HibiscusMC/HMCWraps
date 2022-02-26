@@ -30,7 +30,7 @@ dependencies {
     implementation("com.github.Revxrsal.Lamp:common:2.9.4")
     implementation("com.github.Revxrsal.Lamp:bukkit:2.9.4")
     implementation("dev.triumphteam:triumph-gui:3.1.2")
-    implementation("org.spongepowered:configurate-hocon:4.1.2")
+    implementation("org.spongepowered:configurate-yaml:4.1.2")
 }
 
 java {
@@ -59,6 +59,6 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     authors = listOf("Skyslycer")
-    softDepend = listOf("PlaceholderAPI", "ProtocolLib")
+    softDepend = listOf("PlaceholderAPI", "ProtocolLib", "ItemsAdder", "Oraxen")
     apiVersion = "1.16"
 }

@@ -10,7 +10,8 @@ public class EnumUtil {
         raw.forEach(it -> {
             try {
                 newList.add(T.valueOf(clazz, it));
-            } catch (IllegalArgumentException ignored) { }
+            } catch (IllegalArgumentException ignored) {
+            }
         });
         return newList;
     }
