@@ -3,6 +3,7 @@ items:
     wraps:
       1:
         permission: 'hmcwraps.coolwrap'
+        uuid: 1
         id: '6942'
         name: '<red>Very Cool <gray>Wrapping'
         glow: true
@@ -56,5 +57,7 @@ inventory:
       name: '<gray> '
     53:
       id: 'RED_CONCRETE'
-      name: '<red>Close'
-      action: 'CLOSE'
+      name: '<red>Unwrap'
+      lore:
+        - '<gray>Unwrap your current item'
+      action: 'UNWRAP'

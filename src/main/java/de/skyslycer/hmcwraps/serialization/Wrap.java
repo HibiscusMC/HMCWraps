@@ -13,6 +13,7 @@ public class Wrap {
     private boolean glow;
     private List<String> lore;
     private boolean preview;
+    private String uuid;
     private @Nullable
     PhysicalWrap physical;
 
@@ -38,6 +39,10 @@ public class Wrap {
 
     public boolean isGlow() {
         return glow;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     @Nullable
