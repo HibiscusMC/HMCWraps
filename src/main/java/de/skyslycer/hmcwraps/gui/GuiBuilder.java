@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.gui;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.preview.Preview;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -9,7 +10,6 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
-import dev.triumphteam.gui.guis.PaginatedGui;
 import dev.triumphteam.gui.guis.ScrollingGui;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -45,7 +45,8 @@ public class GuiBuilder {
             if (stack != null) {
                 GuiItem guiItem = new GuiItem(stack);
                 if (serializableItem.getAction() != null) {
-                    de.skyslycer.hmcwraps.serialization.inventory.Action.add(guiItem, gui, serializableItem.getAction(), plugin);
+                    de.skyslycer.hmcwraps.serialization.inventory.Action.add(guiItem, gui, serializableItem.getAction(),
+                            plugin);
                 }
                 gui.setItem(inventorySlot, guiItem);
             }
@@ -82,13 +83,16 @@ public class GuiBuilder {
                                 return;
                             }
                             player.getInventory().setItem(slot, plugin.getWrapper()
-                                    .setWrap(plugin.getModellIdFromHook(wrap.getId()), wrap.getUuid(), item, false, player));
+                                    .setWrap(plugin.getModellIdFromHook(wrap.getId()), wrap.getUuid(), item, false,
+                                            player));
                             plugin.getHandler().send(player, Messages.APPLY_WRAP);
                         } else if (click.getClick() == ClickType.RIGHT) {
                             if (!wrap.isPreview()) {
                                 plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
+                                return;
                             }
-                            // TODO: do preview
+                            var preview = new Preview(player, item, gui);
+                            preview.preview(plugin);
                         }
                     });
                     gui.addItem(guiItem);

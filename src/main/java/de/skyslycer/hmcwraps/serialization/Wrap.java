@@ -7,7 +7,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class Wrap {
 
-    private @Nullable String permission;
+    private @Nullable
+    String permission;
     private String id;
     private String name;
     private boolean glow;

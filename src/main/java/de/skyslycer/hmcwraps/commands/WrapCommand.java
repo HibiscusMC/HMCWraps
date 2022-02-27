@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Default;
-import revxrsal.commands.annotation.Dependency;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Range;
 import revxrsal.commands.annotation.Subcommand;
@@ -41,7 +40,8 @@ public class WrapCommand {
     }
 
     @Subcommand("give wrap")
-    public void onGiveWrap(CommandActor actor, EntitySelector<Player> players, Wrap wrap, @Optional @Range(min = 1, max = 64) Integer amount) {
+    public void onGiveWrap(CommandActor actor, EntitySelector<Player> players, Wrap wrap,
+            @Optional @Range(min = 1, max = 64) Integer amount) {
         if (wrap.getPhysical() == null || wrap.getPhysical().toItem(plugin) == null) {
             plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_PHYSICAL,
                     Placeholder.parsed("%uuid%", wrap.getUuid()));
@@ -55,7 +55,8 @@ public class WrapCommand {
     }
 
     @Subcommand("give unwrapper")
-    public void onGiveUnwrapper(CommandActor actor, EntitySelector<Player> players, @Optional @Range(min = 1, max = 64) Integer amount) {
+    public void onGiveUnwrapper(CommandActor actor, EntitySelector<Player> players,
+            @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin);
         if (item == null) {
             plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_REMOVER);

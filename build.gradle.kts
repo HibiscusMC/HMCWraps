@@ -24,7 +24,6 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     implementation("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
@@ -34,6 +33,7 @@ dependencies {
     implementation("com.github.Revxrsal.Lamp:bukkit:2.9.4")
     implementation("dev.triumphteam:triumph-gui:3.1.2")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
+    implementation("com.github.retrooper.packetevents:spigot:b2a664dbd0")
 }
 
 java {
@@ -44,9 +44,10 @@ tasks {
     shadowJar {
         relocate("net.kyori.adventure", "$shadePattern.adventure")
         relocate("com.tchristofferson.configupdater", "$shadePattern.configupdater")
-        relocate("revxrsal.commands", "$shadePattern.config")
+        relocate("revxrsal.commands", "$shadePattern.commands")
         relocate("dev.triumphteam.gui", "$shadePattern.gui")
-        relocate("org.spongepowered.configurate", "$shadePattern.gui")
+        relocate("org.spongepowered.configurate", "$shadePattern.config")
+        relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
         val nullClassifier: String? = null
         archiveClassifier.set(nullClassifier)
         minimize()

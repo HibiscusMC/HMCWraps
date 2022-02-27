@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -31,21 +32,19 @@ import revxrsal.commands.exception.NoPermissionException;
 
 public class HMCWraps extends JavaPlugin {
 
+    public static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+
     public static final Path PLUGIN_PATH = Path.of("plugins", "HMCWraps");
     public static final Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");
-    public static final Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
-
     private static final YamlConfigurationLoader LOADER = YamlConfigurationLoader.builder()
             .path(CONFIG_PATH)
             .build();
-
-    private Config config;
-    private MessageHandler handler;
-
+    public static final Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
     private final Set<ItemHook> hooks = new HashSet<>();
     private final Map<String, Wrap> wraps = new HashMap<>();
-
     private final Wrapper wrapper = new Wrapper(this);
+    private Config config;
+    private MessageHandler handler;
 
     @Override
     public void onEnable() {
@@ -107,9 +106,12 @@ public class HMCWraps extends JavaPlugin {
             }
             return wrap;
         });
-        commandHandler.registerExceptionHandler(NoPermissionException.class, (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
+        commandHandler.registerExceptionHandler(NoPermissionException.class,
+                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(
-                SenderNotPlayerException.class, (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
+                SenderNotPlayerException.class,
+                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(),
+                        Messages.COMMAND_PLAYER_ONLY));
         commandHandler.register(new WrapCommand(this));
         commandHandler.registerBrigadier();
     }

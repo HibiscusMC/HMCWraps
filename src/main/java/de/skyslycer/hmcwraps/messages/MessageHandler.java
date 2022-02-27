@@ -7,15 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.PropertyResourceBundle;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 public class MessageHandler {
 
+    private final HMCWraps plugin;
     private PropertyResourceBundle bundle;
     private PropertyResourceBundle fallback;
-
-    private final HMCWraps plugin;
 
     public MessageHandler(HMCWraps plugin) {
         this.plugin = plugin;
@@ -23,16 +21,19 @@ public class MessageHandler {
 
     public boolean load(Path path) {
         try {
-            fallback = new PropertyResourceBundle(HMCWraps.class.getClassLoader().getResource("messages.properties").openStream());
+            fallback = new PropertyResourceBundle(
+                    HMCWraps.class.getClassLoader().getResource("messages.properties").openStream());
         } catch (IOException | NullPointerException exception) {
-            plugin.getLogger().severe("An error occurred while trying to load the fallback messages (please report this to the developers):");
+            plugin.getLogger()
+                    .severe("An error occurred while trying to load the fallback messages (please report this to the developers):");
             exception.printStackTrace();
         }
 
         try {
             bundle = new PropertyResourceBundle(Files.newInputStream(path));
         } catch (IOException exception) {
-            plugin.getLogger().severe("An error occurred while trying to load the messages (please report this to the developers):");
+            plugin.getLogger()
+                    .severe("An error occurred while trying to load the messages (please report this to the developers):");
             exception.printStackTrace();
         }
 
@@ -51,7 +52,7 @@ public class MessageHandler {
     public String get(Messages key) {
         if (bundle.containsKey(key.getKey())) {
             return bundle.getString(key.getKey());
-        } else if (fallback.containsKey(key.getKey())){
+        } else if (fallback.containsKey(key.getKey())) {
             return fallback.getString(key.getKey());
         } else {
             return "Invalid key: " + key;
