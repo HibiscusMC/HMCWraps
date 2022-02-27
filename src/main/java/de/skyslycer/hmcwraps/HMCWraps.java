@@ -111,6 +111,7 @@ public class HMCWraps extends JavaPlugin {
         commandHandler.registerExceptionHandler(
                 SenderNotPlayerException.class, (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
         commandHandler.register(new WrapCommand(this));
+        commandHandler.registerBrigadier();
     }
 
     private boolean loadMessages() {
