@@ -77,13 +77,17 @@ public class GuiBuilder {
                     GuiItem guiItem = new GuiItem(stack.build());
                     guiItem.setAction(click -> {
                         if (click.getClick() == ClickType.LEFT) {
-                            if (!player.hasPermission(wrap.getPermission())) {
+                            if (wrap.getPermission() != null && !player.hasPermission(wrap.getPermission())) {
                                 plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                                 return;
                             }
                             player.getInventory().setItem(slot, plugin.getWrapper()
                                     .setWrap(plugin.getModellIdFromHook(wrap.getId()), wrap.getUuid(), item, false, player));
+                            plugin.getHandler().send(player, Messages.APPLY_WRAP);
                         } else if (click.getClick() == ClickType.RIGHT) {
+                            if (!wrap.isPreview()) {
+                                plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
+                            }
                             // TODO: do preview
                         }
                     });
@@ -92,6 +96,9 @@ public class GuiBuilder {
     }
 
     private static Single available(Wrap wrap, Player player, HMCWraps plugin) {
+        if (wrap.getPermission() == null) {
+            return Placeholder.parsed("%available%", plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE));
+        }
         return Placeholder.parsed("%available%",
                 player.hasPermission(wrap.getPermission()) ? plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE)
                         : plugin.getHandler().get(Messages.PLACEHOLDER_NOT_AVAILABLE));

@@ -8,6 +8,8 @@ public enum Messages {
     NO_WRAPS("no-wraps"),
     NO_PERMISSION_FOR_WRAP("no-permission-for-wrap"),
     NO_ITEM("no-item"),
+    APPLY_WRAP("apply-wrap"),
+    PREVIEW_DISABLED("preview-disabled"),
     COMMAND_PLAYER_ONLY("command.player-only"),
     COMMAND_INVALID_WRAP("command.invalid-wrap"),
     COMMAND_INVALID_PHYSICAL("command.invalid-physical"),

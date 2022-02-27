@@ -7,7 +7,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class Wrap {
 
-    private String permission;
+    private @Nullable String permission;
     private String id;
     private String name;
     private boolean glow;
@@ -17,6 +17,7 @@ public class Wrap {
     private @Nullable
     PhysicalWrap physical;
 
+    @Nullable
     public String getPermission() {
         return permission;
     }
