@@ -1,5 +1,7 @@
 package de.skyslycer.hmcwraps;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
@@ -12,8 +14,12 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
+import io.github.retrooper.packetevents.PacketEventsPlugin;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,12 +53,13 @@ public class HMCWraps extends JavaPlugin {
     private MessageHandler handler;
 
     @Override
-    public void onEnable() {
-        if (!checkDependency("ProtocolLib", true)) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
+    }
 
+    @Override
+    public void onEnable() {
         checkDependency("PlaceholderAPI", false);
         if (checkDependency("ItemsAdder", false)) {
             hooks.add(new ItemsAdderItemHook());
@@ -64,6 +71,8 @@ public class HMCWraps extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
 
+        PacketEvents.getAPI().init();
+
         load();
         registerCommands();
     }
@@ -71,6 +80,7 @@ public class HMCWraps extends JavaPlugin {
     @Override
     public void onDisable() {
         unload();
+        PacketEvents.getAPI().terminate();
     }
 
     public void load() {
@@ -101,7 +111,7 @@ public class HMCWraps extends JavaPlugin {
             var wrap = getWraps().get(context.pop());
             if (wrap == null) {
                 getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
-                        Placeholder.parsed("%uuid%", context.pop()));
+                        Placeholder.parsed("uuid", context.pop()));
                 throw new IllegalArgumentException();
             }
             return wrap;
@@ -117,18 +127,37 @@ public class HMCWraps extends JavaPlugin {
     }
 
     private boolean loadMessages() {
-        saveResource(MESSAGES_PATH.getFileName().toString(), false);
+        try {
+            if (!Files.exists(MESSAGES_PATH)) {
+                Files.copy(this.getClassLoader().getResourceAsStream("messages.properties"), MESSAGES_PATH,
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException exception) {
+            getLogger().severe("""
+                                        
+                    =============================
+                    Could not copy the configuration (please report this to the developers)! The plugin will shut down now.
+                    =============================
+                    """
+            );
+            exception.printStackTrace();
+            return false;
+        }
         handler = new MessageHandler(this);
         return handler.load(MESSAGES_PATH);
     }
 
     private boolean loadConfig() {
-        saveResource(CONFIG_PATH.getFileName().toString(), false);
         try {
-            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items.DIAMOND_SWORD", "inventory.items");
+            if (!Files.exists(CONFIG_PATH)) {
+                Files.copy(this.getClassLoader().getResourceAsStream("config.yml"), CONFIG_PATH,
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items");
             config = LOADER.load().get(Config.class);
         } catch (IOException exception) {
             getLogger().severe("""
+                                        
                     =============================
                     Could not load the configuration (please report this to the developers)! The plugin will shut down now.
                     =============================
@@ -141,10 +170,11 @@ public class HMCWraps extends JavaPlugin {
     }
 
     private boolean checkDependency(String name, boolean needed) {
-        if (!Bukkit.getPluginManager().isPluginEnabled(name)) {
+        if (Bukkit.getPluginManager().getPlugin(name) == null) {
             if (needed) {
                 getLogger().severe(
                         """
+                                                                
                                 =============================
                                 The plugin '""" + name + """
                                 ' is a required dependency but was not found on this server! Please restart the server after you have added the missing plugin!
@@ -168,9 +198,13 @@ public class HMCWraps extends JavaPlugin {
         }
     }
 
-    public int getModellIdFromHook(String id) {
-        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
-        return possible.map(itemHook -> itemHook.getModellId(id)).orElse(-1);
+    public int getModelIdFromHook(String id) {
+        try {
+            return Integer.parseInt(id);
+        } catch (NumberFormatException ignored) {
+            var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+            return possible.map(itemHook -> itemHook.getModelId(id)).orElse(-1);
+        }
     }
 
     @NotNull

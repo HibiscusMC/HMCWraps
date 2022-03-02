@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.serialization.inventory;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.messages.Messages;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
@@ -17,9 +18,12 @@ public enum Action {
             case SCROLL_FORTH -> item.setAction(event -> gui.next());
             case SCROLL_BACK -> item.setAction(event -> gui.previous());
             case CLOSE -> item.setAction(event -> event.getWhoClicked().closeInventory());
-            case UNWRAP -> item.setAction(event -> plugin.getWrapper().removeWrap(
-                    event.getWhoClicked().getInventory().getItemInMainHand(), (Player) event.getWhoClicked())
-            );
+            case UNWRAP -> item.setAction(event -> {
+                event.getWhoClicked().getInventory().setItemInMainHand(plugin.getWrapper().removeWrap(
+                        event.getWhoClicked().getInventory().getItemInMainHand(), (Player) event.getWhoClicked()));
+                event.getWhoClicked().getOpenInventory().close();
+                plugin.getHandler().send(event.getWhoClicked(), Messages.REMOVE_WRAP);
+            });
         }
     }
 

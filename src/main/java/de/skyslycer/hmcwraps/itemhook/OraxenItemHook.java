@@ -16,7 +16,7 @@ public class OraxenItemHook implements ItemHook {
     }
 
     @Override
-    public int getModellId(String id) {
+    public int getModelId(String id) {
         var stack = get(id);
         if (stack != null && stack.getItemMeta().hasCustomModelData()) {
             return stack.getItemMeta().getCustomModelData();

@@ -10,6 +10,6 @@ public interface ItemHook {
 
     ItemStack get(String id);
 
-    int getModellId(String id);
+    int getModelId(String id);
 
 }

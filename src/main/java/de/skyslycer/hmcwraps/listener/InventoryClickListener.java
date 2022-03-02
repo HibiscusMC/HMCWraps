@@ -17,10 +17,11 @@ public class InventoryClickListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCursor() == null
-                || event.getCurrentItem() == null) {
+                || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
             return;
         }
 
+        var player = (Player) event.getWhoClicked();
         var physical = event.getCursor().clone();
         var target = event.getCurrentItem().clone();
         var cursor = physical.clone();
@@ -30,9 +31,9 @@ public class InventoryClickListener implements Listener {
             cursor = null;
         }
 
-        if (physical.isSimilar(plugin.getConfiguration().getUnwrapper().toItem(plugin))
+        if (physical.isSimilar(plugin.getConfiguration().getUnwrapper().toItem(plugin, player))
                 && plugin.getWrapper().getWrap(target) != null) {
-            plugin.getWrapper().removeWrap(target, (Player) event.getWhoClicked());
+            event.setCurrentItem(plugin.getWrapper().removeWrap(target, player));
             event.setCursor(cursor);
             event.setCancelled(true);
             return;
@@ -42,11 +43,12 @@ public class InventoryClickListener implements Listener {
         if (wrappableItem == null) {
             return;
         }
+
         var finalCursor = cursor;
         wrappableItem.getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null)
-                .filter(wrap -> physical.isSimilar(wrap.getPhysical().toItem(plugin))).findFirst().ifPresent(wrap -> {
-                    plugin.getWrapper().setWrap(plugin.getModellIdFromHook(wrap.getId()), wrap.getUuid(), target, true,
-                            (Player) event.getWhoClicked());
+                .filter(wrap -> physical.isSimilar(wrap.getPhysical().toItem(plugin, player))).findFirst().ifPresent(wrap -> {
+                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
+                            (Player) event.getWhoClicked()));
                     event.setCursor(finalCursor);
                     event.setCancelled(true);
                 });

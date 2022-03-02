@@ -1,3 +1,5 @@
+open-shortcut: true
+
 items:
   DIAMOND_SWORD:
     wraps:
@@ -11,7 +13,7 @@ items:
           - '<gray>This is a very cool wrapping!'
         physical:
           id: 'PAPER'
-          modell-id: 1337
+          model-id: 1337
           name: '<red>Very Cool <gray>Wrapping'
           keep-after-unwrap: true
           lore:
@@ -22,38 +24,38 @@ items:
 unwrapper:
   id: 'PAPER'
   name: '<white>The <green><bold>Unwrapper'
-  modell-id: 4200
+  model-id: 4200
   lore:
     - '<green>Apply this to an item to unwrap it!'
     - '<gray>You may get the physical wrap back.'
 
 inventory:
-  title: '<read><bold>Wraps'
+  title: '<rad><bold>Wraps'
   rows: 6
   target-item-slot: 49
   items:
     45:
-      id: 'GRAY_GLASS_PANE'
+      id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
     46:
-      id: 'GRAY_GLASS_PANE'
+      id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
     47:
       id: 'ARROW'
       name: '<green>Previous'
       action: 'SCROLL_BACK'
     48:
-      id: 'GRAY_GLASS_PANE'
+      id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
-    49:
+    50:
+      id: 'GRAY_STAINED_GLASS_PANE'
+      name: '<gray> '
+    51:
       id: 'ARROW'
       name: '<green>aNext'
       action: 'SCROLL_FORTH'
-    50:
-      id: 'GRAY_GLASS_PANE'
-      name: '<gray> '
     52:
-      id: 'GRAY_GLASS_PANE'
+      id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
     53:
       id: 'RED_CONCRETE'

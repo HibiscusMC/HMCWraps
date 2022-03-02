@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.util;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -15,15 +16,20 @@ public class StringUtil {
 
     public static final MiniMessage miniMessage = MiniMessage.builder().build();
 
-    public static Component parse(String message, Single... placeholders) {
+    public static Component parseComponent(String message, Single... placeholders) {
         String string = ChatColor.translateAlternateColorCodes('&', message);
-        return miniMessage.deserialize(string, placeholders);
+        return Component.text().decoration(TextDecoration.ITALIC, false)
+                .append(miniMessage.deserialize(string, placeholders)).build();
+    }
+
+    public static Component parseComponent(CommandSender sender, String message, Single... placeholders) {
+        String string = ChatColor.translateAlternateColorCodes('&', message);
+        return Component.text().decoration(TextDecoration.ITALIC, false)
+                .append(miniMessage.deserialize(replacePlaceholders(sender, string), placeholders)).build();
     }
 
     public static BaseComponent[] parse(CommandSender sender, String message, Single... placeholders) {
-        String string = ChatColor.translateAlternateColorCodes('&', message);
-        Component component = miniMessage.deserialize(replacePlaceholders(sender, string), placeholders);
-        return BungeeComponentSerializer.get().serialize(component);
+        return BungeeComponentSerializer.get().serialize(parseComponent(sender, message, placeholders));
     }
 
     public static void send(CommandSender sender, String message, Single... placeholders) {

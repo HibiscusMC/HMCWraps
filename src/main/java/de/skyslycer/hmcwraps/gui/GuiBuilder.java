@@ -34,14 +34,14 @@ public class GuiBuilder {
 
         Inventory inventory = plugin.getConfiguration().getInventory();
         ScrollingGui gui = Gui.scrolling()
-                .title(StringUtil.parse(inventory.getTitle()))
+                .title(StringUtil.parseComponent(player, inventory.getTitle()))
                 .rows(inventory.getRows())
                 .pageSize((inventory.getRows() * 9) - inventory.getItems().size())
                 .scrollType(ScrollType.HORIZONTAL)
                 .create();
 
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
-            ItemStack stack = serializableItem.toItem(plugin);
+            ItemStack stack = serializableItem.toItem(plugin, player);
             if (stack != null) {
                 GuiItem guiItem = new GuiItem(stack);
                 if (serializableItem.getAction() != null) {
@@ -61,21 +61,14 @@ public class GuiBuilder {
     private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, ScrollingGui gui) {
         plugin.getConfiguration().getItems().get(item.getType().toString()).getWraps()
                 .forEach((ignored, wrap) -> {
-                    int id;
-                    try {
-                        id = Integer.parseInt(wrap.getId());
-                    } catch (NumberFormatException exception) {
-                        id = plugin.getModellIdFromHook(wrap.getId());
-                    }
-                    var stack = ItemBuilder.from(item.getType())
-                            .name(StringUtil.parse(wrap.getName(), available(wrap, player, plugin)))
-                            .lore(wrap.getLore().stream()
-                                    .map(line -> StringUtil.parse(line, available(wrap, player, plugin)))
-                                    .collect(Collectors.toList())).glow(wrap.isGlow());
-                    if (id != -1) {
-                        stack.model(id);
-                    }
-                    GuiItem guiItem = new GuiItem(stack.build());
+                    var builtItem = wrap.toItem(plugin, player);
+                    builtItem.setType(item.getType());
+                    var builder = ItemBuilder.from(builtItem);
+                    builder.lore(wrap.getLore().stream()
+                            .map(it -> StringUtil.parseComponent(player, "", available(wrap, player, plugin)))
+                            .collect(Collectors.toList()));
+
+                    GuiItem guiItem = new GuiItem(builder.build());
                     guiItem.setAction(click -> {
                         if (click.getClick() == ClickType.LEFT) {
                             if (wrap.getPermission() != null && !player.hasPermission(wrap.getPermission())) {
@@ -83,11 +76,12 @@ public class GuiBuilder {
                                 return;
                             }
                             player.getInventory().setItem(slot, plugin.getWrapper()
-                                    .setWrap(plugin.getModellIdFromHook(wrap.getId()), wrap.getUuid(), item, false,
+                                    .setWrap(wrap.getModelId(), wrap.getUuid(), item, false,
                                             player));
                             plugin.getHandler().send(player, Messages.APPLY_WRAP);
+                            player.getOpenInventory().close();
                         } else if (click.getClick() == ClickType.RIGHT) {
-                            if (!wrap.isPreview()) {
+                            if (wrap.isPreview() != null && !wrap.isPreview()) {
                                 plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
                                 return;
                             }
@@ -97,13 +91,14 @@ public class GuiBuilder {
                     });
                     gui.addItem(guiItem);
                 });
+        gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item));
     }
 
     private static Single available(Wrap wrap, Player player, HMCWraps plugin) {
         if (wrap.getPermission() == null) {
-            return Placeholder.parsed("%available%", plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE));
+            return Placeholder.parsed("available", plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE));
         }
-        return Placeholder.parsed("%available%",
+        return Placeholder.parsed("available",
                 player.hasPermission(wrap.getPermission()) ? plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE)
                         : plugin.getHandler().get(Messages.PLACEHOLDER_NOT_AVAILABLE));
     }

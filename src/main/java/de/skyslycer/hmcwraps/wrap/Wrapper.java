@@ -40,23 +40,23 @@ public class Wrapper {
         return plugin.getWraps().get(data);
     }
 
-    public ItemStack setWrap(Integer modellId, String wrapId, ItemStack target, boolean physical, Player player) {
+    public ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player) {
         var editing = target.clone();
         var currentWrap = getWrap(editing);
         if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical()
                 .isKeepAfterUnwrap()) {
-            PlayerUtil.give(player, currentWrap.getPhysical().toItem(plugin));
+            PlayerUtil.give(player, currentWrap.getPhysical().toItem(plugin, player));
         }
         var meta = editing.getItemMeta();
         meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, (byte) (physical ? 1 : 0));
         meta.getPersistentDataContainer().set(wrapKey, PersistentDataType.STRING, wrapId);
-        meta.setCustomModelData(modellId);
+        meta.setCustomModelData(modelId);
         editing.setItemMeta(meta);
         return editing;
     }
 
-    public void removeWrap(ItemStack itemStack, Player player) {
-        setWrap(null, "-", itemStack, false, player);
+    public ItemStack removeWrap(ItemStack itemStack, Player player) {
+        return setWrap(null, "-", itemStack, false, player);
     }
 
 }

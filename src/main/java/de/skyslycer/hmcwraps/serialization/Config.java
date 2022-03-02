@@ -8,9 +8,14 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class Config {
 
+    private boolean openShortcut;
     private Inventory inventory;
     private SerializableItem unwrapper;
     private Map<String, WrappableItem> items;
+
+    public boolean isOpenShortcut() {
+        return openShortcut;
+    }
 
     public Inventory getInventory() {
         return inventory;

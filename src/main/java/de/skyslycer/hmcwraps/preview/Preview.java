@@ -11,7 +11,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.Point;
 import de.skyslycer.hmcwraps.util.VectorUtils;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import io.github.retrooper.packetevents.utils.SpigotDataHelper;
@@ -26,8 +25,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class Preview {
 
-    private static final double POINTS_AMOUNT = 720d;
-    private static final double RADIUS = 2d;
+    private static final double RADIUS = 0.7d;
+    private static final byte MASK = 0x00;
 
     private final int entityId = Integer.MAX_VALUE - HMCWraps.RANDOM.nextInt(10000);
     private final Player player;
@@ -43,6 +42,7 @@ public class Preview {
     }
 
     public void preview(HMCWraps plugin) {
+        player.getOpenInventory().close();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             generateCircleLocations();
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
@@ -54,32 +54,32 @@ public class Preview {
                     0f,
                     0f,
                     VectorUtils.zeroVector(),
-                    List.of(new EntityData(19, EntityDataTypes.ROTATION, new Vector3f(-90, 0, 0)),
+                    List.of(new EntityData(19, EntityDataTypes.ROTATION, new Vector3f(90, 0, 0)),
                             new EntityData(5, EntityDataTypes.BOOLEAN, true),
-                            new EntityData(0, EntityDataTypes.BYTE, (byte) 32)))
+                            new EntityData(0, EntityDataTypes.BYTE, MASK | 0x20)))
             );
             PacketEvents.getAPI().getPlayerManager()
                     .sendPacket(player, new WrapperPlayServerEntityEquipment(entityId, new Equipment(
                             EquipmentSlot.MAINHAND, SpigotDataHelper.fromBukkitItemStack(item))));
 
-            player.getOpenInventory().close();
-
             task = Bukkit.getScheduler()
-                    .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, locations), 0, 1);
+                    .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, locations), 0, 2);
+
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 task.cancel();
                 PacketEvents.getAPI().getPlayerManager()
                         .sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
                 gui.open(player);
-            }, 20 * 2);
+            }, 360 * 6);
         });
     }
 
     private void generateCircleLocations() {
-        for (int i = 0; i < POINTS_AMOUNT; i++) {
-            double angle = Math.toRadians(((double) i / POINTS_AMOUNT) * 360d);
-            locations.add(Point.build(Math.cos(angle) * RADIUS, Math.sin(angle) * RADIUS));
+        for (int i = 0; i < 360; i++) {
+            double angle = i * 180 / Math.PI;
+            locations.add(Point.build(Math.cos(angle) * RADIUS + 2, Math.sin(angle) * RADIUS + 2));
         }
+        System.out.println(locations);
     }
 
 }

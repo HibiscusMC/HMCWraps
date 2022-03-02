@@ -41,29 +41,33 @@ public class WrapCommand {
 
     @Subcommand("give wrap")
     public void onGiveWrap(CommandActor actor, EntitySelector<Player> players, Wrap wrap,
-            @Optional @Range(min = 1, max = 64) Integer amount) {
-        if (wrap.getPhysical() == null || wrap.getPhysical().toItem(plugin) == null) {
+            @Range(min = 1, max = 64) @Optional Integer amount) {
+        if (wrap.getPhysical() == null || wrap.getPhysical().toItem(plugin, null) == null) {
             plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_PHYSICAL,
-                    Placeholder.parsed("%uuid%", wrap.getUuid()));
+                    Placeholder.parsed("uuid", wrap.getUuid()));
             return;
         }
-        var item = wrap.getPhysical().toItem(plugin);
-        item.setAmount(amount == null ? 1 : amount);
-        players.forEach(player -> PlayerUtil.give(player, item));
+        players.forEach(player -> {
+            var item = wrap.getPhysical().toItem(plugin, player);
+            item.setAmount(amount == null ? 1 : amount);
+            PlayerUtil.give(player, item);
+        });
         plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_GIVEN_PHYSICAL,
-                Placeholder.parsed("%uuid%", wrap.getUuid()));
+                Placeholder.parsed("uuid", wrap.getUuid()));
     }
 
     @Subcommand("give unwrapper")
     public void onGiveUnwrapper(CommandActor actor, EntitySelector<Player> players,
             @Optional @Range(min = 1, max = 64) Integer amount) {
-        var item = plugin.getConfiguration().getUnwrapper().toItem(plugin);
-        if (item == null) {
-            plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_REMOVER);
-            return;
-        }
-        item.setAmount(amount == null ? 1 : amount);
-        players.forEach(player -> PlayerUtil.give(player, item));
+        players.forEach(player -> {
+            var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
+            if (item == null) {
+                plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_REMOVER);
+                return;
+            }
+            item.setAmount(amount == null ? 1 : amount);
+            PlayerUtil.give(player, item);
+        });
         plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_GIVEN_UNWRAPPER);
     }
 

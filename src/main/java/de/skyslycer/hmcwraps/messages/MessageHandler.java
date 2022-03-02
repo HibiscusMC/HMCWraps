@@ -39,6 +39,7 @@ public class MessageHandler {
 
         if (bundle == null && fallback == null) {
             plugin.getLogger().severe("""
+                                        
                     =============================
                     Could not load any messages (please report this to the developers)! The plugin will shut down now.
                     =============================

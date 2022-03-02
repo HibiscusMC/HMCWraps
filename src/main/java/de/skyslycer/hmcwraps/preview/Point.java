@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps;
+package de.skyslycer.hmcwraps.preview;
 
 public class Point<T> {
 
@@ -22,4 +22,8 @@ public class Point<T> {
         return z;
     }
 
+    @Override
+    public String toString() {
+        return "x=" + x + ", z=" + z;
+    }
 }

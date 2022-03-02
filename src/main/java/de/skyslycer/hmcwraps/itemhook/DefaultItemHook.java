@@ -19,7 +19,7 @@ public class DefaultItemHook implements ItemHook {
     }
 
     @Override
-    public int getModellId(String id) {
+    public int getModelId(String id) {
         return -1;
     }
 
