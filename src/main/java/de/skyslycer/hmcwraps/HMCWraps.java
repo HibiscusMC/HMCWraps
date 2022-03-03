@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
@@ -14,7 +13,6 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
-import io.github.retrooper.packetevents.PacketEventsPlugin;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
