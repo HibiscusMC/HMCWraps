@@ -73,8 +73,6 @@ public class HMCWraps extends JavaPlugin {
         PacketEvents.getAPI().init();
 
         registerCommands();
-
-        getPreviewManager().removeAll(true);
     }
 
     @Override
@@ -112,6 +110,7 @@ public class HMCWraps extends JavaPlugin {
         getConfiguration().getItems()
                 .forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
         wraps.remove("-");
+        getPreviewManager().removeAll(true);
         return true;
     }
 
@@ -134,10 +133,8 @@ public class HMCWraps extends JavaPlugin {
         });
         commandHandler.registerExceptionHandler(NoPermissionException.class,
                 (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
-        commandHandler.registerExceptionHandler(
-                SenderNotPlayerException.class,
-                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(),
-                        Messages.COMMAND_PLAYER_ONLY));
+        commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
+                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
         commandHandler.register(new WrapCommand(this));
         commandHandler.registerBrigadier();
     }
