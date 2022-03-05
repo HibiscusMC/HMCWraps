@@ -38,7 +38,8 @@ public class SerializableItem {
         }
         ItemBuilder builder = ItemBuilder.from(origin);
         builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
-                .amount(getAmount() == null ? 1 : getAmount());
+                .amount(getAmount() == null ? 1 : getAmount())
+                .model(getModelId());
 
         if (getLore() != null) {
             builder.lore(getLore().stream()
@@ -48,12 +49,6 @@ public class SerializableItem {
         if (getFlags() != null) {
             List<ItemFlag> parsed = EnumUtil.getAllPossibilities(getFlags(), ItemFlag.class);
             builder.flags(parsed.toArray(ItemFlag[]::new));
-        }
-        if (getModelId() != null) {
-            builder.model(getModelId());
-        } else {
-            builder.model(plugin.getModelIdFromHook(getId()));
-            modelId = plugin.getModelIdFromHook(getId());
         }
         if (getEnchantments() != null) {
             getEnchantments().forEach((name, level) -> {
@@ -87,8 +82,10 @@ public class SerializableItem {
         return flags;
     }
 
-    @Nullable
-    public Integer getModelId() {
+    public int getModelId() {
+        if (modelId == null) {
+            modelId = HMCWraps.getPlugin(HMCWraps.class).getModelIdFromHook(getId());
+        }
         return modelId;
     }
 
