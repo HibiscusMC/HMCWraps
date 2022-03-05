@@ -37,11 +37,14 @@ public class SerializableItem {
             origin = new ItemStack(Material.STRUCTURE_VOID);
         }
         ItemBuilder builder = ItemBuilder.from(origin);
-        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName())).amount(getAmount() == null ? 1 : getAmount());
+        builder.name(
+                        player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
+                .amount(getAmount() == null ? 1 : getAmount());
 
         if (getLore() != null) {
-            builder.lore(
-                    getLore().stream().map(it -> player == null ? StringUtil.parseComponent(it) : StringUtil.parseComponent(player, it)).collect(Collectors.toList()));
+            builder.lore(getLore().stream()
+                    .map(it -> player == null ? StringUtil.parseComponent(it) : StringUtil.parseComponent(player, it))
+                    .collect(Collectors.toList()));
         }
         if (getFlags() != null) {
             List<ItemFlag> parsed = EnumUtil.getAllPossibilities(getFlags(), ItemFlag.class);

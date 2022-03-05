@@ -24,27 +24,22 @@ public class MessageHandler {
             fallback = new PropertyResourceBundle(
                     HMCWraps.class.getClassLoader().getResource("messages.properties").openStream());
         } catch (IOException | NullPointerException exception) {
-            plugin.getLogger()
-                    .severe("An error occurred while trying to load the fallback messages (please report this to the developers):");
+            plugin.logSevere(
+                    "An error occurred while trying to load the fallback messages (please report this to the developers):");
             exception.printStackTrace();
         }
 
         try {
             bundle = new PropertyResourceBundle(Files.newInputStream(path));
         } catch (IOException exception) {
-            plugin.getLogger()
-                    .severe("An error occurred while trying to load the messages (please report this to the developers):");
+            plugin.logSevere(
+                    "An error occurred while trying to load the messages (please report this to the developers):");
             exception.printStackTrace();
         }
 
         if (bundle == null && fallback == null) {
-            plugin.getLogger().severe("""
-                                        
-                    =============================
-                    Could not load any messages (please report this to the developers)! The plugin will shut down now.
-                    =============================
-                    """
-            );
+            plugin.logSevere(
+                    "Could not load any messages (please report this to the developers)! The plugin will shut down now.");
             return false;
         }
         return true;

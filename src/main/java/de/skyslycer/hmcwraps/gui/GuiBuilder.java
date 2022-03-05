@@ -2,7 +2,6 @@ package de.skyslycer.hmcwraps.gui;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.preview.Preview;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -22,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 public class GuiBuilder {
 
     public static void open(HMCWraps plugin, Player player, ItemStack item, EquipmentSlot slot) {
+        plugin.getPreviewManager().remove(player.getUniqueId(), false);
+
         if (item == null) {
             plugin.getHandler().send(player, Messages.NO_ITEM);
             return;
@@ -64,9 +65,11 @@ public class GuiBuilder {
                     var builtItem = wrap.toItem(plugin, player);
                     builtItem.setType(item.getType());
                     var builder = ItemBuilder.from(builtItem);
-                    builder.lore(wrap.getLore().stream()
-                            .map(it -> StringUtil.parseComponent(player, "", available(wrap, player, plugin)))
-                            .collect(Collectors.toList()));
+                    if (wrap.getLore() != null) {
+                        builder.lore(wrap.getLore().stream()
+                                .map(it -> StringUtil.parseComponent(player, it, available(wrap, player, plugin)))
+                                .collect(Collectors.toList()));
+                    }
 
                     GuiItem guiItem = new GuiItem(builder.build());
                     guiItem.setAction(click -> {
@@ -85,8 +88,7 @@ public class GuiBuilder {
                                 plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
                                 return;
                             }
-                            var preview = new Preview(player, item, gui);
-                            preview.preview(plugin);
+                            plugin.getPreviewManager().create(player, builder.build(), gui);
                         }
                     });
                     gui.addItem(guiItem);

@@ -9,16 +9,18 @@ import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.direction.Direction;
+import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.VectorUtils;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import io.github.retrooper.packetevents.utils.SpigotDataHelper;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,62 +28,67 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class Preview {
 
-    private static final double RADIUS = 1d;
-    private static final byte MASK = 0x00;
-
     private final int entityId = Integer.MAX_VALUE - HMCWraps.RANDOM.nextInt(10000);
     private final Player player;
     private final ItemStack item;
     private final PaginatedGui gui;
-    private final Set<Point<Double>> locations = new LinkedHashSet<>();
+    private final HMCWraps plugin;
     private BukkitTask task;
+    private BukkitTask cancelTask;
 
-    public Preview(Player player, ItemStack item, PaginatedGui gui) {
+    Preview(Player player, ItemStack item, PaginatedGui gui, HMCWraps plugin) {
         this.player = player;
         this.item = item;
         this.gui = gui;
+        this.plugin = plugin;
     }
 
-    public void preview(HMCWraps plugin) {
-        var location = Direction.apply(player);
+    public void preview() {
+        if (PlayerUtil.getLookBlock(player) == null) {
+            return;
+        }
         player.getOpenInventory().close();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            generateCircleLocations();
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
-                    entityId,
-                    UUID.randomUUID(),
-                    EntityTypes.ARMOR_STAND,
-                    VectorUtils.fromLocation(location),
-                    0f,
-                    0f,
-                    0f,
-                    VectorUtils.zeroVector(),
-                    List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                            new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10),
-                            new EntityData(15, EntityDataTypes.BYTE, (byte) 0x04),
-                            new EntityData(19, EntityDataTypes.ROTATION, new Vector3f(-180, -180, -180)),
-                            new EntityData(5, EntityDataTypes.BOOLEAN, true)))
-            );
-            PacketEvents.getAPI().getPlayerManager()
-                    .sendPacket(player, new WrapperPlayServerEntityEquipment(entityId, new Equipment(
-                            EquipmentSlot.MAINHAND, SpigotDataHelper.fromBukkitItemStack(item))));
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerSpawnLivingEntity(
+                entityId,
+                UUID.randomUUID(),
+                EntityTypes.ARMOR_STAND,
+                VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
+                0f,
+                0f,
+                0f,
+                VectorUtils.zeroVector(),
+                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                        new EntityData(5, EntityDataTypes.BOOLEAN, true))
+        ));
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityMetadata(
+                entityId,
+                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                        new EntityData(5, EntityDataTypes.BOOLEAN, true)))
+        );
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player,
+                new WrapperPlayServerEntityTeleport(entityId, VectorUtils.fromLocation(PlayerUtil.getLookBlock(player)),
+                        0f, 0f, false));
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityEquipment(
+                entityId, new Equipment(EquipmentSlot.HELMET, SpigotDataHelper.fromBukkitItemStack(item))));
 
-            task = Bukkit.getScheduler()
-                    .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, location, entityId, locations), 0, 20);
+        task = Bukkit.getScheduler()
+                .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 0, 1);
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                task.cancel();
-                PacketEvents.getAPI().getPlayerManager()
-                        .sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
-                gui.open(player);
-            }, 30 * 20);
-        });
+        cancelTask = Bukkit.getScheduler()
+                .runTaskLater(plugin, () -> cancel(true), plugin.getConfiguration().getPreview().getDuration() * 20L);
     }
 
-    private void generateCircleLocations() {
-        for (int i = 0; i < 360; i++) {
-            double angle = i * 180 / Math.PI;
-            locations.add(Point.build(Math.cos(angle) * RADIUS, Math.sin(angle) * RADIUS));
+    public void cancel(boolean open) {
+        task.cancel();
+        cancelTask.cancel();
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
+        if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
+        }
+        if (open) {
+            gui.open(player);
         }
     }
 

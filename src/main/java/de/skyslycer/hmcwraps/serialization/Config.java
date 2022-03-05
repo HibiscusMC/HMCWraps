@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
 import java.util.Map;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -9,6 +10,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class Config {
 
     private boolean openShortcut;
+    private PreviewSettings preview;
     private Inventory inventory;
     private SerializableItem unwrapper;
     private Map<String, WrappableItem> items;
@@ -29,4 +31,7 @@ public class Config {
         return items;
     }
 
+    public PreviewSettings getPreview() {
+        return preview;
+    }
 }

@@ -46,7 +46,8 @@ public class InventoryClickListener implements Listener {
 
         var finalCursor = cursor;
         wrappableItem.getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null)
-                .filter(wrap -> physical.isSimilar(wrap.getPhysical().toItem(plugin, player))).findFirst().ifPresent(wrap -> {
+                .filter(wrap -> physical.isSimilar(wrap.getPhysical().toItem(plugin, player))).findFirst()
+                .ifPresent(wrap -> {
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
                             (Player) event.getWhoClicked()));
                     event.setCursor(finalCursor);

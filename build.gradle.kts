@@ -55,10 +55,8 @@ tasks {
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")
-        exclude("assets/mappings/enchantment/**")
         exclude("assets/mappings/particle/**")
         exclude("assets/mappings/potion/**")
-        //exclude("assets/mappings/entity/legacy_entity_type_mappings.json")
 
         val nullClassifier: String? = null
         archiveClassifier.set(nullClassifier)

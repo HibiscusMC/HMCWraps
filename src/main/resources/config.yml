@@ -1,41 +1,104 @@
+# If the shortcut to open the wrap inventory when shift & right-clicking and should be enabled
 open-shortcut: true
 
+# Preview settings
+preview:
+  # Duration of the preview in seconds
+  duration: 5
+  # Rotation per tick (50ms)
+  rotation: 5
+  # Sneak to cancel preview settings
+  sneak-cancel:
+    # If the preview should be cancelled when sneaking
+    enabled: true
+    # If the configured message should be sent as an action bar while previewing
+    action-bar: true
+
+# The items with wraps
 items:
+  # Wraps of a diamond sword
   DIAMOND_SWORD:
+    # Wrap list
     wraps:
       1:
-        permission: 'hmcwraps.coolwrap'
+        # The permission to virtually apply this wrap (inventory) (nullable)
+        permission: 'hmcwraps.fire_sword'
+        # The UUID (global identifier), has to be unique in ALL wraps!
         uuid: 1
-        id: '6942'
-        name: '<red>Very Cool <gray>Wrapping'
+        # Either custom model id or a hook to get the custom model id
+        id: '1'
+        # The name in the wraps inventory
+        name: '<red>Fire <gray>Wrap'
+        # If it should glow in the wraps inventory (nullable)
+        glow: true
+        # The lore in the wraps inventory (nullable)
+        lore:
+          - '<gray>Apply this wrap to make your sword look fire!'
+        # The flags the item should have in the wraps inventory (nullable)
+        flags:
+          - 'HIDE_ATTRIBUTES'
+        # The physical wrap to apply (nullable)
+        physical:
+          # The Bukkit material or a hook
+          id: 'PAPER'
+          # Custom model id, automatically applies if you have set a hook in the id value
+          model-id: 2
+          # Name displayed
+          name: '<red>Fire <gray>Wrap for <blue>Diamond Sword'
+          # If the wrap should be given to the player after they unwrap the item or re wrap it
+          keep-after-unwrap: true
+          # Lore displayed
+          lore:
+            - '<green>Apply this to an item to wrap it!'
+  DIAMOND_PICKAXE:
+    wraps:
+      1:
+        permission: 'hmcwraps.fire_pickaxe'
+        uuid: 2
+        id: '1'
+        name: '<red>Fire <gray>Wrap'
         glow: true
         lore:
-          - '<gray>This is a very cool wrapping!'
+          - '<gray>Apply this wrap to make your pickaxe look fire!'
+        flags:
+          - 'HIDE_ATTRIBUTES'
         physical:
           id: 'PAPER'
-          model-id: 1337
-          name: '<red>Very Cool <gray>Wrapping'
+          model-id: 3
+          name: '<red>Fire <gray>Wrap for <blue>Diamond Pickaxe'
           keep-after-unwrap: true
           lore:
-            - '<gray>This is a very cool wrapping!'
-            - ' '
             - '<green>Apply this to an item to wrap it!'
 
+
+# The unwrapper configuration
 unwrapper:
+  # The Bukkit material or a hook
   id: 'PAPER'
-  name: '<white>The <green><bold>Unwrapper'
-  model-id: 4200
+  # Name displayed
+  name: '<green><bold>Unwrapper'
+  # Custom model id, automatically applies if you have set a hook in the id value
+  model-id: 1
+  # Lore displayed
   lore:
     - '<green>Apply this to an item to unwrap it!'
     - '<gray>You may get the physical wrap back.'
 
+# The inventory (/wraps)
 inventory:
-  title: '<rad><bold>Wraps'
+  # The title
+  title: '<red><bold>Wraps'
+  # How many rows the inventory should have
   rows: 6
+  # The slot to set the item the player is holding to
   target-item-slot: 49
+  # The set items in the inventory, every empty slot will be filled with wraps
   items:
+    # Slots start from 0
     45:
+      # The Bukkit material or hook
       id: 'GRAY_STAINED_GLASS_PANE'
+      # The name
       name: '<gray> '
     46:
       id: 'GRAY_STAINED_GLASS_PANE'
@@ -43,6 +106,7 @@ inventory:
     47:
       id: 'ARROW'
       name: '<green>Previous'
+      # The action: Either 'SCROLL_BACK', 'SCROLL_FORTH', 'UNWRAP' to unwrap the current item, 'CLOSE' to close the inventory
       action: 'SCROLL_BACK'
     48:
       id: 'GRAY_STAINED_GLASS_PANE'
@@ -52,7 +116,7 @@ inventory:
       name: '<gray> '
     51:
       id: 'ARROW'
-      name: '<green>aNext'
+      name: '<green>Next'
       action: 'SCROLL_FORTH'
     52:
       id: 'GRAY_STAINED_GLASS_PANE'
@@ -60,6 +124,7 @@ inventory:
     53:
       id: 'RED_CONCRETE'
       name: '<red>Unwrap'
+      # The lore displayed
       lore:
         - '<gray>Unwrap your current item'
       action: 'UNWRAP'

@@ -1,48 +1,36 @@
 package de.skyslycer.hmcwraps.preview;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
-import de.skyslycer.hmcwraps.util.VectorUtils;
-import java.util.Iterator;
-import java.util.Set;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
+import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.util.StringUtil;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.entity.Player;
 
 public class RotateRunnable implements Runnable {
 
     private final Player player;
     private final int entityId;
-    private final Set<Point<Double>> locations;
-    private final Location location;
-    private Iterator<Point<Double>> iterator;
+    private final HMCWraps plugin;
 
     private float currentAngle = 0;
 
-    public RotateRunnable(Player player, Location location, int entityId, Set<Point<Double>> locations) {
+    public RotateRunnable(Player player, int entityId, HMCWraps plugin) {
         this.player = player;
         this.entityId = entityId;
-        this.locations = locations;
-        this.location = location;
-        this.iterator = locations.iterator();
+        this.plugin = plugin;
     }
 
     @Override
     public void run() {
-        if (iterator.hasNext()) {
-            var point = iterator.next();
-            var appliedLocation = location.add(point.getX(), 0, point.getZ());
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player,
-                    new WrapperPlayServerEntityTeleport(entityId, VectorUtils.fromLocation(appliedLocation),
-                            currentAngle, 90f, false));
-        } else {
-            iterator = locations.iterator();
-            currentAngle = 0;
-            run();
-            return;
+        if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                    StringUtil.parse(player, plugin.getHandler().get(Messages.PREVIEW_BAR)));
         }
-        Bukkit.broadcastMessage("Current rotation: " + currentAngle);
-        currentAngle += 1;
+        PacketEvents.getAPI().getPlayerManager()
+                .sendPacket(player, new WrapperPlayServerEntityRotation(entityId, currentAngle, 90f, false));
+        currentAngle += plugin.getConfiguration().getPreview().getRotation();
     }
 
 }

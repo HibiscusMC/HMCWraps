@@ -12,6 +12,9 @@ public class OraxenItemHook implements ItemHook {
 
     @Override
     public ItemStack get(String id) {
+        if (OraxenItems.getItemById(id) == null) {
+            return null;
+        }
         return OraxenItems.getItemById(id).build();
     }
 

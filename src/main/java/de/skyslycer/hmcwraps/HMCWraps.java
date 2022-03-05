@@ -8,8 +8,10 @@ import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
 import de.skyslycer.hmcwraps.listener.InventoryClickListener;
 import de.skyslycer.hmcwraps.listener.PlayerInteractListener;
+import de.skyslycer.hmcwraps.listener.PlayerShiftListener;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
@@ -17,7 +19,6 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class HMCWraps extends JavaPlugin {
     private final Set<ItemHook> hooks = new HashSet<>();
     private final Map<String, Wrap> wraps = new HashMap<>();
     private final Wrapper wrapper = new Wrapper(this);
+    private final PreviewManager previewManager = new PreviewManager(this);
     private Config config;
     private MessageHandler handler;
 
@@ -58,6 +60,11 @@ public class HMCWraps extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!load()) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         checkDependency("PlaceholderAPI", false);
         if (checkDependency("ItemsAdder", false)) {
             hooks.add(new ItemsAdderItemHook());
@@ -68,11 +75,13 @@ public class HMCWraps extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
 
         PacketEvents.getAPI().init();
 
-        load();
         registerCommands();
+
+        getPreviewManager().removeAll(true);
     }
 
     @Override
@@ -81,20 +90,30 @@ public class HMCWraps extends JavaPlugin {
         PacketEvents.getAPI().terminate();
     }
 
-    public void load() {
+    public boolean load() {
+        if (!Files.exists(PLUGIN_PATH)) {
+            try {
+                Files.createDirectory(PLUGIN_PATH);
+            } catch (IOException exception) {
+                logSevere(
+                        "Could not create the folder (please report this to the developers)! The plugin will shut down now.");
+                exception.printStackTrace();
+                return false;
+            }
+        }
+
         if (!loadConfig()) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
+            return false;
         }
 
         if (!loadMessages()) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
+            return false;
         }
 
         getConfiguration().getItems().forEach((ignored, wrappableItem) ->
                 wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
         wraps.remove("-");
+        return true;
     }
 
     public void unload() {
@@ -127,17 +146,11 @@ public class HMCWraps extends JavaPlugin {
     private boolean loadMessages() {
         try {
             if (!Files.exists(MESSAGES_PATH)) {
-                Files.copy(this.getClassLoader().getResourceAsStream("messages.properties"), MESSAGES_PATH,
-                        StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(this.getClassLoader().getResourceAsStream("messages.properties"), MESSAGES_PATH);
             }
         } catch (IOException exception) {
-            getLogger().severe("""
-                                        
-                    =============================
-                    Could not copy the configuration (please report this to the developers)! The plugin will shut down now.
-                    =============================
-                    """
-            );
+            logSevere(
+                    "Could not copy the configuration (please report this to the developers)! The plugin will shut down now.");
             exception.printStackTrace();
             return false;
         }
@@ -148,19 +161,13 @@ public class HMCWraps extends JavaPlugin {
     private boolean loadConfig() {
         try {
             if (!Files.exists(CONFIG_PATH)) {
-                Files.copy(this.getClassLoader().getResourceAsStream("config.yml"), CONFIG_PATH,
-                        StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(this.getClassLoader().getResourceAsStream("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items");
             config = LOADER.load().get(Config.class);
         } catch (IOException exception) {
-            getLogger().severe("""
-                                        
-                    =============================
-                    Could not load the configuration (please report this to the developers)! The plugin will shut down now.
-                    =============================
-                    """
-            );
+            logSevere(
+                    "Could not load the configuration (please report this to the developers)! The plugin will shut down now.");
             exception.printStackTrace();
             return false;
         }
@@ -170,20 +177,14 @@ public class HMCWraps extends JavaPlugin {
     private boolean checkDependency(String name, boolean needed) {
         if (Bukkit.getPluginManager().getPlugin(name) == null) {
             if (needed) {
-                getLogger().severe(
-                        """
-                                                                
-                                =============================
-                                The plugin '""" + name + """
-                                ' is a required dependency but was not found on this server! Please restart the server after you have added the missing plugin!
-                                This plugin will shut down now.
-                                ============================="""
-                );
-            } else {
-                getLogger().info("Plugin '" + name + "' found. Initializing hook.");
+                logSevere("""
+                        The plugin '""" + name + """
+                        ' is a required dependency but was not found on this server! Please restart the server after you have added the missing plugin!
+                        This plugin will shut down now.""");
             }
             return false;
         }
+        getLogger().info("Plugin '" + name + "' found. Initializing hook.");
         return true;
     }
 
@@ -205,6 +206,14 @@ public class HMCWraps extends JavaPlugin {
         }
     }
 
+    public void logSevere(String message) {
+        getLogger().severe(
+                "\n=============================\n" +
+                        message + "\n" +
+                        "============================="
+        );
+    }
+
     @NotNull
     public Config getConfiguration() {
         return config;
@@ -223,6 +232,11 @@ public class HMCWraps extends JavaPlugin {
     @NotNull
     public Wrapper getWrapper() {
         return wrapper;
+    }
+
+    @NotNull
+    public PreviewManager getPreviewManager() {
+        return previewManager;
     }
 
 }
