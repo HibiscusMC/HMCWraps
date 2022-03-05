@@ -47,6 +47,7 @@ public class HMCWraps extends JavaPlugin {
     public static final Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
     private final Set<ItemHook> hooks = new HashSet<>();
     private final Map<String, Wrap> wraps = new HashMap<>();
+    private final Set<String> loadedHooks = new HashSet<>();
     private final Wrapper wrapper = new Wrapper(this);
     private final PreviewManager previewManager = new PreviewManager(this);
     private Config config;
@@ -63,14 +64,6 @@ public class HMCWraps extends JavaPlugin {
         if (!load()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
-        }
-
-        checkDependency("PlaceholderAPI", false);
-        if (checkDependency("ItemsAdder", false)) {
-            hooks.add(new ItemsAdderItemHook());
-        }
-        if (checkDependency("Oraxen", false)) {
-            hooks.add(new OraxenItemHook());
         }
 
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
@@ -91,6 +84,14 @@ public class HMCWraps extends JavaPlugin {
     }
 
     public boolean load() {
+        checkDependency("PlaceholderAPI", false);
+        if (checkDependency("ItemsAdder", false)) {
+            hooks.add(new ItemsAdderItemHook());
+        }
+        if (checkDependency("Oraxen", false)) {
+            hooks.add(new OraxenItemHook());
+        }
+
         if (!Files.exists(PLUGIN_PATH)) {
             try {
                 Files.createDirectory(PLUGIN_PATH);
@@ -184,7 +185,10 @@ public class HMCWraps extends JavaPlugin {
             }
             return false;
         }
-        getLogger().info("Plugin '" + name + "' found. Initializing hook.");
+        if (!loadedHooks.contains(name)) {
+            getLogger().info("Plugin '" + name + "' found. Initializing hook.");
+            loadedHooks.add(name);
+        }
         return true;
     }
 
@@ -202,7 +206,7 @@ public class HMCWraps extends JavaPlugin {
             return Integer.parseInt(id);
         } catch (NumberFormatException ignored) {
             var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
-            return possible.map(itemHook -> itemHook.getModelId(id)).orElse(-1);
+            return possible.map(itemHook -> itemHook.getModelId(id.replace(possible.get().getPrefix(), ""))).orElse(-1);
         }
     }
 
