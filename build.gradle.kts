@@ -1,3 +1,5 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
+
 plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
@@ -75,4 +77,10 @@ bukkit {
     authors = listOf("Skyslycer")
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen")
     apiVersion = "1.16"
+    permissions {
+        register("hmcwraps.admin") {
+            description = "Gives access to admin commands."
+            default = Default.OP
+        }
+    }
 }

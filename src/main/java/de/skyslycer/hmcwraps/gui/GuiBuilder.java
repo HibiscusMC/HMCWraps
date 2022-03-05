@@ -60,39 +60,38 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, ScrollingGui gui) {
-        plugin.getConfiguration().getItems().get(item.getType().toString()).getWraps()
-                .forEach((ignored, wrap) -> {
-                    var builtItem = wrap.toItem(plugin, player);
-                    builtItem.setType(item.getType());
-                    var builder = ItemBuilder.from(builtItem);
-                    if (wrap.getLore() != null) {
-                        builder.lore(wrap.getLore().stream()
-                                .map(it -> StringUtil.parseComponent(player, it, available(wrap, player, plugin)))
-                                .collect(Collectors.toList()));
-                    }
+        plugin.getConfiguration().getItems().get(item.getType().toString()).getWraps().forEach((ignored, wrap) -> {
+            var builtItem = wrap.toItem(plugin, player);
+            builtItem.setType(item.getType());
+            var builder = ItemBuilder.from(builtItem);
+            if (wrap.getLore() != null) {
+                builder.lore(wrap.getLore().stream()
+                        .map(it -> StringUtil.parseComponent(player, it, available(wrap, player, plugin)))
+                        .collect(Collectors.toList()));
+            }
 
-                    GuiItem guiItem = new GuiItem(builder.build());
-                    guiItem.setAction(click -> {
-                        if (click.getClick() == ClickType.LEFT) {
-                            if (wrap.getPermission() != null && !player.hasPermission(wrap.getPermission())) {
-                                plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
-                                return;
-                            }
-                            player.getInventory().setItem(slot, plugin.getWrapper()
-                                    .setWrap(wrap.getModelId(), wrap.getUuid(), item, false,
-                                            player));
-                            plugin.getHandler().send(player, Messages.APPLY_WRAP);
-                            player.getOpenInventory().close();
-                        } else if (click.getClick() == ClickType.RIGHT) {
-                            if (wrap.isPreview() != null && !wrap.isPreview()) {
-                                plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
-                                return;
-                            }
-                            plugin.getPreviewManager().create(player, builder.build(), gui);
-                        }
-                    });
-                    gui.addItem(guiItem);
-                });
+            GuiItem guiItem = new GuiItem(builder.build());
+            guiItem.setAction(click -> {
+                if (click.getClick() == ClickType.LEFT) {
+                    if (wrap.getPermission() != null && !player.hasPermission(wrap.getPermission())) {
+                        plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+                        return;
+                    }
+                    player.getInventory().setItem(slot, plugin.getWrapper()
+                            .setWrap(wrap.getModelId(), wrap.getUuid(), item, false,
+                                    player));
+                    plugin.getHandler().send(player, Messages.APPLY_WRAP);
+                    player.getOpenInventory().close();
+                } else if (click.getClick() == ClickType.RIGHT) {
+                    if (wrap.isPreview() != null && !wrap.isPreview()) {
+                        plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
+                        return;
+                    }
+                    plugin.getPreviewManager().create(player, builder.build(), gui);
+                }
+            });
+            gui.addItem(guiItem);
+        });
         gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item));
     }
 

@@ -18,8 +18,7 @@ public class StringUtil {
 
     public static Component parseComponent(String message, Single... placeholders) {
         String string = ChatColor.translateAlternateColorCodes('&', message);
-        return Component.text().decoration(TextDecoration.ITALIC, false)
-                .append(miniMessage.deserialize(string, placeholders)).build();
+        return Component.text().decoration(TextDecoration.ITALIC, false).append(miniMessage.deserialize(string, placeholders)).build();
     }
 
     public static Component parseComponent(CommandSender sender, String message, Single... placeholders) {

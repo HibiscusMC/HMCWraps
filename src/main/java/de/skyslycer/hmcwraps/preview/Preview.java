@@ -48,30 +48,10 @@ public class Preview {
             return;
         }
         player.getOpenInventory().close();
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerSpawnLivingEntity(
-                entityId,
-                UUID.randomUUID(),
-                EntityTypes.ARMOR_STAND,
-                VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
-                0f,
-                0f,
-                0f,
-                VectorUtils.zeroVector(),
-                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
-                        new EntityData(5, EntityDataTypes.BOOLEAN, true))
-        ));
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityMetadata(
-                entityId,
-                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
-                        new EntityData(5, EntityDataTypes.BOOLEAN, true)))
-        );
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player,
-                new WrapperPlayServerEntityTeleport(entityId, VectorUtils.fromLocation(PlayerUtil.getLookBlock(player)),
-                        0f, 0f, false));
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityEquipment(
-                entityId, new Equipment(EquipmentSlot.HELMET, SpigotDataHelper.fromBukkitItemStack(item))));
+        sendSpawnPacket();
+        sendMetadataPacket();
+        sendTeleportPacket();
+        sendEquipPacket();
 
         task = Bukkit.getScheduler()
                 .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 0, 1);
@@ -90,6 +70,42 @@ public class Preview {
         if (open) {
             gui.open(player);
         }
+    }
+
+    private void sendSpawnPacket() {
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerSpawnLivingEntity(
+                entityId,
+                UUID.randomUUID(),
+                EntityTypes.ARMOR_STAND,
+                VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
+                0f,
+                0f,
+                0f,
+                VectorUtils.zeroVector(),
+                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                        new EntityData(5, EntityDataTypes.BOOLEAN, true))
+        ));
+    }
+
+    private void sendMetadataPacket() {
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityMetadata(
+                entityId,
+                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                        new EntityData(5, EntityDataTypes.BOOLEAN, true)))
+        );
+    }
+
+    private void sendTeleportPacket() {
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player,
+                new WrapperPlayServerEntityTeleport(entityId, VectorUtils.fromLocation(PlayerUtil.getLookBlock(player)),
+                        0f, 0f, false));
+    }
+
+    private void sendEquipPacket() {
+        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityEquipment(
+                entityId, new Equipment(EquipmentSlot.HELMET, SpigotDataHelper.fromBukkitItemStack(item))));
     }
 
 }

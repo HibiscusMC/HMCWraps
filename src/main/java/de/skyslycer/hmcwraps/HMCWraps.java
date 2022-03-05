@@ -102,17 +102,15 @@ public class HMCWraps extends JavaPlugin {
                 return false;
             }
         }
-
         if (!loadConfig()) {
             return false;
         }
-
         if (!loadMessages()) {
             return false;
         }
 
-        getConfiguration().getItems().forEach((ignored, wrappableItem) ->
-                wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
+        getConfiguration().getItems()
+                .forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
         wraps.remove("-");
         return true;
     }

@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.itemhook;
 
 import dev.lone.itemsadder.api.CustomStack;
-import dev.lone.itemsadder.api.ItemsAdder;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemsAdderItemHook implements ItemHook {

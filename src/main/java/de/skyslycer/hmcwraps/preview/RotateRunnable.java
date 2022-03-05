@@ -25,11 +25,9 @@ public class RotateRunnable implements Runnable {
     @Override
     public void run() {
         if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    StringUtil.parse(player, plugin.getHandler().get(Messages.PREVIEW_BAR)));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, StringUtil.parse(player, plugin.getHandler().get(Messages.PREVIEW_BAR)));
         }
-        PacketEvents.getAPI().getPlayerManager()
-                .sendPacket(player, new WrapperPlayServerEntityRotation(entityId, currentAngle, 90f, false));
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerEntityRotation(entityId, currentAngle, 90f, false));
         currentAngle += plugin.getConfiguration().getPreview().getRotation();
     }
 

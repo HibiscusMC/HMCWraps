@@ -37,8 +37,7 @@ public class SerializableItem {
             origin = new ItemStack(Material.STRUCTURE_VOID);
         }
         ItemBuilder builder = ItemBuilder.from(origin);
-        builder.name(
-                        player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
+        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
                 .amount(getAmount() == null ? 1 : getAmount());
 
         if (getLore() != null) {
@@ -64,7 +63,7 @@ public class SerializableItem {
                 }
             });
         }
-        if (isGlow() != null && isGlow()) {
+        if (Boolean.TRUE.equals(isGlow())) {
             builder.glow();
         }
         return builder.build();

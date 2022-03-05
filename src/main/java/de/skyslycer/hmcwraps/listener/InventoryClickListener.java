@@ -31,8 +31,7 @@ public class InventoryClickListener implements Listener {
             cursor = null;
         }
 
-        if (physical.isSimilar(plugin.getConfiguration().getUnwrapper().toItem(plugin, player))
-                && plugin.getWrapper().getWrap(target) != null) {
+        if (physical.isSimilar(plugin.getConfiguration().getUnwrapper().toItem(plugin, player)) && plugin.getWrapper().getWrap(target) != null) {
             event.setCurrentItem(plugin.getWrapper().removeWrap(target, player));
             event.setCursor(cursor);
             event.setCancelled(true);

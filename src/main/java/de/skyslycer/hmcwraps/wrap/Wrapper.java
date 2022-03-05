@@ -43,8 +43,7 @@ public class Wrapper {
     public ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player) {
         var editing = target.clone();
         var currentWrap = getWrap(editing);
-        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical()
-                .isKeepAfterUnwrap()) {
+        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()) {
             PlayerUtil.give(player, currentWrap.getPhysical().toItem(plugin, player));
         }
         var meta = editing.getItemMeta();
