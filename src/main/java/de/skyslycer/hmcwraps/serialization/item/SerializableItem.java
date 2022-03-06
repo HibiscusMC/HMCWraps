@@ -28,7 +28,6 @@ public class SerializableItem {
     private @Nullable Integer modelId;
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
-    private @Nullable Action action;
 
     @Nullable
     public ItemStack toItem(HMCWraps plugin, Player player) {
@@ -36,6 +35,10 @@ public class SerializableItem {
         if (origin == null) {
             origin = new ItemStack(Material.STRUCTURE_VOID);
         }
+        if (!origin.hasItemMeta()) {
+            return origin;
+        }
+
         ItemBuilder builder = ItemBuilder.from(origin);
         builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
                 .amount(getAmount() == null ? 1 : getAmount())
@@ -97,11 +100,6 @@ public class SerializableItem {
     @Nullable
     public Integer getAmount() {
         return amount;
-    }
-
-    @Nullable
-    public Action getAction() {
-        return action;
     }
 
     @Nullable

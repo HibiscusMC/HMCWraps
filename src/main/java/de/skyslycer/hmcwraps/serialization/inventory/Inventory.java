@@ -10,7 +10,7 @@ public class Inventory {
     private String title;
     private int rows;
     private int targetItemSlot;
-    private Map<Integer, SerializableItem> items;
+    private Map<Integer, InventoryItem> items;
 
     public String getTitle() {
         return title;
@@ -24,7 +24,7 @@ public class Inventory {
         return targetItemSlot;
     }
 
-    public Map<Integer, SerializableItem> getItems() {
+    public Map<Integer, InventoryItem> getItems() {
         return items;
     }
 
