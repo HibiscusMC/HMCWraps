@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.serialization.item;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.serialization.inventory.Action;
 import de.skyslycer.hmcwraps.util.EnumUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;

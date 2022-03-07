@@ -14,6 +14,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.Wrap;
+import de.skyslycer.hmcwraps.serialization.WrappableItem;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.io.IOException;
@@ -73,6 +74,8 @@ public class HMCWraps extends JavaPlugin {
         PacketEvents.getAPI().init();
 
         registerCommands();
+
+        new PluginMetrics(this).init();
     }
 
     @Override
@@ -125,8 +128,7 @@ public class HMCWraps extends JavaPlugin {
         commandHandler.registerValueResolver(Wrap.class, context -> {
             var wrap = getWraps().get(context.pop());
             if (wrap == null) {
-                getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
-                        Placeholder.parsed("uuid", context.pop()));
+                getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP, Placeholder.parsed("uuid", context.pop()));
                 throw new IllegalArgumentException();
             }
             return wrap;
@@ -157,7 +159,7 @@ public class HMCWraps extends JavaPlugin {
     private boolean loadConfig() {
         try {
             if (!Files.exists(CONFIG_PATH)) {
-                Files.copy(this.getClassLoader().getResourceAsStream("config.yml"), CONFIG_PATH);
+                Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items");
             config = LOADER.load().get(Config.class);
@@ -211,6 +213,14 @@ public class HMCWraps extends JavaPlugin {
                         message + "\n" +
                         "============================="
         );
+    }
+
+    public int getWrapAmount() {
+        int count = 0;
+        for (WrappableItem item : getConfiguration().getItems().values()) {
+            count += item.getWraps().size();
+        }
+        return count;
     }
 
     @NotNull
