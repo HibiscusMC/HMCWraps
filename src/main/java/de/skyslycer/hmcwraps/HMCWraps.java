@@ -153,6 +153,7 @@ public class HMCWraps extends JavaPlugin {
             return false;
         }
         handler = new MessageHandler(this);
+        handler.update(MESSAGES_PATH);
         return handler.load(MESSAGES_PATH);
     }
 

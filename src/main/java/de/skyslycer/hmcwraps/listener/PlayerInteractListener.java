@@ -18,7 +18,8 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || event.getItem() == null || !event.getPlayer().isSneaking() || !plugin.getConfiguration().isOpenShortcut()) {
+                || event.getItem() == null || !plugin.getConfiguration().getItems().containsKey(event.getItem().getType().toString()) || !event.getPlayer().isSneaking()
+                || !plugin.getConfiguration().isOpenShortcut()) {
             return;
         }
         event.setCancelled(true);

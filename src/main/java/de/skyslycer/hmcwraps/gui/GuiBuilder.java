@@ -23,16 +23,6 @@ public class GuiBuilder {
     public static void open(HMCWraps plugin, Player player, ItemStack item, EquipmentSlot slot) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
-        if (item == null) {
-            plugin.getHandler().send(player, Messages.NO_ITEM);
-            return;
-        }
-
-        if (!plugin.getConfiguration().getItems().containsKey(item.getType().toString())) {
-            plugin.getHandler().send(player, Messages.NO_WRAPS);
-            return;
-        }
-
         Inventory inventory = plugin.getConfiguration().getInventory();
         ScrollingGui gui = Gui.scrolling()
                 .title(StringUtil.parseComponent(player, inventory.getTitle()))

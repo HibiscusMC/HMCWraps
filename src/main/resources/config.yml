@@ -7,6 +7,14 @@ preview:
   duration: 5
   # Rotation per tick (50ms)
   rotation: 5
+  # Bobbing settings
+  bobbing:
+    # If the item should move up and done while previewing
+    enabled: true
+    # The movement per tick (50ms)
+    movement: 0.1
+    # How many times the movement should repeat until returning again
+    times: 10
   # Sneak to cancel preview settings
   sneak-cancel:
     # If the preview should be cancelled when sneaking

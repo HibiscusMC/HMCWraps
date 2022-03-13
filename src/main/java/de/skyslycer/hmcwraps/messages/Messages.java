@@ -5,9 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public enum Messages {
 
     NO_PERMISSION("no-permission"),
-    NO_WRAPS("no-wraps"),
     NO_PERMISSION_FOR_WRAP("no-permission-for-wrap"),
-    NO_ITEM("no-item"),
     APPLY_WRAP("apply-wrap"),
     REMOVE_WRAP("remove-wrap"),
     PREVIEW_DISABLED("preview.disabled"),

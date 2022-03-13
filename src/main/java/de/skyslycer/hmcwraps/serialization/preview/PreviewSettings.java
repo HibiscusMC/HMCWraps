@@ -7,6 +7,7 @@ public class PreviewSettings {
 
     private int duration;
     private int rotation;
+    private ItemBobbing bobbing;
     private SneakCancel sneakCancel;
 
     public int getDuration() {
@@ -15,6 +16,10 @@ public class PreviewSettings {
 
     public int getRotation() {
         return rotation;
+    }
+
+    public ItemBobbing getBobbing() {
+        return bobbing;
     }
 
     public SneakCancel getSneakCancel() {

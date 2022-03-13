@@ -1,16 +1,12 @@
 package de.skyslycer.hmcwraps.serialization.preview;
 
+import de.skyslycer.hmcwraps.serialization.Toggleable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-public class SneakCancel {
+public class SneakCancel extends Toggleable {
 
-    private boolean enabled;
     private boolean actionBar;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     public boolean isActionBar() {
         return actionBar;

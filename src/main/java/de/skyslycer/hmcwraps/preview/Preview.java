@@ -16,7 +16,7 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.VectorUtils;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import io.github.retrooper.packetevents.utils.SpigotDataHelper;
+import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import java.util.List;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatMessageType;

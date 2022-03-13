@@ -2,9 +2,13 @@ package de.skyslycer.hmcwraps.messages;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.PropertyResourceBundle;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import org.bukkit.command.CommandSender;
@@ -48,6 +52,28 @@ public class MessageHandler {
             return fallback.getString(key.getKey());
         } else {
             return "Invalid key: " + key;
+        }
+    }
+
+    public void update(Path path) {
+        try {
+            var stream = HMCWraps.class.getClassLoader().getResource("messages.properties").openStream();
+            var lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines();
+            var checkLines = Files.readAllLines(path);
+            lines.forEach(line -> {
+                var split = line.split("=");
+                if (split.length > 1 && checkLines.stream().filter(it -> it.startsWith(split[0])).findFirst().isEmpty()) {
+                    try {
+                        Files.writeString(path, line, StandardOpenOption.APPEND);
+                    } catch (IOException exception) {
+                        plugin.logSevere("Could not append the following line: \n" + line);
+                        exception.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception exception) {
+            plugin.logSevere("Could not load the message files to update them!");
+            exception.printStackTrace();
         }
     }
 
