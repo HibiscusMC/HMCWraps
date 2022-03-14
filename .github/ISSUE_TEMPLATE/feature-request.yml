@@ -27,3 +27,13 @@ body:
       description: "The configuration changes your feature should have"
     validations:
       required: true
+  - type: "dropdown"
+    id: "type"
+    attributes:
+      label: "How significant is the feature?"
+      options:
+        - "Huge - Requires many changes in the current structure"
+        - "Moderate - Needs moderate changes to the current structure"
+        - "Meerly Significant - Small feature fitting perfectly into the current structure"
+    validations:
+      required: true
