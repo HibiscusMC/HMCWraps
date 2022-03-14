@@ -48,8 +48,8 @@ body:
     attributes:
       label: "How breaking is the bug?"
       options:
-        - "**Breaking Bug** - Plugin unusable"
-        - "**Non-breaking Bug** - Plugin still usable, but certain features unavailable"
-        - "**Minor Bug** - Plugin completely functional, but features have non-working aspects"
+        - "Breaking Bug - Plugin unusable"
+        - "Non-breaking Bug - Plugin still usable, but certain features unavailable"
+        - "Minor Bug - Plugin completely functional, but features have non-working aspects"
     validations:
       required: true
