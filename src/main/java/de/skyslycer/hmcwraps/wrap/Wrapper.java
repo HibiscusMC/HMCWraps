@@ -15,11 +15,15 @@ public class Wrapper {
 
     private final NamespacedKey physicalKey;
     private final NamespacedKey wrapKey;
+    private final NamespacedKey unwrapperKey;
+    private final NamespacedKey wrapperKey;
 
     public Wrapper(HMCWraps plugin) {
         this.plugin = plugin;
         physicalKey = new NamespacedKey(plugin, "wrap-physical");
         wrapKey = new NamespacedKey(plugin, "wrap-id");
+        unwrapperKey = new NamespacedKey(plugin, "unwrapper");
+        wrapperKey = new NamespacedKey(plugin, "wrapper");
     }
 
     public boolean isPhysical(ItemStack item) {
@@ -56,6 +60,32 @@ public class Wrapper {
 
     public ItemStack removeWrap(ItemStack itemStack, Player player) {
         return setWrap(null, "-", itemStack, false, player);
+    }
+
+    public ItemStack setUnwrapper(ItemStack item) {
+        var editing = item.clone();
+        var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().set(unwrapperKey, PersistentDataType.BYTE, (byte) 1);
+        editing.setItemMeta(meta);
+        return editing;
+    }
+
+    public ItemStack setWrapper(ItemStack item, String wrapId) {
+        var editing = item.clone();
+        var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().set(wrapperKey, PersistentDataType.STRING, wrapId);
+        editing.setItemMeta(meta);
+        return editing;
+    }
+
+    public boolean isUnwrapper(ItemStack item) {
+        var meta = item.getItemMeta();
+        return meta.getPersistentDataContainer().has(unwrapperKey, PersistentDataType.BYTE);
+    }
+
+    public String getWrapper(ItemStack item) {
+        var meta = item.getItemMeta();
+        return meta.getPersistentDataContainer().get(wrapperKey, PersistentDataType.STRING);
     }
 
 }

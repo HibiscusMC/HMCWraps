@@ -15,7 +15,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.VectorUtils;
-import dev.triumphteam.gui.guis.PaginatedGui;
+import dev.triumphteam.gui.guis.BaseGui;
 import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import java.util.List;
 import java.util.UUID;
@@ -31,12 +31,12 @@ public class Preview {
     private final int entityId = Integer.MAX_VALUE - HMCWraps.RANDOM.nextInt(10000);
     private final Player player;
     private final ItemStack item;
-    private final PaginatedGui gui;
+    private final BaseGui gui;
     private final HMCWraps plugin;
     private BukkitTask task;
     private BukkitTask cancelTask;
 
-    Preview(Player player, ItemStack item, PaginatedGui gui, HMCWraps plugin) {
+    Preview(Player player, ItemStack item, BaseGui gui, HMCWraps plugin) {
         this.player = player;
         this.item = item;
         this.gui = gui;
@@ -48,6 +48,7 @@ public class Preview {
             return;
         }
         player.getOpenInventory().close();
+
         sendSpawnPacket();
         sendMetadataPacket();
         sendTeleportPacket();

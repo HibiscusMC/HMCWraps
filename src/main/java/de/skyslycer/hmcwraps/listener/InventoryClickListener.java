@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import java.util.Objects;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +32,7 @@ public class InventoryClickListener implements Listener {
             cursor = null;
         }
 
-        if (physical.isSimilar(plugin.getConfiguration().getUnwrapper().toItem(plugin, player)) && plugin.getWrapper().getWrap(target) != null) {
+        if (plugin.getWrapper().isUnwrapper(physical) && plugin.getWrapper().getWrap(target) != null) {
             event.setCurrentItem(plugin.getWrapper().removeWrap(target, player));
             event.setCursor(cursor);
             event.setCancelled(true);
@@ -39,13 +40,14 @@ public class InventoryClickListener implements Listener {
         }
 
         var wrappableItem = plugin.getConfiguration().getItems().get(target.getType().toString());
-        if (wrappableItem == null) {
+        var wrapId = plugin.getWrapper().getWrapper(physical);
+        if (wrappableItem == null || wrapId == null) {
             return;
         }
 
         var finalCursor = cursor;
         wrappableItem.getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null)
-                .filter(wrap -> physical.isSimilar(wrap.getPhysical().toItem(plugin, player))).findFirst()
+                .filter(wrap -> wrap.getUuid().equals(wrapId)).findFirst()
                 .ifPresent(wrap -> {
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
                             (Player) event.getWhoClicked()));

@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import revxrsal.commands.annotation.Command;
@@ -30,6 +31,15 @@ public class WrapCommand {
     @Default
     public void onWraps(CommandActor actor) {
         var player = actor.as(BukkitActor.class).requirePlayer();
+        var item = player.getInventory().getItemInMainHand();
+        if (item.getType() == Material.AIR) {
+            plugin.getHandler().send(player, Messages.NO_ITEM);
+            return;
+        }
+        if (!plugin.getWraps().containsKey(item.getType().toString())) {
+            plugin.getHandler().send(player, Messages.NO_WRAPS);
+            return;
+        }
         GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand(), EquipmentSlot.HAND);
     }
 
@@ -52,7 +62,7 @@ public class WrapCommand {
         players.forEach(player -> {
             var item = wrap.getPhysical().toItem(plugin, player);
             item.setAmount(amount == null ? 1 : amount);
-            PlayerUtil.give(player, item);
+            PlayerUtil.give(player, plugin.getWrapper().setWrapper(item, wrap.getUuid()));
         });
         plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_GIVEN_PHYSICAL,
                 Placeholder.parsed("uuid", wrap.getUuid()));
@@ -68,7 +78,7 @@ public class WrapCommand {
                 return;
             }
             item.setAmount(amount == null ? 1 : amount);
-            PlayerUtil.give(player, item);
+            PlayerUtil.give(player, plugin.getWrapper().setUnwrapper(item));
         });
         plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_GIVEN_UNWRAPPER);
     }

@@ -34,7 +34,7 @@ public class SerializableItem {
         if (origin == null) {
             origin = new ItemStack(Material.STRUCTURE_VOID);
         }
-        if (!origin.hasItemMeta()) {
+        if (origin.getType() == Material.AIR) {
             return origin;
         }
 

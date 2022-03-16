@@ -8,6 +8,8 @@ public enum Messages {
     NO_PERMISSION_FOR_WRAP("no-permission-for-wrap"),
     APPLY_WRAP("apply-wrap"),
     REMOVE_WRAP("remove-wrap"),
+    NO_ITEM("no-item"),
+    NO_WRAPS("no-wraps"),
     PREVIEW_DISABLED("preview.disabled"),
     PREVIEW_BAR("preview.bar"),
     PREVIEW_NOT_ENOUGH_SPACE("preview.not-enough-space"),
