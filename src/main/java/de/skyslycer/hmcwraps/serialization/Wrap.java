@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import javax.annotation.Nullable;
+import org.bukkit.command.CommandSender;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
@@ -29,6 +30,13 @@ public class Wrap extends SerializableItem {
     @Nullable
     public Boolean isPreview() {
         return preview;
+    }
+
+    public boolean hasPermission(CommandSender sender) {
+        if (getPermission() == null) {
+            return true;
+        }
+        return sender.hasPermission(getPermission());
     }
 
 }

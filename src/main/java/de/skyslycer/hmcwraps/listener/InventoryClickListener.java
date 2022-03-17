@@ -39,21 +39,22 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        var wrappableItem = plugin.getConfiguration().getItems().get(target.getType().toString());
         var wrapId = plugin.getWrapper().getWrapper(physical);
-        if (wrappableItem == null || wrapId == null) {
+        if (wrapId == null) {
             return;
         }
 
+        var wrap = plugin.getWraps().get(wrapId);
+        if (wrap == null) {
+            return;
+        }
         var finalCursor = cursor;
-        wrappableItem.getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null)
-                .filter(wrap -> wrap.getUuid().equals(wrapId)).findFirst()
-                .ifPresent(wrap -> {
-                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
-                            (Player) event.getWhoClicked()));
-                    event.setCursor(finalCursor);
-                    event.setCancelled(true);
-                });
+        if (wrap.getPhysical() != null && wrap.hasPermission(player)) {
+            event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
+                    (Player) event.getWhoClicked()));
+            event.setCursor(finalCursor);
+            event.setCancelled(true);
+        }
     }
 
 }

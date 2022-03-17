@@ -33,14 +33,12 @@ public class GuiBuilder {
 
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
             ItemStack stack = serializableItem.toItem(plugin, player);
-            if (stack != null) {
-                GuiItem guiItem = new GuiItem(stack);
-                if (serializableItem.getAction() != null) {
-                    de.skyslycer.hmcwraps.serialization.inventory.Action.add(guiItem, gui, serializableItem.getAction(),
-                            plugin);
-                }
-                gui.setItem(inventorySlot, guiItem);
+            GuiItem guiItem = new GuiItem(stack);
+            if (serializableItem.getAction() != null) {
+                de.skyslycer.hmcwraps.serialization.inventory.Action.add(guiItem, gui, serializableItem.getAction(),
+                        plugin);
             }
+            gui.setItem(inventorySlot, guiItem);
         });
 
         populate(plugin, item, slot, player, gui);
@@ -50,20 +48,20 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, ScrollingGui gui) {
-        plugin.getConfiguration().getItems().get(item.getType().toString()).getWraps().forEach((ignored, wrap) -> {
+        plugin.getCollection().getItems(item.getType()).forEach(it -> it.getWraps().forEach((ignored, wrap) -> {
             var builtItem = wrap.toItem(plugin, player);
             builtItem.setType(item.getType());
             var builder = ItemBuilder.from(builtItem);
             if (wrap.getLore() != null) {
                 builder.lore(wrap.getLore().stream()
-                        .map(it -> StringUtil.parseComponent(player, it, available(wrap, player, plugin)))
+                        .map(line -> StringUtil.parseComponent(player, line, available(wrap, player, plugin)))
                         .collect(Collectors.toList()));
             }
 
             GuiItem guiItem = new GuiItem(builder.build());
             guiItem.setAction(click -> {
                 if (click.getClick() == ClickType.LEFT) {
-                    if (wrap.getPermission() != null && !player.hasPermission(wrap.getPermission())) {
+                    if (!wrap.hasPermission(player)) {
                         plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
@@ -73,7 +71,7 @@ public class GuiBuilder {
                     plugin.getHandler().send(player, Messages.APPLY_WRAP);
                     player.getOpenInventory().close();
                 } else if (click.getClick() == ClickType.RIGHT) {
-                    if (wrap.isPreview() != null && !wrap.isPreview()) {
+                    if (Boolean.FALSE.equals(wrap.isPreview())) {
                         plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
@@ -81,16 +79,13 @@ public class GuiBuilder {
                 }
             });
             gui.addItem(guiItem);
-        });
+        }));
         gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item));
     }
 
     private static Single available(Wrap wrap, Player player, HMCWraps plugin) {
-        if (wrap.getPermission() == null) {
-            return Placeholder.parsed("available", plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE));
-        }
         return Placeholder.parsed("available",
-                player.hasPermission(wrap.getPermission()) ? plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE)
+                wrap.hasPermission(player) ? plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE)
                         : plugin.getHandler().get(Messages.PLACEHOLDER_NOT_AVAILABLE));
     }
 

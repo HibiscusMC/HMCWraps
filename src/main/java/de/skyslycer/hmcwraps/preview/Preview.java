@@ -83,9 +83,7 @@ public class Preview {
                 0f,
                 0f,
                 VectorUtils.zeroVector(),
-                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
-                        new EntityData(5, EntityDataTypes.BOOLEAN, true))
+                List.of()
         ));
     }
 
@@ -93,7 +91,7 @@ public class Preview {
         PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityMetadata(
                 entityId,
                 List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, -135)),
                         new EntityData(5, EntityDataTypes.BOOLEAN, true)))
         );
     }

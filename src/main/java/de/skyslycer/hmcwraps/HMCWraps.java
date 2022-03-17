@@ -15,6 +15,7 @@ import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class HMCWraps extends JavaPlugin {
     private final Set<String> loadedHooks = new HashSet<>();
     private final Wrapper wrapper = new Wrapper(this);
     private final PreviewManager previewManager = new PreviewManager(this);
+    private final CollectionHelper collection = new CollectionHelper(this);
     private Config config;
     private MessageHandler handler;
 
@@ -162,7 +164,7 @@ public class HMCWraps extends JavaPlugin {
             if (!Files.exists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
-            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items");
+            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections");
             config = LOADER.load().get(Config.class);
         } catch (IOException exception) {
             logSevere(
@@ -247,6 +249,11 @@ public class HMCWraps extends JavaPlugin {
     @NotNull
     public PreviewManager getPreviewManager() {
         return previewManager;
+    }
+
+    @NotNull
+    public CollectionHelper getCollection() {
+        return collection;
     }
 
 }

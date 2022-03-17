@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":api"))
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")

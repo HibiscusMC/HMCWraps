@@ -36,7 +36,7 @@ public class WrapCommand {
             plugin.getHandler().send(player, Messages.NO_ITEM);
             return;
         }
-        if (!plugin.getWraps().containsKey(item.getType().toString())) {
+        if (plugin.getCollection().getItems(item.getType()).isEmpty()) {
             plugin.getHandler().send(player, Messages.NO_WRAPS);
             return;
         }
@@ -54,10 +54,12 @@ public class WrapCommand {
     @Subcommand("give wrap")
     @CommandPermission("hmcwraps.admin")
     public void onGiveWrap(CommandActor actor, EntitySelector<Player> players, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
-        if (wrap.getPhysical() == null || wrap.getPhysical().toItem(plugin, null) == null) {
+        if (wrap.getPhysical() == null) {
             plugin.getHandler()
                     .send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
+        } else {
+            wrap.getPhysical().toItem(plugin, null);
         }
         players.forEach(player -> {
             var item = wrap.getPhysical().toItem(plugin, player);
