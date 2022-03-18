@@ -14,6 +14,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
@@ -28,7 +29,7 @@ public class SerializableItem {
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
 
-    @Nullable
+    @NotNull
     public ItemStack toItem(HMCWraps plugin, Player player) {
         ItemStack origin = plugin.getItemFromHook(getId());
         if (origin == null) {
