@@ -80,11 +80,17 @@ public class Wrapper {
 
     public boolean isUnwrapper(ItemStack item) {
         var meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
         return meta.getPersistentDataContainer().has(unwrapperKey, PersistentDataType.BYTE);
     }
 
     public String getWrapper(ItemStack item) {
         var meta = item.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
         return meta.getPersistentDataContainer().get(wrapperKey, PersistentDataType.STRING);
     }
 

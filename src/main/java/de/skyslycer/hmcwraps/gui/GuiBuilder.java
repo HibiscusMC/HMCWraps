@@ -71,10 +71,11 @@ public class GuiBuilder {
                     plugin.getHandler().send(player, Messages.APPLY_WRAP);
                     player.getOpenInventory().close();
                 } else if (click.getClick() == ClickType.RIGHT) {
-                    if (Boolean.FALSE.equals(wrap.isPreview())) {
+                    if (!wrap.isPreview()) {
                         plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
+                    System.out.println("gasusma");
                     plugin.getPreviewManager().create(player, builder.build(), gui);
                 }
             });

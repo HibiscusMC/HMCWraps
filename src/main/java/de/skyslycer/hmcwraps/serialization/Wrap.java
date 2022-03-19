@@ -9,7 +9,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class Wrap extends SerializableItem {
 
     private @Nullable String permission;
-    private @Nullable Boolean preview;
+    private Boolean preview = true;
     private String uuid;
     private @Nullable PhysicalWrap physical;
 
@@ -27,7 +27,6 @@ public class Wrap extends SerializableItem {
         return physical;
     }
 
-    @Nullable
     public Boolean isPreview() {
         return preview;
     }

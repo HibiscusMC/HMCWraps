@@ -74,7 +74,7 @@ public class Preview {
     }
 
     private void sendSpawnPacket() {
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerSpawnLivingEntity(
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
                 entityId,
                 UUID.randomUUID(),
                 EntityTypes.ARMOR_STAND,
@@ -83,12 +83,13 @@ public class Preview {
                 0f,
                 0f,
                 VectorUtils.zeroVector(),
-                List.of()
-        ));
+                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, -135)),
+                        new EntityData(5, EntityDataTypes.BOOLEAN, true))));
     }
 
     private void sendMetadataPacket() {
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityMetadata(
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerEntityMetadata(
                 entityId,
                 List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
                         new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, -135)),
@@ -97,13 +98,13 @@ public class Preview {
     }
 
     private void sendTeleportPacket() {
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player,
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player,
                 new WrapperPlayServerEntityTeleport(entityId, VectorUtils.fromLocation(PlayerUtil.getLookBlock(player)),
                         0f, 0f, false));
     }
 
     private void sendEquipPacket() {
-        PacketEvents.getAPI().getPlayerManager().sendPacketAsync(player, new WrapperPlayServerEntityEquipment(
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerEntityEquipment(
                 entityId, new Equipment(EquipmentSlot.HELMET, SpigotDataHelper.fromBukkitItemStack(item))));
     }
 
