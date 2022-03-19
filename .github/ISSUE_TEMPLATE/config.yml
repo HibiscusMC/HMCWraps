@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Discord Support"
+    url: "https://discord.gg/pcm8kWrdNt"
+    about: "You receive support here"
+  - name: "Spigot Page"
+    url: "https://www.coming-soon.com/"
+    about: "The plugin page on SpigotMC"
+  - name: "Polymart Page"
+    url: "https://www.coming-soon.com/"
+    about: "The plugin page on Polymart"
