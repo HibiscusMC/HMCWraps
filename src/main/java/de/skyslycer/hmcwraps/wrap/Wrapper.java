@@ -48,7 +48,7 @@ public class Wrapper {
         var editing = target.clone();
         var currentWrap = getWrap(editing);
         if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()) {
-            PlayerUtil.give(player, currentWrap.getPhysical().toItem(plugin, player));
+            PlayerUtil.give(player, setWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap.getUuid()));
         }
         var meta = editing.getItemMeta();
         meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, (byte) (physical ? 1 : 0));

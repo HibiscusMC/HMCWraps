@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.tchristofferson.configupdater.ConfigUpdater;
+import de.skyslycer.hmcwraps.circle.CircleManager;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
@@ -53,6 +54,7 @@ public class HMCWraps extends JavaPlugin {
     private final Wrapper wrapper = new Wrapper(this);
     private final PreviewManager previewManager = new PreviewManager(this);
     private final CollectionHelper collection = new CollectionHelper(this);
+    private final CircleManager circleManager = new CircleManager();
     private Config config;
     private MessageHandler handler;
 
@@ -60,6 +62,7 @@ public class HMCWraps extends JavaPlugin {
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
+        PacketEvents.getAPI().getSettings().checkForUpdates(false);
     }
 
     @Override
@@ -116,6 +119,8 @@ public class HMCWraps extends JavaPlugin {
                 .forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
         wraps.remove("-");
         getPreviewManager().removeAll(true);
+        getCircleManager().clear();
+        getCircleManager().generateCircleLocations(getConfiguration().getPreview().getBobbing());
         return true;
     }
 
@@ -254,6 +259,11 @@ public class HMCWraps extends JavaPlugin {
     @NotNull
     public CollectionHelper getCollection() {
         return collection;
+    }
+
+    @NotNull
+    public CircleManager getCircleManager() {
+        return circleManager;
     }
 
 }

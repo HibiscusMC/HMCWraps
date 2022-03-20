@@ -11,10 +11,10 @@ preview:
   bobbing:
     # If the item should move up and done while previewing
     enabled: true
-    # The movement per tick (50ms)
-    movement: 0.1
-    # How many times the movement should repeat until returning again
-    times: 10
+    # How many points there should be for a full cycle
+    size: 360
+    # How high the bobbing should differ from its original location
+    amplitude: 0.2
   # Sneak to cancel preview settings
   sneak-cancel:
     # If the preview should be cancelled when sneaking

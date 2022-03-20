@@ -1,12 +1,14 @@
 package de.skyslycer.hmcwraps.preview;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.chat.ChatPosition;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.util.Vector3f;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
@@ -58,7 +60,7 @@ public class Preview {
                 .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 0, 1);
 
         cancelTask = Bukkit.getScheduler()
-                .runTaskLater(plugin, () -> cancel(true), plugin.getConfiguration().getPreview().getDuration() * 20L);
+                .runTaskLater(plugin, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true), plugin.getConfiguration().getPreview().getDuration() * 20L);
     }
 
     public void cancel(boolean open) {

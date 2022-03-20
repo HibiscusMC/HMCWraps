@@ -75,7 +75,6 @@ public class GuiBuilder {
                         plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
-                    System.out.println("gasusma");
                     plugin.getPreviewManager().create(player, builder.build(), gui);
                 }
             });

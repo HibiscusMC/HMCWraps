@@ -11,5 +11,5 @@ Please note we have a code of conduct, please follow it in all your interactions
 3. Bump versions in `build.gradle.kts`. We use the [SemVer](http://semver.org/) scheme. (`M`.`M`.`P`) 
 4. Commit your changes with a descriptive message to a separate branch. Name it appropriately.
 5. Build the project and test your changes extensively.
-5. Create a pull using our demplate.
-6. Wait for approval
+5. Create a pull using our template.
+6. Wait for approval. Answer upcoming questions.
