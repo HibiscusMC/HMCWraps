@@ -65,9 +65,7 @@ public class GuiBuilder {
                         plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
-                    player.getInventory().setItem(slot, plugin.getWrapper()
-                            .setWrap(wrap.getModelId(), wrap.getUuid(), item, false,
-                                    player));
+                    player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), item, false, player));
                     plugin.getHandler().send(player, Messages.APPLY_WRAP);
                     player.getOpenInventory().close();
                 } else if (click.getClick() == ClickType.RIGHT) {
@@ -75,7 +73,7 @@ public class GuiBuilder {
                         plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
-                    plugin.getPreviewManager().create(player, builder.build(), gui);
+                    plugin.getPreviewManager().create(player, guiItem.getItemStack(), gui);
                 }
             });
             gui.addItem(guiItem);

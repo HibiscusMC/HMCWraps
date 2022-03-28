@@ -8,12 +8,14 @@ import java.util.Set;
 
 public class CircleManager {
 
+    private static final int POINTS = 720;
+
     private final Map<CircleIdentity, Set<Point>> locations = new HashMap<>();
 
     public void generateCircleLocations(CircleIdentity identity) {
         var set = new HashSet<Point>();
-        for (double i = 0; i < 360; i += 360d / identity.getSize()) {
-            double angle = i * Math.PI / 180;
+        for (int i = 0; i < POINTS; i++) {
+            double angle = Math.toRadians(((double) i / POINTS) * 360d);
             set.add(Point.build(Math.cos(angle) * identity.getAmplitude(), Math.sin(angle) * identity.getAmplitude()));
         }
         locations.put(identity, set);

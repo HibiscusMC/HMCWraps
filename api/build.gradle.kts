@@ -25,7 +25,6 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.10.0")
     compileOnly ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     compileOnly("net.kyori:adventure-platform-bukkit:4.0.1")
-    compileOnly("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
     compileOnly("com.github.Revxrsal.Lamp:common:2.9.4")
     compileOnly("com.github.Revxrsal.Lamp:bukkit:2.9.4")
     compileOnly("org.bstats:bstats-bukkit:3.0.0")

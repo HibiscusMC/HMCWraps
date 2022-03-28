@@ -29,8 +29,7 @@ public class PlayerUtil {
     }
 
     private static Location fixLocation(Location location, Player player) {
-        location.setY(player.getLocation().getY() - 0.5d);
-        location.add(0.5, 0, 0.5);
+        location.setY(player.getLocation().getY() + 1);
         return location;
     }
 

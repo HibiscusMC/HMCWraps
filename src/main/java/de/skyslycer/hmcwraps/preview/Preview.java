@@ -19,6 +19,7 @@ import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.VectorUtils;
 import dev.triumphteam.gui.guis.BaseGui;
 import io.github.retrooper.packetevents.util.SpigotDataHelper;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import java.util.List;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatMessageType;
@@ -30,7 +31,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class Preview {
 
-    private final int entityId = Integer.MAX_VALUE - HMCWraps.RANDOM.nextInt(10000);
+    private final int entityId = SpigotReflectionUtil.generateEntityId();
     private final Player player;
     private final ItemStack item;
     private final BaseGui gui;
@@ -49,7 +50,7 @@ public class Preview {
         if (PlayerUtil.getLookBlock(player) == null) {
             return;
         }
-        player.getOpenInventory().close();
+        gui.close(player);
 
         sendSpawnPacket();
         sendMetadataPacket();
@@ -86,7 +87,7 @@ public class Preview {
                 0f,
                 VectorUtils.zeroVector(),
                 List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, -135)),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
                         new EntityData(5, EntityDataTypes.BOOLEAN, true))));
     }
 
@@ -94,7 +95,7 @@ public class Preview {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerEntityMetadata(
                 entityId,
                 List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, -135)),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
                         new EntityData(5, EntityDataTypes.BOOLEAN, true)))
         );
     }
