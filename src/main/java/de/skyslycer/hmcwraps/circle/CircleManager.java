@@ -16,7 +16,7 @@ public class CircleManager {
         var set = new HashSet<Point>();
         for (int i = 0; i < POINTS; i++) {
             double angle = Math.toRadians(((double) i / POINTS) * 360d);
-            set.add(Point.build(Math.cos(angle) * identity.getAmplitude(), Math.sin(angle) * identity.getAmplitude()));
+            set.add(Point.build(Math.cos(angle / identity.getSize()) * identity.getAmplitude(), Math.sin(angle / identity.getSize()) * identity.getAmplitude()));
         }
         locations.put(identity, set);
     }

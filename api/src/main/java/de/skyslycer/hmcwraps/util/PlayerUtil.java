@@ -13,11 +13,15 @@ public class PlayerUtil {
     }
 
     public static Location getLookBlock(Player player) {
-        var blocks = player.getLineOfSight(null, 2);
-        if (blocks.size() < 2 || blocks.get(1).getType() != Material.AIR) {
-            return null;
+        var twoBlocks = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone().multiply(2)), player);
+        var oneBlock = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone()), player);
+        if (oneBlock.getWorld().getBlockAt(oneBlock).getType() == Material.AIR) {
+            if (twoBlocks.getWorld().getBlockAt(twoBlocks).getType() == Material.AIR) {
+                return twoBlocks;
+            }
+            return oneBlock;
         }
-        return fixLocation(blocks.get(1).getLocation().clone(), player);
+        return fixLocation(player.getLocation(), player);
     }
 
     public static Location getOpposite(Player player) {
