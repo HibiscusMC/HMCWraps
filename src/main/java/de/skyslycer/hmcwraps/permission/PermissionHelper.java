@@ -27,7 +27,7 @@ public class PermissionHelper {
         }
         if (!hasPermission(plugin, wrap, item, player)) {
             plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
-            return plugin.getWrapper().removeWrap(item, player, false);
+            return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissionSettings().isPermissionPhysical());
         }
         return null;
     }

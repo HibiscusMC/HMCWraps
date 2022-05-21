@@ -37,7 +37,7 @@ items:
         # The permission to virtually apply this wrap (inventory) (nullable)
         permission: 'hmcwraps.fire_sword'
         # The UUID (global identifier), has to be unique in ALL wraps!
-        uuid: 1
+        uuid: 'fire_sword'
         # Either custom model id or a hook to get the custom model id
         id: '1'
         # The name in the wraps inventory
@@ -57,7 +57,7 @@ items:
           # Custom model id, automatically applies if you have set a hook in the id value
           model-id: 2
           # Name displayed
-          name: '<red>Fire <gray>Wrap for <blue>Diamond Sword'
+          name: '<red>Fire <gray>Wrap for <red>swords'
           # If the wrap should be given to the player after they unwrap the item or re wrap it
           keep-after-unwrap: true
           # Lore displayed
@@ -68,7 +68,7 @@ items:
     wraps:
       1:
         permission: 'hmcwraps.fire_pickaxe'
-        uuid: 2
+        uuid: 'fire_pickaxe'
         id: '1'
         name: '<red>Fire <gray>Wrap'
         glow: true
@@ -83,6 +83,66 @@ items:
           keep-after-unwrap: true
           lore:
             - '<green>Apply this to an item to wrap it!'
+  IRON_SWORD:
+    wraps:
+      1:
+        permission: 'hmcwraps.silver_sword'
+        uuid: 'silver_sword'
+        id: '2'
+        name: '<aqua>Silver <gray>Wrap'
+        glow: true
+        lore:
+          - '<gray>Apply this wrap to make your sword look silver!'
+        flags:
+          - 'HIDE_ATTRIBUTES'
+  IRON_PICKAXE:
+    wraps:
+      1:
+        permission: 'hmcwraps.silver_pickaxe'
+        uuid: 'silver_pickaxe'
+        id: '2'
+        name: '<aqua>Silver <gray>Wrap'
+        glow: true
+        lore:
+          - '<gray>Apply this wrap to make your pickaxe look silver!'
+        flags:
+          - 'HIDE_ATTRIBUTES'
+  IRON_AXE:
+    wraps:
+      1:
+        permission: 'hmcwraps.silver_axe'
+        uuid: 'silver_axe'
+        id: '1'
+        name: '<aqua>Silver <gray>Wrap'
+        glow: true
+        lore:
+          - '<gray>Apply this wrap to make your axe look silver!'
+        flags:
+          - 'HIDE_ATTRIBUTES'
+  IRON_SHOVEL:
+    wraps:
+      1:
+        permission: 'hmcwraps.silver_shovel'
+        uuid: 'silver_shovel'
+        id: '1'
+        name: '<aqua>Silver <gray>Wrap'
+        glow: true
+        lore:
+          - '<gray>Apply this wrap to make your shovel look silver!'
+        flags:
+          - 'HIDE_ATTRIBUTES'
+  IRON_HOE:
+    wraps:
+      1:
+        permission: 'hmcwraps.silver_hoe'
+        uuid: 'silver_hoe'
+        id: '1'
+        name: '<aqua>Silver <gray>Wrap'
+        glow: true
+        lore:
+          - '<gray>Apply this wrap to make your hoe look silver!'
+        flags:
+          - 'HIDE_ATTRIBUTES'
 
 collections:
   SWORDS:
@@ -109,7 +169,7 @@ inventory:
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
-  type: SCROLLING
+  type: 'SCROLLING'
   # How many rows the inventory should have
   rows: 6
   # The slot to set the item the player is holding to
