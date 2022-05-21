@@ -50,7 +50,9 @@ public class Preview {
         if (PlayerUtil.getLookBlock(player) == null) {
             return;
         }
-        gui.close(player);
+        if (gui != null) {
+            gui.close(player);
+        }
 
         sendSpawnPacket();
         sendMetadataPacket();
@@ -71,7 +73,7 @@ public class Preview {
         if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
         }
-        if (open) {
+        if (open && gui != null) {
             gui.open(player);
         }
     }

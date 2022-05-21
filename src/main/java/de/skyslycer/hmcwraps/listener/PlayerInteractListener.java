@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
+import de.skyslycer.hmcwraps.permission.PermissionHelper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -17,8 +18,14 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
+        if (event.getItem() == null) {
+            return;
+        }
+
+        PermissionHelper.loopThroughInventory(plugin, event.getPlayer());
+
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || event.getItem() == null || plugin.getCollection().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
+                || plugin.getCollection().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
                 || !plugin.getConfiguration().isOpenShortcut()) {
             return;
         }

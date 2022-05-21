@@ -1,20 +1,25 @@
 # If the shortcut to open the wrap inventory when shift & right-clicking and should be enabled
 open-shortcut: true
 
+# Settings on how permissions should be handled
+permission-settings:
+  # If permission checks should be performed during usage for...
+  # ...physical wraps
+  check-permission-physical: true
+  # ...virtual wraps
+  check-permission-virtual: true
+  # If permissions should be checked on appliance for...
+  # ...physical wraps
+  permission-physical: false
+  # ...virtual wraps
+  permission-virtual: true
+
 # Preview settings
 preview:
   # Duration of the preview in seconds
   duration: 5
   # Rotation per tick (50ms)
   rotation: 5
-  # Bobbing settings
-  bobbing:
-    # If the item should move up and done while previewing
-    enabled: true
-    # How many points there should be for a full cycle
-    size: 360
-    # How high the bobbing should differ from its original location
-    amplitude: 0.2
   # Sneak to cancel preview settings
   sneak-cancel:
     # If the preview should be cancelled when sneaking
@@ -103,6 +108,8 @@ unwrapper:
 inventory:
   # The title
   title: '<red><bold>Wraps'
+  # Type of inventory, SCROLLING or PAGINATED
+  type: SCROLLING
   # How many rows the inventory should have
   rows: 6
   # The slot to set the item the player is holding to
@@ -121,7 +128,7 @@ inventory:
     47:
       id: 'ARROW'
       name: '<green>Previous'
-      # The action: Either 'SCROLL_BACK', 'SCROLL_FORTH', 'UNWRAP' to unwrap the current item, 'CLOSE' to close the inventory
+      # The action: Either 'SCROLL_BACK', 'SCROLL_FORTH', 'PREVIOUS_PAGE', 'NEXT_PAGE', 'UNWRAP' to unwrap the current item, 'CLOSE' to close the inventory
       action: 'SCROLL_BACK'
     48:
       id: 'GRAY_STAINED_GLASS_PANE'

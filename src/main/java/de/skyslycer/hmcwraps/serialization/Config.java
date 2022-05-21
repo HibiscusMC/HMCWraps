@@ -12,6 +12,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class Config {
 
     private boolean openShortcut;
+    private PermissionSettings permissionSettings;
     private PreviewSettings preview;
     private Inventory inventory;
     private SerializableItem unwrapper;
@@ -42,4 +43,7 @@ public class Config {
         return collections;
     }
 
+    public PermissionSettings getPermissionSettings() {
+        return permissionSettings;
+    }
 }

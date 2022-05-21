@@ -28,4 +28,17 @@ public class CollectionHelper {
         return list;
     }
 
+    public List<Material> getMaterials(String collection) {
+        var list = new ArrayList<Material>();
+        if (!plugin.getConfiguration().getCollections().containsKey(collection)) {
+            return List.of();
+        }
+        for (String materialName : plugin.getConfiguration().getCollections().get(collection)) {
+            if (Material.getMaterial(materialName) != null) {
+                list.add(Material.getMaterial(materialName));
+            }
+        }
+        return list;
+    }
+
 }

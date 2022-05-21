@@ -1,7 +1,9 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import java.util.Objects;
+import de.skyslycer.hmcwraps.permission.PermissionHelper;
+import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,14 +19,20 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCursor() == null
-                || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
+        if (event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
             return;
         }
 
         var player = (Player) event.getWhoClicked();
-        var physical = event.getCursor().clone();
         var target = event.getCurrentItem().clone();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionHelper.loopThroughInventory(plugin, player), 1L);
+
+        if (event.getCursor() == null) {
+            return;
+        }
+
+        var physical = event.getCursor().clone();
         var cursor = physical.clone();
         if (cursor.getAmount() != 1) {
             cursor.setAmount(cursor.getAmount() - 1);
@@ -33,7 +41,7 @@ public class InventoryClickListener implements Listener {
         }
 
         if (plugin.getWrapper().isUnwrapper(physical) && plugin.getWrapper().getWrap(target) != null) {
-            event.setCurrentItem(plugin.getWrapper().removeWrap(target, player));
+            event.setCurrentItem(plugin.getWrapper().removeWrap(target, player, true));
             event.setCursor(cursor);
             event.setCancelled(true);
             return;
@@ -49,11 +57,16 @@ public class InventoryClickListener implements Listener {
             return;
         }
         var finalCursor = cursor;
-        if (wrap.getPhysical() != null && wrap.hasPermission(player)) {
-            event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
-                    (Player) event.getWhoClicked()));
-            event.setCursor(finalCursor);
-            event.setCancelled(true);
+        if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissionSettings().isPermissionPhysical())) {
+            for (WrappableItem wrappableItem : plugin.getCollection().getItems(target.getType())) {
+                if (wrappableItem.getWraps().containsValue(wrap)) {
+                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
+                            player ,true));
+                    event.setCursor(finalCursor);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
 import de.skyslycer.hmcwraps.listener.InventoryClickListener;
 import de.skyslycer.hmcwraps.listener.PlayerInteractListener;
+import de.skyslycer.hmcwraps.listener.PlayerPickupListener;
 import de.skyslycer.hmcwraps.listener.PlayerShiftListener;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.Messages;
@@ -39,8 +40,6 @@ import revxrsal.commands.bukkit.exception.SenderNotPlayerException;
 import revxrsal.commands.exception.NoPermissionException;
 
 public class HMCWraps extends JavaPlugin {
-
-    public static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     public static final Path PLUGIN_PATH = Path.of("plugins", "HMCWraps");
     public static final Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");
@@ -75,6 +74,7 @@ public class HMCWraps extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
 
         PacketEvents.getAPI().init();
 
@@ -115,12 +115,9 @@ public class HMCWraps extends JavaPlugin {
             return false;
         }
 
-        getConfiguration().getItems()
-                .forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
+        getConfiguration().getItems().forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
         wraps.remove("-");
         getPreviewManager().removeAll(true);
-        getCircleManager().clear();
-        getCircleManager().generateCircleLocations(getConfiguration().getPreview().getBobbing());
         return true;
     }
 

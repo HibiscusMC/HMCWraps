@@ -7,6 +7,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class Inventory {
 
     private String title;
+    private InventoryType type;
     private int rows;
     private int targetItemSlot;
     private Map<Integer, InventoryItem> items;
@@ -25,6 +26,10 @@ public class Inventory {
 
     public Map<Integer, InventoryItem> getItems() {
         return items;
+    }
+
+    public InventoryType getType() {
+        return type;
     }
 
 }

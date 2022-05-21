@@ -8,7 +8,6 @@ public class PreviewSettings {
 
     private int duration;
     private int rotation;
-    private CircleIdentity bobbing;
     private SneakCancel sneakCancel;
 
     public int getDuration() {
@@ -17,10 +16,6 @@ public class PreviewSettings {
 
     public int getRotation() {
         return rotation;
-    }
-
-    public CircleIdentity getBobbing() {
-        return bobbing;
     }
 
     public SneakCancel getSneakCancel() {
