@@ -1,12 +1,12 @@
 package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 
-public class CollectionHelper {
+public class CollectionHelper implements ICollectionHelper {
 
     private final HMCWraps plugin;
 
@@ -14,9 +14,10 @@ public class CollectionHelper {
         this.plugin = plugin;
     }
 
-    public List<WrappableItem> getItems(Material material) {
+    @Override
+    public List<IWrappableItem> getItems(Material material) {
         var configuration = plugin.getConfiguration();
-        var list = new ArrayList<WrappableItem>();
+        var list = new ArrayList<IWrappableItem>();
         if (configuration.getItems().containsKey(material.toString())) {
             list.add(configuration.getItems().get(material.toString()));
         }
@@ -28,6 +29,7 @@ public class CollectionHelper {
         return list;
     }
 
+    @Override
     public List<Material> getMaterials(String collection) {
         var list = new ArrayList<Material>();
         if (!plugin.getConfiguration().getCollections().containsKey(collection)) {

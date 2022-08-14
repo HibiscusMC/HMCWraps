@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-public class Preview {
+public class Preview implements IPreview {
 
     private final int entityId = SpigotReflectionUtil.generateEntityId();
     private final Player player;
@@ -44,10 +44,8 @@ public class Preview {
         this.plugin = plugin;
     }
 
+    @Override
     public void preview() {
-        if (PlayerUtil.getLookBlock(player) == null) {
-            return;
-        }
         if (gui != null) {
             gui.close(player);
         }
@@ -61,9 +59,11 @@ public class Preview {
                 .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 0, 1);
 
         cancelTask = Bukkit.getScheduler()
-                .runTaskLater(plugin, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true), plugin.getConfiguration().getPreview().getDuration() * 20L);
+                .runTaskLater(plugin, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
+                        plugin.getConfiguration().getPreview().getDuration() * 20L);
     }
 
+    @Override
     public void cancel(boolean open) {
         task.cancel();
         cancelTask.cancel();

@@ -2,7 +2,7 @@ package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.permission.PermissionHelper;
-import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +19,8 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
+        if (event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCurrentItem() == null
+                || event.getCurrentItem().getItemMeta() == null) {
             return;
         }
 
@@ -58,10 +59,10 @@ public class InventoryClickListener implements Listener {
         }
         var finalCursor = cursor;
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissionSettings().isPermissionPhysical())) {
-            for (WrappableItem wrappableItem : plugin.getCollection().getItems(target.getType())) {
+            for (IWrappableItem wrappableItem : plugin.getCollection().getItems(target.getType())) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
-                            player ,true));
+                            player, true));
                     event.setCursor(finalCursor);
                     event.setCancelled(true);
                     return;

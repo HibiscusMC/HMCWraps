@@ -1,7 +1,10 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
+import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.preview.IPreviewSettings;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +12,7 @@ import java.util.Map;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-public class Config {
+public class Config implements IConfig {
 
     private boolean openShortcut;
     private PermissionSettings permissionSettings;
@@ -19,31 +22,38 @@ public class Config {
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
 
+    @Override
     public boolean isOpenShortcut() {
         return openShortcut;
     }
 
-    public Inventory getInventory() {
+    @Override
+    public IInventory getInventory() {
         return inventory;
     }
 
-    public SerializableItem getUnwrapper() {
+    @Override
+    public ISerializableItem getUnwrapper() {
         return unwrapper;
     }
 
-    public Map<String, WrappableItem> getItems() {
+    @Override
+    public Map<String, ? extends IWrappableItem> getItems() {
         return items;
     }
 
-    public PreviewSettings getPreview() {
+    @Override
+    public IPreviewSettings getPreview() {
         return preview;
     }
 
+    @Override
     public Map<String, List<String>> getCollections() {
         return collections;
     }
 
-    public PermissionSettings getPermissionSettings() {
+    @Override
+    public IPermissionSettings getPermissionSettings() {
         return permissionSettings;
     }
 }

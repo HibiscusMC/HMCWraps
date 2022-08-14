@@ -4,11 +4,12 @@ import java.util.Map;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-public class WrappableItem {
+public class WrappableItem implements IWrappableItem {
 
     private Map<String, Wrap> wraps;
 
-    public Map<String, Wrap> getWraps() {
+    @Override
+    public Map<String, ? extends IWrap> getWraps() {
         return wraps;
     }
 

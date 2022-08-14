@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    labels:
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/api/"
+    labels:
+      - "dependabot"
+    schedule:
+      interval: "weekly"

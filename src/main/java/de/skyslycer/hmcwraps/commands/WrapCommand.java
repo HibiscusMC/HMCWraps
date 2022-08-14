@@ -3,12 +3,11 @@ package de.skyslycer.hmcwraps.commands;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.Wrap;
-import de.skyslycer.hmcwraps.serialization.WrappableItem;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import java.util.Map;
-import java.util.Objects;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -64,7 +63,7 @@ public class WrapCommand {
             plugin.getHandler().send(sender, Messages.COMMAND_NEED_ITEM);
             return;
         }
-        for (WrappableItem wrappableItem : plugin.getCollection().getItems(item.getType())) {
+        for (IWrappableItem wrappableItem : plugin.getCollection().getItems(item.getType())) {
             if (wrappableItem.getWraps().containsValue(wrap)) {
                 item = plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
@@ -81,7 +80,7 @@ public class WrapCommand {
     public void onPreview(CommandSender sender, Player player, Wrap wrap) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
-        for (Map.Entry<String, WrappableItem> entry : plugin.getConfiguration().getItems().entrySet()) {
+        for (Map.Entry<String, ? extends IWrappableItem> entry : plugin.getConfiguration().getItems().entrySet()) {
             currentCollection = entry.getKey();
             if (entry.getValue().getWraps().containsValue(wrap)) {
                 break;

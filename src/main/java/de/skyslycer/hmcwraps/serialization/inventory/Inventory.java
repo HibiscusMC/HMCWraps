@@ -4,7 +4,7 @@ import java.util.Map;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-public class Inventory {
+public class Inventory implements IInventory {
 
     private String title;
     private InventoryType type;
@@ -12,22 +12,27 @@ public class Inventory {
     private int targetItemSlot;
     private Map<Integer, InventoryItem> items;
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public int getRows() {
         return rows;
     }
 
+    @Override
     public int getTargetItemSlot() {
         return targetItemSlot;
     }
 
-    public Map<Integer, InventoryItem> getItems() {
+    @Override
+    public Map<Integer, ? extends IInventoryItem> getItems() {
         return items;
     }
 
+    @Override
     public InventoryType getType() {
         return type;
     }

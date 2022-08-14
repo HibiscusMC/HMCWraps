@@ -2,18 +2,15 @@ package de.skyslycer.hmcwraps.gui;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.Wrap;
-import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
+import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.inventory.InventoryType;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import dev.triumphteam.gui.builder.gui.BaseGuiBuilder;
-import dev.triumphteam.gui.builder.gui.PaginatedBuilder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import dev.triumphteam.gui.guis.ScrollingGui;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
@@ -27,7 +24,7 @@ public class GuiBuilder {
     public static void open(HMCWraps plugin, Player player, ItemStack item, EquipmentSlot slot) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
-        Inventory inventory = plugin.getConfiguration().getInventory();
+        IInventory inventory = plugin.getConfiguration().getInventory();
         PaginatedGui gui;
         if (plugin.getConfiguration().getInventory().getType() == InventoryType.PAGINATED) {
             gui = Gui.paginated()
@@ -93,7 +90,7 @@ public class GuiBuilder {
         gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item));
     }
 
-    private static Single available(Wrap wrap, Player player, HMCWraps plugin) {
+    private static Single available(IWrap wrap, Player player, HMCWraps plugin) {
         return Placeholder.parsed("available",
                 wrap.hasPermission(player) ? plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE)
                         : plugin.getHandler().get(Messages.PLACEHOLDER_NOT_AVAILABLE));

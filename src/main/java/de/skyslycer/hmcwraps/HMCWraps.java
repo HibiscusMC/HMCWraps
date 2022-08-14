@@ -11,23 +11,26 @@ import de.skyslycer.hmcwraps.listener.InventoryClickListener;
 import de.skyslycer.hmcwraps.listener.PlayerInteractListener;
 import de.skyslycer.hmcwraps.listener.PlayerPickupListener;
 import de.skyslycer.hmcwraps.listener.PlayerShiftListener;
+import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
-import de.skyslycer.hmcwraps.serialization.Wrap;
-import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import de.skyslycer.hmcwraps.serialization.IConfig;
+import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
+import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
+import de.skyslycer.hmcwraps.wrap.IWrapper;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -39,23 +42,20 @@ import revxrsal.commands.bukkit.core.BukkitActor;
 import revxrsal.commands.bukkit.exception.SenderNotPlayerException;
 import revxrsal.commands.exception.NoPermissionException;
 
-public class HMCWraps extends JavaPlugin {
+public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
-    public static final Path PLUGIN_PATH = Path.of("plugins", "HMCWraps");
-    public static final Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");
     private static final YamlConfigurationLoader LOADER = YamlConfigurationLoader.builder()
             .path(CONFIG_PATH)
             .build();
-    public static final Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
     private final Set<ItemHook> hooks = new HashSet<>();
-    private final Map<String, Wrap> wraps = new HashMap<>();
+    private final Map<String, IWrap> wraps = new HashMap<>();
     private final Set<String> loadedHooks = new HashSet<>();
-    private final Wrapper wrapper = new Wrapper(this);
-    private final PreviewManager previewManager = new PreviewManager(this);
-    private final CollectionHelper collection = new CollectionHelper(this);
+    private final IWrapper wrapper = new Wrapper(this);
+    private final IPreviewManager previewManager = new PreviewManager(this);
+    private final ICollectionHelper collection = new CollectionHelper(this);
     private final CircleManager circleManager = new CircleManager();
-    private Config config;
-    private MessageHandler handler;
+    private IConfig config;
+    private IMessageHandler handler;
 
     @Override
     public void onLoad() {
@@ -89,6 +89,7 @@ public class HMCWraps extends JavaPlugin {
         PacketEvents.getAPI().terminate();
     }
 
+    @Override
     public boolean load() {
         checkDependency("PlaceholderAPI", false);
         if (checkDependency("ItemsAdder", false)) {
@@ -115,12 +116,14 @@ public class HMCWraps extends JavaPlugin {
             return false;
         }
 
-        getConfiguration().getItems().forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
+        getConfiguration().getItems()
+                .forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
         wraps.remove("-");
         getPreviewManager().removeAll(true);
         return true;
     }
 
+    @Override
     public void unload() {
         hooks.clear();
         wraps.clear();
@@ -129,10 +132,11 @@ public class HMCWraps extends JavaPlugin {
     private void registerCommands() {
         BukkitCommandHandler commandHandler = BukkitCommandHandler.create(this);
 
-        commandHandler.registerValueResolver(Wrap.class, context -> {
+        commandHandler.registerValueResolver(IWrap.class, context -> {
             var wrap = getWraps().get(context.pop());
             if (wrap == null) {
-                getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP, Placeholder.parsed("uuid", context.pop()));
+                getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
+                        Placeholder.parsed("uuid", context.pop()));
                 throw new IllegalArgumentException();
             }
             return wrap;
@@ -194,6 +198,7 @@ public class HMCWraps extends JavaPlugin {
         return true;
     }
 
+    @Override
     public ItemStack getItemFromHook(String id) {
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         if (possible.isEmpty()) {
@@ -203,6 +208,7 @@ public class HMCWraps extends JavaPlugin {
         }
     }
 
+    @Override
     public int getModelIdFromHook(String id) {
         try {
             return Integer.parseInt(id);
@@ -212,6 +218,7 @@ public class HMCWraps extends JavaPlugin {
         }
     }
 
+    @Override
     public void logSevere(String message) {
         getLogger().severe(
                 "\n=============================\n" +
@@ -220,41 +227,48 @@ public class HMCWraps extends JavaPlugin {
         );
     }
 
+    @Override
     public int getWrapAmount() {
         int count = 0;
-        for (WrappableItem item : getConfiguration().getItems().values()) {
+        for (IWrappableItem item : getConfiguration().getItems().values()) {
             count += item.getWraps().size();
         }
         return count;
     }
 
+    @Override
     @NotNull
-    public Config getConfiguration() {
+    public IConfig getConfiguration() {
         return config;
     }
 
+    @Override
     @NotNull
-    public MessageHandler getHandler() {
+    public IMessageHandler getHandler() {
         return handler;
     }
 
+    @Override
     @NotNull
-    public Map<String, Wrap> getWraps() {
+    public Map<String, IWrap> getWraps() {
         return wraps;
     }
 
+    @Override
     @NotNull
-    public Wrapper getWrapper() {
+    public IWrapper getWrapper() {
         return wrapper;
     }
 
+    @Override
     @NotNull
-    public PreviewManager getPreviewManager() {
+    public IPreviewManager getPreviewManager() {
         return previewManager;
     }
 
+    @Override
     @NotNull
-    public CollectionHelper getCollection() {
+    public ICollectionHelper getCollection() {
         return collection;
     }
 

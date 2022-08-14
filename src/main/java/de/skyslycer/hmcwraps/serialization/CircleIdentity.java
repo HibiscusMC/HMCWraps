@@ -17,7 +17,7 @@ public class CircleIdentity extends Toggleable {
     }
 
     public static CircleIdentity build(int size, int amplitude) {
-        var identity =  new CircleIdentity();
+        var identity = new CircleIdentity();
         identity.size = size;
         identity.amplitude = amplitude;
         return identity;

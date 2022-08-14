@@ -1,9 +1,10 @@
 package de.skyslycer.hmcwraps.serialization.item;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.util.EnumUtil;
+import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-public class SerializableItem {
+public class SerializableItem implements ISerializableItem {
 
     private String id;
     private String name;
@@ -29,8 +30,9 @@ public class SerializableItem {
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
 
+    @Override
     @NotNull
-    public ItemStack toItem(HMCWraps plugin, Player player) {
+    public ItemStack toItem(IHMCWraps plugin, Player player) {
         ItemStack origin = plugin.getItemFromHook(getId());
         if (origin == null) {
             origin = new ItemStack(Material.STRUCTURE_VOID);
@@ -50,7 +52,7 @@ public class SerializableItem {
                     .collect(Collectors.toList()));
         }
         if (getFlags() != null) {
-            List<ItemFlag> parsed = EnumUtil.getAllPossibilities(getFlags(), ItemFlag.class);
+            List<ItemFlag> parsed = Arrays.asList(ItemFlag.values());
             builder.flags(parsed.toArray(ItemFlag[]::new));
         }
         if (getEnchantments() != null) {
@@ -67,24 +69,29 @@ public class SerializableItem {
         return builder.build();
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     @Nullable
     public List<String> getLore() {
         return lore;
     }
 
+    @Override
     @Nullable
     public List<String> getFlags() {
         return flags;
     }
 
+    @Override
     public int getModelId() {
         if (modelId == null) {
             modelId = HMCWraps.getPlugin(HMCWraps.class).getModelIdFromHook(getId());
@@ -92,16 +99,19 @@ public class SerializableItem {
         return modelId;
     }
 
+    @Override
     @Nullable
     public Map<String, Integer> getEnchantments() {
         return enchantments;
     }
 
+    @Override
     @Nullable
     public Integer getAmount() {
         return amount;
     }
 
+    @Override
     @Nullable
     public Boolean isGlow() {
         return glow;

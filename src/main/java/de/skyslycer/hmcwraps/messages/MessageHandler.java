@@ -13,7 +13,7 @@ import java.util.PropertyResourceBundle;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import org.bukkit.command.CommandSender;
 
-public class MessageHandler {
+public class MessageHandler implements IMessageHandler {
 
     private final HMCWraps plugin;
     private PropertyResourceBundle bundle;
@@ -23,6 +23,7 @@ public class MessageHandler {
         this.plugin = plugin;
     }
 
+    @Override
     public boolean load(Path path) {
         try {
             fallback = new PropertyResourceBundle(HMCWraps.class.getClassLoader().getResource("messages.properties").openStream());
@@ -45,6 +46,7 @@ public class MessageHandler {
         return true;
     }
 
+    @Override
     public String get(Messages key) {
         if (bundle.containsKey(key.getKey())) {
             return bundle.getString(key.getKey());
@@ -55,6 +57,7 @@ public class MessageHandler {
         }
     }
 
+    @Override
     public void update(Path path) {
         try {
             var stream = HMCWraps.class.getClassLoader().getResource("messages.properties").openStream();
@@ -77,6 +80,7 @@ public class MessageHandler {
         }
     }
 
+    @Override
     public void send(CommandSender sender, Messages key, Single... placeholders) {
         StringUtil.send(sender, get(key), placeholders);
     }

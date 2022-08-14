@@ -12,7 +12,6 @@ public enum Messages {
     NO_WRAPS("no-wraps"),
     PREVIEW_DISABLED("preview.disabled"),
     PREVIEW_BAR("preview.bar"),
-    PREVIEW_NOT_ENOUGH_SPACE("preview.not-enough-space"),
     COMMAND_PLAYER_ONLY("command.player-only"),
     COMMAND_INVALID_WRAP("command.invalid-wrap"),
     COMMAND_INVALID_PHYSICAL("command.invalid-physical"),
@@ -33,6 +32,10 @@ public enum Messages {
         this.key = key;
     }
 
+    /**
+     * Get the properties key based on an enum value.
+     * @return The key
+     */
     @NotNull
     public String getKey() {
         return key;

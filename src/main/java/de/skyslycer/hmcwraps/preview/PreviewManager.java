@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.preview;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import java.util.Map;
@@ -10,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class PreviewManager {
+public class PreviewManager implements IPreviewManager {
 
     private final HMCWraps plugin;
 
@@ -20,6 +19,7 @@ public class PreviewManager {
         this.plugin = plugin;
     }
 
+    @Override
     public void remove(UUID uuid, boolean open) {
         if (previews.containsKey(uuid)) {
             previews.get(uuid).cancel(open);
@@ -27,17 +27,15 @@ public class PreviewManager {
         }
     }
 
+    @Override
     public void create(Player player, ItemStack item, PaginatedGui gui) {
         var location = PlayerUtil.getLookBlock(player);
-        if (location == null) {
-            plugin.getHandler().send(player, Messages.PREVIEW_NOT_ENOUGH_SPACE);
-            return;
-        }
         var preview = new Preview(player, item, gui, plugin);
         previews.put(player.getUniqueId(), preview);
         preview.preview();
     }
 
+    @Override
     public void removeAll(boolean open) {
         previews.keySet().forEach(uuid -> this.remove(uuid, open));
     }
