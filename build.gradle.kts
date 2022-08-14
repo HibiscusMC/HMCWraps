@@ -24,7 +24,7 @@ repositories {
 dependencies {
     implementation(project(":api"))
     compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     implementation("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
