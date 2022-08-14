@@ -38,7 +38,7 @@ public class PermissionHelper {
             if (item == null) {
                 continue;
             }
-            var newItem = PermissionHelper.hasPermission(plugin, item, player);
+            var newItem = hasPermission(plugin, item, player);
             if (newItem != null) {
                 player.getInventory().setItem(i, newItem);
             }

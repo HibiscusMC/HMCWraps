@@ -19,7 +19,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://jitpack.io")
     maven("https://repo.dmulloy2.net/repository/public/")
-    maven("https://repo.jeff-media.de/maven2/")
+    maven("https://repo.codemc.io/repository/maven-snapshots/")
 }
 
 dependencies {
@@ -28,15 +28,15 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
-    implementation("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
-    implementation("net.kyori:adventure-api:4.10.0")
-    implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
-    implementation("net.kyori:adventure-platform-bukkit:4.0.1")
+    implementation("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
+    implementation("net.kyori:adventure-api:4.11.0")
+    implementation ("net.kyori:adventure-text-minimessage:4.11.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.1.1")
     implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
     implementation("com.github.Revxrsal.Lamp:common:2.9.4")
     implementation("com.github.Revxrsal.Lamp:bukkit:2.9.4")
     implementation("org.bstats:bstats-bukkit:3.0.0")
-    implementation("dev.triumphteam:triumph-gui:3.1.2") {
+    implementation("dev.triumphteam:triumph-gui:3.1.3") {
         exclude("com.google.code.gson")
     }
     implementation("org.spongepowered:configurate-yaml:4.1.2") {

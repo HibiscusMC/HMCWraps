@@ -5,7 +5,7 @@ open-shortcut: true
 permission-settings:
   # If permission checks should be performed during usage for...
   # ...physical wraps
-  check-permission-physical: true
+  check-permission-physical: false
   # ...virtual wraps
   check-permission-virtual: true
   # If permissions should be checked on appliance for...
