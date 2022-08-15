@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           java-version: 16
       - name: Build with Gradle
-        run: ./gradlew api:clean api:build
+        run: ./gradlew api:clean api:build --no-daemon --stacktrace
       - name: Publish to Nexus
         if: ${{ env.HAS_TOKEN == 'true' }}
         run: ./gradlew api:publishMavenPublicationToSkyNexusRepository
