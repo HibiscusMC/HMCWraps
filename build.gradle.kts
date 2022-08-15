@@ -13,6 +13,7 @@ val shadePattern = "$group.hmcwraps.shade"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/groups/public")
@@ -62,8 +63,7 @@ tasks {
         exclude("assets/mappings/particle/**")
         exclude("assets/mappings/potion/**")
 
-        val nullClassifier: String? = null
-        archiveClassifier.set(nullClassifier)
+        archiveFileName.set("HMCWraps.jar")
         minimize()
     }
 
