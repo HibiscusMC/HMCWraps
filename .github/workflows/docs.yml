@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -26,3 +26,14 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: 'api/build/dokka/html'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: 'hibiscusmc.github.io'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
