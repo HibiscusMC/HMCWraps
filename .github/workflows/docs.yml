@@ -21,6 +21,6 @@ jobs:
       - name: Build HTML
         run: ./gradlew api:dokkaHtml --no-daemon --stacktrace
       - name: Upload artifact
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: actions/upload-pages-artifact@v1
         with:
-          path: api/build/dokka/html
+          path: 'api/build/dokka/html'
