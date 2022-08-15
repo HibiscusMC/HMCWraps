@@ -9,13 +9,15 @@ jobs:
   build:
     environment: build
     runs-on: ubuntu-latest
-
+    env:
+      HAS_TOKEN: ${{ secrets.NEXUS_PASSWORD != '' }}
+    if: ${{ env.HAVE_SONAR_TOKEN == 'true' }}
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Set up JDK 16
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          distribution: adopt
+          distribution: 'temurin'
           java-version: 16
       - name: Build with Gradle
         run: ./gradlew api:clean api:build

@@ -30,7 +30,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: 'hibiscusmc.github.io'
+      url: 'https://hibiscusmc.github.io/HMCWraps/'
     runs-on: ubuntu-latest
     needs: build
     steps:
