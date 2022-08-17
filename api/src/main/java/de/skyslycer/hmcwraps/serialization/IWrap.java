@@ -1,8 +1,8 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
-import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
 public interface IWrap extends ISerializableItem {
 

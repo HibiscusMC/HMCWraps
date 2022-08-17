@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.serialization.inventory;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
