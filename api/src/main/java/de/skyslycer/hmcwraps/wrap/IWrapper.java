@@ -2,9 +2,9 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import java.util.UUID;
-import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface IWrapper {
 

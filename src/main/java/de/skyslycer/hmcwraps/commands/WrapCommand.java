@@ -33,8 +33,7 @@ public class WrapCommand {
     }
 
     @Default
-    public void onWraps(CommandActor actor) {
-        var player = actor.as(BukkitActor.class).requirePlayer();
+    public void onWraps(Player player) {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR) {
             plugin.getHandler().send(player, Messages.NO_ITEM);
@@ -49,10 +48,10 @@ public class WrapCommand {
 
     @Subcommand("reload")
     @CommandPermission("hmcwraps.admin")
-    public void onReload(CommandActor actor) {
+    public void onReload(CommandSender sender) {
         plugin.unload();
         plugin.load();
-        plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_RELOAD);
+        plugin.getHandler().send(sender, Messages.COMMAND_RELOAD);
     }
 
     @Subcommand("set")
@@ -105,10 +104,9 @@ public class WrapCommand {
 
     @Subcommand("give wrapper")
     @CommandPermission("hmcwraps.admin")
-    public void onGiveWrap(CommandActor actor, EntitySelector<Player> players, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
+    public void onGiveWrap(CommandSender sender, EntitySelector<Player> players, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical() == null) {
-            plugin.getHandler()
-                    .send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
+            plugin.getHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
         } else {
             wrap.getPhysical().toItem(plugin, null);
@@ -118,19 +116,18 @@ public class WrapCommand {
             item.setAmount(amount == null ? 1 : amount);
             PlayerUtil.give(player, plugin.getWrapper().setWrapper(item, wrap.getUuid()));
         });
-        plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_GIVEN_PHYSICAL,
-                Placeholder.parsed("uuid", wrap.getUuid()));
+        plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
     }
 
     @Subcommand("give unwrapper")
     @CommandPermission("hmcwraps.admin")
-    public void onGiveUnwrapper(CommandActor actor, EntitySelector<Player> players, @Optional @Range(min = 1, max = 64) Integer amount) {
+    public void onGiveUnwrapper(CommandSender sender, EntitySelector<Player> players, @Optional @Range(min = 1, max = 64) Integer amount) {
         players.forEach(player -> {
             var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
             item.setAmount(amount == null ? 1 : amount);
             PlayerUtil.give(player, plugin.getWrapper().setUnwrapper(item));
         });
-        plugin.getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_GIVEN_UNWRAPPER);
+        plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_UNWRAPPER);
     }
 
 }

@@ -3,10 +3,10 @@ package de.skyslycer.hmcwraps.serialization.item;
 import de.skyslycer.hmcwraps.IHMCWraps;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ISerializableItem {
 

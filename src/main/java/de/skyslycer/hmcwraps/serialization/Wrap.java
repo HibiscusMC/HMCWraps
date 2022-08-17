@@ -1,8 +1,8 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
-import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable

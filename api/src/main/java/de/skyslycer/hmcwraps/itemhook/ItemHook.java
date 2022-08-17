@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.itemhook;
 
-import javax.annotation.Nullable;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface ItemHook {
 

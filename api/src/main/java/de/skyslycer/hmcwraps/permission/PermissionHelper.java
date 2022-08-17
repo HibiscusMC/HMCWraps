@@ -3,10 +3,10 @@ package de.skyslycer.hmcwraps.permission;
 import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.IWrap;
-import javax.annotation.Nullable;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class PermissionHelper {
 

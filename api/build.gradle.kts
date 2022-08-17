@@ -21,19 +21,24 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.10")
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT")
     compileOnly("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("dev.triumphteam:triumph-gui:3.1.3")
     compileOnly("net.kyori:adventure-api:4.11.0")
     compileOnly("net.kyori:adventure-text-minimessage:4.11.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.1.2")
+    compileOnly("org.jetbrains:annotations:23.0.0")
 }
 
 tasks {
     dokkaHtml {
         moduleName.set("HMCWraps API")
     }
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 publishing {

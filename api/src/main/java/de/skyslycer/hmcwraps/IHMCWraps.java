@@ -8,10 +8,10 @@ import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
 import java.nio.file.Path;
 import java.util.Map;
-import javax.annotation.Nullable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IHMCWraps extends Plugin {
 

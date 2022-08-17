@@ -20,6 +20,7 @@ import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.IConfig;
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
@@ -31,12 +32,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitActor;
 import revxrsal.commands.bukkit.exception.SenderNotPlayerException;
@@ -132,8 +135,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private void registerCommands() {
         BukkitCommandHandler commandHandler = BukkitCommandHandler.create(this);
 
-        commandHandler.registerValueResolver(IWrap.class, context -> {
-            var wrap = getWraps().get(context.pop());
+        commandHandler.registerValueResolver(Wrap.class, context -> {
+            var wrap = (Wrap) getWraps().get(context.pop());
             if (wrap == null) {
                 getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
                         Placeholder.parsed("uuid", context.pop()));
@@ -141,6 +144,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             }
             return wrap;
         });
+        commandHandler.getAutoCompleter().registerParameterSuggestions(Wrap.class, SuggestionProvider.map(() -> getWraps().values(), IWrap::getUuid));
         commandHandler.registerExceptionHandler(NoPermissionException.class,
                 (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
