@@ -20,8 +20,6 @@ import revxrsal.commands.annotation.Range;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.EntitySelector;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
-import revxrsal.commands.bukkit.core.BukkitActor;
-import revxrsal.commands.command.CommandActor;
 
 @Command("wraps")
 public class WrapCommand {
@@ -105,14 +103,12 @@ public class WrapCommand {
     @Subcommand("give wrapper")
     @CommandPermission("hmcwraps.admin")
     public void onGiveWrap(CommandSender sender, EntitySelector<Player> players, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
-        if (wrap.getPhysical() == null) {
+        if (wrap.getPhysical().isEmpty()) {
             plugin.getHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
-        } else {
-            wrap.getPhysical().toItem(plugin, null);
         }
         players.forEach(player -> {
-            var item = wrap.getPhysical().toItem(plugin, player);
+            var item = wrap.getPhysical().get().toItem(plugin, player);
             item.setAmount(amount == null ? 1 : amount);
             PlayerUtil.give(player, plugin.getWrapper().setWrapper(item, wrap.getUuid()));
         });
