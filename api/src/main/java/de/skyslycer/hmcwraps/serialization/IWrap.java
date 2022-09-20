@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
+import java.util.Optional;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,8 +12,7 @@ public interface IWrap extends ISerializableItem {
 
     String getUuid();
 
-    @Nullable
-    IPhysicalWrap getPhysical();
+    Optional<IPhysicalWrap> getPhysical();
 
     Boolean isPreview();
 

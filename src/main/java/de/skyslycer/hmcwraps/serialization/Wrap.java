@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import java.util.Optional;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -25,9 +26,8 @@ public class Wrap extends SerializableItem implements IWrap {
     }
 
     @Override
-    @Nullable
-    public IPhysicalWrap getPhysical() {
-        return physical;
+    public Optional<IPhysicalWrap> getPhysical() {
+        return Optional.ofNullable(physical);
     }
 
     @Override
