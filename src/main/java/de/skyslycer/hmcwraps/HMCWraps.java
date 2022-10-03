@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -149,6 +148,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                 (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
                 (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
+        commandHandler.disableStackTraceSanitizing();
         commandHandler.register(new WrapCommand(this));
         commandHandler.registerBrigadier();
     }

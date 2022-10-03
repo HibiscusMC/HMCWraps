@@ -78,7 +78,7 @@ bukkit {
     description = "The best choice to make your items prettier."
     authors = listOf("Skyslycer")
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen")
-    apiVersion = "1.16"
+    apiVersion = "1.17"
     permissions {
         register("hmcwraps.admin") {
             description = "Gives access to admin commands."
