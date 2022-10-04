@@ -70,6 +70,12 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+
+    compileJava {
+        options.compilerArgs.add("-parameters")
+        options.isFork = true
+        options.forkOptions.executable = "javac"
+    }
 }
 
 bukkit {

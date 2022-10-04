@@ -12,6 +12,7 @@ public enum Messages {
     NO_WRAPS("no-wraps"),
     PREVIEW_DISABLED("preview.disabled"),
     PREVIEW_BAR("preview.bar"),
+    COMMAND_MISSING_ARGUMENT("command.missing-argument"),
     COMMAND_PLAYER_ONLY("command.player-only"),
     COMMAND_INVALID_WRAP("command.invalid-wrap"),
     COMMAND_INVALID_PHYSICAL("command.invalid-physical"),
