@@ -23,6 +23,8 @@ public enum Messages {
     COMMAND_WRAP_APPLIED("command.wrap-applied"),
     COMMAND_NO_MATCHING_ITEM("command.no-matching-item"),
     COMMAND_PREVIEW_CREATED("command.preview-created"),
+    COMMAND_HELP_HEADER("command.help.header"),
+    COMMAND_HELP_FORMAT("command.help.format"),
     PLACEHOLDER_AVAILABLE("placeholder.available"),
     PLACEHOLDER_NOT_AVAILABLE("placeholder.not-available");
 

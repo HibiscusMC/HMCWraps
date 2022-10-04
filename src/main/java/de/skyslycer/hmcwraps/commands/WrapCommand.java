@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
+import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import java.util.Map;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -15,11 +16,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Default;
+import revxrsal.commands.annotation.Description;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Range;
 import revxrsal.commands.annotation.Subcommand;
-import revxrsal.commands.bukkit.EntitySelector;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
+import revxrsal.commands.help.CommandHelp;
 
 @Command("wraps")
 public class WrapCommand {
@@ -31,6 +33,7 @@ public class WrapCommand {
     }
 
     @Default
+    @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR) {
@@ -46,6 +49,7 @@ public class WrapCommand {
 
     @Subcommand("reload")
     @CommandPermission("hmcwraps.admin")
+    @Description("Reload configuration and messages.")
     public void onReload(CommandSender sender) {
         plugin.unload();
         plugin.load();
@@ -54,6 +58,7 @@ public class WrapCommand {
 
     @Subcommand("set")
     @CommandPermission("hmcwraps.admin")
+    @Description("Wrap the item a player is holding in his main hand.")
     public void onSet(CommandSender sender, Player player, Wrap wrap) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
@@ -74,6 +79,7 @@ public class WrapCommand {
 
     @Subcommand("preview")
     @CommandPermission("hmcwraps.admin")
+    @Description("Preview a wrap for the specified player.")
     public void onPreview(CommandSender sender, Player player, Wrap wrap) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
@@ -102,28 +108,33 @@ public class WrapCommand {
 
     @Subcommand("give wrapper")
     @CommandPermission("hmcwraps.admin")
-    public void onGiveWrap(CommandSender sender, EntitySelector<Player> players, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
+    @Description("Give a wrapper to a player.")
+    public void onGiveWrap(CommandSender sender, Player player, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical().isEmpty()) {
             plugin.getHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
         }
-        players.forEach(player -> {
-            var item = wrap.getPhysical().get().toItem(plugin, player);
-            item.setAmount(amount == null ? 1 : amount);
-            PlayerUtil.give(player, plugin.getWrapper().setWrapper(item, wrap.getUuid()));
-        });
+        var item = wrap.getPhysical().get().toItem(plugin, player);
+        item.setAmount(amount == null ? 1 : amount);
+        PlayerUtil.give(player, plugin.getWrapper().setWrapper(item, wrap.getUuid()));
         plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
     }
 
     @Subcommand("give unwrapper")
     @CommandPermission("hmcwraps.admin")
-    public void onGiveUnwrapper(CommandSender sender, EntitySelector<Player> players, @Optional @Range(min = 1, max = 64) Integer amount) {
-        players.forEach(player -> {
-            var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
-            item.setAmount(amount == null ? 1 : amount);
-            PlayerUtil.give(player, plugin.getWrapper().setUnwrapper(item));
-        });
+    @Description("Give an unwrapper to a player.")
+    public void onGiveUnwrapper(CommandSender sender, Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
+        var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
+        item.setAmount(amount == null ? 1 : amount);
+        PlayerUtil.give(player, plugin.getWrapper().setUnwrapper(item));
         plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_UNWRAPPER);
+    }
+
+    @Subcommand("help")
+    @Description("Shows the help page.")
+    public void onHelp(CommandSender sender, CommandHelp<String> helpEntries) {
+        plugin.getHandler().send(sender, Messages.COMMAND_HELP_HEADER);
+        helpEntries.paginate(1, 100).forEach((line) -> StringUtil.send(sender, line));
     }
 
 }

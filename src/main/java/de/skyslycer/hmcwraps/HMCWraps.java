@@ -149,6 +149,9 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
                 (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
         commandHandler.disableStackTraceSanitizing();
+        commandHandler.setHelpWriter(
+                (command, actor) -> getHandler().get(Messages.COMMAND_HELP_FORMAT).replace("<command>", command.getPath().toRealString())
+                        .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()));
         commandHandler.register(new WrapCommand(this));
         commandHandler.registerBrigadier();
     }
