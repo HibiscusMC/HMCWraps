@@ -9,6 +9,8 @@ import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -134,7 +136,12 @@ public class WrapCommand {
     @Description("Shows the help page.")
     public void onHelp(CommandSender sender, CommandHelp<String> helpEntries) {
         plugin.getHandler().send(sender, Messages.COMMAND_HELP_HEADER);
-        helpEntries.paginate(1, 100).forEach((line) -> StringUtil.send(sender, line));
+        Supplier<Stream<String>> filteredEntries = () -> helpEntries.paginate(1, 100).stream().filter(string -> !string.equals(""));
+        if (filteredEntries.get().findAny().isEmpty()) {
+            plugin.getHandler().send(sender, Messages.COMMAND_HELP_NO_PERMISSION);
+        } else {
+            filteredEntries.get().forEach((line) -> StringUtil.send(sender, line));
+        }
     }
 
 }

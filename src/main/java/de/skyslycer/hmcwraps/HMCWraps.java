@@ -154,8 +154,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                         Placeholder.parsed("argument", context.getParameter().getName())));
         commandHandler.disableStackTraceSanitizing();
         commandHandler.setHelpWriter(
-                (command, actor) -> getHandler().get(Messages.COMMAND_HELP_FORMAT).replace("<command>", command.getPath().toRealString())
-                        .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()));
+                (command, actor) -> command.getPermission().canExecute(actor) ? getHandler().get(Messages.COMMAND_HELP_FORMAT).replace("<command>", command.getPath().toRealString())
+                        .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : "");
         commandHandler.register(new WrapCommand(this));
         commandHandler.registerBrigadier();
     }

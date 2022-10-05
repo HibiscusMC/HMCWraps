@@ -67,7 +67,7 @@ public class MessageHandler implements IMessageHandler {
                 var split = line.split("=");
                 if (split.length > 1 && checkLines.stream().filter(it -> it.startsWith(split[0])).findFirst().isEmpty()) {
                     try {
-                        Files.writeString(path, line, StandardOpenOption.APPEND);
+                        Files.writeString(path, '\n' + line, StandardOpenOption.APPEND);
                     } catch (IOException exception) {
                         plugin.logSevere("Could not append the following line: \n" + line);
                         exception.printStackTrace();
