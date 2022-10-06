@@ -11,6 +11,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
@@ -19,6 +20,7 @@ import dev.triumphteam.gui.guis.BaseGui;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -77,18 +79,34 @@ public class Preview implements IPreview {
     }
 
     private void sendSpawnPacket() {
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
-                entityId,
-                UUID.randomUUID(),
-                EntityTypes.ARMOR_STAND,
-                VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
-                0f,
-                0f,
-                0f,
-                VectorUtils.zeroVector(),
-                List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
-                        new EntityData(5, EntityDataTypes.BOOLEAN, true))));
+        if (SpigotReflectionUtil.V_1_19_OR_HIGHER) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnEntity(entityId,
+                    Optional.of(UUID.randomUUID()),
+                    EntityTypes.ARMOR_STAND,
+                    VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
+                    0f,
+                    0f,
+                    0f,
+                    0,
+                    Optional.empty()));
+            PacketEvents.getAPI().getPlayerManager()
+                    .sendPacket(player, new WrapperPlayServerEntityMetadata(entityId, List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                            new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                            new EntityData(5, EntityDataTypes.BOOLEAN, true))));
+        } else {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
+                    entityId,
+                    UUID.randomUUID(),
+                    EntityTypes.ARMOR_STAND,
+                    VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
+                    0f,
+                    0f,
+                    0f,
+                    VectorUtils.zeroVector(),
+                    List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                            new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                            new EntityData(5, EntityDataTypes.BOOLEAN, true))));
+        }
     }
 
     private void sendMetadataPacket() {
