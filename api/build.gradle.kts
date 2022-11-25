@@ -2,7 +2,7 @@ plugins {
     java
     `maven-publish`
     kotlin("jvm") version "1.7.21"
-    id("org.jetbrains.dokka") version ("1.7.10")
+    id("org.jetbrains.dokka") version ("1.7.20")
 }
 
 group = "de.skyslycer.hmcwraps"
