@@ -19,15 +19,16 @@ import de.skyslycer.hmcwraps.util.VectorUtils;
 import dev.triumphteam.gui.guis.BaseGui;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Preview implements IPreview {
 
@@ -58,7 +59,7 @@ public class Preview implements IPreview {
         sendEquipPacket();
 
         task = Bukkit.getScheduler()
-                .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 0, 1);
+                .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 3, 1);
 
         cancelTask = Bukkit.getScheduler()
                 .runTaskLater(plugin, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
@@ -90,7 +91,8 @@ public class Preview implements IPreview {
                     0,
                     Optional.empty()));
             PacketEvents.getAPI().getPlayerManager()
-                    .sendPacket(player, new WrapperPlayServerEntityMetadata(entityId, List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                    .sendPacket(player, new WrapperPlayServerEntityMetadata(entityId,
+                            List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
                             new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
                             new EntityData(5, EntityDataTypes.BOOLEAN, true))));
         } else {

@@ -23,8 +23,8 @@ public class PlayerUtil {
      * @return The block the player is looking at
      */
     public static Location getLookBlock(Player player) {
-        var twoBlocks = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone().multiply(2)), player);
-        var oneBlock = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone()), player);
+        var twoBlocks = fixLocation(player.getEyeLocation().add(VectorUtils.getDirection(player.getLocation()).multiply(2)), player);
+        var oneBlock = fixLocation(player.getEyeLocation().add(VectorUtils.getDirection(player.getLocation())), player);
         if (oneBlock.getWorld().getBlockAt(oneBlock).getType() == Material.AIR) {
             if (twoBlocks.getWorld().getBlockAt(twoBlocks).getType() == Material.AIR) {
                 return twoBlocks;
