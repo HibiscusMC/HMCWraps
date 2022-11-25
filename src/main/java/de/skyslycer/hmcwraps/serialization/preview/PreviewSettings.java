@@ -8,6 +8,7 @@ public class PreviewSettings implements IPreviewSettings {
     private int duration;
     private int rotation;
     private SneakCancel sneakCancel;
+    private Bobbing bobbing;
 
     @Override
     public int getDuration() {
@@ -22,6 +23,11 @@ public class PreviewSettings implements IPreviewSettings {
     @Override
     public SneakCancel getSneakCancel() {
         return sneakCancel;
+    }
+
+    @Override
+    public IBobbing getBobbing() {
+        return bobbing;
     }
 
 }

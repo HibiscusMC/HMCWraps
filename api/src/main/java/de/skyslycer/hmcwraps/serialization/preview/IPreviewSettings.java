@@ -8,4 +8,6 @@ public interface IPreviewSettings {
 
     ISneakCancel getSneakCancel();
 
+    IBobbing getBobbing();
+
 }

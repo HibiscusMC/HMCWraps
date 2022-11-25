@@ -26,6 +26,14 @@ preview:
     enabled: true
     # If the configured message should be sent as an action bar while previewing
     action-bar: true
+  # Lets the preview item move up and down
+  bobbing:
+    # If the item should bob while previewing
+    enabled: true
+    # How fast it should bob up and down
+    speed: 5
+    # How far it should bob up and down
+    intensity: 0.25
 
 # The items with wraps
 items:

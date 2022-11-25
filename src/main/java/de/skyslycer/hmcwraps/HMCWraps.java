@@ -2,7 +2,6 @@ package de.skyslycer.hmcwraps;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.tchristofferson.configupdater.ConfigUpdater;
-import de.skyslycer.hmcwraps.circle.CircleManager;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
@@ -56,7 +55,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private final IWrapper wrapper = new Wrapper(this);
     private final IPreviewManager previewManager = new PreviewManager(this);
     private final ICollectionHelper collection = new CollectionHelper(this);
-    private final CircleManager circleManager = new CircleManager();
     private IConfig config;
     private IMessageHandler handler;
 
@@ -281,11 +279,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @NotNull
     public ICollectionHelper getCollection() {
         return collection;
-    }
-
-    @NotNull
-    public CircleManager getCircleManager() {
-        return circleManager;
     }
 
 }
