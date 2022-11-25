@@ -6,6 +6,10 @@ public interface IPreviewSettings {
 
     int getRotation();
 
+    int getBob();
+
+    double getBobHeightMultiplier();
+
     ISneakCancel getSneakCancel();
 
 }

@@ -59,7 +59,7 @@ public class Preview implements IPreview {
         sendEquipPacket();
 
         task = Bukkit.getScheduler()
-                .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 3, 1);
+                .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, PlayerUtil.getLookBlock(player), plugin), 3, 1);
 
         cancelTask = Bukkit.getScheduler()
                 .runTaskLater(plugin, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),

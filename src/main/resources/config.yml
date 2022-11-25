@@ -20,6 +20,10 @@ preview:
   duration: 5
   # Rotation per tick (50ms)
   rotation: 5
+  # bob interval per tick
+  bob: 5
+  # this value times the current sin value
+  bob-height-multiplier: 0.25
   # Sneak to cancel preview settings
   sneak-cancel:
     # If the preview should be cancelled when sneaking
