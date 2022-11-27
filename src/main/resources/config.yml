@@ -71,8 +71,8 @@ items:
           # Lore displayed
           lore:
             - '<green>Apply this to an item to wrap it!'
-  # Wraps for a 'DIAMOND_PICKAXE'
-  DIAMOND_PICKAXE:
+  # Wraps of every item in the 'PICKAXES' collection
+  PICKAXES:
     wraps:
       1:
         permission: 'hmcwraps.fire_pickaxe'
@@ -98,7 +98,6 @@ items:
         uuid: 'silver_sword'
         id: '2'
         name: '<aqua>Silver <gray>Wrap'
-        glow: true
         lore:
           - '<gray>Apply this wrap to make your sword look silver!'
         flags:
@@ -110,7 +109,6 @@ items:
         uuid: 'silver_pickaxe'
         id: '2'
         name: '<aqua>Silver <gray>Wrap'
-        glow: true
         lore:
           - '<gray>Apply this wrap to make your pickaxe look silver!'
         flags:
@@ -122,7 +120,6 @@ items:
         uuid: 'silver_axe'
         id: '1'
         name: '<aqua>Silver <gray>Wrap'
-        glow: true
         lore:
           - '<gray>Apply this wrap to make your axe look silver!'
         flags:
@@ -134,7 +131,6 @@ items:
         uuid: 'silver_shovel'
         id: '1'
         name: '<aqua>Silver <gray>Wrap'
-        glow: true
         lore:
           - '<gray>Apply this wrap to make your shovel look silver!'
         flags:
@@ -146,7 +142,6 @@ items:
         uuid: 'silver_hoe'
         id: '1'
         name: '<aqua>Silver <gray>Wrap'
-        glow: true
         lore:
           - '<gray>Apply this wrap to make your hoe look silver!'
         flags:
@@ -158,6 +153,11 @@ collections:
     - 'DIAMOND_SWORD'
     - 'IRON_SWORD'
     - 'STONE_SWORD'
+  PICKAXES:
+    - 'NETHERITE_PICKAXE'
+    - 'DIAMOND_PICKAXE'
+    - 'IRON_PICKAXE'
+    - 'STONE_PICKAXE'
 
 # The unwrapper configuration
 unwrapper:
