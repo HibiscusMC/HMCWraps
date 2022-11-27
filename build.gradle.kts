@@ -31,7 +31,6 @@ dependencies {
     implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
     implementation("com.github.Revxrsal.Lamp:common:3.1.0")
     implementation("com.github.Revxrsal.Lamp:bukkit:3.1.0")
-//    implementation("com.github.Revxrsal.Lamp:paper-internal-dont-use:3.1.0")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("dev.triumphteam:triumph-gui:3.1.3") {
         exclude("com.google.code.gson")

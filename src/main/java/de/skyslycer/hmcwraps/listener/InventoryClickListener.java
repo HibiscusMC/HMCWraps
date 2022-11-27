@@ -43,7 +43,7 @@ public class InventoryClickListener implements Listener {
 
         if (plugin.getWrapper().isUnwrapper(physical) && plugin.getWrapper().getWrap(target) != null) {
             event.setCurrentItem(plugin.getWrapper().removeWrap(target, player, true));
-            event.setCursor(cursor);
+            event.getWhoClicked().setItemOnCursor(cursor);
             event.setCancelled(true);
             return;
         }
@@ -58,12 +58,13 @@ public class InventoryClickListener implements Listener {
             return;
         }
         var finalCursor = cursor;
-        if (wrap.getPhysical().isPresent() && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissionSettings().isPermissionPhysical())) {
+        if (wrap.getPhysical().isPresent() && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissionSettings()
+                .isPermissionPhysical())) {
             for (IWrappableItem wrappableItem : plugin.getCollection().getItems(target.getType())) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), target, true,
                             player, true));
-                    event.setCursor(finalCursor);
+                    event.getWhoClicked().setItemOnCursor(finalCursor);
                     event.setCancelled(true);
                     return;
                 }

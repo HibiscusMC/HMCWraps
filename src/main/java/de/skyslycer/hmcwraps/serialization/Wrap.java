@@ -15,9 +15,8 @@ public class Wrap extends SerializableItem implements IWrap {
     private @Nullable PhysicalWrap physical;
 
     @Override
-    @Nullable
-    public String getPermission() {
-        return permission;
+    public Optional<String> getPermission() {
+        return Optional.ofNullable(permission);
     }
 
     @Override
@@ -37,10 +36,10 @@ public class Wrap extends SerializableItem implements IWrap {
 
     @Override
     public boolean hasPermission(CommandSender sender) {
-        if (getPermission() == null) {
+        if (getPermission().isEmpty()) {
             return true;
         }
-        return sender.hasPermission(getPermission());
+        return sender.hasPermission(getPermission().get());
     }
 
 }

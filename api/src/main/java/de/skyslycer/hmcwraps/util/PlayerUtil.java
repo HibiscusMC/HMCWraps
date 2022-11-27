@@ -9,6 +9,7 @@ public class PlayerUtil {
 
     /**
      * Give a player an item and drop what doesn't fit.
+     *
      * @param player The player
      * @param item The item to give
      */
@@ -19,12 +20,13 @@ public class PlayerUtil {
 
     /**
      * Get the block a player is looking at. Max distance is 2 blocks and min distance is 0 blocks.
+     *
      * @param player The player
      * @return The block the player is looking at
      */
     public static Location getLookBlock(Player player) {
-        var twoBlocks = fixLocation(player.getEyeLocation().add(VectorUtils.getDirection(player.getLocation()).multiply(2)), player);
-        var oneBlock = fixLocation(player.getEyeLocation().add(VectorUtils.getDirection(player.getLocation())), player);
+        var twoBlocks = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone().multiply(2)).subtract(0, 0.5, 0), player);
+        var oneBlock = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone()).subtract(0, 0.5, 0), player);
         if (oneBlock.getWorld().getBlockAt(oneBlock).getType() == Material.AIR) {
             if (twoBlocks.getWorld().getBlockAt(twoBlocks).getType() == Material.AIR) {
                 return twoBlocks;
@@ -36,6 +38,7 @@ public class PlayerUtil {
 
     /**
      * Get the block location on the opposite side of the player
+     *
      * @param player The player
      * @return The opposite location
      */
@@ -49,6 +52,7 @@ public class PlayerUtil {
 
     /**
      * Sets the Y-coordinate of the location to 1 higher than the players Y-level
+     *
      * @param location The location to edit
      * @param player The player
      * @return The changed location

@@ -3,12 +3,10 @@ package de.skyslycer.hmcwraps.serialization;
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
 import java.util.Optional;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.Nullable;
 
 public interface IWrap extends ISerializableItem {
 
-    @Nullable
-    String getPermission();
+    Optional<String> getPermission();
 
     String getUuid();
 
@@ -18,6 +16,7 @@ public interface IWrap extends ISerializableItem {
 
     /**
      * If the sender has permission to use this wrap.
+     *
      * @param sender The sender
      * @return If the sender has permission
      */

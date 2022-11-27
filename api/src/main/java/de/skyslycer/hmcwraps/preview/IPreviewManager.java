@@ -9,6 +9,7 @@ public interface IPreviewManager {
 
     /**
      * Remove and stop a preview.
+     *
      * @param uuid The UUID of the player
      * @param open If the inventory should open up again
      */
@@ -16,6 +17,7 @@ public interface IPreviewManager {
 
     /**
      * Create a preview.
+     *
      * @param player The player
      * @param item The item to preview
      * @param gui The GUI to open again
@@ -24,6 +26,7 @@ public interface IPreviewManager {
 
     /**
      * Remove and stop all running previews.
+     *
      * @param open If the inventory should open up again
      */
     void removeAll(boolean open);

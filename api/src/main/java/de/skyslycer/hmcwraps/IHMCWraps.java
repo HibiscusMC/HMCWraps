@@ -21,6 +21,7 @@ public interface IHMCWraps extends Plugin {
 
     /**
      * Load the plugin. Used for reload.
+     *
      * @return If the plugin was able to load
      */
     boolean load();
@@ -32,6 +33,7 @@ public interface IHMCWraps extends Plugin {
 
     /**
      * Get an item stack based on the input.
+     *
      * @param id The input
      * @return The item stack
      */
@@ -40,6 +42,7 @@ public interface IHMCWraps extends Plugin {
 
     /**
      * Get the model id corresponding to the input.
+     *
      * @param id The input
      * @return The model id, may return -1 when none is available
      */
@@ -47,48 +50,56 @@ public interface IHMCWraps extends Plugin {
 
     /**
      * Log an error that stands out from other system messages.
+     *
      * @param message The message to display
      */
     void logSevere(String message);
 
     /**
      * Get the amount of wraps currently configured.
+     *
      * @return The amount of wraps
      */
     int getWrapAmount();
 
     /**
      * Get the config.
+     *
      * @return The config
      */
     @NotNull IConfig getConfiguration();
 
     /**
      * Get the message handler.
+     *
      * @return The message handler
      */
     @NotNull IMessageHandler getHandler();
 
     /**
      * All wraps currently configured.
+     *
      * @return All wraps
      */
     @NotNull Map<String, IWrap> getWraps();
 
     /**
      * Get the wrapper.
+     *
      * @return The wrapper
      */
     @NotNull IWrapper getWrapper();
 
     /**
      * Get the preview manager.
+     *
      * @return The preview manager
      */
     @NotNull IPreviewManager getPreviewManager();
 
     /**
      * Get the collection helper.
+     *
      * @return The collection helper.
      */
     @NotNull ICollectionHelper getCollection();

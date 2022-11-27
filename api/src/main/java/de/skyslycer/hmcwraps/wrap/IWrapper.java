@@ -10,6 +10,7 @@ public interface IWrapper {
 
     /**
      * Check if the wrap was applied physically.
+     *
      * @param item The item
      * @return If the wrap was apllied physically
      */
@@ -17,6 +18,7 @@ public interface IWrapper {
 
     /**
      * Get the player UUID the wrap belongs to.
+     *
      * @param item The item
      * @return The player UUID
      */
@@ -25,6 +27,7 @@ public interface IWrapper {
 
     /**
      * Set the owning player.
+     *
      * @param item The item to set the owning player
      * @param uuid The UUID to set
      * @return The changed item
@@ -33,6 +36,7 @@ public interface IWrapper {
 
     /**
      * If the provided player is owning the wrap on the item.
+     *
      * @param item The item
      * @param player The wrap
      * @return If the wrap on the item belongs to the player
@@ -41,6 +45,7 @@ public interface IWrapper {
 
     /**
      * Get the wrap on an item.
+     *
      * @param item The item
      * @return The wrap
      */
@@ -48,8 +53,9 @@ public interface IWrapper {
     IWrap getWrap(ItemStack item);
 
     /**
-     * Wrap an item. If giveBack is true, the item is currently physically wrapped and the physical
-     * wrap was configured to give it back, it will also give the player the wrapper of the old wrap.
+     * Wrap an item. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
+     * give the player the wrapper of the old wrap.
+     *
      * @param modelId The model id of the wrap
      * @param wrapId The wrap id
      * @param target The item to apply the wrap to
@@ -61,8 +67,9 @@ public interface IWrapper {
     ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack);
 
     /**
-     * Remove a wrap. If giveBack is true, the item is currently physically wrapped and the physical
-     * wrap was configured to give it back, it will also give the player the wrapper of the old wrap.
+     * Remove a wrap. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
+     * give the player the wrapper of the old wrap.
+     *
      * @param itemStack The item to remove the wrap from
      * @param player The player
      * @param giveBack If the player should get his physical wrapper back
@@ -72,6 +79,7 @@ public interface IWrapper {
 
     /**
      * Set the item to be a physical unwrapper.
+     *
      * @param item The item to edit
      * @return The new unwrapper
      */
@@ -79,6 +87,7 @@ public interface IWrapper {
 
     /**
      * Set the item to be a physical wrapper.
+     *
      * @param item The item
      * @param wrapId The wrap the wrapper should give other items
      * @return The new wrapper
@@ -87,6 +96,7 @@ public interface IWrapper {
 
     /**
      * Check if the item is an unwrapper.
+     *
      * @param item The item
      * @return If the item is an unwrapper
      */
@@ -94,6 +104,7 @@ public interface IWrapper {
 
     /**
      * Get the ID from a wrapper.
+     *
      * @param item The item
      * @return THe wrapper ID
      */

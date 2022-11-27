@@ -38,6 +38,7 @@ public enum Messages {
 
     /**
      * Get the properties key based on an enum value.
+     *
      * @return The key
      */
     @NotNull

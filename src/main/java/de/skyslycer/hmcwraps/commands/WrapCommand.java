@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import revxrsal.commands.annotation.AutoComplete;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Default;
 import revxrsal.commands.annotation.Description;
@@ -61,6 +62,7 @@ public class WrapCommand {
     @Subcommand("set")
     @CommandPermission("hmcwraps.admin")
     @Description("Wrap the item a player is holding in his main hand.")
+    @AutoComplete("* @wraps")
     public void onSet(CommandSender sender, Player player, Wrap wrap) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
@@ -82,6 +84,7 @@ public class WrapCommand {
     @Subcommand("preview")
     @CommandPermission("hmcwraps.admin")
     @Description("Preview a wrap for the specified player.")
+    @AutoComplete("* @wraps")
     public void onPreview(CommandSender sender, Player player, Wrap wrap) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
@@ -111,6 +114,7 @@ public class WrapCommand {
     @Subcommand("give wrapper")
     @CommandPermission("hmcwraps.admin")
     @Description("Give a wrapper to a player.")
+    @AutoComplete("* @physicalWraps *")
     public void onGiveWrap(CommandSender sender, Player player, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical().isEmpty()) {
             plugin.getHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));

@@ -12,6 +12,7 @@ public class PermissionHelper {
 
     /**
      * Check if a player has the permission to use a wrap on an item based on the configuration.
+     *
      * @param plugin The plugin
      * @param wrap The wrap
      * @param item The item stack
@@ -30,10 +31,12 @@ public class PermissionHelper {
 
     /**
      * Check if the player has permission for the wrap on the item.
+     *
      * @param plugin The plugin
      * @param item The item
      * @param player The player
-     * @return If the player doesn't have the required permission, it returns the item but unwrapped, while it returns null when the player has permission
+     * @return If the player doesn't have the required permission, it returns the item but unwrapped, while it returns null when the player has
+     * permission
      */
     @Nullable
     public static ItemStack hasPermission(IHMCWraps plugin, ItemStack item, Player player) {
@@ -53,6 +56,7 @@ public class PermissionHelper {
 
     /**
      * Loops through a players inventory and unwraps items the player doesn't have access to
+     *
      * @param plugin The plugin
      * @param player The player
      */

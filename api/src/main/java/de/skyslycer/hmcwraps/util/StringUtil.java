@@ -19,6 +19,7 @@ public class StringUtil {
 
     /**
      * Parse MiniMessage from a string and replace placeholders.
+     *
      * @param message The string to parse
      * @param placeholders The placeholders
      * @return The parsed component
@@ -31,6 +32,7 @@ public class StringUtil {
 
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders.
+     *
      * @param sender The sender
      * @param message The string to parse
      * @param placeholders The placeholders
@@ -44,6 +46,7 @@ public class StringUtil {
 
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders and return a Spigot friendly component.
+     *
      * @param sender The sender
      * @param message The string to parse
      * @param placeholders The placeholders
@@ -55,6 +58,7 @@ public class StringUtil {
 
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders and send it to the sender.
+     *
      * @param sender The sender
      * @param message The string to parse
      * @param placeholders The placeholders
@@ -65,6 +69,7 @@ public class StringUtil {
 
     /**
      * Replace all PlaceholderAPI placeholders in a string.
+     *
      * @param sender The sender
      * @param string The string
      * @return A replaced string

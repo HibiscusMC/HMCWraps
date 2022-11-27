@@ -54,12 +54,12 @@ publishing {
         maven {
             authentication {
                 credentials(PasswordCredentials::class) {
-                    username = System.getenv("NEXUS_USERNAME")
-                    password = System.getenv("NEXUS_PASSWORD")
+                    username = System.getenv("REPO_USERNAME")
+                    password = System.getenv("REPO_PASSWORD")
                 }
             }
 
-            name = "SkyNexus"
+            name = "SkyRepository"
             url = uri(publishData.getRepository())
         }
     }
@@ -78,23 +78,26 @@ class PublishData(private val project: Project) {
         }
     }
 
-    private fun getCheckedOutGitCommitHash(): String = System.getenv("GITHUB_SHA")?.substring(0, hashLength) ?: "local"
+    private fun getCheckedOutGitCommitHash(): String =
+        System.getenv("GITHUB_SHA")?.substring(0, hashLength) ?: "local"
 
-    private fun getCheckedOutBranch(): String = System.getenv("GITHUB_REF")?.replace("refs/heads/", "") ?: "local"
+    private fun getCheckedOutBranch(): String =
+        System.getenv("GITHUB_REF")?.replace("refs/heads/", "") ?: "local"
 
     fun getVersion(): String = getVersion(false)
 
     fun getVersion(appendCommit: Boolean): String =
         type.append(getVersionString(), appendCommit, getCheckedOutGitCommitHash())
 
-    private fun getVersionString(): String = (project.version as String).replace("-SNAPSHOT", "").replace("-DEV", "")
+    private fun getVersionString(): String =
+        (project.version as String).replace("-SNAPSHOT", "").replace("-DEV", "")
 
     fun getRepository(): String = type.repo
 
     enum class Type(private val append: String, val repo: String, private val addCommit: Boolean) {
-        RELEASE("", "https://repo.skyslycer.de/repository/maven-releases/", false),
-        DEV("-DEV", "https://repo.skyslycer.de/repository/maven-dev/", true),
-        SNAPSHOT("-SNAPSHOT", "https://repo.skyslycer.de/repository/maven-snapshots/", true);
+        RELEASE("", "https://repo.skyslycer.de/releases/", false),
+        DEV("-DEV", "https://repo.skyslycer.de/development/", true),
+        SNAPSHOT("-SNAPSHOT", "https://repo.skyslycer.de/snapshots/", true);
 
         fun append(name: String, appendCommit: Boolean, commitHash: String): String =
             name.plus(append).plus(if (appendCommit && addCommit) "-".plus(commitHash) else "")

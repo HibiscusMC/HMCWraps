@@ -8,6 +8,7 @@ public interface ICollectionHelper {
 
     /**
      * Get all wraps for a material.
+     *
      * @param material The material to search for
      * @return A list of all wraps
      */
@@ -15,6 +16,7 @@ public interface ICollectionHelper {
 
     /**
      * Get all materials in a collection.
+     *
      * @param collection The collection
      * @return All materials in the collection
      */

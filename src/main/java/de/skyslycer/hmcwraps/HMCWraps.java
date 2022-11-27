@@ -31,13 +31,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import revxrsal.commands.autocomplete.SuggestionProvider;
+import revxrsal.commands.autocomplete.SuggestionProviderFactory;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitActor;
 import revxrsal.commands.bukkit.exception.SenderNotPlayerException;
@@ -47,6 +51,7 @@ import revxrsal.commands.exception.NoPermissionException;
 public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private static final YamlConfigurationLoader LOADER = YamlConfigurationLoader.builder()
+            .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
             .path(CONFIG_PATH)
             .build();
     private final Set<ItemHook> hooks = new HashSet<>();
@@ -142,7 +147,14 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             }
             return wrap;
         });
-        commandHandler.getAutoCompleter().registerParameterSuggestions(Wrap.class, SuggestionProvider.map(() -> getWraps().values(), IWrap::getUuid));
+        commandHandler.getAutoCompleter().registerSuggestionFactory(0,
+                SuggestionProviderFactory.forType(Player.class, SuggestionProvider.map(Bukkit::getOnlinePlayers, Player::getName)));
+        commandHandler.getAutoCompleter().registerParameterSuggestions(Integer.class, SuggestionProvider.of(IntStream.range(1, 65).boxed().map(
+                Object::toString).sorted().toList()));
+        commandHandler.getAutoCompleter().registerSuggestion("physicalWraps",
+                (args, sender, command) -> getWraps().values().stream().filter(wrap -> wrap.getPhysical().isPresent()).map(IWrap::getUuid).toList());
+        commandHandler.getAutoCompleter()
+                .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(IWrap::getUuid).toList()));
         commandHandler.registerExceptionHandler(NoPermissionException.class,
                 (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
@@ -152,7 +164,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                         Placeholder.parsed("argument", context.getParameter().getName())));
         commandHandler.disableStackTraceSanitizing();
         commandHandler.setHelpWriter(
-                (command, actor) -> command.getPermission().canExecute(actor) ? getHandler().get(Messages.COMMAND_HELP_FORMAT).replace("<command>", command.getPath().toRealString())
+                (command, actor) -> command.getPermission().canExecute(actor) ? getHandler().get(Messages.COMMAND_HELP_FORMAT)
+                        .replace("<command>", command.getPath().toRealString())
                         .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : "");
         commandHandler.register(new WrapCommand(this));
         commandHandler.registerBrigadier();

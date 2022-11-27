@@ -1,7 +1,7 @@
 name: Bug Report
 description: Create a bug report to help us keep track of all bugs that have to be fixed
 title: "[BUG] <title>"
-labels: [bug]
+labels: [ bug ]
 
 body:
   - type: "checkboxes"

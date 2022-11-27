@@ -10,12 +10,14 @@ public interface ItemHook {
 
     /**
      * Get the hook prefix.
+     *
      * @return The hook prefix
      */
     String getPrefix();
 
     /**
      * Get an item stack based on the input.
+     *
      * @param id The input
      * @return The item stack
      */
@@ -24,6 +26,7 @@ public interface ItemHook {
 
     /**
      * Get the model id corresponding to the input.
+     *
      * @param id The input
      * @return The model id
      */

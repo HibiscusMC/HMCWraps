@@ -69,13 +69,15 @@ public class Preview implements IPreview {
     public void cancel(boolean open) {
         task.cancel();
         cancelTask.cancel();
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
-        if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
-        }
         if (open && gui != null) {
             gui.open(player);
         }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
+            if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
+            }
+        }, 1L);
     }
 
     private void sendSpawnPacket() {
@@ -92,8 +94,8 @@ public class Preview implements IPreview {
             PacketEvents.getAPI().getPlayerManager()
                     .sendPacket(player, new WrapperPlayServerEntityMetadata(entityId,
                             List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                            new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
-                            new EntityData(5, EntityDataTypes.BOOLEAN, true))));
+                                    new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                                    new EntityData(5, EntityDataTypes.BOOLEAN, true))));
         } else {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
                     entityId,

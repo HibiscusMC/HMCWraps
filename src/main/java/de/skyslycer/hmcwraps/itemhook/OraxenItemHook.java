@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.itemhook;
 
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.api.OraxenItems;
 import org.bukkit.inventory.ItemStack;
 
 public class OraxenItemHook implements ItemHook {
