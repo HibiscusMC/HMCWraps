@@ -2,18 +2,13 @@ package de.skyslycer.hmcwraps.gui;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.inventory.InventoryType;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import java.util.stream.Collectors;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
@@ -58,16 +53,10 @@ public class GuiBuilder {
 
     private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, PaginatedGui gui) {
         plugin.getCollection().getItems(item.getType()).forEach(it -> it.getWraps().forEach((ignored, wrap) -> {
-            var builtItem = wrap.toItem(plugin, player);
-            builtItem.setType(item.getType());
-            var builder = ItemBuilder.from(builtItem);
-            if (wrap.getLore() != null) {
-                builder.lore(wrap.getLore().stream()
-                        .map(line -> StringUtil.parseComponent(player, line, available(wrap, player, plugin)))
-                        .collect(Collectors.toList()));
-            }
+            var wrapItem = wrap.toItem(plugin, player);
+            wrapItem.setType(item.getType());
 
-            GuiItem guiItem = new GuiItem(builder.build());
+            GuiItem guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
                 if (click.getClick() == ClickType.LEFT) {
                     if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissionSettings().isPermissionVirtual()) {
@@ -88,12 +77,6 @@ public class GuiBuilder {
             gui.addItem(guiItem);
         }));
         gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item));
-    }
-
-    private static Single available(IWrap wrap, Player player, HMCWraps plugin) {
-        return Placeholder.parsed("available",
-                wrap.hasPermission(player) ? plugin.getHandler().get(Messages.PLACEHOLDER_AVAILABLE)
-                        : plugin.getHandler().get(Messages.PLACEHOLDER_NOT_AVAILABLE));
     }
 
 }

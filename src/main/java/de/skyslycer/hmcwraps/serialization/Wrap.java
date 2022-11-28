@@ -57,11 +57,13 @@ public class Wrap extends SerializableItem implements IWrap {
     }
 
     @Override
+    @Nullable
     public String getName(Player player) {
         return !hasPermission(player) && getLockedName() != null ? getLockedName() : getName();
     }
 
     @Override
+    @Nullable
     public List<String> getLore(Player player) {
         return !hasPermission(player) && getLockedLore() != null ? getLockedLore() : getLore();
     }
