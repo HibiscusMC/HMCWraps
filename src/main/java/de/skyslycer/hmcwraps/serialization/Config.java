@@ -14,18 +14,13 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class Config implements IConfig {
 
-    private boolean openShortcut;
     private PermissionSettings permissionSettings;
     private PreviewSettings preview;
     private Inventory inventory;
     private SerializableItem unwrapper;
+    private ModelIdSettings modelIdSettings;
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
-
-    @Override
-    public boolean isOpenShortcut() {
-        return openShortcut;
-    }
 
     @Override
     public IInventory getInventory() {
@@ -56,4 +51,10 @@ public class Config implements IConfig {
     public IPermissionSettings getPermissionSettings() {
         return permissionSettings;
     }
+
+    @Override
+    public IModelIdSettings getModelIdSettings() {
+        return modelIdSettings;
+    }
+
 }

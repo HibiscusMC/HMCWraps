@@ -6,6 +6,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class Inventory implements IInventory {
 
+    private boolean openShortcut;
     private String title;
     private InventoryType type;
     private int rows;
@@ -35,6 +36,11 @@ public class Inventory implements IInventory {
     @Override
     public InventoryType getType() {
         return type;
+    }
+
+    @Override
+    public boolean isOpenShortcut() {
+        return openShortcut;
     }
 
 }

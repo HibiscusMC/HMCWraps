@@ -8,8 +8,6 @@ import java.util.Map;
 
 public interface IConfig {
 
-    boolean isOpenShortcut();
-
     IInventory getInventory();
 
     ISerializableItem getUnwrapper();
@@ -21,5 +19,7 @@ public interface IConfig {
     Map<String, List<String>> getCollections();
 
     IPermissionSettings getPermissionSettings();
+
+    IModelIdSettings getModelIdSettings();
 
 }

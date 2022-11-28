@@ -111,4 +111,7 @@ public interface IWrapper {
     @Nullable
     String getWrapper(ItemStack item);
 
+    int getOriginalModelId(ItemStack item);
+
+    ItemStack setOriginalModelId(ItemStack item, int originalModelid);
 }

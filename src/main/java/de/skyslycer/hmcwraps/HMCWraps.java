@@ -192,7 +192,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             if (!Files.exists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
-            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections");
+            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections", "model-id-settings.default-model-ids");
             config = LOADER.load().get(Config.class);
         } catch (IOException exception) {
             logSevere(

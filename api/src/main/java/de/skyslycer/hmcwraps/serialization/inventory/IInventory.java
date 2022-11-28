@@ -4,6 +4,8 @@ import java.util.Map;
 
 public interface IInventory {
 
+    boolean isOpenShortcut();
+
     String getTitle();
 
     int getRows();
