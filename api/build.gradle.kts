@@ -26,7 +26,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("dev.triumphteam:triumph-gui:3.1.3")
     compileOnly("net.kyori:adventure-api:4.11.0")
-    compileOnly("net.kyori:adventure-text-minimessage:4.11.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.1.2")
     compileOnly("org.jetbrains:annotations:23.0.0")
 }
