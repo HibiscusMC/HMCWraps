@@ -50,11 +50,16 @@ items:
         id: '1'
         # The name in the wraps inventory
         name: '<red>Fire <gray>Wrap'
-        # If it should glow in the wraps inventory (nullable)
-        glow: true
+        # The name in the wraps inventory, if the player doesn't have the permission above (nullable)
+        locked-name: '<red><bold>Locked!'
         # The lore in the wraps inventory (nullable)
         lore:
           - '<gray>Apply this wrap to make your sword look fire!'
+        # The lore in the wraps inventory, if the player doesn't have the permission above (nullable)
+        locked-lore:
+          - '<gray>You need to buy this item in our <red>store<gray>!'
+        # If it should glow in the wraps inventory (nullable)
+        glow: true
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
@@ -79,9 +84,9 @@ items:
         uuid: 'fire_pickaxe'
         id: '1'
         name: '<red>Fire <gray>Wrap'
-        glow: true
         lore:
           - '<gray>Apply this wrap to make your pickaxe look fire!'
+        glow: true
         flags:
           - 'HIDE_ATTRIBUTES'
         physical:

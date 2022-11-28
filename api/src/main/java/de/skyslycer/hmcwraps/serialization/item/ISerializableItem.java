@@ -14,15 +14,20 @@ public interface ISerializableItem {
 
     String getId();
 
+    int getModelId();
+
     String getName();
+
+    String getName(Player player);
 
     @Nullable
     List<String> getLore();
 
     @Nullable
-    List<String> getFlags();
+    List<String> getLore(Player player);
 
-    int getModelId();
+    @Nullable
+    List<String> getFlags();
 
     @Nullable
     Map<String, Integer> getEnchantments();

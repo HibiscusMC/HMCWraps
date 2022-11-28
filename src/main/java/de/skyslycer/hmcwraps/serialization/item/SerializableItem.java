@@ -7,7 +7,6 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -42,14 +41,13 @@ public class SerializableItem implements ISerializableItem {
         }
 
         ItemBuilder builder = ItemBuilder.from(origin);
-        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
+        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName(player)))
                 .amount(getAmount() == null ? 1 : getAmount())
                 .model(getModelId());
 
         if (getLore() != null) {
-            builder.lore(getLore().stream()
-                    .map(it -> player == null ? StringUtil.parseComponent(it) : StringUtil.parseComponent(player, it))
-                    .collect(Collectors.toList()));
+            builder.lore(player == null ? getLore().stream().map(StringUtil::parseComponent).toList()
+                    : getLore(player).stream().map(string -> StringUtil.parseComponent(player, string)).toList());
         }
         if (getFlags() != null) {
             List<ItemFlag> parsed = Arrays.asList(ItemFlag.values());
@@ -75,8 +73,19 @@ public class SerializableItem implements ISerializableItem {
     }
 
     @Override
+    public String getName(Player player) {
+        return name;
+    }
+
+    @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    @Nullable
+    public List<String> getLore(Player player) {
+        return lore;
     }
 
     @Override
