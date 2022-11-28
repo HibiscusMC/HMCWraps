@@ -26,7 +26,7 @@ dependencies {
     implementation(project(":api"))
     implementation("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
-    implementation("net.kyori:adventure-text-minimessage:4.11.0")
+    implementation("net.kyori:adventure-text-minimessage:4.12.0")
     implementation("net.kyori:adventure-platform-bukkit:4.1.2")
     implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
     implementation("com.github.Revxrsal.Lamp:common:3.1.0")
