@@ -1,4 +1,4 @@
-name: Publish to Nexus
+name: Publish to Skyslycer Repository
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: 16
+          java-version: 17
       - name: Build with Gradle
         run: ./gradlew api:clean api:build --no-daemon --stacktrace
       - name: Publish to Nexus
