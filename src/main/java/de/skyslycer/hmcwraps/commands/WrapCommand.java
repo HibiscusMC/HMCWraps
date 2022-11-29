@@ -8,10 +8,15 @@ import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -134,6 +139,39 @@ public class WrapCommand {
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setUnwrapper(item));
         plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_UNWRAPPER);
+    }
+
+    @Subcommand("list")
+    @CommandPermission("hmcwraps.admin")
+    @Description("Shows all wraps and collections configured.")
+    public void onList(CommandSender sender) {
+        var handler = plugin.getHandler();
+        var set = new HashSet<Component>();
+        set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_HEADER)));
+        set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS)));
+        plugin.getConfiguration().getCollections().forEach((key, list) -> {
+            set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", key)));
+            list.forEach(entry -> set.add(
+                    StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS_FORMAT), Placeholder.parsed("value", entry))));
+        });
+        set.add(Component.newline());
+        set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
+        plugin.getConfiguration().getItems().forEach((material, wraps) -> {
+            set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
+            wraps.getWraps().forEach((uuid, wrap) -> {
+                var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission().orElse("None")),
+                        Placeholder.parsed("modelid", String.valueOf(wrap.getModelId())),
+                        Placeholder.parsed("player", sender instanceof Player player ? player.getName() : " "),
+                        Placeholder.parsed("physical", String.valueOf(wrap.getPhysical().isPresent())),
+                        Placeholder.parsed("preview", String.valueOf(wrap.isPreview())));
+                set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS_FORMAT), placeholders.toArray(Single[]::new)));
+            });
+        });
+        var component = Component.empty();
+        for (Component entry : set) {
+            component = component.append(entry).append(Component.newline());
+        }
+        sender.spigot().sendMessage(BungeeComponentSerializer.get().serialize(component));
     }
 
     @Subcommand("help")

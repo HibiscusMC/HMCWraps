@@ -26,7 +26,13 @@ public enum Messages {
     COMMAND_PREVIEW_CREATED("command.preview-created"),
     COMMAND_HELP_HEADER("command.help.header"),
     COMMAND_HELP_FORMAT("command.help.format"),
-    COMMAND_HELP_NO_PERMISSION("command.help.no-permission");
+    COMMAND_HELP_NO_PERMISSION("command.help.no-permission"),
+    COMMAND_LIST_HEADER("command.list.header"),
+    COMMAND_LIST_COLLECTIONS("command.list.collections"),
+    COMMAND_LIST_WRAPS("command.list.wraps"),
+    COMMAND_LIST_COLLECTIONS_FORMAT("command.list.collections-format"),
+    COMMAND_LIST_WRAPS_FORMAT("command.list.wraps-format"),
+    COMMAND_LIST_KEY_FORMAT("command.list.key-format");
 
     private final String key;
 
