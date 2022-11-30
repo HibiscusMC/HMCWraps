@@ -98,7 +98,8 @@ public class Wrapper implements IWrapper {
 
     @Override
     public ItemStack removeWrap(ItemStack item, Player player, boolean giveBack) {
-        if (getWrap(item) == null) {
+        var currentWrap = getWrapper(item);
+        if (currentWrap == null || currentWrap.equals("-")) {
             return item;
         }
         return setWrap(getOriginalModelId(item), "-", item, false, player, giveBack);
