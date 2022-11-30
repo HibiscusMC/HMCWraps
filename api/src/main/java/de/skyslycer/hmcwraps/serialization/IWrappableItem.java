@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface IWrappableItem {
 
-    Map<String, ? extends IWrap> getWraps();
+    Map<String, IWrap> getWraps();
 
 }

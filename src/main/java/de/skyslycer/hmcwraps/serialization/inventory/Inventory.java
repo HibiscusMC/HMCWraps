@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.serialization.inventory;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -29,8 +30,8 @@ public class Inventory implements IInventory {
     }
 
     @Override
-    public Map<Integer, ? extends IInventoryItem> getItems() {
-        return items;
+    public Map<Integer, IInventoryItem> getItems() {
+        return new HashMap<>(items);
     }
 
     @Override

@@ -93,7 +93,7 @@ public class WrapCommand {
     public void onPreview(CommandSender sender, Player player, Wrap wrap) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
-        for (Map.Entry<String, ? extends IWrappableItem> entry : plugin.getConfiguration().getItems().entrySet()) {
+        for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
             currentCollection = entry.getKey();
             if (entry.getValue().getWraps().containsValue(wrap)) {
                 break;
@@ -156,7 +156,7 @@ public class WrapCommand {
         });
         set.add(Component.newline());
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
-        plugin.getConfiguration().getItems().forEach((material, wraps) -> {
+        plugin.getWrappableItems().forEach((material, wraps) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
             wraps.getWraps().forEach((uuid, wrap) -> {
                 var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission().orElse("None")),

@@ -12,7 +12,7 @@ public interface IInventory {
 
     int getTargetItemSlot();
 
-    Map<Integer, ? extends IInventoryItem> getItems();
+    Map<Integer, IInventoryItem> getItems();
 
     InventoryType getType();
 

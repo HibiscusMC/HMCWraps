@@ -18,12 +18,12 @@ public class CollectionHelper implements ICollectionHelper {
     public List<IWrappableItem> getItems(Material material) {
         var configuration = plugin.getConfiguration();
         var list = new ArrayList<IWrappableItem>();
-        if (configuration.getItems().containsKey(material.toString())) {
-            list.add(configuration.getItems().get(material.toString()));
+        if (plugin.getWrappableItems().containsKey(material.toString())) {
+            list.add(plugin.getWrappableItems().get(material.toString()));
         }
         configuration.getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
-            if (configuration.getItems().containsKey(it.getKey())) {
-                list.add(configuration.getItems().get(it.getKey()));
+            if (plugin.getWrappableItems().containsKey(it.getKey())) {
+                list.add(plugin.getWrappableItems().get(it.getKey()));
             }
         });
         return list;

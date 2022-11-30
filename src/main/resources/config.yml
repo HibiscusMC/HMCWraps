@@ -33,6 +33,7 @@ preview:
     intensity: 0.25
 
 # The items with wraps
+# You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
 items:
   # Wraps of every item in the 'SWORDS' collection
   SWORDS:
@@ -93,61 +94,6 @@ items:
           keep-after-unwrap: true
           lore:
             - '<green>Apply this to an item to wrap it!'
-  IRON_SWORD:
-    wraps:
-      1:
-        permission: 'hmcwraps.silver_sword'
-        uuid: 'silver_sword'
-        id: '2'
-        name: '<aqua>Silver <gray>Wrap'
-        lore:
-          - '<gray>Apply this wrap to make your sword look silver!'
-        flags:
-          - 'HIDE_ATTRIBUTES'
-  IRON_PICKAXE:
-    wraps:
-      1:
-        permission: 'hmcwraps.silver_pickaxe'
-        uuid: 'silver_pickaxe'
-        id: '2'
-        name: '<aqua>Silver <gray>Wrap'
-        lore:
-          - '<gray>Apply this wrap to make your pickaxe look silver!'
-        flags:
-          - 'HIDE_ATTRIBUTES'
-  IRON_AXE:
-    wraps:
-      1:
-        permission: 'hmcwraps.silver_axe'
-        uuid: 'silver_axe'
-        id: '1'
-        name: '<aqua>Silver <gray>Wrap'
-        lore:
-          - '<gray>Apply this wrap to make your axe look silver!'
-        flags:
-          - 'HIDE_ATTRIBUTES'
-  IRON_SHOVEL:
-    wraps:
-      1:
-        permission: 'hmcwraps.silver_shovel'
-        uuid: 'silver_shovel'
-        id: '1'
-        name: '<aqua>Silver <gray>Wrap'
-        lore:
-          - '<gray>Apply this wrap to make your shovel look silver!'
-        flags:
-          - 'HIDE_ATTRIBUTES'
-  IRON_HOE:
-    wraps:
-      1:
-        permission: 'hmcwraps.silver_hoe'
-        uuid: 'silver_hoe'
-        id: '1'
-        name: '<aqua>Silver <gray>Wrap'
-        lore:
-          - '<gray>Apply this wrap to make your hoe look silver!'
-        flags:
-          - 'HIDE_ATTRIBUTES'
 
 collections:
   SWORDS:

@@ -33,8 +33,8 @@ public class Config implements IConfig {
     }
 
     @Override
-    public Map<String, ? extends IWrappableItem> getItems() {
-        return items;
+    public Map<String, IWrappableItem> getItems() {
+        return new HashMap<>(items);
     }
 
     @Override

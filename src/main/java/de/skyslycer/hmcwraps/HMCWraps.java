@@ -18,8 +18,10 @@ import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.IConfig;
 import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.IWrapFile;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.Wrap;
+import de.skyslycer.hmcwraps.serialization.WrapFile;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
@@ -27,17 +29,20 @@ import de.skyslycer.hmcwraps.wrap.Wrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import revxrsal.commands.autocomplete.SuggestionProvider;
@@ -56,6 +61,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             .build();
     private final Set<ItemHook> hooks = new HashSet<>();
     private final Map<String, IWrap> wraps = new HashMap<>();
+    private final Map<String, IWrappableItem> wrappableItems = new HashMap<>();
+    private final Set<IWrapFile> wrapFiles = new HashSet<>();
     private final Set<String> loadedHooks = new HashSet<>();
     private final IWrapper wrapper = new Wrapper(this);
     private final IPreviewManager previewManager = new PreviewManager(this);
@@ -122,8 +129,18 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             return false;
         }
 
-        getConfiguration().getItems()
-                .forEach((ignored, wrappableItem) -> wrappableItem.getWraps().forEach((id, wrap) -> wraps.put(wrap.getUuid(), wrap)));
+        wrappableItems.putAll(getConfiguration().getItems());
+        wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
+            if (wrappableItems.containsKey(type)) {
+                var current = wrappableItems.get(type);
+                current.getWraps().putAll(wrappableItem.getWraps());
+                wrappableItems.put(type, current);
+            } else {
+                wrappableItems.put(type, wrappableItem);
+            }
+        }));
+        wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
+
         wraps.remove("-");
         getPreviewManager().removeAll(true);
         return true;
@@ -133,6 +150,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     public void unload() {
         hooks.clear();
         wraps.clear();
+        wrappableItems.clear();
+        wrapFiles.clear();
     }
 
     private void registerCommands() {
@@ -189,11 +208,17 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private boolean loadConfig() {
         try {
+            if (!Files.exists(WRAP_FILES_PATH)) {
+                Files.createDirectory(WRAP_FILES_PATH);
+            }
             if (!Files.exists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
+                Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
             }
-            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections", "model-id-settings.default-model-ids");
+            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
+                    "model-id-settings.default-model-ids");
             config = LOADER.load().get(Config.class);
+            loadWrapFiles();
         } catch (IOException exception) {
             logSevere(
                     "Could not load the configuration (please report this to the developers)! The plugin will shut down now.");
@@ -201,6 +226,29 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             return false;
         }
         return true;
+    }
+
+    private void loadWrapFiles() {
+        try (Stream<Path> paths = Files.find(WRAP_FILES_PATH, 10,
+                ((path, attributes) -> attributes.isRegularFile() && (path.endsWith(".yml") || path.endsWith(".yaml"))))) {
+            paths.forEach(path -> {
+                try {
+                    var wrapFile = YamlConfigurationLoader.builder()
+                            .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
+                            .path(path)
+                            .build().load().get(WrapFile.class);
+                    wrapFiles.add(wrapFile);
+                } catch (ConfigurateException exception) {
+                    logSevere(
+                            "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!");
+                    exception.printStackTrace();
+                }
+            });
+        } catch (IOException exception) {
+            logSevere(
+                    "Could not find the wrap files (please report this to the developers)!");
+            exception.printStackTrace();
+        }
     }
 
     private boolean checkDependency(String name, boolean needed) {
@@ -252,7 +300,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @Override
     public int getWrapAmount() {
         int count = 0;
-        for (IWrappableItem item : getConfiguration().getItems().values()) {
+        for (IWrappableItem item : getWrappableItems().values()) {
             count += item.getWraps().size();
         }
         return count;
@@ -274,6 +322,18 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @NotNull
     public Map<String, IWrap> getWraps() {
         return wraps;
+    }
+
+    @Override
+    @NotNull
+    public Set<IWrapFile> getWrapFiles() {
+        return wrapFiles;
+    }
+
+    @Override
+    @NotNull
+    public Map<String, IWrappableItem> getWrappableItems() {
+        return wrappableItems;
     }
 
     @Override

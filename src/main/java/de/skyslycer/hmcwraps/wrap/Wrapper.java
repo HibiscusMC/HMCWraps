@@ -71,8 +71,7 @@ public class Wrapper implements IWrapper {
 
     @Override
     public IWrap getWrap(ItemStack item) {
-        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        var data = container.get(wrapKey, PersistentDataType.STRING);
+        var data = getWrapper(item);
         if (data == null) {
             return null;
         }
@@ -99,6 +98,9 @@ public class Wrapper implements IWrapper {
 
     @Override
     public ItemStack removeWrap(ItemStack item, Player player, boolean giveBack) {
+        if (getWrap(item) == null) {
+            return item;
+        }
         return setWrap(getOriginalModelId(item), "-", item, false, player, giveBack);
     }
 
@@ -145,7 +147,7 @@ public class Wrapper implements IWrapper {
             return 0;
         }
         if (plugin.getConfiguration().getModelIdSettings().isOriginalModelIdsEnabled()) {
-            var data =  meta.getPersistentDataContainer().get(wrapperKey, PersistentDataType.INTEGER);
+            var data =  meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
             if (data != null) {
                 return data;
             }
@@ -168,7 +170,7 @@ public class Wrapper implements IWrapper {
     public ItemStack setOriginalModelId(ItemStack item, int originalModelid) {
         var editing = item.clone();
         var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(wrapperKey, PersistentDataType.INTEGER, originalModelid);
+        meta.getPersistentDataContainer().set(originalModelIdKey, PersistentDataType.INTEGER, originalModelid);
         editing.setItemMeta(meta);
         return editing;
     }

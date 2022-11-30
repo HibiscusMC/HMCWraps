@@ -4,10 +4,13 @@ import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.serialization.IConfig;
 import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.IWrapFile;
+import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Set;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +20,7 @@ public interface IHMCWraps extends Plugin {
 
     Path PLUGIN_PATH = Path.of("plugins", "HMCWraps");
     Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");
+    Path WRAP_FILES_PATH = PLUGIN_PATH.resolve("wraps");
     Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
 
     /**
@@ -82,6 +86,22 @@ public interface IHMCWraps extends Plugin {
      * @return All wraps
      */
     @NotNull Map<String, IWrap> getWraps();
+
+    /**
+     * All wrap files currently loaded.
+     * NOTE: This also contains disabled wrap files, you have to filter for enabled ones yourself.
+     *
+     * @return All currently loaded wrap files
+     */
+    @NotNull Set<IWrapFile> getWrapFiles();
+
+    /**
+     * All currently loadedwrappable items.
+     * This map contains all wraps that can be applied to a particular material/collection.
+     *
+     * @return All currently loaded wrappable items
+     */
+    @NotNull Map<String, IWrappableItem> getWrappableItems();
 
     /**
      * Get the wrapper.

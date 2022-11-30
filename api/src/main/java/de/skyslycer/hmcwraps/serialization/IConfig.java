@@ -12,7 +12,7 @@ public interface IConfig {
 
     ISerializableItem getUnwrapper();
 
-    Map<String, ? extends IWrappableItem> getItems();
+    Map<String, IWrappableItem> getItems();
 
     IPreviewSettings getPreview();
 

@@ -26,7 +26,7 @@ public class PlayerInteractListener implements Listener {
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
                 || plugin.getCollection().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
-                || !plugin.getConfiguration().isOpenShortcut()) {
+                || !plugin.getConfiguration().getInventory().isOpenShortcut()) {
             return;
         }
         event.setCancelled(true);
