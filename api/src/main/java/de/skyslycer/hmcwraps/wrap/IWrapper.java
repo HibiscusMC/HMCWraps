@@ -9,14 +9,6 @@ import org.jetbrains.annotations.Nullable;
 public interface IWrapper {
 
     /**
-     * Check if the wrap was applied physically.
-     *
-     * @param item The item
-     * @return If the wrap was apllied physically
-     */
-    boolean isPhysical(ItemStack item);
-
-    /**
      * Get the player UUID the wrap belongs to.
      *
      * @param item The item
@@ -26,15 +18,6 @@ public interface IWrapper {
     UUID getOwningPlayer(ItemStack item);
 
     /**
-     * Set the owning player.
-     *
-     * @param item The item to set the owning player
-     * @param uuid The UUID to set
-     * @return The changed item
-     */
-    ItemStack setOwningPlayer(ItemStack item, UUID uuid);
-
-    /**
      * If the provided player is owning the wrap on the item.
      *
      * @param item The item
@@ -42,6 +25,15 @@ public interface IWrapper {
      * @return If the wrap on the item belongs to the player
      */
     boolean isOwningPlayer(ItemStack item, Player player);
+
+    /**
+     * Set the owning player.
+     *
+     * @param item The item to set the owning player
+     * @param uuid The UUID to set
+     * @return The changed item
+     */
+    ItemStack setOwningPlayer(ItemStack item, UUID uuid);
 
     /**
      * Get the wrap on an item.
@@ -93,29 +85,20 @@ public interface IWrapper {
     ItemStack removeWrap(ItemStack itemStack, Player player, boolean giveBack);
 
     /**
-     * Set the item to be a physical unwrapper.
-     *
-     * @param item The item to edit
-     * @return The new unwrapper
-     */
-    ItemStack setUnwrapper(ItemStack item);
-
-    /**
-     * Set the item to be a physical wrapper.
-     *
-     * @param item The item
-     * @param wrapId The wrap the wrapper should give other items
-     * @return The new wrapper
-     */
-    ItemStack setWrapper(ItemStack item, String wrapId);
-
-    /**
      * Check if the item is an unwrapper.
      *
      * @param item The item
      * @return If the item is an unwrapper
      */
-    boolean isUnwrapper(ItemStack item);
+    boolean isPhysicalUnwrapper(ItemStack item);
+
+    /**
+     * Set the item to be a physical unwrapper.
+     *
+     * @param item The item to edit
+     * @return The new unwrapper
+     */
+    ItemStack setPhysicalUnwrapper(ItemStack item);
 
     /**
      * Get the ID from a wrapper.
@@ -124,9 +107,51 @@ public interface IWrapper {
      * @return THe wrapper ID
      */
     @Nullable
-    String getWrapper(ItemStack item);
+    String getPhysicalWrapper(ItemStack item);
 
+    /**
+     * Set the item to be a physical wrapper.
+     *
+     * @param item The item
+     * @param wrapId The wrap the wrapper should give other items
+     * @return The new wrapper
+     */
+    ItemStack setPhysicalWrapper(ItemStack item, String wrapId);
+
+    /**
+     * Get the saved model id of the item.
+     * If the item doesn't have a saved model id, or it's disabled, it will use the default model id.
+     * If that is disabled, or it doesn't exist, it will return -1;
+     *
+     * @param item The item
+     * @return The model id
+     */
     int getOriginalModelId(ItemStack item);
 
+    /**
+     * Set the saved model id of the item.
+     *
+     * @param item The item
+     * @param originalModelid The model id
+     * @return The changed item
+     */
     ItemStack setOriginalModelId(ItemStack item, int originalModelid);
+
+    /**
+     * Set if the wrap was applied physically.
+     *
+     * @param item The item
+     * @param physical If the wrap was applied physically
+     * @return The changed item
+     */
+    ItemStack setPhysical(ItemStack item, boolean physical);
+
+    /**
+     * Check if the wrap was applied physically.
+     *
+     * @param item The item
+     * @return If the wrap was apllied physically
+     */
+    boolean isPhysical(ItemStack item);
+
 }

@@ -127,7 +127,7 @@ public class WrapCommand {
         }
         var item = wrap.getPhysical().get().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
-        PlayerUtil.give(player, plugin.getWrapper().setWrapper(item, wrap.getUuid()));
+        PlayerUtil.give(player, plugin.getWrapper().setPhysicalWrapper(item, wrap.getUuid()));
         plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
     }
 
@@ -137,7 +137,7 @@ public class WrapCommand {
     public void onGiveUnwrapper(CommandSender sender, Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
-        PlayerUtil.give(player, plugin.getWrapper().setUnwrapper(item));
+        PlayerUtil.give(player, plugin.getWrapper().setPhysicalUnwrapper(item));
         plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_UNWRAPPER);
     }
 
@@ -154,7 +154,6 @@ public class WrapCommand {
             list.forEach(entry -> set.add(
                     StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS_FORMAT), Placeholder.parsed("value", entry))));
         });
-        set.add(Component.newline());
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
         plugin.getWrappableItems().forEach((material, wraps) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
