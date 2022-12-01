@@ -15,19 +15,19 @@ public class Wrapper implements IWrapper {
     private final HMCWraps plugin;
 
     private final NamespacedKey physicalKey;
-    private final NamespacedKey wrapKey;
+    private final NamespacedKey wrapIdKey;
     private final NamespacedKey playerKey;
-    private final NamespacedKey unwrapperKey;
-    private final NamespacedKey wrapperKey;
+    private final NamespacedKey physicalUnwrapperKe;
+    private final NamespacedKey physicalWrapperKey;
     private final NamespacedKey originalModelIdKey;
 
     public Wrapper(HMCWraps plugin) {
         this.plugin = plugin;
         physicalKey = new NamespacedKey(plugin, "wrap-physical");
-        wrapKey = new NamespacedKey(plugin, "wrap-id");
+        wrapIdKey = new NamespacedKey(plugin, "wrap-id");
         playerKey = new NamespacedKey(plugin, "wrap-player");
-        unwrapperKey = new NamespacedKey(plugin, "unwrapper");
-        wrapperKey = new NamespacedKey(plugin, "wrapper");
+        physicalUnwrapperKey = new NamespacedKey(plugin, "unwrapper");
+        physicalWrapperKey = new NamespacedKey(plugin, "wrapper");
         originalModelIdKey = new NamespacedKey(plugin, "original-model-id");
     }
 
@@ -71,15 +71,16 @@ public class Wrapper implements IWrapper {
 
     @Override
     public IWrap getWrap(ItemStack item) {
-        var data = getWrapper(item);
-        if (data == null) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var data = container.get(wrapIdKey, PersistentDataType.STRING);
+        if (data == null || data.equals("-")) {
             return null;
         }
         return plugin.getWraps().get(data);
     }
 
     @Override
-    public ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack) {
+    public ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack, boolean unwrap) {
         var editing = target.clone();
         var currentWrap = getWrap(editing);
         if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical().isPresent() && currentWrap.getPhysical().get().isKeepAfterUnwrap()
@@ -89,27 +90,34 @@ public class Wrapper implements IWrapper {
         var meta = editing.getItemMeta();
         var originalModelId = meta.getCustomModelData();
         meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, (byte) (physical ? 1 : 0));
-        meta.getPersistentDataContainer().set(wrapKey, PersistentDataType.STRING, wrapId);
+        meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrapId);
         meta.setCustomModelData(modelId);
-        var updated = setOriginalModelId(editing, originalModelId);
-        updated.setItemMeta(meta);
-        return updated;
+        editing.setItemMeta(meta);
+        if (unwrap) {
+            return editing;
+        }
+        return setOriginalModelId(editing, originalModelId);
+    }
+
+    @Override
+    public ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack) {
+        return setWrap(modelId, wrapId, target, physical, player, giveBack, false)
     }
 
     @Override
     public ItemStack removeWrap(ItemStack item, Player player, boolean giveBack) {
-        var currentWrap = getWrapper(item);
-        if (currentWrap == null || currentWrap.equals("-")) {
+        var currentWrap = getWrap(item);
+        if (currentWrap == null) {
             return item;
         }
-        return setWrap(getOriginalModelId(item), "-", item, false, player, giveBack);
+        return setWrap(getOriginalModelId(item), "-", item, false, player, giveBack, true);
     }
 
     @Override
     public ItemStack setUnwrapper(ItemStack item) {
         var editing = item.clone();
         var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(unwrapperKey, PersistentDataType.BYTE, (byte) 1);
+        meta.getPersistentDataContainer().set(physicalUnwrapperKey, PersistentDataType.BYTE, (byte) 1);
         editing.setItemMeta(meta);
         return editing;
     }
@@ -118,7 +126,7 @@ public class Wrapper implements IWrapper {
     public ItemStack setWrapper(ItemStack item, String wrapId) {
         var editing = item.clone();
         var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(wrapperKey, PersistentDataType.STRING, wrapId);
+        meta.getPersistentDataContainer().set(physicalWrapperKey, PersistentDataType.STRING, wrapId);
         editing.setItemMeta(meta);
         return editing;
     }
@@ -129,7 +137,7 @@ public class Wrapper implements IWrapper {
         if (meta == null) {
             return false;
         }
-        return meta.getPersistentDataContainer().has(unwrapperKey, PersistentDataType.BYTE);
+        return meta.getPersistentDataContainer().has(physicalUnwrapperKey, PersistentDataType.BYTE);
     }
 
     @Override
@@ -138,7 +146,7 @@ public class Wrapper implements IWrapper {
         if (meta == null) {
             return null;
         }
-        return meta.getPersistentDataContainer().get(wrapperKey, PersistentDataType.STRING);
+        return meta.getPersistentDataContainer().get(physicalWrapperKey, PersistentDataType.STRING);
     }
 
     @Override

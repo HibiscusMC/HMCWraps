@@ -62,6 +62,21 @@ public interface IWrapper {
      * @param physical If the wrap was added physically
      * @param player The player
      * @param giveBack If the player should get his physical wrapper back
+     * @param unwrap If the action is an unwrap and if so, won't change the original model id
+     * @return The newly wrapped item
+     */
+    ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack, boolean unwrap);
+
+    /**
+     * The same as @see IWrapper#setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack, boolean unwrap) the original method,
+     * except that the last parameter (unwrap) is set to false. Good for everything not including an unwrap.
+     *
+     * @param modelId The model id of the wrap
+     * @param wrapId The wrap id
+     * @param target The item to apply the wrap to
+     * @param physical If the wrap was added physically
+     * @param player The player
+     * @param giveBack If the player should get his physical wrapper back
      * @return The newly wrapped item
      */
     ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack);
