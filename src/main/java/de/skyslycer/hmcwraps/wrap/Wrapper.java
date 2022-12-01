@@ -88,10 +88,11 @@ public class Wrapper implements IWrapper {
             PlayerUtil.give(player, setWrapper(currentWrap.getPhysical().get().toItem(plugin, player), currentWrap.getUuid()));
         }
         var meta = editing.getItemMeta();
-        var originalModelId = 1;
+        var originalModelId = 0;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
-        }        meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, (byte) (physical ? 1 : 0));
+        }
+        meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, (byte) (physical ? 1 : 0));
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrapId);
         meta.setCustomModelData(modelId);
         editing.setItemMeta(meta);
