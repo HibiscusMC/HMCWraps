@@ -101,7 +101,7 @@ public class Wrapper implements IWrapper {
 
     @Override
     public ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack) {
-        return setWrap(modelId, wrapId, target, physical, player, giveBack, false)
+        return setWrap(modelId, wrapId, target, physical, player, giveBack, false);
     }
 
     @Override
