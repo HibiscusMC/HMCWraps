@@ -17,7 +17,7 @@ public class Wrapper implements IWrapper {
     private final NamespacedKey physicalKey;
     private final NamespacedKey wrapIdKey;
     private final NamespacedKey playerKey;
-    private final NamespacedKey physicalUnwrapperKe;
+    private final NamespacedKey physicalUnwrapperKey;
     private final NamespacedKey physicalWrapperKey;
     private final NamespacedKey originalModelIdKey;
 
