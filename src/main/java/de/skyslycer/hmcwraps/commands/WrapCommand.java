@@ -8,6 +8,8 @@ import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +148,7 @@ public class WrapCommand {
     @Description("Shows all wraps and collections configured.")
     public void onList(CommandSender sender) {
         var handler = plugin.getHandler();
-        var set = new HashSet<Component>();
+        var set = new ArrayList<Component>();
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_HEADER)));
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS)));
         plugin.getConfiguration().getCollections().forEach((key, list) -> {
@@ -158,7 +160,8 @@ public class WrapCommand {
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
         plugin.getWrappableItems().forEach((material, wraps) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
-            wraps.getWraps().forEach((uuid, wrap) -> {
+            wraps.getWraps().forEach((ignored, wrap) -> {
+                var uuid = wrap.getUuid();
                 var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission().orElse("None")),
                         Placeholder.parsed("modelid", String.valueOf(wrap.getModelId())),
                         Placeholder.parsed("player", sender instanceof Player player ? player.getName() : " "),
