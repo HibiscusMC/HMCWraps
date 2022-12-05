@@ -68,7 +68,7 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Wrap the item a player is holding in his main hand.")
     @AutoComplete("* @wraps")
-    public void onSet(CommandSender sender, Player player, Wrap wrap) {
+    public void onSet(CommandSender sender, Wrap wrap, @Default("self") Player player) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -90,7 +90,7 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Preview a wrap for the specified player.")
     @AutoComplete("* @wraps")
-    public void onPreview(CommandSender sender, Player player, Wrap wrap) {
+    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
         for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
@@ -120,7 +120,7 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Give a wrapper to a player.")
     @AutoComplete("* @physicalWraps *")
-    public void onGiveWrap(CommandSender sender, Player player, Wrap wrap, @Range(min = 1, max = 64) @Optional Integer amount) {
+    public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical().isEmpty()) {
             plugin.getHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
@@ -134,7 +134,7 @@ public class WrapCommand {
     @Subcommand("give unwrapper")
     @CommandPermission("hmcwraps.admin")
     @Description("Give an unwrapper to a player.")
-    public void onGiveUnwrapper(CommandSender sender, Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
+    public void onGiveUnwrapper(CommandSender sender, @Default("self") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setPhysicalUnwrapper(item));
