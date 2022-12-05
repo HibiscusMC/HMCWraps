@@ -4,6 +4,8 @@ import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.preservation.IPreservationSettings;
+import de.skyslycer.hmcwraps.serialization.preservation.PreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preview.IPreviewSettings;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
 import java.util.HashMap;
@@ -18,7 +20,7 @@ public class Config implements IConfig {
     private PreviewSettings preview;
     private Inventory inventory;
     private SerializableItem unwrapper;
-    private ModelIdSettings modelIdSettings;
+    private PreservationSettings preservation;
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
 
@@ -53,8 +55,8 @@ public class Config implements IConfig {
     }
 
     @Override
-    public IModelIdSettings getModelIdSettings() {
-        return modelIdSettings;
+    public IPreservationSettings getPreservation() {
+        return preservation;
     }
 
 }

@@ -1,8 +1,10 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.util.StringUtil;
 import java.util.List;
 import java.util.Optional;
+import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +15,7 @@ public class Wrap extends SerializableItem implements IWrap {
 
     private Boolean preview = true;
     private String uuid;
+    private @Nullable String color;
     private @Nullable PhysicalWrap physical;
     private @Nullable String permission;
     private @Nullable String lockedName;
@@ -58,6 +61,12 @@ public class Wrap extends SerializableItem implements IWrap {
 
     @Override
     @Nullable
+    public Color getColor() {
+        return StringUtil.colorFromString(color);
+    }
+
+    @Override
+    @Nullable
     public String getName(Player player) {
         return !hasPermission(player) && getLockedName() != null ? getLockedName() : getName();
     }
@@ -66,6 +75,28 @@ public class Wrap extends SerializableItem implements IWrap {
     @Nullable
     public List<String> getLore(Player player) {
         return !hasPermission(player) && getLockedLore() != null ? getLockedLore() : getLore();
+    }
+
+    public static class WrapValues implements IWrapValues {
+
+        private final int modelId;
+        private Color color;
+
+        public WrapValues(int modelId, @Nullable Color color) {
+            this.modelId = modelId;
+            this.color = color;
+        }
+
+        @Override
+        public int getModelId() {
+            return modelId;
+        }
+
+        @Override
+        public Color getColor() {
+            return color;
+        }
+
     }
 
 }

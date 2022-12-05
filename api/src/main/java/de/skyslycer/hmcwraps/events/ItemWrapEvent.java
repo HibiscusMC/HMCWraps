@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.events;
 
+import de.skyslycer.hmcwraps.serialization.IWrap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -13,16 +14,14 @@ public class ItemWrapEvent extends Event implements Cancellable {
 
     boolean isCancelled = false;
 
-    private int modelId;
-    private String wrapId;
+    private IWrap wrap;
     private Player player;
     private ItemStack item;
     private boolean physical;
     private boolean giveBack;
 
-    public ItemWrapEvent(Integer modelId, String wrapId, ItemStack item, boolean physical, Player player, boolean giveBack) {
-        this.modelId = modelId;
-        this.wrapId = wrapId;
+    public ItemWrapEvent(IWrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
+        this.wrap = wrap;
         this.item = item;
         this.physical = physical;
         this.player = player;
@@ -45,12 +44,8 @@ public class ItemWrapEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
-    public int getModelId() {
-        return modelId;
-    }
-
-    public String getWrapId() {
-        return wrapId;
+    public IWrap getWrap() {
+        return wrap;
     }
 
     public Player getPlayer() {
@@ -69,12 +64,8 @@ public class ItemWrapEvent extends Event implements Cancellable {
         return giveBack;
     }
 
-    public void setModelId(int modelId) {
-        this.modelId = modelId;
-    }
-
-    public void setWrapId(String wrapId) {
-        this.wrapId = wrapId;
+    public void setWrap(IWrap wrap) {
+        this.wrap = wrap;
     }
 
     public void setPlayer(Player player) {

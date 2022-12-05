@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
+import de.skyslycer.hmcwraps.serialization.preservation.IPreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preview.IPreviewSettings;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,6 @@ public interface IConfig {
 
     IPermissionSettings getPermissionSettings();
 
-    IModelIdSettings getModelIdSettings();
+    IPreservationSettings getPreservation();
 
 }

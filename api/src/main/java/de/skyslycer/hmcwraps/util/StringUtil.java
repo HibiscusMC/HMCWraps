@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.util;
 
+import java.util.Arrays;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -10,8 +11,10 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class StringUtil {
 
@@ -79,6 +82,30 @@ public class StringUtil {
             return PlaceholderAPI.setPlaceholders(player, string);
         }
         return string;
+    }
+
+    /**
+     * Parse a color from a string.
+     * Formats: #RRGGBB; R,G,B
+     *
+     * @param color The string
+     * @return The color
+     */
+    @Nullable
+    public static Color colorFromString(@Nullable String color) {
+        if (color == null) {
+            return null;
+        }
+        try {
+            return Color.fromRGB(java.awt.Color.decode(color.startsWith("#") ? color : "#" + color).getRGB());
+        } catch (NumberFormatException invalidHex) {
+            try {
+                var rgbValues = Arrays.stream(color.split(",")).map(Integer::parseInt).toArray(Integer[]::new);
+                return Color.fromRGB(rgbValues[0], rgbValues[1], rgbValues[2]);
+            } catch (Exception invalidRgb) {
+                return null;
+            }
+        }
     }
 
 }

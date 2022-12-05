@@ -46,6 +46,8 @@ items:
         uuid: 'fire_sword'
         # Either custom model id or a hook to get the custom model id
         id: '1'
+        # The color of the item (this won't do anything now because this isn't dye able) (nullable, just here for demonstration)
+        color: '#ffffff'
         # The name in the wraps inventory
         name: '<red>Fire <gray>Wrap'
         # The name in the wraps inventory, if the player doesn't have the permission above (nullable)
@@ -122,18 +124,27 @@ unwrapper:
 
 # Settings for model id preservation
 model-id-settings:
-  # If the model id should be restored after it gets unwrapped from before the item got wrapped
-  # NOTE: If there is an original model id stored on the item, that will get preferred over original model ids
-  # NOTE: Disabling both options will result in all items ending up with the model id '0' when unwrapped
-  original-model-ids-enabled: false
-  # If the model id should be set to the id below when the item is unwrapped
-  default-model-ids-enabled: true
-  # The default model ids for items that get unwrapped
-  default-model-ids:
-    # Every item in the 'PICKAXES' collection will end up with the model id 0 after getting unwrapped
-    PICKAXES: 0
-    # Iron shovels will end up with the model id 0 after getting unwrapped
-    IRON_SHOVEL: 0
+
+
+preservation:
+  model-id:
+    # If the model id should be restored after it gets unwrapped from before the item got wrapped
+    # NOTE: If there is an original model id stored on the item, that will get preferred over original model ids
+    # NOTE: Disabling both options will result in all items ending up with the model id '0' when unwrapped
+    originalEnabled: false
+    # If the model id should be set to the id below when the item is unwrapped
+    defaultEnabled: false
+    # The default model ids for items that get unwrapped
+    defaults:
+      # Every item in the 'PICKAXES' collection will end up with the model id 0 after getting unwrapped
+      PICKAXES: 0
+      # Iron shovels will end up with the model id 0 after getting unwrapped
+      IRON_SHOVEL: 0
+  # Basically the same as model-id preservation, but with the color
+  color:
+    originalEnabled: false
+    defaultEnabled: false
+    defaults: {}
 
 # The inventory (/wraps)
 inventory:

@@ -63,7 +63,7 @@ public class GuiBuilder {
                         plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
-                    player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), item, false, player, true));
+                    player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
                     plugin.getHandler().send(player, Messages.APPLY_WRAP);
                     player.getOpenInventory().close();
                 } else if (click.getClick() == ClickType.RIGHT) {

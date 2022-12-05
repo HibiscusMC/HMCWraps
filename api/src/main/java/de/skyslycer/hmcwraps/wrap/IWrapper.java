@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.IWrapValues;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,30 +49,14 @@ public interface IWrapper {
      * Wrap an item. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
      * give the player the wrapper of the old wrap.
      *
-     * @param modelId The model id of the wrap
-     * @param wrapId The wrap id
-     * @param target The item to apply the wrap to
-     * @param physical If the wrap was added physically
-     * @param player The player
-     * @param giveBack If the player should get his physical wrapper back
-     * @param unwrap If the action is an unwrap and if so, won't change the original model id
-     * @return The newly wrapped item
-     */
-    ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack, boolean unwrap);
-
-    /**
-     * The same as @see IWrapper#setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack, boolean unwrap) the original method,
-     * except that the last parameter (unwrap) is set to false. Good for everything not including an unwrap.
-     *
-     * @param modelId The model id of the wrap
-     * @param wrapId The wrap id
+     * @param wrap The wrap to apply, if null, the item will be unwrapped
      * @param target The item to apply the wrap to
      * @param physical If the wrap was added physically
      * @param player The player
      * @param giveBack If the player should get his physical wrapper back
      * @return The newly wrapped item
      */
-    ItemStack setWrap(Integer modelId, String wrapId, ItemStack target, boolean physical, Player player, boolean giveBack);
+    ItemStack setWrap(IWrap wrap, ItemStack target, boolean physical, Player player, boolean giveBack);
 
     /**
      * Remove a wrap. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
@@ -113,10 +98,10 @@ public interface IWrapper {
      * Set the item to be a physical wrapper.
      *
      * @param item The item
-     * @param wrapId The wrap the wrapper should give other items
+     * @param wrap The wrap the wrapper should give other items
      * @return The new wrapper
      */
-    ItemStack setPhysicalWrapper(ItemStack item, String wrapId);
+    ItemStack setPhysicalWrapper(ItemStack item, IWrap wrap);
 
     /**
      * Get the saved model id of the item.
@@ -126,16 +111,15 @@ public interface IWrapper {
      * @param item The item
      * @return The model id
      */
-    int getOriginalModelId(ItemStack item);
+    IWrapValues getOriginalData(ItemStack item);
 
     /**
      * Set the saved model id of the item.
      *
-     * @param item The item
-     * @param originalModelid The model id
+     * @param wrapValues All values to set
      * @return The changed item
      */
-    ItemStack setOriginalModelId(ItemStack item, int originalModelid);
+    ItemStack setOriginalData(ItemStack item, IWrapValues wrapValues);
 
     /**
      * Set if the wrap was applied physically.
@@ -150,7 +134,7 @@ public interface IWrapper {
      * Check if the wrap was applied physically.
      *
      * @param item The item
-     * @return If the wrap was apllied physically
+     * @return If the wrap was applied physically
      */
     boolean isPhysical(ItemStack item);
 

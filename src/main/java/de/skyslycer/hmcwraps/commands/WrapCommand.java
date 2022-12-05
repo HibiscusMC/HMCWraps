@@ -76,7 +76,7 @@ public class WrapCommand {
         }
         for (IWrappableItem wrappableItem : plugin.getCollection().getItems(item.getType())) {
             if (wrappableItem.getWraps().containsValue(wrap)) {
-                item = plugin.getWrapper().setWrap(wrap.getModelId(), wrap.getUuid(), item, false, player, true);
+                item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
                 player.getInventory().setItemInMainHand(item);
                 plugin.getHandler().send(sender, Messages.COMMAND_WRAP_APPLIED);
@@ -127,7 +127,7 @@ public class WrapCommand {
         }
         var item = wrap.getPhysical().get().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
-        PlayerUtil.give(player, plugin.getWrapper().setPhysicalWrapper(item, wrap.getUuid()));
+        PlayerUtil.give(player, plugin.getWrapper().setPhysicalWrapper(item, wrap));
         plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
     }
 
