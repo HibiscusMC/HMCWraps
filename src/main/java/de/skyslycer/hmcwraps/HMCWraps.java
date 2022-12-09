@@ -13,6 +13,7 @@ import de.skyslycer.hmcwraps.listener.PlayerShiftListener;
 import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.placeholderapi.HMCWrapsPlaceholders;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
@@ -79,6 +80,14 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     public void onEnable() {
+        checkDependency("PlaceholderAPI", false);
+        if (checkDependency("ItemsAdder", false)) {
+            hooks.add(new ItemsAdderItemHook());
+        }
+        if (checkDependency("Oraxen", false)) {
+            hooks.add(new OraxenItemHook());
+        }
+
         if (!load()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -94,6 +103,10 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         registerCommands();
 
         new PluginMetrics(this).init();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new HMCWrapsPlaceholders(this).register();
+        }
     }
 
     @Override
@@ -104,14 +117,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     public boolean load() {
-        checkDependency("PlaceholderAPI", false);
-        if (checkDependency("ItemsAdder", false)) {
-            hooks.add(new ItemsAdderItemHook());
-        }
-        if (checkDependency("Oraxen", false)) {
-            hooks.add(new OraxenItemHook());
-        }
-
         if (!Files.exists(PLUGIN_PATH)) {
             try {
                 Files.createDirectory(PLUGIN_PATH);
