@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps;
 
+import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.serialization.IConfig;
@@ -78,7 +79,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The message handler
      */
-    @NotNull IMessageHandler getHandler();
+    @NotNull IMessageHandler getMessageHandler();
 
     /**
      * All wraps currently configured.
@@ -122,6 +123,13 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The collection helper.
      */
-    @NotNull ICollectionHelper getCollection();
+    @NotNull ICollectionHelper getCollectionHelper();
+
+    /**
+     * Get the action handler.
+     *
+     * @return The action handler
+     */
+    @NotNull IActionHandler getActionHandler();
 
 }

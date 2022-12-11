@@ -6,7 +6,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 
-public enum Action {
+public enum InventoryAction {
 
     SCROLL_FORTH,
     SCROLL_BACK,
@@ -23,16 +23,20 @@ public enum Action {
      * @param action The action to add
      * @param plugin The plugin
      */
-    public static void add(GuiItem item, PaginatedGui gui, Action action, IHMCWraps plugin) {
+    public static void add(GuiItem item, PaginatedGui gui, InventoryAction action, IHMCWraps plugin) {
         switch (action) {
             case SCROLL_FORTH, NEXT_PAGE -> item.setAction(event -> gui.next());
             case SCROLL_BACK, PREVIOUS_PAGE -> item.setAction(event -> gui.previous());
             case CLOSE -> item.setAction(event -> event.getWhoClicked().closeInventory());
             case UNWRAP -> item.setAction(event -> {
+                var wrap = plugin.getWrapper().getWrap(event.getWhoClicked().getInventory().getItemInMainHand());
                 event.getWhoClicked().getInventory().setItemInMainHand(plugin.getWrapper().removeWrap(
                         event.getWhoClicked().getInventory().getItemInMainHand(), (Player) event.getWhoClicked(), true));
                 event.getWhoClicked().getOpenInventory().close();
-                plugin.getHandler().send(event.getWhoClicked(), Messages.REMOVE_WRAP);
+                plugin.getMessageHandler().send(event.getWhoClicked(), Messages.REMOVE_WRAP);
+                if (wrap != null) {
+                    plugin.getActionHandler().pushUnwrap(wrap, (Player) event.getWhoClicked());
+                }
             });
         }
     }

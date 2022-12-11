@@ -21,7 +21,7 @@ public enum Messages {
     COMMAND_RELOAD("command.reload"),
     COMMAND_NEED_ITEM("command.need-item"),
     COMMAND_ITEM_NOT_FOR_WRAP("command.item-not-for-wrap"),
-    COMMAND_WRAP_APPLIED("command.wrap-applied"),
+    COMMAND_WRAP_WRAPPED("command.wrap.wrapped"),
     COMMAND_NO_MATCHING_ITEM("command.no-matching-item"),
     COMMAND_PREVIEW_CREATED("command.preview-created"),
     COMMAND_HELP_HEADER("command.help.header"),
@@ -32,7 +32,9 @@ public enum Messages {
     COMMAND_LIST_WRAPS("command.list.wraps"),
     COMMAND_LIST_COLLECTIONS_FORMAT("command.list.collections-format"),
     COMMAND_LIST_WRAPS_FORMAT("command.list.wraps-format"),
-    COMMAND_LIST_KEY_FORMAT("command.list.key-format");
+    COMMAND_LIST_KEY_FORMAT("command.list.key-format"),
+    COMMAND_ITEM_NOT_WRAPPED("command.item-not-wrapped"),
+    COMMAND_UNWRAP_UNWRAPPED("command.unwrap.unwrapped");
 
     private final String key;
 

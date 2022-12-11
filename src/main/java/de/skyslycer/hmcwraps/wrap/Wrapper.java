@@ -178,7 +178,7 @@ public class Wrapper implements IWrapper {
                 modelData = Integer.parseInt(map.get(item.getType().toString()));
             }
             for (String key : map.keySet()) {
-                if (plugin.getCollection().getMaterials(key).contains(item.getType())) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
                     modelData = Integer.parseInt(map.get(key));
                 }
             }
@@ -201,7 +201,7 @@ public class Wrapper implements IWrapper {
                 color = StringUtil.colorFromString(map.get(item.getType().toString()));
             }
             for (String key : map.keySet()) {
-                if (plugin.getCollection().getMaterials(key).contains(item.getType())) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
                     color = StringUtil.colorFromString(map.get(key));
                 }
             }

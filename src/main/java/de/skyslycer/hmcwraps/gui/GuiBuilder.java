@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps.gui;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
+import de.skyslycer.hmcwraps.serialization.inventory.InventoryAction;
 import de.skyslycer.hmcwraps.serialization.inventory.InventoryType;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.components.ScrollType;
@@ -39,7 +40,7 @@ public class GuiBuilder {
             ItemStack stack = serializableItem.toItem(plugin, player);
             GuiItem guiItem = new GuiItem(stack);
             if (serializableItem.getAction() != null) {
-                de.skyslycer.hmcwraps.serialization.inventory.Action.add(guiItem, gui, serializableItem.getAction(),
+                InventoryAction.add(guiItem, gui, serializableItem.getAction(),
                         plugin);
             }
             gui.setItem(inventorySlot, guiItem);
@@ -52,7 +53,7 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, PaginatedGui gui) {
-        plugin.getCollection().getItems(item.getType()).forEach(it -> it.getWraps().forEach((ignored, wrap) -> {
+        plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps().forEach((ignored, wrap) -> {
             var wrapItem = wrap.toItem(plugin, player);
             wrapItem.setType(item.getType());
 
@@ -60,18 +61,20 @@ public class GuiBuilder {
             guiItem.setAction(click -> {
                 if (click.getClick() == ClickType.LEFT) {
                     if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissionSettings().isPermissionVirtual()) {
-                        plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+                        plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
                     player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
-                    plugin.getHandler().send(player, Messages.APPLY_WRAP);
+                    plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
+                    plugin.getActionHandler().pushWrap(wrap, player);
                     player.getOpenInventory().close();
                 } else if (click.getClick() == ClickType.RIGHT) {
                     if (!wrap.isPreview()) {
-                        plugin.getHandler().send(player, Messages.PREVIEW_DISABLED);
+                        plugin.getMessageHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
                     plugin.getPreviewManager().create(player, guiItem.getItemStack(), gui);
+                    plugin.getActionHandler().pushPreview(wrap, player);
                 }
             });
             gui.addItem(guiItem);

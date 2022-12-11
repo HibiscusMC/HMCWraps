@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.tchristofferson.configupdater.ConfigUpdater;
+import de.skyslycer.hmcwraps.actions.ActionHandler;
+import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
@@ -67,9 +69,10 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private final Set<String> loadedHooks = new HashSet<>();
     private final IWrapper wrapper = new Wrapper(this);
     private final IPreviewManager previewManager = new PreviewManager(this);
-    private final ICollectionHelper collection = new CollectionHelper(this);
+    private final ICollectionHelper collectionHelper = new CollectionHelper(this);
+    private final IActionHandler actionHandler = new ActionHandler();
     private IConfig config;
-    private IMessageHandler handler;
+    private IMessageHandler messageHandler;
 
     @Override
     public void onLoad() {
@@ -121,8 +124,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             try {
                 Files.createDirectory(PLUGIN_PATH);
             } catch (IOException exception) {
-                logSevere(
-                        "Could not create the folder (please report this to the developers)! The plugin will shut down now.");
+                logSevere("Could not create the folder (please report this to the developers)! The plugin will shut down now.");
                 exception.printStackTrace();
                 return false;
             }
@@ -165,7 +167,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         commandHandler.registerValueResolver(Wrap.class, context -> {
             var wrap = (Wrap) getWraps().get(context.pop());
             if (wrap == null) {
-                getHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
+                getMessageHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
                         Placeholder.parsed("uuid", context.pop()));
                 throw new IllegalArgumentException();
             }
@@ -180,15 +182,15 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         commandHandler.getAutoCompleter()
                 .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(IWrap::getUuid).toList()));
         commandHandler.registerExceptionHandler(NoPermissionException.class,
-                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
+                (actor, context) -> getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
-                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
+                (actor, context) -> getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
         commandHandler.registerExceptionHandler(MissingArgumentException.class,
-                (actor, context) -> getHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_MISSING_ARGUMENT,
+                (actor, context) -> getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_MISSING_ARGUMENT,
                         Placeholder.parsed("argument", context.getParameter().getName())));
         commandHandler.disableStackTraceSanitizing();
         commandHandler.setHelpWriter(
-                (command, actor) -> command.getPermission().canExecute(actor) ? getHandler().get(Messages.COMMAND_HELP_FORMAT)
+                (command, actor) -> command.getPermission().canExecute(actor) ? getMessageHandler().get(Messages.COMMAND_HELP_FORMAT)
                         .replace("<command>", command.getPath().toRealString())
                         .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : "");
         commandHandler.register(new WrapCommand(this));
@@ -206,9 +208,9 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             exception.printStackTrace();
             return false;
         }
-        handler = new MessageHandler(this);
-        handler.update(MESSAGES_PATH);
-        return handler.load(MESSAGES_PATH);
+        messageHandler = new MessageHandler(this);
+        messageHandler.update(MESSAGES_PATH);
+        return messageHandler.load(MESSAGES_PATH);
     }
 
     private boolean loadConfig() {
@@ -319,8 +321,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     @NotNull
-    public IMessageHandler getHandler() {
-        return handler;
+    public IMessageHandler getMessageHandler() {
+        return messageHandler;
     }
 
     @Override
@@ -355,8 +357,14 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     @NotNull
-    public ICollectionHelper getCollection() {
-        return collection;
+    public ICollectionHelper getCollectionHelper() {
+        return collectionHelper;
+    }
+
+    @Override
+    @NotNull
+    public IActionHandler getActionHandler() {
+        return actionHandler;
     }
 
 }

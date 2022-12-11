@@ -77,7 +77,7 @@ public class StringUtil {
      * @param string The string
      * @return A replaced string
      */
-    private static String replacePlaceholders(CommandSender sender, String string) {
+    public static String replacePlaceholders(CommandSender sender, String string) {
         if (sender instanceof Player player && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             return PlaceholderAPI.setPlaceholders(player, string);
         }

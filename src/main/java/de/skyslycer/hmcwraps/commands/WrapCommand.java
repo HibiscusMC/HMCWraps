@@ -45,11 +45,11 @@ public class WrapCommand {
     public void onWraps(Player player) {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR) {
-            plugin.getHandler().send(player, Messages.NO_ITEM);
+            plugin.getMessageHandler().send(player, Messages.NO_ITEM);
             return;
         }
-        if (plugin.getCollection().getItems(item.getType()).isEmpty()) {
-            plugin.getHandler().send(player, Messages.NO_WRAPS);
+        if (plugin.getCollectionHelper().getItems(item.getType()).isEmpty()) {
+            plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             return;
         }
         GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand(), EquipmentSlot.HAND);
@@ -61,29 +61,55 @@ public class WrapCommand {
     public void onReload(CommandSender sender) {
         plugin.unload();
         plugin.load();
-        plugin.getHandler().send(sender, Messages.COMMAND_RELOAD);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD);
     }
 
-    @Subcommand("set")
+    @Subcommand("wrap")
     @CommandPermission("hmcwraps.admin")
-    @Description("Wrap the item a player is holding in his main hand.")
-    @AutoComplete("* @wraps")
-    public void onSet(CommandSender sender, Wrap wrap, @Default("self") Player player) {
+    @Description("Wrap the item a player is holding in their main hand.")
+    @AutoComplete("* @wraps * *")
+    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional Boolean actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
-            plugin.getHandler().send(sender, Messages.COMMAND_NEED_ITEM);
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
             return;
         }
-        for (IWrappableItem wrappableItem : plugin.getCollection().getItems(item.getType())) {
+        for (IWrappableItem wrappableItem : plugin.getCollectionHelper().getItems(item.getType())) {
             if (wrappableItem.getWraps().containsValue(wrap)) {
                 item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
                 player.getInventory().setItemInMainHand(item);
-                plugin.getHandler().send(sender, Messages.COMMAND_WRAP_APPLIED);
+                if (actions != null && actions) {
+                    plugin.getActionHandler().pushWrap(wrap, player);
+                }
+                plugin.getMessageHandler().send(sender, Messages.COMMAND_WRAP_WRAPPED);
                 return;
             }
         }
-        plugin.getHandler().send(sender, Messages.COMMAND_ITEM_NOT_FOR_WRAP);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_ITEM_NOT_FOR_WRAP);
+    }
+
+    @Subcommand("unwrap")
+    @CommandPermission("hmcwraps.admin")
+    @Description("Unwrap the item a player is holding in their main hand.")
+    @AutoComplete("@players *")
+    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional Boolean actions) {
+        var item = player.getInventory().getItemInMainHand().clone();
+        if (item.getType() == Material.AIR) {
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
+            return;
+        }
+        var wrap = plugin.getWrapper().getWrap(item);
+        if (wrap == null) {
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_ITEM_NOT_WRAPPED);
+            return;
+        }
+        item = plugin.getWrapper().removeWrap(item, player, true);
+        player.getInventory().setItemInMainHand(item);
+        if (actions != null && actions) {
+            plugin.getActionHandler().pushUnwrap(wrap, player);
+        }
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_UNWRAP_UNWRAPPED);
     }
 
     @Subcommand("preview")
@@ -100,20 +126,20 @@ public class WrapCommand {
             }
         }
         if (currentCollection.equals("")) {
-            plugin.getHandler().send(sender, Messages.COMMAND_INVALID_WRAP);
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_WRAP);
             return;
         }
 
         if (Material.getMaterial(currentCollection) != null) {
             itemMaterial = Material.getMaterial(currentCollection);
-        } else if (plugin.getCollection().getMaterials(currentCollection).stream().findFirst().isPresent()) {
-            itemMaterial = plugin.getCollection().getMaterials(currentCollection).stream().findFirst().get();
+        } else if (plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().isPresent()) {
+            itemMaterial = plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().get();
         } else {
-            plugin.getHandler().send(sender, Messages.COMMAND_NO_MATCHING_ITEM);
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_NO_MATCHING_ITEM);
             return;
         }
         plugin.getPreviewManager().create(player, ItemBuilder.from(itemMaterial).model(wrap.getModelId()).build(), null);
-        plugin.getHandler().send(sender, Messages.COMMAND_PREVIEW_CREATED);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_PREVIEW_CREATED);
     }
 
     @Subcommand("give wrapper")
@@ -122,13 +148,13 @@ public class WrapCommand {
     @AutoComplete("* @physicalWraps *")
     public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical().isEmpty()) {
-            plugin.getHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
         }
         var item = wrap.getPhysical().get().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setPhysicalWrapper(item, wrap));
-        plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
     }
 
     @Subcommand("give unwrapper")
@@ -138,14 +164,14 @@ public class WrapCommand {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setPhysicalUnwrapper(item));
-        plugin.getHandler().send(sender, Messages.COMMAND_GIVEN_UNWRAPPER);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_GIVEN_UNWRAPPER);
     }
 
     @Subcommand("list")
     @CommandPermission("hmcwraps.admin")
     @Description("Shows all wraps and collections configured.")
     public void onList(CommandSender sender) {
-        var handler = plugin.getHandler();
+        var handler = plugin.getMessageHandler();
         var set = new ArrayList<Component>();
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_HEADER)));
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS)));
@@ -177,10 +203,10 @@ public class WrapCommand {
     @Subcommand("help")
     @Description("Shows the help page.")
     public void onHelp(CommandSender sender, CommandHelp<String> helpEntries) {
-        plugin.getHandler().send(sender, Messages.COMMAND_HELP_HEADER);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_HELP_HEADER);
         Supplier<Stream<String>> filteredEntries = () -> helpEntries.paginate(1, 100).stream().filter(string -> !string.equals(""));
         if (filteredEntries.get().findAny().isEmpty()) {
-            plugin.getHandler().send(sender, Messages.COMMAND_HELP_NO_PERMISSION);
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_HELP_NO_PERMISSION);
         } else {
             filteredEntries.get().forEach((line) -> StringUtil.send(sender, line));
         }

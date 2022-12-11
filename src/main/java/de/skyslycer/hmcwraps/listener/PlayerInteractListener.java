@@ -25,7 +25,7 @@ public class PlayerInteractListener implements Listener {
         PermissionHelper.loopThroughInventory(plugin, event.getPlayer());
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || plugin.getCollection().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
+                || plugin.getCollectionHelper().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
                 || !plugin.getConfiguration().getInventory().isOpenShortcut()) {
             return;
         }

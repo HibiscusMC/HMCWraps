@@ -20,6 +20,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://repo.bytecode.space/repository/maven-public/")
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
     implementation("com.github.Revxrsal.Lamp:common:3.1.0")
     implementation("com.github.Revxrsal.Lamp:bukkit:3.1.0")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.3") {
         exclude("com.google.code.gson")
     }
@@ -57,6 +59,7 @@ tasks {
         relocate("org.spongepowered.configurate", "$shadePattern.config")
         relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
         relocate("org.bstats", "$shadePattern.bstats")
+        relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")

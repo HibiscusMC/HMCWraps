@@ -7,11 +7,11 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class InventoryItem extends SerializableItem implements IInventoryItem {
 
-    private @Nullable Action action;
+    private @Nullable InventoryAction action;
 
     @Override
     @Nullable
-    public Action getAction() {
+    public InventoryAction getAction() {
         return action;
     }
 

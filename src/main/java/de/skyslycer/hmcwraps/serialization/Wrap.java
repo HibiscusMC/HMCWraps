@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import org.bukkit.Color;
@@ -20,6 +21,7 @@ public class Wrap extends SerializableItem implements IWrap {
     private @Nullable String permission;
     private @Nullable String lockedName;
     private @Nullable List<String> lockedLore;
+    private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
 
     @Override
     public Optional<String> getPermission() {
@@ -41,14 +43,22 @@ public class Wrap extends SerializableItem implements IWrap {
         return preview;
     }
 
+    @Override
     @Nullable
     public String getLockedName() {
         return lockedName;
     }
 
+    @Override
     @Nullable
     public List<String> getLockedLore() {
         return lockedLore;
+    }
+
+    @Override
+    @Nullable
+    public HashMap<String, HashMap<String, List<String>>> getActions() {
+        return actions;
     }
 
     @Override

@@ -17,6 +17,7 @@ public class PluginMetrics {
 
     public void init() {
         metrics.addCustomChart(new SimplePie("wraps", () -> String.valueOf(plugin.getWrapAmount())));
+        metrics.addCustomChart(new SimplePie("wrapfiles", () -> String.valueOf(plugin.getWrapFiles().size())));
     }
 
 }
