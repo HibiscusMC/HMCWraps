@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps.commands;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.permission.PermissionHelper;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
@@ -35,6 +36,19 @@ import revxrsal.commands.help.CommandHelp;
 @Command("wraps")
 public class WrapCommand {
 
+    public static final String ALL_PERMISSION = "hmcwraps.admin";
+    public static final String VIRTUAL_PERMISSION = "hmcwraps.commands.virtual";
+    public static final String PHYSICAL_PERMISSION = "hmcwraps.commands.physical";
+    public static final String MANAGEMENT_PERMISSION = "hmcwraps.commands.management";
+    public static final String[] RELOAD_PERMISSION = {"hmcwraps.command.reload", ALL_PERMISSION};
+    public static final String[] WRAP_PERMISSION = {"hmcwraps.command.wrap", ALL_PERMISSION, MANAGEMENT_PERMISSION, VIRTUAL_PERMISSION};
+    public static final String[] UNWRAP_PERMISSION = {"hmcwraps.command.unwrap", ALL_PERMISSION, MANAGEMENT_PERMISSION, VIRTUAL_PERMISSION};
+    public static final String[] GIVE_WRAPPER_PERMISSION = {"hmcwraps.command.give.wrapper", ALL_PERMISSION, MANAGEMENT_PERMISSION, PHYSICAL_PERMISSION};
+    public static final String[] GIVE_UNWRAPPER_PERMISSION = {"hmcwraps.command.give.unwrapper", ALL_PERMISSION, MANAGEMENT_PERMISSION, PHYSICAL_PERMISSION};
+    public static final String[] PREVIEW_PERMISSION = {"hmcwraps.command.preview", ALL_PERMISSION, MANAGEMENT_PERMISSION};
+    public static final String[] LIST_PERMISSION = {"hmcwraps.command.list", ALL_PERMISSION, MANAGEMENT_PERMISSION};
+    public static final String[] WRAPS_PERMISSION = {"hmcwraps.wraps", ALL_PERMISSION, MANAGEMENT_PERMISSION};
+
     private final HMCWraps plugin;
 
     public WrapCommand(HMCWraps plugin) {
@@ -44,6 +58,10 @@ public class WrapCommand {
     @Default
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
+        if (plugin.getConfiguration().getPermissionSettings().isInventoryPermission() && !PermissionHelper.hasAnyPermission(player, WRAPS_PERMISSION)) {
+            plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
+            return;
+        }
         var item = player.getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(player, Messages.NO_ITEM);
@@ -60,16 +78,23 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Reload configuration and messages.")
     public void onReload(CommandSender sender) {
+        if (!PermissionHelper.hasAnyPermission(sender, RELOAD_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         plugin.unload();
         plugin.load();
         plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD);
     }
 
     @Subcommand("wrap")
-    @CommandPermission("hmcwraps.admin")
     @Description("Wrap the item a player is holding in their main hand.")
     @AutoComplete("@wraps * *")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
+        if (!PermissionHelper.hasAnyPermission(sender, WRAP_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -91,10 +116,13 @@ public class WrapCommand {
     }
 
     @Subcommand("unwrap")
-    @CommandPermission("hmcwraps.admin")
     @Description("Unwrap the item a player is holding in their main hand.")
     @AutoComplete("@players *")
     public void onUnwrap(CommandSender sender, @Default("self") Player player, @Switch @Default("true") boolean actions) {
+        if (!PermissionHelper.hasAnyPermission(sender, UNWRAP_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -114,10 +142,13 @@ public class WrapCommand {
     }
 
     @Subcommand("preview")
-    @CommandPermission("hmcwraps.admin")
     @Description("Preview a wrap for the specified player.")
     @AutoComplete("@wraps *")
     public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
+        if (!PermissionHelper.hasAnyPermission(sender, PREVIEW_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         var currentCollection = "";
         var itemMaterial = Material.AIR;
         for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
@@ -147,10 +178,13 @@ public class WrapCommand {
     }
 
     @Subcommand("give wrapper")
-    @CommandPermission("hmcwraps.admin")
     @Description("Give a wrapper to a player.")
     @AutoComplete("@physicalWraps * *")
     public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
+        if (!PermissionHelper.hasAnyPermission(sender, GIVE_WRAPPER_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         if (wrap.getPhysical().isEmpty()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
@@ -162,10 +196,13 @@ public class WrapCommand {
     }
 
     @Subcommand("give unwrapper")
-    @CommandPermission("hmcwraps.admin")
     @Description("Give an unwrapper to a player.")
     @AutoComplete("* *")
     public void onGiveUnwrapper(CommandSender sender, @Default("self") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
+        if (!PermissionHelper.hasAnyPermission(sender, GIVE_UNWRAPPER_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setPhysicalUnwrapper(item));
@@ -173,9 +210,12 @@ public class WrapCommand {
     }
 
     @Subcommand("list")
-    @CommandPermission("hmcwraps.admin")
     @Description("Shows all wraps and collections configured.")
     public void onList(CommandSender sender) {
+        if (!PermissionHelper.hasAnyPermission(sender, LIST_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         var handler = plugin.getMessageHandler();
         var set = new ArrayList<Component>();
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_HEADER)));

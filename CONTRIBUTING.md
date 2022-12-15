@@ -10,7 +10,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 1. Clone the project and open it in your desired IDE.
 2. Make your changes. Please follow
    the [Google Style Guide](https://google.github.io/styleguide/javaguide.html).
-3. Bump versions in `build.gradle.kts`. We use the [SemVer](http://semver.org/) scheme. (`M`.`M`
+3. Bump versions in **all** `build.gradle.kts` files. We use the [SemVer](http://semver.org/) scheme. (`M`.`M`
    .`P`)
 4. Commit your changes with a descriptive message to a separate branch. Name it appropriately.
 5. Build the project and test your changes extensively.

@@ -9,6 +9,7 @@ public class PermissionSettings implements IPermissionSettings {
     private boolean checkPermissionVirtual;
     private boolean permissionPhysical;
     private boolean permissionVirtual;
+    private boolean inventoryPermission;
 
     @Override
     public boolean isCheckPermissionPhysical() {
@@ -28,6 +29,11 @@ public class PermissionSettings implements IPermissionSettings {
     @Override
     public boolean isPermissionVirtual() {
         return permissionVirtual;
+    }
+
+    @Override
+    public boolean isInventoryPermission() {
+        return inventoryPermission;
     }
 
 }

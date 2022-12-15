@@ -55,7 +55,6 @@ import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitActor;
 import revxrsal.commands.bukkit.exception.SenderNotPlayerException;
 import revxrsal.commands.exception.MissingArgumentException;
-import revxrsal.commands.exception.NoPermissionException;
 
 public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
@@ -183,8 +182,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                 (args, sender, command) -> getWraps().values().stream().filter(wrap -> wrap.getPhysical().isPresent()).map(IWrap::getUuid).toList());
         commandHandler.getAutoCompleter()
                 .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(IWrap::getUuid).toList()));
-        commandHandler.registerExceptionHandler(NoPermissionException.class,
-                (actor, context) -> getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
                 (actor, context) -> getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
         commandHandler.registerExceptionHandler(MissingArgumentException.class,

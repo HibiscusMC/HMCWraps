@@ -10,4 +10,6 @@ public interface IPermissionSettings {
 
     boolean isPermissionVirtual();
 
+    boolean isInventoryPermission();
+
 }
