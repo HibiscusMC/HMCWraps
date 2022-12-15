@@ -28,6 +28,7 @@ import revxrsal.commands.annotation.Description;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Range;
 import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.annotation.Switch;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.help.CommandHelp;
 
@@ -68,7 +69,7 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Wrap the item a player is holding in their main hand.")
     @AutoComplete("@wraps * *")
-    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional Boolean actions) {
+    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -79,7 +80,7 @@ public class WrapCommand {
                 item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
                 player.getInventory().setItemInMainHand(item);
-                if (actions != null && actions) {
+                if (actions) {
                     plugin.getActionHandler().pushWrap(wrap, player);
                 }
                 plugin.getMessageHandler().send(sender, Messages.COMMAND_WRAP_WRAPPED);
@@ -93,7 +94,7 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Unwrap the item a player is holding in their main hand.")
     @AutoComplete("@players *")
-    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional Boolean actions) {
+    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Switch @Default("true") boolean actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -106,7 +107,7 @@ public class WrapCommand {
         }
         item = plugin.getWrapper().removeWrap(item, player, true);
         player.getInventory().setItemInMainHand(item);
-        if (actions != null && actions) {
+        if (actions) {
             plugin.getActionHandler().pushUnwrap(wrap, player);
         }
         plugin.getMessageHandler().send(sender, Messages.COMMAND_UNWRAP_UNWRAPPED);
@@ -116,7 +117,7 @@ public class WrapCommand {
     @CommandPermission("hmcwraps.admin")
     @Description("Preview a wrap for the specified player.")
     @AutoComplete("@wraps *")
-    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player) {
+    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
         for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
@@ -139,6 +140,9 @@ public class WrapCommand {
             return;
         }
         plugin.getPreviewManager().create(player, ItemBuilder.from(itemMaterial).model(wrap.getModelId()).build(), null);
+        if (actions) {
+            plugin.getActionHandler().pushPreview(wrap, player);
+        }
         plugin.getMessageHandler().send(sender, Messages.COMMAND_PREVIEW_CREATED);
     }
 

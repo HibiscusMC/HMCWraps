@@ -63,7 +63,7 @@ public class DefaultActionRegister {
 
     private void doParticle(ActionInformation information, boolean multi) {
         var split = information.getArguments().split(" ");
-        if (checkSplit(split, 1, "particle", "HEART")) {
+        if (checkSplit(split, 1, multi ? "particle multi" : "particle", multi ? "heart 10 0.1 0.1 0.1" : "heart")) {
             return;
         }
         var particleType = Particles.fromKey(Key.key(split[0]));
@@ -94,11 +94,11 @@ public class DefaultActionRegister {
         if (particle instanceof MultiParticle multiParticle) {
             multiParticle.setCount(getBigInteger(split[counter]).intValue());
             counter++;
-            multiParticle.setXOffset(getBigInteger(split[counter]).intValue());
+            multiParticle.setXOffset(getBigInteger(split[counter]).floatValue());
             counter++;
-            multiParticle.setYOffset(getBigInteger(split[counter]).intValue());
+            multiParticle.setYOffset(getBigInteger(split[counter]).floatValue());
             counter++;
-            multiParticle.setZOffset(getBigInteger(split[counter]).intValue());
+            multiParticle.setZOffset(getBigInteger(split[counter]).floatValue());
             counter++;
             if (multiParticle instanceof MultiNoteParticle multiNoteParticle) {
                 multiNoteParticle.setColorMultplier(getBigInteger(split[counter]).intValue());
