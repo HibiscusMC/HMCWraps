@@ -67,7 +67,7 @@ public class WrapCommand {
     @Subcommand("wrap")
     @CommandPermission("hmcwraps.admin")
     @Description("Wrap the item a player is holding in their main hand.")
-    @AutoComplete("* @wraps * *")
+    @AutoComplete("@wraps * *")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional Boolean actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
@@ -115,7 +115,7 @@ public class WrapCommand {
     @Subcommand("preview")
     @CommandPermission("hmcwraps.admin")
     @Description("Preview a wrap for the specified player.")
-    @AutoComplete("* @wraps")
+    @AutoComplete("@wraps *")
     public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player) {
         var currentCollection = "";
         var itemMaterial = Material.AIR;
@@ -145,7 +145,7 @@ public class WrapCommand {
     @Subcommand("give wrapper")
     @CommandPermission("hmcwraps.admin")
     @Description("Give a wrapper to a player.")
-    @AutoComplete("* @physicalWraps *")
+    @AutoComplete("@physicalWraps * *")
     public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical().isEmpty()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
@@ -160,6 +160,7 @@ public class WrapCommand {
     @Subcommand("give unwrapper")
     @CommandPermission("hmcwraps.admin")
     @Description("Give an unwrapper to a player.")
+    @AutoComplete("* *")
     public void onGiveUnwrapper(CommandSender sender, @Default("self") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);

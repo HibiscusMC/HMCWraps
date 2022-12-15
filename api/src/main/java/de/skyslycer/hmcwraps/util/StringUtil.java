@@ -89,7 +89,7 @@ public class StringUtil {
      * Formats: #RRGGBB; R,G,B
      *
      * @param color The string
-     * @return The color
+     * @return The color, if the string can't be parsed, null is returned
      */
     @Nullable
     public static Color colorFromString(@Nullable String color) {

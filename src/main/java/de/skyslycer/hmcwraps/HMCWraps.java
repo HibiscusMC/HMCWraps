@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.IActionHandler;
+import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
@@ -105,6 +106,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
         registerCommands();
 
+        new DefaultActionRegister(this).register();
         new PluginMetrics(this).init();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

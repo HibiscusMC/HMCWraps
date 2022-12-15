@@ -29,13 +29,18 @@ public enum InventoryAction {
             case SCROLL_BACK, PREVIOUS_PAGE -> item.setAction(event -> gui.previous());
             case CLOSE -> item.setAction(event -> event.getWhoClicked().closeInventory());
             case UNWRAP -> item.setAction(event -> {
+                System.out.println("1");
                 var wrap = plugin.getWrapper().getWrap(event.getWhoClicked().getInventory().getItemInMainHand());
                 event.getWhoClicked().getInventory().setItemInMainHand(plugin.getWrapper().removeWrap(
                         event.getWhoClicked().getInventory().getItemInMainHand(), (Player) event.getWhoClicked(), true));
+                System.out.println("2");
                 event.getWhoClicked().getOpenInventory().close();
                 plugin.getMessageHandler().send(event.getWhoClicked(), Messages.REMOVE_WRAP);
+                System.out.println("3");
                 if (wrap != null) {
+                    System.out.println("4");
                     plugin.getActionHandler().pushUnwrap(wrap, (Player) event.getWhoClicked());
+                    System.out.println("5");
                 }
             });
         }
