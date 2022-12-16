@@ -66,7 +66,7 @@ public class DefaultActionRegister {
         if (checkSplit(split, 1, multi ? "particle multi" : "particle", multi ? "heart 10 0.1 0.1 0.1" : "heart")) {
             return;
         }
-        var particleType = Particles.fromKey(Key.key(split[0]));
+        var particleType = Particles.fromKey(Key.key(split[0].toLowerCase()));
         if (particleType == null) {
             plugin.getLogger().warning("The particle " + split[0] + " does not exist!");
             return;
@@ -195,7 +195,7 @@ public class DefaultActionRegister {
     }
 
     private void registerActionBar() {
-        plugin.getActionHandler().subscribe(Action.SUBTITLE, (information -> {
+        plugin.getActionHandler().subscribe(Action.ACTIONBAR, (information -> {
             if (checkSplit(information.getArguments().split(" "), 1, "actionbar", "message")) return;
             information.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, StringUtil.parse(information.getPlayer(), parseMessage(information)));
         }));

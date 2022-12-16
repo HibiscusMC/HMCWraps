@@ -19,6 +19,10 @@ public class ActionHandler implements IActionHandler {
 
     @Override
     public void push(Action action, ActionInformation information) {
+        if (!actions.containsKey(action)) {
+            Bukkit.getLogger().warning("Action " + action.name() + " is not registered! This is a bug! Please report this.");
+            return;
+        }
         actions.get(action).execute(information);
     }
 

@@ -92,5 +92,46 @@ bukkit {
             description = "Gives access to admin commands."
             default = Default.OP
         }
+        register("hmcwraps.management") {
+            description = "Gives access to every command except the reload command."
+        }
+        register("hmcwraps.commands.physical") {
+            description = "Gives access to all commands related to physical wraps."
+        }
+        register("hmcwraps.commands.virtual") {
+            description = "Gives access to all commands related to virtual wraps."
+        }
+        register("hmcwraps.commands.reload") {
+            description = "Gives access to the reload command."
+            children = listOf("hmcwraps.management")
+        }
+        register("hmcwraps.commands.wrap") {
+            description = "Gives access to wrap an item using commands (virtual)."
+            children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.virtual")
+        }
+        register("hmcwraps.commands.unwrap") {
+            description = "Gives access to unwrap an item using commands (virtual)."
+            children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.virtual")
+        }
+        register("hmcwraps.commands.give.wrapper") {
+            description = "Gives access to giving physical wrappers to players."
+            children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.physical")
+        }
+        register("hmcwraps.commands.give.unwrapper") {
+            description = "Gives access to giving physical unwrappers to players."
+            children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.physical")
+        }
+        register("hmcwraps.commands.preview") {
+            description = "Gives access to starting a preview on behalf of others."
+            children = listOf("hmcwraps.management", "hmcwraps.admin")
+        }
+        register("hmcwraps.commands.list") {
+            description = "Gives access to the list command."
+            children = listOf("hmcwraps.management", "hmcwraps.admin")
+        }
+        register("hmcwraps.wraps") {
+            description = "Gives access to the wraps inventory (has to be enabled in config)."
+            children = listOf("hmcwraps.management", "hmcwraps.admin")
+        }
     }
 }
