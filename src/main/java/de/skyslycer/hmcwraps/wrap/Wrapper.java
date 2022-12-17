@@ -63,14 +63,12 @@ public class Wrapper implements IWrapper {
     }
 
     private ItemStack setWrapPrivate(@Nullable IWrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
-        System.out.println("11");
         var editing = item.clone();
         var currentWrap = getWrap(editing);
         if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical().isPresent() && currentWrap.getPhysical().get().isKeepAfterUnwrap()
                 && giveBack) {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().get().toItem(plugin, player), currentWrap));
         }
-        System.out.println("12");
         var originalData = getOriginalData(item);
         var meta = editing.getItemMeta();
         var originalModelId = -1;
@@ -78,7 +76,6 @@ public class Wrapper implements IWrapper {
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
         }
-        System.out.println("13");
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.setCustomModelData(wrap == null ? originalData.getModelId() : wrap.getModelId());
         if (meta instanceof LeatherArmorMeta leatherMeta) {
@@ -88,24 +85,18 @@ public class Wrapper implements IWrapper {
         } else {
             editing.setItemMeta(meta);
         }
-        System.out.println("14");
-        editing = setPhysical(editing, physical);
+        editing = setPhysical(editing.clone(), physical);
         if (wrap == null) {
-            System.out.println("16");
             return editing;
         }
-        System.out.println("15");
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor));
     }
 
     @Override
     public ItemStack removeWrap(ItemStack target, Player player, boolean giveBack) {
         var event = new ItemUnwrapEvent(target, player, giveBack);
-        System.out.println("6");
         Bukkit.getPluginManager().callEvent(event);
-        System.out.println("7");
         if (event.isCancelled()) {
-            System.out.println("8");
             return target;
         }
         return removeWrapPrivate(event.getItem(), event.getPlayer(), event.isGiveBack());
@@ -114,10 +105,8 @@ public class Wrapper implements IWrapper {
     private ItemStack removeWrapPrivate(ItemStack item, Player player, boolean giveBack) {
         var currentWrap = getWrap(item);
         if (currentWrap == null) {
-            System.out.println("9");
             return item;
         }
-        System.out.println("10");
         return setWrapPrivate(null, item, false, player, giveBack);
     }
 
@@ -197,7 +186,7 @@ public class Wrapper implements IWrapper {
         return modelData;
     }
 
-    private Color getOriginalColor(ItemStack item) throws Exception {
+    private Color getOriginalColor(ItemStack item) {
         var colorSettings = plugin.getConfiguration().getPreservation().getColor();
         Color color = null;
         var meta = item.getItemMeta();
@@ -272,10 +261,11 @@ public class Wrapper implements IWrapper {
 
     @Override
     public ItemStack setPhysical(ItemStack item, boolean physical) {
-        var container = item.getItemMeta().getPersistentDataContainer();
-        container.set(physicalKey, PersistentDataType.INTEGER, physical ? 1 : 0);
-        item.setItemMeta(item.getItemMeta());
-        return item;
+        var editing = item.clone();
+        var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, physical ? (byte) 1 : (byte) 0);
+        editing.setItemMeta(meta);
+        return editing;
     }
 
 }

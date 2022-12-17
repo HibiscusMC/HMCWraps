@@ -8,6 +8,13 @@ public class SneakCancel extends Toggleable implements ISneakCancel {
 
     private boolean actionBar;
 
+    public SneakCancel(boolean actionBar, boolean enabled) {
+        super(enabled);
+        this.actionBar = actionBar;
+    }
+
+    public SneakCancel() { }
+
     @Override
     public boolean isActionBar() {
         return actionBar;

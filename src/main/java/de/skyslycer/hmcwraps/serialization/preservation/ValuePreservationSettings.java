@@ -11,6 +11,14 @@ public class ValuePreservationSettings implements IValuePreservationSettings {
     private boolean originalEnabled;
     private Map<String, String> defaults = new HashMap<>();
 
+    public ValuePreservationSettings(boolean defaultEnabled, boolean originalEnabled, Map<String, String> defaults) {
+        this.defaultEnabled = defaultEnabled;
+        this.originalEnabled = originalEnabled;
+        this.defaults = defaults;
+    }
+
+    public ValuePreservationSettings() { }
+
     @Override
     public Map<String, String> getDefaults() {
         return defaults;

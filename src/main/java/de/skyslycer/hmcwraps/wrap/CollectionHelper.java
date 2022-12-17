@@ -16,12 +16,11 @@ public class CollectionHelper implements ICollectionHelper {
 
     @Override
     public List<IWrappableItem> getItems(Material material) {
-        var configuration = plugin.getConfiguration();
         var list = new ArrayList<IWrappableItem>();
         if (plugin.getWrappableItems().containsKey(material.toString())) {
             list.add(plugin.getWrappableItems().get(material.toString()));
         }
-        configuration.getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
+        plugin.getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
             if (plugin.getWrappableItems().containsKey(it.getKey())) {
                 list.add(plugin.getWrappableItems().get(it.getKey()));
             }
@@ -32,10 +31,10 @@ public class CollectionHelper implements ICollectionHelper {
     @Override
     public List<Material> getMaterials(String collection) {
         var list = new ArrayList<Material>();
-        if (!plugin.getConfiguration().getCollections().containsKey(collection)) {
+        if (!plugin.getCollections().containsKey(collection)) {
             return List.of();
         }
-        for (String materialName : plugin.getConfiguration().getCollections().get(collection)) {
+        for (String materialName : plugin.getCollections().get(collection)) {
             if (Material.getMaterial(materialName) != null) {
                 list.add(Material.getMaterial(materialName));
             }

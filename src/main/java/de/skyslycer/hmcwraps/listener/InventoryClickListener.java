@@ -43,6 +43,9 @@ public class InventoryClickListener implements Listener {
 
         if (plugin.getWrapper().isPhysicalUnwrapper(physical) && plugin.getWrapper().getWrap(target) != null) {
             event.setCurrentItem(plugin.getWrapper().removeWrap(target, player, true));
+            var wrap = plugin.getWrapper().getWrap(target);
+            plugin.getActionHandler().pushUnwrap(wrap, player);
+            plugin.getActionHandler().pushPhysicalUnwrap(wrap, player);
             event.getWhoClicked().setItemOnCursor(cursor);
             event.setCancelled(true);
             return;
@@ -64,6 +67,8 @@ public class InventoryClickListener implements Listener {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true,
                             player, true));
+                    plugin.getActionHandler().pushWrap(wrap, player);
+                    plugin.getActionHandler().pushPhysicalWrap(wrap, player);
                     event.getWhoClicked().setItemOnCursor(finalCursor);
                     event.setCancelled(true);
                     return;

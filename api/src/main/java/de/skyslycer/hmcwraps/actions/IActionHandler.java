@@ -33,7 +33,7 @@ public interface IActionHandler {
     void pushFromConfig(HashMap<String, List<String>> actionTypes, ActionInformation information);
 
     /**
-     * Push the unwrap action to all subscribers.
+     * Push all unwrap actions to all subscribers.
      *
      * @param wrap The wrap
      * @param player the player
@@ -41,7 +41,7 @@ public interface IActionHandler {
     void pushUnwrap(IWrap wrap, Player player);
 
     /**
-     * Push the wrap action to all subscribers.
+     * Push all wrap actions to all subscribers.
      *
      * @param wrap The wrap
      * @param player the player
@@ -49,7 +49,39 @@ public interface IActionHandler {
     void pushWrap(IWrap wrap, Player player);
 
     /**
-     * Push the preview action to all subscribers from the config.
+     * Push all physical wrap actions to all subscribers.
+     *
+     * @param wrap The wrap
+     * @param player the player
+     */
+    void pushPhysicalUnwrap(IWrap wrap, Player player);
+
+    /**
+     * Push all physical unwrap actions to all subscribers.
+     *
+     * @param wrap The wrap
+     * @param player the player
+     */
+    void pushPhysicalWrap(IWrap wrap, Player player);
+
+    /**
+     * Push all virtual wrap actions to all subscribers.
+     *
+     * @param wrap The wrap
+     * @param player the player
+     */
+    void pushVirtualUnwrap(IWrap wrap, Player player);
+
+    /**
+     * Push all virtual unwrap actions to all subscribers.
+     *
+     * @param wrap The wrap
+     * @param player the player
+     */
+    void pushVirtualWrap(IWrap wrap, Player player);
+
+    /**
+     * Push all preview actions to all subscribers from the config.
      *
      * @param wrap The wrap
      * @param player the player

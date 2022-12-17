@@ -103,7 +103,11 @@ bukkit {
         }
         register("hmcwraps.commands.reload") {
             description = "Gives access to the reload command."
-            children = listOf("hmcwraps.management")
+            children = listOf("hmcwraps.admin")
+        }
+        register("hmcwraps.commands.convert") {
+            description = "Gives access to the convert command."
+            children = listOf("hmcwraps.admin")
         }
         register("hmcwraps.commands.wrap") {
             description = "Gives access to wrap an item using commands (virtual)."

@@ -97,7 +97,8 @@ public class StringUtil {
             return null;
         }
         try {
-            return Color.fromRGB(java.awt.Color.decode(color.startsWith("#") ? color : "#" + color).getRGB());
+            var decodedColor = java.awt.Color.decode(color.startsWith("#") ? color : "#" + color);
+            return Color.fromRGB(decodedColor.getRed(), decodedColor.getGreen(), decodedColor.getBlue());
         } catch (NumberFormatException invalidHex) {
             try {
                 var rgbValues = Arrays.stream(color.split(",")).map(Integer::parseInt).toArray(Integer[]::new);

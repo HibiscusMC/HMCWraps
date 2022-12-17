@@ -14,6 +14,17 @@ public class Inventory implements IInventory {
     private int targetItemSlot;
     private Map<Integer, InventoryItem> items;
 
+    public Inventory(boolean openShortcut, String title, InventoryType type, int rows, int targetItemSlot, Map<Integer, InventoryItem> items) {
+        this.openShortcut = openShortcut;
+        this.title = title;
+        this.type = type;
+        this.rows = rows;
+        this.targetItemSlot = targetItemSlot;
+        this.items = items;
+    }
+
+    public Inventory() { }
+
     @Override
     public String getTitle() {
         return title;

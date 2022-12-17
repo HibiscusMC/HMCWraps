@@ -34,7 +34,11 @@ public enum Messages {
     COMMAND_LIST_WRAPS_FORMAT("command.list.wraps-format"),
     COMMAND_LIST_KEY_FORMAT("command.list.key-format"),
     COMMAND_ITEM_NOT_WRAPPED("command.item-not-wrapped"),
-    COMMAND_UNWRAP_UNWRAPPED("command.unwrap.unwrapped");
+    COMMAND_UNWRAP_UNWRAPPED("command.unwrap.unwrapped"),
+    COMMAND_CONVERT_SUCCESS("command.convert.success"),
+    COMMAND_CONVERT_CONFIRM("command.convert.confirm"),
+    COMMAND_CONVERT_NO_CONFIRM("command.convert.no-confirm"),
+    COMMAND_CONVERT_FAILED("command.convert.failed");
 
     private final String key;
 

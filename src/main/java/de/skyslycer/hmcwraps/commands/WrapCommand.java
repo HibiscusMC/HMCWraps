@@ -10,8 +10,10 @@ import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
@@ -37,6 +39,7 @@ import revxrsal.commands.help.CommandHelp;
 public class WrapCommand {
 
     public static final String RELOAD_PERMISSION = "hmcwraps.commands.reload";
+    public static final String CONVERT_PERMISSION = "hmcwraps.commands.convert";
     public static final String WRAP_PERMISSION = "hmcwraps.commands.wrap";
     public static final String UNWRAP_PERMISSION = "hmcwraps.commands.unwrap";
     public static final String GIVE_WRAPPER_PERMISSION = "hmcwraps.commands.give.wrapper";
@@ -44,6 +47,8 @@ public class WrapCommand {
     public static final String PREVIEW_PERMISSION = "hmcwraps.commands.preview";
     public static final String LIST_PERMISSION = "hmcwraps.commands.list";
     public static final String WRAPS_PERMISSION = "hmcwraps.wraps";
+
+    private final Set<String> confirmingPlayers = new HashSet<>();
 
     private final HMCWraps plugin;
 
@@ -79,6 +84,34 @@ public class WrapCommand {
         plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD);
     }
 
+    @Subcommand("convert")
+    @CommandPermission(CONVERT_PERMISSION)
+    @Description("Convert ItemSkins files to HMCWraps files.")
+    public void onConvert(CommandSender sender, @Optional String confirm) {
+        var uuid = "CONSOLE";
+        if (sender instanceof Player player) {
+            uuid = player.getUniqueId().toString();
+        }
+        if (confirm == null || !confirm.equalsIgnoreCase("confirm")) {
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_CONVERT_CONFIRM);
+            confirmingPlayers.add(uuid);
+        } else {
+            if (!confirmingPlayers.contains(uuid)) {
+                plugin.getMessageHandler().send(sender, Messages.COMMAND_CONVERT_NO_CONFIRM);
+                return;
+            }
+            var success = plugin.getFileConverter().convertAll();
+            if (!success) {
+                plugin.getMessageHandler().send(sender, Messages.COMMAND_CONVERT_FAILED);
+                return;
+            }
+            plugin.unload();
+            plugin.load();
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_CONVERT_SUCCESS);
+            confirmingPlayers.remove(uuid);
+        }
+    }
+
     @Subcommand("wrap")
     @Description("Wrap the item a player is holding in their main hand.")
     @CommandPermission(WRAP_PERMISSION)
@@ -96,6 +129,7 @@ public class WrapCommand {
                 player.getInventory().setItemInMainHand(item);
                 if (actions) {
                     plugin.getActionHandler().pushWrap(wrap, player);
+                    plugin.getActionHandler().pushVirtualWrap(wrap, player);
                 }
                 plugin.getMessageHandler().send(sender, Messages.COMMAND_WRAP_WRAPPED);
                 return;
@@ -123,6 +157,7 @@ public class WrapCommand {
         player.getInventory().setItemInMainHand(item);
         if (actions) {
             plugin.getActionHandler().pushUnwrap(wrap, player);
+            plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
         }
         plugin.getMessageHandler().send(sender, Messages.COMMAND_UNWRAP_UNWRAPPED);
     }
@@ -194,11 +229,12 @@ public class WrapCommand {
         var set = new ArrayList<Component>();
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_HEADER)));
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS)));
-        plugin.getConfiguration().getCollections().forEach((key, list) -> {
+        plugin.getCollections().forEach((key, list) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", key)));
             list.forEach(entry -> set.add(
                     StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS_FORMAT), Placeholder.parsed("value", entry))));
         });
+        set.add(Component.space());
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
         plugin.getWrappableItems().forEach((material, wraps) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));

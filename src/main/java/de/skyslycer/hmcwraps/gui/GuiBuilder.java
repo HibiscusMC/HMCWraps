@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class GuiBuilder {
 
@@ -56,6 +57,10 @@ public class GuiBuilder {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps().forEach((ignored, wrap) -> {
             var wrapItem = wrap.toItem(plugin, player);
             wrapItem.setType(item.getType());
+            if (wrapItem.getItemMeta() instanceof LeatherArmorMeta meta) {
+                meta.setColor(wrap.getColor());
+                wrapItem.setItemMeta(meta);
+            }
 
             GuiItem guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
@@ -67,6 +72,7 @@ public class GuiBuilder {
                     player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
                     plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
                     plugin.getActionHandler().pushWrap(wrap, player);
+                    plugin.getActionHandler().pushVirtualWrap(wrap, player);
                     player.getOpenInventory().close();
                 } else if (click.getClick() == ClickType.RIGHT) {
                     if (!wrap.isPreview()) {

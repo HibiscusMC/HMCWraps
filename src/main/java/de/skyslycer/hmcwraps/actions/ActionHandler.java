@@ -58,6 +58,34 @@ public class ActionHandler implements IActionHandler {
     }
 
     @Override
+    public void pushPhysicalUnwrap(IWrap wrap, Player player) {
+        if (wrap.getActions() != null && wrap.getActions().containsKey("unwrap-physical")) {
+            pushFromConfig(wrap.getActions().get("unwrap-physical"), new WrapActionInformation(wrap, player, ""));
+        }
+    }
+
+    @Override
+    public void pushPhysicalWrap(IWrap wrap, Player player) {
+        if (wrap.getActions() != null && wrap.getActions().containsKey("wrap-physical")) {
+            pushFromConfig(wrap.getActions().get("wrap-physical"), new WrapActionInformation(wrap, player, ""));
+        }
+    }
+
+    @Override
+    public void pushVirtualUnwrap(IWrap wrap, Player player) {
+        if (wrap.getActions() != null && wrap.getActions().containsKey("unwrap-virtual")) {
+            pushFromConfig(wrap.getActions().get("unwrap-virtual"), new WrapActionInformation(wrap, player, ""));
+        }
+    }
+
+    @Override
+    public void pushVirtualWrap(IWrap wrap, Player player) {
+        if (wrap.getActions() != null && wrap.getActions().containsKey("wrap-virtual")) {
+            pushFromConfig(wrap.getActions().get("wrap-virtual"), new WrapActionInformation(wrap, player, ""));
+        }
+    }
+
+    @Override
     public void pushPreview(IWrap wrap, Player player) {
         if (wrap.getActions() != null && wrap.getActions().containsKey("preview")) {
             pushFromConfig(wrap.getActions().get("preview"), new WrapActionInformation(wrap, player, ""));

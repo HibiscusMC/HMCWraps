@@ -10,6 +10,15 @@ public class PreviewSettings implements IPreviewSettings {
     private SneakCancel sneakCancel;
     private Bobbing bobbing;
 
+    public PreviewSettings(int duration, int rotation, SneakCancel sneakCancel, Bobbing bobbing) {
+        this.duration = duration;
+        this.rotation = rotation;
+        this.sneakCancel = sneakCancel;
+        this.bobbing = bobbing;
+    }
+
+    public PreviewSettings() { }
+
     @Override
     public int getDuration() {
         return duration;

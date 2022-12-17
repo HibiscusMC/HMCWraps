@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
+import de.skyslycer.hmcwraps.converter.FileConverter;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
@@ -19,13 +20,17 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.placeholderapi.HMCWrapsPlaceholders;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
+import de.skyslycer.hmcwraps.serialization.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.Config;
+import de.skyslycer.hmcwraps.serialization.ICollectionsFile;
 import de.skyslycer.hmcwraps.serialization.IConfig;
+import de.skyslycer.hmcwraps.serialization.IToggleable;
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrapFile;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.serialization.WrapFile;
+import de.skyslycer.hmcwraps.serialization.WrappableItem;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
@@ -36,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -64,13 +70,16 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             .build();
     private final Set<ItemHook> hooks = new HashSet<>();
     private final Map<String, IWrap> wraps = new HashMap<>();
+    private final Map<String, List<String>> collections = new HashMap<>();
     private final Map<String, IWrappableItem> wrappableItems = new HashMap<>();
     private final Set<IWrapFile> wrapFiles = new HashSet<>();
+    private final Set<ICollectionsFile> collectionFiles = new HashSet<>();
     private final Set<String> loadedHooks = new HashSet<>();
     private final IWrapper wrapper = new Wrapper(this);
     private final IPreviewManager previewManager = new PreviewManager(this);
     private final ICollectionHelper collectionHelper = new CollectionHelper(this);
     private final IActionHandler actionHandler = new ActionHandler();
+    private final FileConverter fileConverter = new FileConverter(this);
     private IConfig config;
     private IMessageHandler messageHandler;
 
@@ -136,20 +145,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         if (!loadMessages()) {
             return false;
         }
-
-        wrappableItems.putAll(getConfiguration().getItems());
-        wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
-            if (wrappableItems.containsKey(type)) {
-                var current = wrappableItems.get(type);
-                current.getWraps().putAll(wrappableItem.getWraps());
-                wrappableItems.put(type, current);
-            } else {
-                wrappableItems.put(type, wrappableItem);
-            }
-        }));
-        wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
-
-        wraps.remove("-");
         getPreviewManager().removeAll(true);
         return true;
     }
@@ -160,6 +155,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         wraps.clear();
         wrappableItems.clear();
         wrapFiles.clear();
+        collectionFiles.clear();
     }
 
     private void registerCommands() {
@@ -216,15 +212,24 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         try {
             if (!Files.exists(WRAP_FILES_PATH)) {
                 Files.createDirectory(WRAP_FILES_PATH);
+                Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
+            }
+            if (!Files.exists(COLLECTION_FILES_PATH)) {
+                Files.createDirectory(COLLECTION_FILES_PATH);
+                Files.copy(getResource("some_collections.yml"), COLLECTION_FILES_PATH.resolve("some_collections.yml"));
+            }
+            if (!Files.exists(CONVERT_PATH)) {
+                Files.createDirectory(CONVERT_PATH);
             }
             if (!Files.exists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
-                Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
                     "model-id-settings.default-model-ids");
             config = LOADER.load().get(Config.class);
             loadWrapFiles();
+            loadCollectionFiles();
+            combineFiles();
         } catch (IOException exception) {
             logSevere(
                     "Could not load the configuration (please report this to the developers)! The plugin will shut down now.");
@@ -234,9 +239,29 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         return true;
     }
 
+    private void combineFiles() {
+        collections.putAll(getConfiguration().getCollections());
+        collectionFiles.stream().filter(IToggleable::isEnabled).forEach(collectionFile -> collections.putAll(collectionFile.getCollections()));
+
+        wrappableItems.putAll(getConfiguration().getItems());
+        wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
+            if (wrappableItems.containsKey(type)) {
+                var current = (WrappableItem) wrappableItems.get(type);
+                var toAdd = (WrappableItem) wrappableItem;
+                toAdd.getWrapsPrivate().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
+                wrappableItems.put(type, current);
+            } else {
+                wrappableItems.put(type, wrappableItem);
+            }
+        }));
+        wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
+
+        wraps.remove("-");
+    }
+
     private void loadWrapFiles() {
         try (Stream<Path> paths = Files.find(WRAP_FILES_PATH, 10,
-                ((path, attributes) -> attributes.isRegularFile() && (path.endsWith(".yml") || path.endsWith(".yaml"))))) {
+                ((path, attributes) -> attributes.isRegularFile() && (path.toString().endsWith(".yml") || path.toString().endsWith(".yaml"))))) {
             paths.forEach(path -> {
                 try {
                     var wrapFile = YamlConfigurationLoader.builder()
@@ -247,6 +272,29 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                 } catch (ConfigurateException exception) {
                     logSevere(
                             "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!");
+                    exception.printStackTrace();
+                }
+            });
+        } catch (IOException exception) {
+            logSevere(
+                    "Could not find the wrap files (please report this to the developers)!");
+            exception.printStackTrace();
+        }
+    }
+
+    private void loadCollectionFiles() {
+        try (Stream<Path> paths = Files.find(COLLECTION_FILES_PATH, 10,
+                ((path, attributes) -> attributes.isRegularFile() && (path.toString().endsWith(".yml") || path.toString().endsWith(".yaml"))))) {
+            paths.forEach(path -> {
+                try {
+                    var collectionFile = YamlConfigurationLoader.builder()
+                            .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
+                            .path(path)
+                            .build().load().get(CollectionFile.class);
+                    collectionFiles.add(collectionFile);
+                } catch (ConfigurateException exception) {
+                    logSevere(
+                            "Could not load the collection file " + path.getFileName().toString() + " (please report this to the developers)!");
                     exception.printStackTrace();
                 }
             });
@@ -364,6 +412,16 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @NotNull
     public IActionHandler getActionHandler() {
         return actionHandler;
+    }
+
+    @Override
+    @NotNull
+    public Map<String, List<String>> getCollections() {
+        return collections;
+    }
+
+    public FileConverter getFileConverter() {
+        return fileConverter;
     }
 
 }

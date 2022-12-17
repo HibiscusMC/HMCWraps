@@ -26,10 +26,10 @@ import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import java.math.BigInteger;
 import java.util.Arrays;
-import net.kyori.adventure.key.Key;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -66,7 +66,7 @@ public class DefaultActionRegister {
         if (checkSplit(split, 1, multi ? "particle multi" : "particle", multi ? "heart 10 0.1 0.1 0.1" : "heart")) {
             return;
         }
-        var particleType = Particles.fromKey(Key.key(split[0].toLowerCase()));
+        var particleType = Particles.fromKey(NamespacedKey.minecraft(split[0].toLowerCase()));
         if (particleType == null) {
             plugin.getLogger().warning("The particle " + split[0] + " does not exist!");
             return;
