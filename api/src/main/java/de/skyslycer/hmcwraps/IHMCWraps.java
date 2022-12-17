@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps;
 import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
+import de.skyslycer.hmcwraps.serialization.ICollectionFile;
 import de.skyslycer.hmcwraps.serialization.IConfig;
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrapFile;
@@ -136,11 +137,17 @@ public interface IHMCWraps extends Plugin {
     @NotNull IActionHandler getActionHandler();
 
     /**
-     * All currently loaded collection files.
-     * This map contains all collections that are configured.
+     * Get all currently loaded collections.
      *
-     * @return All currently loaded collection files
+     * @return All currently loaded collections
      */
     @NotNull Map<String, List<String>> getCollections();
+
+    /**
+     * Get all currently loaded collection files.
+     *
+     * @return All collection files
+     */
+    @NotNull Set<ICollectionFile> getCollectionFiles();
 
 }

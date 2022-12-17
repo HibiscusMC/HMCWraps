@@ -22,7 +22,7 @@ import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.Config;
-import de.skyslycer.hmcwraps.serialization.ICollectionsFile;
+import de.skyslycer.hmcwraps.serialization.ICollectionFile;
 import de.skyslycer.hmcwraps.serialization.IConfig;
 import de.skyslycer.hmcwraps.serialization.IToggleable;
 import de.skyslycer.hmcwraps.serialization.IWrap;
@@ -73,7 +73,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private final Map<String, List<String>> collections = new HashMap<>();
     private final Map<String, IWrappableItem> wrappableItems = new HashMap<>();
     private final Set<IWrapFile> wrapFiles = new HashSet<>();
-    private final Set<ICollectionsFile> collectionFiles = new HashSet<>();
+    private final Set<ICollectionFile> collectionFiles = new HashSet<>();
     private final Set<String> loadedHooks = new HashSet<>();
     private final IWrapper wrapper = new Wrapper(this);
     private final IPreviewManager previewManager = new PreviewManager(this);
@@ -418,6 +418,12 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @NotNull
     public Map<String, List<String>> getCollections() {
         return collections;
+    }
+
+    @Override
+    @NotNull
+    public Set<ICollectionFile> getCollectionFiles() {
+        return collectionFiles;
     }
 
     public FileConverter getFileConverter() {

@@ -5,7 +5,7 @@ import java.util.Map;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-public class CollectionFile extends Toggleable implements ICollectionsFile {
+public class CollectionFile extends Toggleable implements ICollectionFile {
 
     private Map<String, List<String>> collections;
 
