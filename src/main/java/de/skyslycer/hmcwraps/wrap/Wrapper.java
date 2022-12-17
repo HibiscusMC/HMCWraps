@@ -76,7 +76,7 @@ public class Wrapper implements IWrapper {
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
         }
-        meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getId());
+        meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.setCustomModelData(wrap == null ? originalData.getModelId() : wrap.getModelId());
         if (meta instanceof LeatherArmorMeta leatherMeta) {
             originalColor = leatherMeta.getColor();
@@ -85,7 +85,7 @@ public class Wrapper implements IWrapper {
         } else {
             editing.setItemMeta(meta);
         }
-        editing = setPhysical(editing, physical);
+        editing = setPhysical(editing.clone(), physical);
         if (wrap == null) {
             return editing;
         }
@@ -178,7 +178,7 @@ public class Wrapper implements IWrapper {
                 modelData = Integer.parseInt(map.get(item.getType().toString()));
             }
             for (String key : map.keySet()) {
-                if (plugin.getCollection().getMaterials(key).contains(item.getType())) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
                     modelData = Integer.parseInt(map.get(key));
                 }
             }
@@ -186,7 +186,7 @@ public class Wrapper implements IWrapper {
         return modelData;
     }
 
-    private Color getOriginalColor(ItemStack item) throws Exception {
+    private Color getOriginalColor(ItemStack item) {
         var colorSettings = plugin.getConfiguration().getPreservation().getColor();
         Color color = null;
         var meta = item.getItemMeta();
@@ -201,7 +201,7 @@ public class Wrapper implements IWrapper {
                 color = StringUtil.colorFromString(map.get(item.getType().toString()));
             }
             for (String key : map.keySet()) {
-                if (plugin.getCollection().getMaterials(key).contains(item.getType())) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
                     color = StringUtil.colorFromString(map.get(key));
                 }
             }
@@ -261,10 +261,11 @@ public class Wrapper implements IWrapper {
 
     @Override
     public ItemStack setPhysical(ItemStack item, boolean physical) {
-        var container = item.getItemMeta().getPersistentDataContainer();
-        container.set(physicalKey, PersistentDataType.INTEGER, physical ? 1 : 0);
-        item.setItemMeta(item.getItemMeta());
-        return item;
+        var editing = item.clone();
+        var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, physical ? (byte) 1 : (byte) 0);
+        editing.setItemMeta(meta);
+        return editing;
     }
 
 }

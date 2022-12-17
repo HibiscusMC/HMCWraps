@@ -57,7 +57,7 @@ public class ItemPreviewEvent extends Event implements Cancellable {
         return this;
     }
 
-    public ItemPreviewEvent getItem(ItemStack item) {
+    public ItemPreviewEvent setItem(ItemStack item) {
         this.item = item;
         return this;
     }

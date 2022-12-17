@@ -29,6 +29,20 @@ public class SerializableItem implements ISerializableItem {
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
 
+    public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
+            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount) {
+        this.id = id;
+        this.name = name;
+        this.glow = glow;
+        this.lore = lore;
+        this.flags = flags;
+        this.modelId = modelId;
+        this.enchantments = enchantments;
+        this.amount = amount;
+    }
+
+    public SerializableItem() { }
+
     @Override
     @NotNull
     public ItemStack toItem(IHMCWraps plugin, Player player) {

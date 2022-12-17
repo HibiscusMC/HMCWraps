@@ -1,6 +1,8 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import org.bukkit.Color;
@@ -24,12 +26,16 @@ public interface IWrap extends ISerializableItem {
      */
     boolean hasPermission(CommandSender sender);
 
-    /**
-     * Get the color of the wrap.
-     *
-     * @return The color
-     */
     @Nullable
     Color getColor();
+
+    @Nullable
+    String getLockedName();
+
+    @Nullable
+    List<String> getLockedLore();
+
+    @Nullable
+    HashMap<String, HashMap<String, List<String>>> getActions();
 
 }

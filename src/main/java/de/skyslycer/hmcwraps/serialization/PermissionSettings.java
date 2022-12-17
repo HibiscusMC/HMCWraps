@@ -9,6 +9,18 @@ public class PermissionSettings implements IPermissionSettings {
     private boolean checkPermissionVirtual;
     private boolean permissionPhysical;
     private boolean permissionVirtual;
+    private boolean inventoryPermission;
+
+    public PermissionSettings(boolean checkPermissionPhysical, boolean checkPermissionVirtual, boolean permissionPhysical, boolean permissionVirtual,
+            boolean inventoryPermission) {
+        this.checkPermissionPhysical = checkPermissionPhysical;
+        this.checkPermissionVirtual = checkPermissionVirtual;
+        this.permissionPhysical = permissionPhysical;
+        this.permissionVirtual = permissionVirtual;
+        this.inventoryPermission = inventoryPermission;
+    }
+
+    public PermissionSettings() { }
 
     @Override
     public boolean isCheckPermissionPhysical() {
@@ -28,6 +40,11 @@ public class PermissionSettings implements IPermissionSettings {
     @Override
     public boolean isPermissionVirtual() {
         return permissionVirtual;
+    }
+
+    @Override
+    public boolean isInventoryPermission() {
+        return inventoryPermission;
     }
 
 }

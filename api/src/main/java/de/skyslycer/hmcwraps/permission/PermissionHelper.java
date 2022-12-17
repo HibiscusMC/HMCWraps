@@ -4,6 +4,7 @@ import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -48,14 +49,14 @@ public class PermissionHelper {
             return null;
         }
         if (!hasPermission(plugin, wrap, item, player)) {
-            plugin.getHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+            plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
             return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissionSettings().isPermissionPhysical());
         }
         return null;
     }
 
     /**
-     * Loops through a players inventory and unwraps items the player doesn't have access to
+     * Loops through a players inventory and unwraps items the player doesn't have access to.
      *
      * @param plugin The plugin
      * @param player The player
@@ -71,6 +72,22 @@ public class PermissionHelper {
                 player.getInventory().setItem(i, newItem);
             }
         }
+    }
+
+    /**
+     * Checks if a sender has any of the given permissions.
+     *
+     * @param sender The sender to check on
+     * @param permissions The permissions to check for
+     * @return If the sender has any permissions
+     */
+    public static boolean hasAnyPermission(CommandSender sender, String... permissions) {
+        for (String permission : permissions) {
+            if (sender.hasPermission(permission)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

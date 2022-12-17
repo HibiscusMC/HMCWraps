@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps;
 
+import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.serialization.IConfig;
@@ -9,6 +10,7 @@ import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +24,8 @@ public interface IHMCWraps extends Plugin {
     Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");
     Path WRAP_FILES_PATH = PLUGIN_PATH.resolve("wraps");
     Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
+    Path CONVERT_PATH = PLUGIN_PATH.resolve("convert");
+    Path COLLECTION_FILES_PATH = PLUGIN_PATH.resolve("collections");
 
     /**
      * Load the plugin. Used for reload.
@@ -78,7 +82,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The message handler
      */
-    @NotNull IMessageHandler getHandler();
+    @NotNull IMessageHandler getMessageHandler();
 
     /**
      * All wraps currently configured.
@@ -96,7 +100,7 @@ public interface IHMCWraps extends Plugin {
     @NotNull Set<IWrapFile> getWrapFiles();
 
     /**
-     * All currently loadedwrappable items.
+     * All currently loaded wrappable items.
      * This map contains all wraps that can be applied to a particular material/collection.
      *
      * @return All currently loaded wrappable items
@@ -122,6 +126,21 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The collection helper.
      */
-    @NotNull ICollectionHelper getCollection();
+    @NotNull ICollectionHelper getCollectionHelper();
+
+    /**
+     * Get the action handler.
+     *
+     * @return The action handler
+     */
+    @NotNull IActionHandler getActionHandler();
+
+    /**
+     * All currently loaded collection files.
+     * This map contains all collections that are configured.
+     *
+     * @return All currently loaded collection files
+     */
+    @NotNull Map<String, List<String>> getCollections();
 
 }

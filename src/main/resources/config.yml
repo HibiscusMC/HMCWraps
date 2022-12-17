@@ -1,5 +1,7 @@
 # Settings on how permissions should be handled
 permission-settings:
+  # If permissions should be checked on wraps inventory open
+  inventory-permission: false
   # If permission checks should be performed during usage for...
   # ...physical wraps
   check-permission-physical: false
@@ -10,6 +12,7 @@ permission-settings:
   permission-physical: false
   # ...virtual wraps
   permission-virtual: true
+
 
 # Preview settings
 preview:
@@ -63,6 +66,17 @@ items:
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
+        # Item actions, all possible action triggers are listed below. For a full list of actions, see the wiki.
+        # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
+        # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
+        actions:
+          wrap: []
+          wrap-virtual: []
+          wrap-physical: []
+          unwrap: []
+          unwrap-virtual: []
+          unwrap-physical: []
+          preview: []
         # The physical wrap to apply (nullable)
         physical:
           # The Bukkit material or a hook
@@ -122,10 +136,7 @@ unwrapper:
     - '<green>Apply this to an item to unwrap it!'
     - '<gray>You may get the physical wrap back.'
 
-# Settings for model id preservation
-model-id-settings:
-
-
+# Settings for model id & color preservation
 preservation:
   model-id:
     # If the model id should be restored after it gets unwrapped from before the item got wrapped
@@ -172,8 +183,15 @@ inventory:
     47:
       id: 'ARROW'
       name: '<green>Previous'
+      # Actions, you can use all the above and more. It's the same format as the actions in the wraps.
       # The action: Either 'SCROLL_BACK', 'SCROLL_FORTH', 'PREVIOUS_PAGE', 'NEXT_PAGE', 'UNWRAP' to unwrap the current item, 'CLOSE' to close the inventory
-      action: 'SCROLL_BACK'
+      actions:
+        # On any click, but there is 'left' and 'right' too
+        any:
+          # Scroll back / previous page
+          SCROLL_BACK:
+            # No arguments are needed
+            - ''
     48:
       id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
@@ -183,7 +201,10 @@ inventory:
     51:
       id: 'ARROW'
       name: '<green>Next'
-      action: 'SCROLL_FORTH'
+      actions:
+        any:
+          SCROLL_FORTH:
+            - ''
     52:
       id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
@@ -193,4 +214,7 @@ inventory:
       # The lore displayed
       lore:
         - '<gray>Unwrap your current item'
-      action: 'UNWRAP'
+      actions:
+        any:
+          UNWRAP:
+            - ''

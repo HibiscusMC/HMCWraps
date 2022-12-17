@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.permission.PermissionHelper;
 import org.bukkit.event.EventHandler;
@@ -25,8 +26,10 @@ public class PlayerInteractListener implements Listener {
         PermissionHelper.loopThroughInventory(plugin, event.getPlayer());
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || plugin.getCollection().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
-                || !plugin.getConfiguration().getInventory().isOpenShortcut()) {
+                || plugin.getCollectionHelper().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
+                || !plugin.getConfiguration().getInventory().isOpenShortcut()
+                || (plugin.getConfiguration().getPermissionSettings().isInventoryPermission()
+                && !PermissionHelper.hasAnyPermission(event.getPlayer(), WrapCommand.WRAPS_PERMISSION))) {
             return;
         }
         event.setCancelled(true);

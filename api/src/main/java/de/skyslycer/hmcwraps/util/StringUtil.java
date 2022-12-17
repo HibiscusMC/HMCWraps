@@ -77,7 +77,7 @@ public class StringUtil {
      * @param string The string
      * @return A replaced string
      */
-    private static String replacePlaceholders(CommandSender sender, String string) {
+    public static String replacePlaceholders(CommandSender sender, String string) {
         if (sender instanceof Player player && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             return PlaceholderAPI.setPlaceholders(player, string);
         }
@@ -89,7 +89,7 @@ public class StringUtil {
      * Formats: #RRGGBB; R,G,B
      *
      * @param color The string
-     * @return The color
+     * @return The color, if the string can't be parsed, null is returned
      */
     @Nullable
     public static Color colorFromString(@Nullable String color) {
@@ -97,7 +97,8 @@ public class StringUtil {
             return null;
         }
         try {
-            return Color.fromRGB(java.awt.Color.decode(color.startsWith("#") ? color : "#" + color).getRGB());
+            var decodedColor = java.awt.Color.decode(color.startsWith("#") ? color : "#" + color);
+            return Color.fromRGB(decodedColor.getRed(), decodedColor.getGreen(), decodedColor.getBlue());
         } catch (NumberFormatException invalidHex) {
             try {
                 var rgbValues = Arrays.stream(color.split(",")).map(Integer::parseInt).toArray(Integer[]::new);

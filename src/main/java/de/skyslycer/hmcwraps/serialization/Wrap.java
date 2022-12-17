@@ -2,7 +2,9 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
@@ -20,6 +22,24 @@ public class Wrap extends SerializableItem implements IWrap {
     private @Nullable String permission;
     private @Nullable String lockedName;
     private @Nullable List<String> lockedLore;
+    private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
+
+    public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags, @Nullable Integer modelId,
+            @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, Boolean preview, String uuid, @Nullable String color,
+            @Nullable PhysicalWrap physical, @Nullable String permission, @Nullable String lockedName, @Nullable List<String> lockedLore,
+            @Nullable HashMap<String, HashMap<String, List<String>>> actions) {
+        super(id, name, glow, lore, flags, modelId, enchantments, amount);
+        this.preview = preview;
+        this.uuid = uuid;
+        this.color = color;
+        this.physical = physical;
+        this.permission = permission;
+        this.lockedName = lockedName;
+        this.lockedLore = lockedLore;
+        this.actions = actions;
+    }
+
+    public Wrap() { }
 
     @Override
     public Optional<String> getPermission() {
@@ -41,14 +61,22 @@ public class Wrap extends SerializableItem implements IWrap {
         return preview;
     }
 
+    @Override
     @Nullable
     public String getLockedName() {
         return lockedName;
     }
 
+    @Override
     @Nullable
     public List<String> getLockedLore() {
         return lockedLore;
+    }
+
+    @Override
+    @Nullable
+    public HashMap<String, HashMap<String, List<String>>> getActions() {
+        return actions;
     }
 
     @Override
