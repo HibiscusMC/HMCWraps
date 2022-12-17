@@ -89,11 +89,11 @@ bukkit {
     apiVersion = "1.17"
     permissions {
         register("hmcwraps.admin") {
-            description = "Gives access to admin commands."
+            description = "Gives access to all commands."
             default = Default.OP
         }
         register("hmcwraps.management") {
-            description = "Gives access to every command except the reload command."
+            description = "Gives access to every command except the reload and the convert command."
         }
         register("hmcwraps.commands.physical") {
             description = "Gives access to all commands related to physical wraps."

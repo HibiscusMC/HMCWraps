@@ -225,7 +225,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
-                    "model-id-settings.default-model-ids");
+                    "preservation.model-id.defaults", "preservation.color.defaults");
             config = LOADER.load().get(Config.class);
             loadWrapFiles();
             loadCollectionFiles();
