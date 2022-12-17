@@ -66,7 +66,7 @@ tasks {
         exclude("assets/mappings/particle/**")
         exclude("assets/mappings/potion/**")
 
-        archiveFileName.set("HMCWraps.jar")
+        archiveClassifier.set("")
         minimize()
     }
 

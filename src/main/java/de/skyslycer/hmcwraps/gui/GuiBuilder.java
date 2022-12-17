@@ -1,9 +1,9 @@
 package de.skyslycer.hmcwraps.gui;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
-import de.skyslycer.hmcwraps.serialization.inventory.InventoryAction;
 import de.skyslycer.hmcwraps.serialization.inventory.InventoryType;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.components.ScrollType;
@@ -40,9 +40,18 @@ public class GuiBuilder {
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
             ItemStack stack = serializableItem.toItem(plugin, player);
             GuiItem guiItem = new GuiItem(stack);
-            if (serializableItem.getAction() != null) {
-                InventoryAction.add(guiItem, gui, serializableItem.getAction(),
-                        plugin);
+            if (serializableItem.getActions() != null) {
+                guiItem.setAction(event -> {
+                    if (event.getClick() == ClickType.LEFT && serializableItem.getActions().containsKey("left")) {
+                        plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("left"), new GuiActionInformation(player, "", gui));
+                    } else if (event.getClick() == ClickType.RIGHT && serializableItem.getActions().containsKey("right")) {
+                        plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("right"), new GuiActionInformation(player, "", gui));
+                    }
+                    if (!serializableItem.getActions().containsKey("any")) {
+                        return;
+                    }
+                    plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("any"), new GuiActionInformation(player, "", gui));
+                });
             }
             gui.setItem(inventorySlot, guiItem);
         });

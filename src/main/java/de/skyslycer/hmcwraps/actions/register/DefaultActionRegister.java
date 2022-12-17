@@ -21,8 +21,11 @@ import com.owen1212055.particlehelper.api.particle.types.vibration.VibrationPart
 import com.owen1212055.particlehelper.api.type.Particles;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.actions.Action;
+import de.skyslycer.hmcwraps.actions.ActionMethod;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
+import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
+import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -51,13 +54,59 @@ public class DefaultActionRegister {
         registerMessage();
         registerCommand();
         registerConsoleCommand();
+        registerScrollForth();
+        registerScrollBack();
+        registerUnwrap();
+        registerClose();
     }
 
-    public void registerParticle() {
+    private void registerScrollForth() {
+        ActionMethod consumer = (actionInformation) -> {
+            if (actionInformation instanceof GuiActionInformation guiActionInformation) {
+                guiActionInformation.getGui().next();
+            }
+        };
+        plugin.getActionHandler().subscribe(Action.SCROLL_FORTH, consumer);
+        plugin.getActionHandler().subscribe(Action.NEXT_PAGE, consumer);
+    }
+
+    private void registerScrollBack() {
+        ActionMethod consumer = (actionInformation) -> {
+            if (actionInformation instanceof GuiActionInformation guiActionInformation) {
+                guiActionInformation.getGui().previous();
+            }
+        };
+        plugin.getActionHandler().subscribe(Action.SCROLL_BACK, consumer);
+        plugin.getActionHandler().subscribe(Action.PREVIOUS_PAGE, consumer);
+    }
+
+    private void registerUnwrap() {
+        plugin.getActionHandler().subscribe(Action.UNWRAP, (actionInformation) -> {
+            var player = actionInformation.getPlayer();
+            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItemInMainHand());
+            player.getInventory().setItemInMainHand(plugin.getWrapper().removeWrap(player.getInventory().getItemInMainHand(), player, true));
+            player.getOpenInventory().close();
+            plugin.getMessageHandler().send(player, Messages.REMOVE_WRAP);
+            if (wrap != null) {
+                plugin.getActionHandler().pushUnwrap(wrap, player);
+                plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
+            }
+        });
+    }
+
+    private void registerClose() {
+        plugin.getActionHandler().subscribe(Action.CLOSE_INVENTORY, (actionInformation) -> {
+            if (actionInformation instanceof GuiActionInformation guiActionInformation) {
+                guiActionInformation.getGui().close(actionInformation.getPlayer());
+            }
+        });
+    }
+
+    private void registerParticle() {
         plugin.getActionHandler().subscribe(Action.PARTICLE, (information) -> doParticle(information, false));
     }
 
-    public void registerParticleMulti() {
+    private void registerParticleMulti() {
         plugin.getActionHandler().subscribe(Action.PARTICLE_MULTI, (information) -> doParticle(information, true));
     }
 
@@ -135,7 +184,7 @@ public class DefaultActionRegister {
         return particle;
     }
 
-    public void registerSound() {
+    private void registerSound() {
         plugin.getActionHandler().subscribe(Action.SOUND, (information) -> {
             var player = information.getPlayer();
             var split = information.getArguments().split(" ");
@@ -158,7 +207,7 @@ public class DefaultActionRegister {
         });
     }
 
-    public void registerTitle() {
+    private void registerTitle() {
         plugin.getActionHandler().subscribe(Action.TITLE, (information -> {
             var player = information.getPlayer();
             var split = information.getArguments().split(" ");
@@ -169,7 +218,7 @@ public class DefaultActionRegister {
         }));
     }
 
-    public void registerSubtitle() {
+    private void registerSubtitle() {
         plugin.getActionHandler().subscribe(Action.SUBTITLE, (information -> {
             var player = information.getPlayer();
             var split = information.getArguments().split(" ");
@@ -201,14 +250,14 @@ public class DefaultActionRegister {
         }));
     }
 
-    public void registerMessage() {
+    private void registerMessage() {
         plugin.getActionHandler().subscribe(Action.MESSAGE, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "message", "message")) return;
             StringUtil.send(information.getPlayer(), parseMessage(information));
         });
     }
 
-    public void registerCommand() {
+    private void registerCommand() {
         plugin.getActionHandler().subscribe(Action.COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "command", "say HMCWraps")) return;
             var player = information.getPlayer();
@@ -216,7 +265,7 @@ public class DefaultActionRegister {
         });
     }
 
-    public void registerConsoleCommand() {
+    private void registerConsoleCommand() {
         plugin.getActionHandler().subscribe(Action.CONSOLE_COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "console command", "kill <player>")) return;
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information));
