@@ -40,7 +40,7 @@ dependencies {
     implementation("org.spongepowered:configurate-yaml:4.1.2") {
         exclude("org.yaml")
     }
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
