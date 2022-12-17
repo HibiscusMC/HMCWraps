@@ -27,7 +27,7 @@ dependencies {
     compileOnly("dev.triumphteam:triumph-gui:3.1.3")
     compileOnly("net.kyori:adventure-api:4.12.0")
     compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
-    compileOnly("net.kyori:adventure-platform-bukkit:4.1.2")
+    compileOnly("net.kyori:adventure-platform-bukkit:4.2.0")
     compileOnly("org.jetbrains:annotations:23.1.0")
 }
 
