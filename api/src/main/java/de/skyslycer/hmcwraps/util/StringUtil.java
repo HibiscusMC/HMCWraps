@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -19,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
 public class StringUtil {
 
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().tags(StandardTags.defaults()).build();
+    public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().character('&').hexCharacter('#').hexColors()
+            .useUnusualXRepeatedCharacterHexFormat().build();
+
 
     /**
      * Parse MiniMessage from a string and replace placeholders.
@@ -28,7 +32,7 @@ public class StringUtil {
      * @return The parsed component
      */
     public static Component parseComponent(String message, TagResolver... placeholders) {
-        String string = ChatColor.translateAlternateColorCodes('&', message);
+        String string = legacyToMiniMessage(message);
         return Component.text().decoration(TextDecoration.ITALIC, false).append(MINI_MESSAGE.deserialize(string, TagResolver.resolver(placeholders)))
                 .build();
     }
@@ -42,7 +46,7 @@ public class StringUtil {
      * @return The parsed component
      */
     public static Component parseComponent(CommandSender sender, String message, TagResolver... placeholders) {
-        String string = ChatColor.translateAlternateColorCodes('&', message);
+        String string = legacyToMiniMessage(message);
         return Component.text().decoration(TextDecoration.ITALIC, false)
                 .append(MINI_MESSAGE.deserialize(replacePlaceholders(sender, string), placeholders)).build();
     }
@@ -107,6 +111,10 @@ public class StringUtil {
                 return null;
             }
         }
+    }
+
+    public static String legacyToMiniMessage(String legacy) {
+        return MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(legacy));
     }
 
 }
