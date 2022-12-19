@@ -31,7 +31,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.2.0")
     implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
     implementation("com.github.Revxrsal.Lamp:common:3.1.0")
-    implementation("com.github.Revxrsal.Lamp:bukkit:3.1.0")
+    implementation("com.github.Revxrsal.Lamp:bukkit:3.1.1")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.3") {
