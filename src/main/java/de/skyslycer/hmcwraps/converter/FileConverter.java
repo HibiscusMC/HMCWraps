@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.serialization.PhysicalWrap;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.serialization.WrapFile;
 import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import de.skyslycer.hmcwraps.util.StringUtil;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -153,19 +154,21 @@ public class FileConverter {
         PhysicalWrap physical = null;
         if (itemSkinsPhysical != null) {
             physical = new PhysicalWrap(
-                    itemSkinsPhysical.getMaterial(), itemSkinsPhysical.getDisplayName(), itemSkinsPhysical.getGlowing(), itemSkinsPhysical.getLore(),
+                    itemSkinsPhysical.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsPhysical.getDisplayName()), itemSkinsPhysical.getGlowing(),
+                    itemSkinsPhysical.getLore() != null ? itemSkinsPhysical.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
                     null, itemSkinsPhysical.getCustomModelData(), null, null, true);
         }
         List<String> lockedLore = null;
-        if (itemSkinsFile.getUnavailableItem() != null) {
-            lockedLore = itemSkinsFile.getUnavailableItem().getLore();
+        if (itemSkinsFile.getUnavailableItem() != null && itemSkinsFile.getUnavailableItem().getLore() != null) {
+            lockedLore = itemSkinsFile.getUnavailableItem().getLore().stream().map(StringUtil::legacyToMiniMessage).toList();
         }
         String lockedName = null;
         if (itemSkinsFile.getUnavailableItem() != null) {
-            lockedName = itemSkinsFile.getUnavailableItem().getDisplayName();
+            lockedName = StringUtil.legacyToMiniMessage(itemSkinsFile.getUnavailableItem().getDisplayName());
         }
         var wrap = new Wrap(
-                itemSkinsItem.getMaterial(), itemSkinsItem.getDisplayName(), itemSkinsItem.getGlowing(), itemSkinsItem.getLore(), null,
+                itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
+                itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null, null,
                 itemSkinsFile.getCustomModelData(), null, null, true, file.getName().replace(".yml", ""),
                 null, physical, itemSkinsFile.getPermission(), lockedName, lockedLore, null);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
