@@ -9,7 +9,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -113,6 +112,12 @@ public class StringUtil {
         }
     }
 
+    /**
+     * Convert legacy color codes (&c) to MiniMessage (<red>).
+     *
+     * @param legacy The string containing legacy color codes
+     * @return The string with MiniMessage color codes
+     */
     public static String legacyToMiniMessage(String legacy) {
         return MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(legacy));
     }
