@@ -11,7 +11,7 @@ jobs:
     environment: build
     runs-on: ubuntu-latest
     env:
-      HAS_TOKEN: ${{ secrets.NEXUS_PASSWORD != '' }}
+      HAS_TOKEN: ${{ secrets.REPO_PASSWORD != '' }}
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Java
@@ -23,7 +23,7 @@ jobs:
         run: ./gradlew api:clean api:build --no-daemon --stacktrace
       - name: Publish to Nexus
         if: ${{ env.HAS_TOKEN == 'true' }}
-        run: ./gradlew api:publishMavenPublicationToSkyNexusRepository
+        run: ./gradlew api:publishMavenPublicationToSkyRepositoryRepository
         env:
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
+          REPU_PASSWORD: ${{ secrets.REPO_PASSWORD }}
