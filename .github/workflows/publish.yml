@@ -26,4 +26,4 @@ jobs:
         run: ./gradlew api:publishMavenPublicationToSkyRepositoryRepository
         env:
           REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
-          REPU_PASSWORD: ${{ secrets.REPO_PASSWORD }}
+          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
