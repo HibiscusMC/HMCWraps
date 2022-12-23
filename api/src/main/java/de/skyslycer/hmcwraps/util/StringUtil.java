@@ -5,12 +5,14 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -114,12 +116,18 @@ public class StringUtil {
 
     /**
      * Convert legacy color codes (&c) to MiniMessage (<red>).
+     * If the string contains legacy color codes, other MiniMessage tags won't work.
      *
      * @param legacy The string containing legacy color codes
      * @return The string with MiniMessage color codes
      */
     public static String legacyToMiniMessage(String legacy) {
-        return MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(legacy));
+        try {
+            MINI_MESSAGE.deserialize(ChatColor.translateAlternateColorCodes('&', legacy));
+            return legacy;
+        } catch (ParsingException exception) {
+            return MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(legacy));
+        }
     }
 
 }
