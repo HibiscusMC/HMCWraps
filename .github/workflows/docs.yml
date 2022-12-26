@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, 'dependabot')"
+    if: "!contains(github.event.head_commit.message, 'dependabot') && !contains(github.event.head_commit.message, 'nodocs')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

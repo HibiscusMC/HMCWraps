@@ -13,7 +13,7 @@ val shadePattern = "$group.hmcwraps.shade"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
+    maven("https://repo.skyslycer.de/jitpack")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/groups/public")
