@@ -15,7 +15,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
-import de.skyslycer.hmcwraps.util.VectorUtils;
+import de.skyslycer.hmcwraps.util.VectorUtil;
 import dev.triumphteam.gui.guis.BaseGui;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
@@ -85,7 +85,7 @@ public class Preview implements IPreview {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnEntity(entityId,
                     Optional.of(UUID.randomUUID()),
                     EntityTypes.ARMOR_STAND,
-                    VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
+                    VectorUtil.fromLocation(PlayerUtil.getOpposite(player)),
                     0f,
                     0f,
                     0f,
@@ -101,11 +101,11 @@ public class Preview implements IPreview {
                     entityId,
                     UUID.randomUUID(),
                     EntityTypes.ARMOR_STAND,
-                    VectorUtils.fromLocation(PlayerUtil.getOpposite(player)),
+                    VectorUtil.fromLocation(PlayerUtil.getOpposite(player)),
                     0f,
                     0f,
                     0f,
-                    VectorUtils.zeroVector(),
+                    VectorUtil.zeroVector(),
                     List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
                             new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
                             new EntityData(5, EntityDataTypes.BOOLEAN, true))));
@@ -123,7 +123,7 @@ public class Preview implements IPreview {
 
     private void sendTeleportPacket() {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player,
-                new WrapperPlayServerEntityTeleport(entityId, VectorUtils.fromLocation(PlayerUtil.getLookBlock(player)),
+                new WrapperPlayServerEntityTeleport(entityId, VectorUtil.fromLocation(PlayerUtil.getLookBlock(player)),
                         0f, 0f, false));
     }
 

@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.util;
 import com.github.retrooper.packetevents.util.Vector3d;
 import org.bukkit.Location;
 
-public class VectorUtils {
+public class VectorUtil {
 
     /**
      * Convert a Bukkit Location to a PacketEvents Vector3d.

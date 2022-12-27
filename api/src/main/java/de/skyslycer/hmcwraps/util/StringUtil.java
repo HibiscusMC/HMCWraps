@@ -24,7 +24,6 @@ public class StringUtil {
     public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().character('&').hexCharacter('#').hexColors()
             .useUnusualXRepeatedCharacterHexFormat().build();
 
-
     /**
      * Parse MiniMessage from a string and replace placeholders.
      *
