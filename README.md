@@ -14,7 +14,7 @@ as color and look of an item are purely cosmetic.
 The configurations that are put onto the item are called wraps, and conveniently so, you can call the according setting and removing of a wrap **wrapping** and **unwrapping**.
 
 ## How to get it
-Polymart: `Coming soon!`
+Polymart: https://polymart.org/resource/hmcwraps.3216
 
 Spigot: `Coming soon!`
 
