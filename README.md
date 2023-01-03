@@ -1,7 +1,24 @@
-# HMCWraps
+<p align="center">
+    <a href="https://polymart.org/resource/hmcwraps.3216">
+        <img width="300" alt="logo" src="https://upload.skyslycer.de/wraps_logo_resized.png"/>
+    </a>
+</p>
 
-### The best choice to make your items prettier.
-Say hello to the latest entry, **HMCWraps**, in the HCS plugin family!
+<h2 align="center">The best choice to make your items prettier.</h4>
+
+<p align="center">
+    <a href="https://polymart.org/resource/hmcwraps.3216">
+        <img alt="polymart" src="https://img.shields.io/badge/POLYMART-HMCWraps-brightgreen?style=for-the-badge"/>
+    </a>
+    <a href="https://docs.hibiscusmc.com/">
+        <img alt="docs" src="https://img.shields.io/badge/Documentation-brightgreen?style=for-the-badge"/>
+    </a>
+    <a href="https://discord.gg/pcm8kWrdNt">
+        <img alt="discord" src="https://img.shields.io/badge/Discord Support-blue?style=for-the-badge"/>
+    </a>
+</p>
+
+Say hello to the latest plugin entry, **HMCWraps**, in the HCS plugin family!
 
 HMCWraps is an easy-to-use, intuitive item cosmetic plugin which is completely EULA compliant providing cool features.
 
