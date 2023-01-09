@@ -7,6 +7,9 @@
 <h2 align="center">The best choice to make your items prettier.</h4>
 
 <p align="center">
+    <a href="https://www.spigotmc.org/resources/hmcwraps.107099/6">
+        <img alt="polymart" src="https://img.shields.io/badge/SPIGOT-HMCWraps-brightgreen?style=for-the-badge"/>
+    </a>
     <a href="https://polymart.org/resource/hmcwraps.3216">
         <img alt="polymart" src="https://img.shields.io/badge/POLYMART-HMCWraps-brightgreen?style=for-the-badge"/>
     </a>
