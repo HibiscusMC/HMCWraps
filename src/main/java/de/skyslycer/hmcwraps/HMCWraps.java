@@ -10,10 +10,7 @@ import de.skyslycer.hmcwraps.converter.FileConverter;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
-import de.skyslycer.hmcwraps.listener.InventoryClickListener;
-import de.skyslycer.hmcwraps.listener.PlayerInteractListener;
-import de.skyslycer.hmcwraps.listener.PlayerPickupListener;
-import de.skyslycer.hmcwraps.listener.PlayerShiftListener;
+import de.skyslycer.hmcwraps.listener.*;
 import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.Messages;
@@ -109,6 +106,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryOpenListener(this), this);
 
         PacketEvents.getAPI().init();
 
@@ -125,6 +123,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @Override
     public void onDisable() {
         unload();
+        hooks.clear();
         PacketEvents.getAPI().terminate();
     }
 
@@ -151,7 +150,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     public void unload() {
-        hooks.clear();
         wraps.clear();
         wrappableItems.clear();
         wrapFiles.clear();

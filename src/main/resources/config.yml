@@ -1,6 +1,6 @@
 # Settings on how permissions should be handled
 permission-settings:
-  # If permissions should be checked on wraps inventory open
+  # If the wrap inventory open permission should be checked on wraps inventory open
   inventory-permission: false
   # If permission checks should be performed during usage for...
   # ...physical wraps

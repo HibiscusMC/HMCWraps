@@ -77,9 +77,7 @@ public class Wrapper implements IWrapper {
             originalModelId = meta.getCustomModelData();
         }
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
-        System.out.println(originalData.getModelId());
         meta.setCustomModelData(wrap == null ? originalData.getModelId() : wrap.getModelId());
-        System.out.println(meta.getCustomModelData());
         if (meta instanceof LeatherArmorMeta leatherMeta) {
             originalColor = leatherMeta.getColor();
             leatherMeta.setColor(wrap == null ? originalData.getColor() : wrap.getColor());
@@ -88,7 +86,6 @@ public class Wrapper implements IWrapper {
             editing.setItemMeta(meta);
         }
         editing = setPhysical(editing.clone(), physical);
-        System.out.println(editing.getItemMeta().getCustomModelData());
         if (wrap == null) {
             return editing;
         }
@@ -157,7 +154,6 @@ public class Wrapper implements IWrapper {
         } catch (Exception ignored) {
             Bukkit.getLogger().warning("Failed to get original model data for " + item.getType() + "! Data may not be a number.");
         }
-        System.out.println(modelData);
         Color color = null;
         try {
             color = getOriginalColor(item);
@@ -172,11 +168,8 @@ public class Wrapper implements IWrapper {
         var modelData = -1;
         var modelDataSettings = plugin.getConfiguration().getPreservation().getModelId();
         if (modelDataSettings.isOriginalEnabled()) {
-            System.out.println("enabled");
             var data =  meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
             if (data != null) {
-                System.out.println("not null");
-                System.out.println(data);
                 modelData = data;
             }
         } else if (modelDataSettings.isDefaultEnabled()) {
@@ -190,7 +183,6 @@ public class Wrapper implements IWrapper {
                 }
             }
         }
-        System.out.println(modelData);
         return modelData;
     }
 
