@@ -28,7 +28,7 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string and replace placeholders.
      *
-     * @param message      The string to parse
+     * @param message The string to parse
      * @param placeholders The placeholders
      * @return The parsed component
      */
@@ -41,8 +41,8 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders.
      *
-     * @param sender       The sender
-     * @param message      The string to parse
+     * @param sender The sender
+     * @param message The string to parse
      * @param placeholders The placeholders
      * @return The parsed component
      */
@@ -55,8 +55,8 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders and return a Spigot friendly component.
      *
-     * @param sender       The sender
-     * @param message      The string to parse
+     * @param sender The sender
+     * @param message The string to parse
      * @param placeholders The placeholders
      * @return The BaseComponent array used in Spigot
      */
@@ -67,12 +67,16 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders and send it to the sender.
      *
-     * @param sender       The sender
-     * @param message      The string to parse
+     * @param sender The sender
+     * @param message The string to parse
      * @param placeholders The placeholders
      */
     public static void send(CommandSender sender, String message, TagResolver... placeholders) {
         sender.spigot().sendMessage(parse(sender, message, placeholders));
+    }
+
+    public static void sendComponent(CommandSender sender, Component component) {
+        sender.spigot().sendMessage(BungeeComponentSerializer.get().serialize(component));
     }
 
     /**

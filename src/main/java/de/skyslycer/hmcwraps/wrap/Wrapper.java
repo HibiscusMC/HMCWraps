@@ -192,7 +192,7 @@ public class Wrapper implements IWrapper {
         Color color = null;
         var meta = item.getItemMeta();
         if (colorSettings.isOriginalEnabled()) {
-            var data = meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
+            var data = meta.getPersistentDataContainer().get(originalColorKey, PersistentDataType.INTEGER);
             if (data != null) {
                 color = Color.fromRGB(data);
             }

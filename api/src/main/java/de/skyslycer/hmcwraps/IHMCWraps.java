@@ -2,10 +2,12 @@ package de.skyslycer.hmcwraps;
 
 import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.messages.IMessageHandler;
+import de.skyslycer.hmcwraps.pool.ObjectPool;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.serialization.*;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
+import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +17,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public interface IHMCWraps extends Plugin {
 
@@ -146,5 +149,12 @@ public interface IHMCWraps extends Plugin {
      * @return All collection files
      */
     @NotNull Set<ICollectionFile> getCollectionFiles();
+
+    /**
+     * Get the message pool.
+     *
+     * @return The message pool
+     */
+    ObjectPool<UUID, Component> getMessagePool();
 
 }

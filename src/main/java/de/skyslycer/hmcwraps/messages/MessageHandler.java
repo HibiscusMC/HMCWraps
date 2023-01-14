@@ -4,6 +4,7 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,7 +84,12 @@ public class MessageHandler implements IMessageHandler {
 
     @Override
     public void send(CommandSender sender, Messages key, Single... placeholders) {
-        StringUtil.send(sender, get(key), placeholders);
+        var message = StringUtil.parseComponent(sender, get(key), placeholders);
+        if (sender instanceof Player player) {
+            plugin.getMessagePool().execute(player.getUniqueId(), message, () -> StringUtil.sendComponent(sender, message));
+            return;
+        }
+        StringUtil.sendComponent(sender, message);
     }
 
 }

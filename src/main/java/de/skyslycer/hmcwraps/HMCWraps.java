@@ -15,6 +15,8 @@ import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.placeholderapi.HMCWrapsPlaceholders;
+import de.skyslycer.hmcwraps.pool.MessagePool;
+import de.skyslycer.hmcwraps.pool.ObjectPool;
 import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.*;
@@ -23,6 +25,7 @@ import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -52,6 +55,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
             .path(CONFIG_PATH)
             .build();
+
+    private final ObjectPool<UUID, Component> messagePool = new MessagePool();
     private final Set<ItemHook> hooks = new HashSet<>();
     private final Map<String, IWrap> wraps = new HashMap<>();
     private final Map<String, List<String>> collections = new HashMap<>();
@@ -417,6 +422,11 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     public FileConverter getFileConverter() {
         return fileConverter;
+    }
+
+    @Override
+    public ObjectPool<UUID, Component> getMessagePool() {
+        return messagePool;
     }
 
 }
