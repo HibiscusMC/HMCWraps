@@ -1,9 +1,10 @@
 package de.skyslycer.hmcwraps.preview;
 
 import dev.triumphteam.gui.guis.PaginatedGui;
-import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 
 public interface IPreviewManager {
 
@@ -19,8 +20,8 @@ public interface IPreviewManager {
      * Create a preview.
      *
      * @param player The player
-     * @param item The item to preview
-     * @param gui The GUI to open again
+     * @param item   The item to preview
+     * @param gui    The GUI to open again
      */
     void create(Player player, ItemStack item, PaginatedGui gui);
 

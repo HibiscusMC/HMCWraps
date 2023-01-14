@@ -1,12 +1,13 @@
 package de.skyslycer.hmcwraps.converter;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.serialization.CollectionFile;
-import de.skyslycer.hmcwraps.serialization.PhysicalWrap;
-import de.skyslycer.hmcwraps.serialization.Wrap;
-import de.skyslycer.hmcwraps.serialization.WrapFile;
-import de.skyslycer.hmcwraps.serialization.WrappableItem;
+import de.skyslycer.hmcwraps.serialization.*;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import org.spongepowered.configurate.BasicConfigurationNode;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -14,10 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.spongepowered.configurate.BasicConfigurationNode;
-import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 public class FileConverter {
 
@@ -156,7 +153,7 @@ public class FileConverter {
             physical = new PhysicalWrap(
                     itemSkinsPhysical.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsPhysical.getDisplayName()), itemSkinsPhysical.getGlowing(),
                     itemSkinsPhysical.getLore() != null ? itemSkinsPhysical.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
-                    null, itemSkinsPhysical.getCustomModelData(), null, null, true);
+                    null, itemSkinsPhysical.getCustomModelData(), null, null, null, true);
         }
         List<String> lockedLore = null;
         if (itemSkinsFile.getUnavailableItem() != null && itemSkinsFile.getUnavailableItem().getLore() != null) {
@@ -170,7 +167,7 @@ public class FileConverter {
                 itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
                 itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null, null,
                 itemSkinsFile.getCustomModelData(), null, null, true, file.getName().replace(".yml", ""),
-                null, physical, itemSkinsFile.getPermission(), lockedName, lockedLore, null);
+                null, physical, itemSkinsFile.getPermission(), lockedName, lockedLore, null, null /*TODO: Add locked item*/);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
     }
 

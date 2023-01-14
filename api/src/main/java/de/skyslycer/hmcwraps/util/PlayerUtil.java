@@ -11,7 +11,7 @@ public class PlayerUtil {
      * Give a player an item and drop what doesn't fit.
      *
      * @param player The player
-     * @param item The item to give
+     * @param item   The item to give
      */
     public static void give(Player player, ItemStack item) {
         var drops = player.getInventory().addItem(item);
@@ -54,7 +54,7 @@ public class PlayerUtil {
      * Sets the Y-coordinate of the location to 1 higher than the players Y-level
      *
      * @param location The location to edit
-     * @param player The player
+     * @param player   The player
      * @return The changed location
      */
     private static Location fixLocation(Location location, Player player) {

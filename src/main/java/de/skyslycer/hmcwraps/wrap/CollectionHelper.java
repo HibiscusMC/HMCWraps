@@ -2,9 +2,10 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+import org.bukkit.Material;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Material;
 
 public class CollectionHelper implements ICollectionHelper {
 

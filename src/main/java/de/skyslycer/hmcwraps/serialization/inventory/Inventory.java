@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.serialization.inventory;
 
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class Inventory implements IInventory {
@@ -23,7 +24,8 @@ public class Inventory implements IInventory {
         this.items = items;
     }
 
-    public Inventory() { }
+    public Inventory() {
+    }
 
     @Override
     public String getTitle() {

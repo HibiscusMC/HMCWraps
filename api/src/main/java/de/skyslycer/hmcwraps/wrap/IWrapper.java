@@ -2,10 +2,11 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrapValues;
-import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public interface IWrapper {
 
@@ -21,7 +22,7 @@ public interface IWrapper {
     /**
      * If the provided player is owning the wrap on the item.
      *
-     * @param item The item
+     * @param item   The item
      * @param player The wrap
      * @return If the wrap on the item belongs to the player
      */
@@ -49,10 +50,10 @@ public interface IWrapper {
      * Wrap an item. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
      * give the player the wrapper of the old wrap.
      *
-     * @param wrap The wrap to apply, if null, the item will be unwrapped
-     * @param target The item to apply the wrap to
+     * @param wrap     The wrap to apply, if null, the item will be unwrapped
+     * @param target   The item to apply the wrap to
      * @param physical If the wrap was added physically
-     * @param player The player
+     * @param player   The player
      * @param giveBack If the player should get his physical wrapper back
      * @return The newly wrapped item
      */
@@ -63,8 +64,8 @@ public interface IWrapper {
      * give the player the wrapper of the old wrap.
      *
      * @param itemStack The item to remove the wrap from
-     * @param player The player
-     * @param giveBack If the player should get his physical wrapper back
+     * @param player    The player
+     * @param giveBack  If the player should get his physical wrapper back
      * @return The newly unwrapped item
      */
     ItemStack removeWrap(ItemStack itemStack, Player player, boolean giveBack);
@@ -124,7 +125,7 @@ public interface IWrapper {
     /**
      * Set if the wrap was applied physically.
      *
-     * @param item The item
+     * @param item     The item
      * @param physical If the wrap was applied physically
      * @return The changed item
      */

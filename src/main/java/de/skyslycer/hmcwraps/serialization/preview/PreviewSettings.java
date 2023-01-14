@@ -17,7 +17,8 @@ public class PreviewSettings implements IPreviewSettings {
         this.bobbing = bobbing;
     }
 
-    public PreviewSettings() { }
+    public PreviewSettings() {
+    }
 
     @Override
     public int getDuration() {

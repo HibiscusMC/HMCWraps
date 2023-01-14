@@ -13,7 +13,8 @@ public class PreservationSettings implements IPreservationSettings {
         this.color = color;
     }
 
-    public PreservationSettings() { }
+    public PreservationSettings() {
+    }
 
     @Override
     public ValuePreservationSettings getModelId() {

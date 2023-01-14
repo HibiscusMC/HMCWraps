@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.messages;
 
-import java.nio.file.Path;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import org.bukkit.command.CommandSender;
+
+import java.nio.file.Path;
 
 public interface IMessageHandler {
 
@@ -32,8 +33,8 @@ public interface IMessageHandler {
     /**
      * Send a message to a sender with replacing placeholders.
      *
-     * @param sender The receiver
-     * @param key The message key
+     * @param sender       The receiver
+     * @param key          The message key
      * @param placeholders The placeholders to replace
      */
     void send(CommandSender sender, Messages key, Single... placeholders);

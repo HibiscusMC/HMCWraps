@@ -2,9 +2,10 @@ package de.skyslycer.hmcwraps.actions;
 
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.serialization.IWrap;
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.entity.Player;
 
 public interface IActionHandler {
 
@@ -19,7 +20,7 @@ public interface IActionHandler {
     /**
      * Push an action to all subscribers.
      *
-     * @param action The action to push
+     * @param action      The action to push
      * @param information The action information
      */
     void push(Action action, ActionInformation information);
@@ -35,7 +36,7 @@ public interface IActionHandler {
     /**
      * Push all unwrap actions to all subscribers.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushUnwrap(IWrap wrap, Player player);
@@ -43,7 +44,7 @@ public interface IActionHandler {
     /**
      * Push all wrap actions to all subscribers.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushWrap(IWrap wrap, Player player);
@@ -51,7 +52,7 @@ public interface IActionHandler {
     /**
      * Push all physical wrap actions to all subscribers.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushPhysicalUnwrap(IWrap wrap, Player player);
@@ -59,7 +60,7 @@ public interface IActionHandler {
     /**
      * Push all physical unwrap actions to all subscribers.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushPhysicalWrap(IWrap wrap, Player player);
@@ -67,7 +68,7 @@ public interface IActionHandler {
     /**
      * Push all virtual wrap actions to all subscribers.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushVirtualUnwrap(IWrap wrap, Player player);
@@ -75,7 +76,7 @@ public interface IActionHandler {
     /**
      * Push all virtual unwrap actions to all subscribers.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushVirtualWrap(IWrap wrap, Player player);
@@ -83,7 +84,7 @@ public interface IActionHandler {
     /**
      * Push all preview actions to all subscribers from the config.
      *
-     * @param wrap The wrap
+     * @param wrap   The wrap
      * @param player the player
      */
     void pushPreview(IWrap wrap, Player player);

@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
 import java.util.List;
 import java.util.Map;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class CollectionFile extends Toggleable implements ICollectionFile {
@@ -14,7 +15,8 @@ public class CollectionFile extends Toggleable implements ICollectionFile {
         this.collections = collections;
     }
 
-    public CollectionFile() { }
+    public CollectionFile() {
+    }
 
     @Override
     public Map<String, List<String>> getCollections() {

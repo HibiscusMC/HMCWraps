@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.converter;
 
-import java.util.List;
-import javax.annotation.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @ConfigSerializable
 public class ItemSkinsFile {
@@ -14,20 +15,32 @@ public class ItemSkinsFile {
     private @Nullable Item unavailableItem;
     private @Nullable Item physicalItem;
 
-    public List<String> getMaterial() { return material; }
+    public List<String> getMaterial() {
+        return material;
+    }
 
-    public int getCustomModelData() { return customModelData; }
-
-    @Nullable
-    public String getPermission() { return permission; }
-
-    public Item getAvailableItem() { return availableItem; }
-
-    @Nullable
-    public Item getUnavailableItem() { return unavailableItem; }
+    public int getCustomModelData() {
+        return customModelData;
+    }
 
     @Nullable
-    public Item getPhysicalItem() { return physicalItem; }
+    public String getPermission() {
+        return permission;
+    }
+
+    public Item getAvailableItem() {
+        return availableItem;
+    }
+
+    @Nullable
+    public Item getUnavailableItem() {
+        return unavailableItem;
+    }
+
+    @Nullable
+    public Item getPhysicalItem() {
+        return physicalItem;
+    }
 
     @ConfigSerializable
     public static class Item {
@@ -38,18 +51,28 @@ public class ItemSkinsFile {
         private @Nullable Boolean glowing;
         private @Nullable List<String> lore;
 
-        public String getMaterial() { return material; }
+        public String getMaterial() {
+            return material;
+        }
 
-        public String getDisplayName() { return displayName; }
-
-        @Nullable
-        public Integer getCustomModelData() { return customModelData; }
-
-        @Nullable
-        public Boolean getGlowing() { return glowing; }
+        public String getDisplayName() {
+            return displayName;
+        }
 
         @Nullable
-        public List<String> getLore() { return lore; }
+        public Integer getCustomModelData() {
+            return customModelData;
+        }
+
+        @Nullable
+        public Boolean getGlowing() {
+            return glowing;
+        }
+
+        @Nullable
+        public List<String> getLore() {
+            return lore;
+        }
 
     }
 

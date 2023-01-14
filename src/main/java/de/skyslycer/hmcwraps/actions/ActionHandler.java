@@ -3,10 +3,11 @@ package de.skyslycer.hmcwraps.actions;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.serialization.IWrap;
-import java.util.HashMap;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class ActionHandler implements IActionHandler {
 

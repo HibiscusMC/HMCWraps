@@ -4,9 +4,7 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -16,6 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @ConfigSerializable
 public class SerializableItem implements ISerializableItem {
@@ -28,9 +30,10 @@ public class SerializableItem implements ISerializableItem {
     private @Nullable Integer modelId;
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
+    private @Nullable String color;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount) {
+                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -39,9 +42,11 @@ public class SerializableItem implements ISerializableItem {
         this.modelId = modelId;
         this.enchantments = enchantments;
         this.amount = amount;
+        this.color = color;
     }
 
-    public SerializableItem() { }
+    public SerializableItem() {
+    }
 
     @Override
     @NotNull
@@ -59,6 +64,9 @@ public class SerializableItem implements ISerializableItem {
                 .amount(getAmount() == null ? 1 : getAmount())
                 .model(getModelId());
 
+        if (getColor() != null) {
+            builder.color(getColor());
+        }
         if (getLore() != null) {
             builder.lore(player == null ? getLore().stream().map(StringUtil::parseComponent).toList()
                     : getLore(player).stream().map(string -> StringUtil.parseComponent(player, string)).toList());
@@ -138,6 +146,12 @@ public class SerializableItem implements ISerializableItem {
     @Nullable
     public Boolean isGlow() {
         return glow;
+    }
+
+    @Override
+    @Nullable
+    public Color getColor() {
+        return StringUtil.colorFromString(color);
     }
 
 }

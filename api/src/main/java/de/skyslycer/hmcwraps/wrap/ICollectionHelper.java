@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
-import java.util.List;
 import org.bukkit.Material;
+
+import java.util.List;
 
 public interface ICollectionHelper {
 

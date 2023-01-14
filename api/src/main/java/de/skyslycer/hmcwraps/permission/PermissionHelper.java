@@ -15,8 +15,8 @@ public class PermissionHelper {
      * Check if a player has the permission to use a wrap on an item based on the configuration.
      *
      * @param plugin The plugin
-     * @param wrap The wrap
-     * @param item The item stack
+     * @param wrap   The wrap
+     * @param item   The item stack
      * @param player The player
      * @return If the player has permission to use the wrap on the item
      */
@@ -34,7 +34,7 @@ public class PermissionHelper {
      * Check if the player has permission for the wrap on the item.
      *
      * @param plugin The plugin
-     * @param item The item
+     * @param item   The item
      * @param player The player
      * @return If the player doesn't have the required permission, it returns the item but unwrapped, while it returns null when the player has
      * permission
@@ -77,7 +77,7 @@ public class PermissionHelper {
     /**
      * Checks if a sender has any of the given permissions.
      *
-     * @param sender The sender to check on
+     * @param sender      The sender to check on
      * @param permissions The permissions to check for
      * @return If the sender has any permissions
      */

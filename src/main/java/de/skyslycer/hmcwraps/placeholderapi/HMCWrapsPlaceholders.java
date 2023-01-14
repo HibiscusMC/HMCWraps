@@ -4,8 +4,9 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.util.ColorUtil;
-import java.util.Map;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+
+import java.util.Map;
 
 public class HMCWrapsPlaceholders extends PlaceholderExpansion {
 
@@ -38,7 +39,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 return null;
             }
             return wrap.getUuid();
-        } else if (identifier.split("_").length == 2){
+        } else if (identifier.split("_").length == 2) {
             var split = identifier.split("_");
             var wrap = plugin.getWraps().get(split[0]);
             if (wrap == null) {

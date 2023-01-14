@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class WrapFile extends Toggleable implements IWrapFile {
@@ -14,7 +15,8 @@ public class WrapFile extends Toggleable implements IWrapFile {
         this.items = items;
     }
 
-    public WrapFile() {}
+    public WrapFile() {
+    }
 
     @Override
     public Map<String, IWrappableItem> getItems() {

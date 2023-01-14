@@ -2,6 +2,9 @@ package de.skyslycer.hmcwraps.messages;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
+import org.bukkit.command.CommandSender;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,8 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.PropertyResourceBundle;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
-import org.bukkit.command.CommandSender;
 
 public class MessageHandler implements IMessageHandler {
 

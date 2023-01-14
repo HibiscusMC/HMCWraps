@@ -70,13 +70,13 @@ items:
         # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
         # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
         actions:
-          wrap: {}
-          wrap-virtual: {}
-          wrap-physical: {}
-          unwrap: {}
-          unwrap-virtual: {}
-          unwrap-physical: {}
-          preview: {}
+          wrap: { }
+          wrap-virtual: { }
+          wrap-physical: { }
+          unwrap: { }
+          unwrap-virtual: { }
+          unwrap-physical: { }
+          preview: { }
         # The physical wrap to apply (nullable)
         physical:
           # The Bukkit material or a hook
@@ -155,7 +155,7 @@ preservation:
   color:
     original-enabled: false
     default-enabled: false
-    defaults: {}
+    defaults: { }
 
 # The inventory (/wraps)
 inventory:

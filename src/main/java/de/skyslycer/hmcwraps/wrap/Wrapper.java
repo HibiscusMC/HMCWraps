@@ -8,8 +8,6 @@ import de.skyslycer.hmcwraps.serialization.IWrapValues;
 import de.skyslycer.hmcwraps.serialization.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import java.util.UUID;
-import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
@@ -18,6 +16,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class Wrapper implements IWrapper {
 
@@ -168,7 +169,7 @@ public class Wrapper implements IWrapper {
         var modelData = -1;
         var modelDataSettings = plugin.getConfiguration().getPreservation().getModelId();
         if (modelDataSettings.isOriginalEnabled()) {
-            var data =  meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
+            var data = meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
             if (data != null) {
                 modelData = data;
             }
@@ -191,7 +192,7 @@ public class Wrapper implements IWrapper {
         Color color = null;
         var meta = item.getItemMeta();
         if (colorSettings.isOriginalEnabled()) {
-            var data =  meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
+            var data = meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);
             if (data != null) {
                 color = Color.fromRGB(data);
             }

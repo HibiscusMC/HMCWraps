@@ -15,7 +15,8 @@ public class Bobbing extends Toggleable implements IBobbing {
         this.intensity = intensity;
     }
 
-    public Bobbing() { }
+    public Bobbing() {
+    }
 
     @Override
     public double getSpeed() {

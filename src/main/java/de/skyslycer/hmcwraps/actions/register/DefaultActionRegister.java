@@ -6,14 +6,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetTitleTimes;
 import com.owen1212055.particlehelper.api.particle.MultiParticle;
 import com.owen1212055.particlehelper.api.particle.Particle;
-import com.owen1212055.particlehelper.api.particle.types.BlockDataParticle;
-import com.owen1212055.particlehelper.api.particle.types.ColorableParticle;
-import com.owen1212055.particlehelper.api.particle.types.DelayableParticle;
-import com.owen1212055.particlehelper.api.particle.types.DestinationParticle;
-import com.owen1212055.particlehelper.api.particle.types.MaterialParticle;
-import com.owen1212055.particlehelper.api.particle.types.RollableParticle;
-import com.owen1212055.particlehelper.api.particle.types.SizeableParticle;
-import com.owen1212055.particlehelper.api.particle.types.SpeedModifiableParticle;
+import com.owen1212055.particlehelper.api.particle.types.*;
 import com.owen1212055.particlehelper.api.particle.types.dust.transition.TransitionDustParticle;
 import com.owen1212055.particlehelper.api.particle.types.note.MultiNoteParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
@@ -27,14 +20,15 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import java.math.BigInteger;
-import java.util.Arrays;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import java.math.BigInteger;
+import java.util.Arrays;
 
 public class DefaultActionRegister {
 

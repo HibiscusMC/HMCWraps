@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.serialization.preservation;
 
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class ValuePreservationSettings implements IValuePreservationSettings {
@@ -17,7 +18,8 @@ public class ValuePreservationSettings implements IValuePreservationSettings {
         this.defaults = defaults;
     }
 
-    public ValuePreservationSettings() { }
+    public ValuePreservationSettings() {
+    }
 
     @Override
     public Map<String, String> getDefaults() {

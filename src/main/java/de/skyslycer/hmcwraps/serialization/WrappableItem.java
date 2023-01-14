@@ -1,8 +1,9 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class WrappableItem implements IWrappableItem {
@@ -13,7 +14,8 @@ public class WrappableItem implements IWrappableItem {
         this.wraps = wraps;
     }
 
-    public WrappableItem() { }
+    public WrappableItem() {
+    }
 
     @Override
     public Map<String, IWrap> getWraps() {

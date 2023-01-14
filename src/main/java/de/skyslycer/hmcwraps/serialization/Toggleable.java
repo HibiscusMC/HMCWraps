@@ -11,7 +11,8 @@ public class Toggleable implements IToggleable {
         this.enabled = enabled;
     }
 
-    public Toggleable() { }
+    public Toggleable() {
+    }
 
     @Override
     public boolean isEnabled() {

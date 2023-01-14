@@ -8,10 +8,11 @@ import de.skyslycer.hmcwraps.serialization.preservation.IPreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preservation.PreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preview.IPreviewSettings;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class Config implements IConfig {
