@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.converter;
 
+import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import javax.annotation.Nullable;
@@ -72,6 +73,10 @@ public class ItemSkinsFile {
         @Nullable
         public List<String> getLore() {
             return lore;
+        }
+
+        public SerializableItem toItem() {
+            return new SerializableItem(material, displayName, glowing, lore, null, customModelData, null, 1, null);
         }
 
     }

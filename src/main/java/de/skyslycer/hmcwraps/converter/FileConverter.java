@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.converter;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.*;
+import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
@@ -155,19 +156,16 @@ public class FileConverter {
                     itemSkinsPhysical.getLore() != null ? itemSkinsPhysical.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
                     null, itemSkinsPhysical.getCustomModelData(), null, null, null, true);
         }
-        List<String> lockedLore = null;
-        if (itemSkinsFile.getUnavailableItem() != null && itemSkinsFile.getUnavailableItem().getLore() != null) {
-            lockedLore = itemSkinsFile.getUnavailableItem().getLore().stream().map(StringUtil::legacyToMiniMessage).toList();
-        }
-        String lockedName = null;
+        SerializableItem lockedItem = null;
         if (itemSkinsFile.getUnavailableItem() != null) {
-            lockedName = StringUtil.legacyToMiniMessage(itemSkinsFile.getUnavailableItem().getDisplayName());
+            var unavailableItem = itemSkinsFile.getUnavailableItem();
+            lockedItem = unavailableItem.toItem();
         }
         var wrap = new Wrap(
                 itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
                 itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null, null,
                 itemSkinsFile.getCustomModelData(), null, null, true, file.getName().replace(".yml", ""),
-                null, physical, itemSkinsFile.getPermission(), lockedName, lockedLore, null, null /*TODO: Add locked item*/);
+                null, physical, itemSkinsFile.getPermission(), null, null, lockedItem, null);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
     }
 
