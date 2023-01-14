@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps.preview;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
+import de.skyslycer.hmcwraps.serialization.IWrap;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,8 +32,12 @@ public class PreviewManager implements IPreviewManager {
     }
 
     @Override
-    public void create(Player player, ItemStack item, PaginatedGui gui) {
-        var event = new ItemPreviewEvent(player, item, gui);
+    public void create(Player player, PaginatedGui gui, IWrap wrap) {
+        var item = ItemBuilder.from(plugin.getCollectionHelper().getMaterial(wrap)).model(wrap.getModelId());
+        if (wrap.getColor() != null) {
+            item.color(wrap.getColor());
+        }
+        var event = new ItemPreviewEvent(player, item.build(), gui, wrap);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;

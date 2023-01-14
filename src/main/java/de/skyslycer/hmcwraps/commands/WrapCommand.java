@@ -8,7 +8,6 @@ import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
@@ -17,12 +16,14 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.*;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.help.CommandHelp;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -158,28 +159,12 @@ public class WrapCommand {
     @CommandPermission(PREVIEW_PERMISSION)
     @AutoComplete("@wraps *")
     public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
-        var currentCollection = "";
-        var itemMaterial = Material.AIR;
-        for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
-            currentCollection = entry.getKey();
-            if (entry.getValue().getWraps().containsValue(wrap)) {
-                break;
-            }
-        }
-        if (currentCollection.equals("")) {
-            plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_WRAP);
-            return;
-        }
-
-        if (Material.getMaterial(currentCollection) != null) {
-            itemMaterial = Material.getMaterial(currentCollection);
-        } else if (plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().isPresent()) {
-            itemMaterial = plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().get();
-        } else {
+        var material = plugin.getCollectionHelper().getMaterial(wrap);
+        if (material == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NO_MATCHING_ITEM);
             return;
         }
-        plugin.getPreviewManager().create(player, ItemBuilder.from(itemMaterial).model(wrap.getModelId()).build(), null);
+        plugin.getPreviewManager().create(player, null, wrap);
         if (actions) {
             plugin.getActionHandler().pushPreview(wrap, player);
         }

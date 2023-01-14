@@ -1,11 +1,13 @@
 package de.skyslycer.hmcwraps.events;
 
+import de.skyslycer.hmcwraps.serialization.IWrap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemUnwrapEvent extends Event implements Cancellable {
 
@@ -15,11 +17,13 @@ public class ItemUnwrapEvent extends Event implements Cancellable {
 
     private Player player;
     private ItemStack item;
+    private final IWrap wrap;
     private boolean giveBack;
 
-    public ItemUnwrapEvent(ItemStack item, Player player, boolean giveBack) {
+    public ItemUnwrapEvent(ItemStack item, Player player, IWrap wrap, boolean giveBack) {
         this.item = item;
         this.player = player;
+        this.wrap = wrap;
         this.giveBack = giveBack;
     }
 
@@ -45,6 +49,11 @@ public class ItemUnwrapEvent extends Event implements Cancellable {
 
     public ItemStack getItem() {
         return item;
+    }
+
+    @Nullable
+    public IWrap getWrap() {
+        return wrap;
     }
 
     public boolean isGiveBack() {

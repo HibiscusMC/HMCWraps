@@ -85,7 +85,7 @@ public class GuiBuilder {
                         plugin.getMessageHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
-                    plugin.getPreviewManager().create(player, guiItem.getItemStack(), gui);
+                    plugin.getPreviewManager().create(player, gui, wrap);
                     plugin.getActionHandler().pushPreview(wrap, player);
                 }
             });

@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.wrap;
 
+import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import org.bukkit.Material;
 
@@ -22,5 +23,12 @@ public interface ICollectionHelper {
      * @return All materials in the collection
      */
     List<Material> getMaterials(String collection);
+
+    /**
+     * Get a possible material from a wrap.
+     * @param wrap The wrap to get the material from
+     * @return One possible material
+     */
+    Material getMaterial(IWrap wrap);
 
 }

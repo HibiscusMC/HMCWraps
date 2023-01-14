@@ -87,7 +87,7 @@ public class Wrapper implements IWrapper {
             editing.setItemMeta(meta);
         }
         editing = setPhysical(editing.clone(), physical);
-        if (wrap == null) {
+        if (wrap == null || currentWrap != null) {
             return editing;
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor));
@@ -95,7 +95,7 @@ public class Wrapper implements IWrapper {
 
     @Override
     public ItemStack removeWrap(ItemStack target, Player player, boolean giveBack) {
-        var event = new ItemUnwrapEvent(target, player, giveBack);
+        var event = new ItemUnwrapEvent(target, player, getWrap(target), giveBack);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return target;

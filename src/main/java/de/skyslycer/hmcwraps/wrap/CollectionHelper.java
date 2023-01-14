@@ -1,11 +1,13 @@
 package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CollectionHelper implements ICollectionHelper {
 
@@ -41,6 +43,27 @@ public class CollectionHelper implements ICollectionHelper {
             }
         }
         return list;
+    }
+
+    @Override
+    public Material getMaterial(IWrap wrap) {
+        var currentCollection = "";
+        var itemMaterial = Material.AIR;
+        for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
+            currentCollection = entry.getKey();
+            if (entry.getValue().getWraps().containsValue(wrap)) {
+                break;
+            }
+        }
+
+        if (Material.getMaterial(currentCollection) != null) {
+            itemMaterial = Material.getMaterial(currentCollection);
+        } else if (plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().isPresent()) {
+            itemMaterial = plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().get();
+        } else {
+            return null;
+        }
+        return itemMaterial;
     }
 
 }
