@@ -142,9 +142,9 @@ preservation:
     # If the model id should be restored after it gets unwrapped from before the item got wrapped
     # NOTE: If there is an original model id stored on the item, that will get preferred over original model ids
     # NOTE: Disabling both options will result in all items ending up with the model id '0' when unwrapped
-    originalEnabled: false
+    original-enabled: false
     # If the model id should be set to the id below when the item is unwrapped
-    defaultEnabled: false
+    default-enabled: false
     # The default model ids for items that get unwrapped
     defaults:
       # Every item in the 'PICKAXES' collection will end up with the model id 0 after getting unwrapped
@@ -153,8 +153,8 @@ preservation:
       IRON_SHOVEL: 0
   # Basically the same as model-id preservation, but with the color
   color:
-    originalEnabled: false
-    defaultEnabled: false
+    original-enabled: false
+    default-enabled: false
     defaults: {}
 
 # The inventory (/wraps)

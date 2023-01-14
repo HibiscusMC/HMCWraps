@@ -268,7 +268,9 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                             .path(path)
                             .build().load().get(WrapFile.class);
-                    wrapFiles.add(wrapFile);
+                    if (wrapFile != null && wrapFile.isEnabled()) {
+                        wrapFiles.add(wrapFile);
+                    }
                 } catch (ConfigurateException exception) {
                     logSevere(
                             "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!");
@@ -291,7 +293,9 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                             .path(path)
                             .build().load().get(CollectionFile.class);
-                    collectionFiles.add(collectionFile);
+                    if (collectionFile != null && collectionFile.isEnabled()) {
+                        collectionFiles.add(collectionFile);
+                    }
                 } catch (ConfigurateException exception) {
                     logSevere(
                             "Could not load the collection file " + path.getFileName().toString() + " (please report this to the developers)!");

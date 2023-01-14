@@ -28,7 +28,7 @@ public class RotateRunnable implements Runnable {
 
     @Override
     public void run() {
-        if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
+        if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar() && plugin.getConfiguration().getPreview().getSneakCancel().isEnabled()) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, StringUtil.parse(player, plugin.getMessageHandler().get(Messages.PREVIEW_BAR)));
         }
         if (plugin.getConfiguration().getPreview().getBobbing().isEnabled()) {

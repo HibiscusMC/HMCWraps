@@ -94,7 +94,7 @@ public class GuiBuilder {
             });
             gui.addItem(guiItem);
         }));
-        gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item));
+        gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item.clone()));
     }
 
 }
