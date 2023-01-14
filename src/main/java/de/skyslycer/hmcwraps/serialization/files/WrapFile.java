@@ -1,5 +1,9 @@
-package de.skyslycer.hmcwraps.serialization;
+package de.skyslycer.hmcwraps.serialization.files;
 
+import de.skyslycer.hmcwraps.serialization.IWrapFile;
+import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+import de.skyslycer.hmcwraps.serialization.Toggleable;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.HashMap;

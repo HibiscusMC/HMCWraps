@@ -1,5 +1,6 @@
-package de.skyslycer.hmcwraps.serialization;
+package de.skyslycer.hmcwraps.serialization.wrap;
 
+import de.skyslycer.hmcwraps.serialization.IPhysicalWrap;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;

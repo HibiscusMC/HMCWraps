@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.permission.PermissionHelper;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public class InventoryClickListener implements Listener {
         var player = (Player) event.getWhoClicked();
         var target = event.getCurrentItem().clone();
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionHelper.loopThroughInventory(plugin, player), 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, player), 1L);
 
         if (event.getCursor() == null) {
             return;

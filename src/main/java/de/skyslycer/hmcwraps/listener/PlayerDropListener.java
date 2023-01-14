@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.permission.PermissionHelper;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +20,7 @@ public class PlayerDropListener implements Listener {
         if (!(event.getEntity() instanceof Player)) {
             return;
         }
-        var result = PermissionHelper.hasPermission(plugin, event.getItemDrop().getItemStack(), ((Player) event.getEntity()).getPlayer());
+        var result = PermissionUtil.hasPermission(plugin, event.getItemDrop().getItemStack(), ((Player) event.getEntity()).getPlayer());
         if (result != null) {
             event.getItemDrop().setItemStack(result);
         }

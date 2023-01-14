@@ -1,6 +1,9 @@
-package de.skyslycer.hmcwraps.serialization;
+package de.skyslycer.hmcwraps.serialization.wrap;
 
 import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.serialization.IPhysicalWrap;
+import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.IWrapValues;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;

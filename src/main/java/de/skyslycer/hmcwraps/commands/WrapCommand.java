@@ -3,9 +3,9 @@ package de.skyslycer.hmcwraps.commands;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.permission.PermissionHelper;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
-import de.skyslycer.hmcwraps.serialization.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.kyori.adventure.text.Component;
@@ -51,7 +51,7 @@ public class WrapCommand {
     @Default
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
-        if (plugin.getConfiguration().getPermissionSettings().isInventoryPermission() && !PermissionHelper.hasAnyPermission(player, WRAPS_PERMISSION)) {
+        if (plugin.getConfiguration().getPermissionSettings().isInventoryPermission() && !PermissionUtil.hasAnyPermission(player, WRAPS_PERMISSION)) {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
             return;
         }

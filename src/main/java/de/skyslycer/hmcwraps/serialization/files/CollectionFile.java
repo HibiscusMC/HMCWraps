@@ -1,5 +1,7 @@
-package de.skyslycer.hmcwraps.serialization;
+package de.skyslycer.hmcwraps.serialization.files;
 
+import de.skyslycer.hmcwraps.serialization.ICollectionFile;
+import de.skyslycer.hmcwraps.serialization.Toggleable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;

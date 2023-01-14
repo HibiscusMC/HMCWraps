@@ -1,5 +1,6 @@
-package de.skyslycer.hmcwraps.serialization;
+package de.skyslycer.hmcwraps.serialization.permission;
 
+import de.skyslycer.hmcwraps.serialization.IPermissionSettings;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable

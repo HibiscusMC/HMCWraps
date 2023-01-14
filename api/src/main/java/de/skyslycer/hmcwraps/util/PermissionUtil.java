@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps.permission;
+package de.skyslycer.hmcwraps.util;
 
 import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class PermissionHelper {
+public class PermissionUtil {
 
     /**
      * Check if a player has the permission to use a wrap on an item based on the configuration.
