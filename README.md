@@ -39,7 +39,7 @@ and removing of a wrap **wrapping** and **unwrapping**.
 
 Polymart: https://polymart.org/resource/hmcwraps.3216
 
-Spigot: `Coming soon!`
+Spigot: https://www.spigotmc.org/resources/hmcwraps.107099/
 
 ## Wiki & Support
 
