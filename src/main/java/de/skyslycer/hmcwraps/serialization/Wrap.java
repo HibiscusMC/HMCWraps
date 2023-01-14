@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.util.StringUtil;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -102,38 +104,25 @@ public class Wrap extends SerializableItem implements IWrap {
             return super.toItem(plugin, player);
         } else if (getLockedItem() == null) {
             var item = super.toItem(plugin, player);
-            var meta = item.getItemMeta();
+            var builder = ItemBuilder.from(item);
             if (getLockedName() != null) {
-                meta.setDisplayName(getLockedName());
+                builder.name(player != null ? StringUtil.parseComponent(player, getLockedName()) : StringUtil.parseComponent(getLockedName()));
             }
-            if (getLockedLore() != null) {
-                meta.setLore(getLockedLore());
+            if (getLockedName() != null) {
+                builder.lore(player == null ? getLockedLore().stream().map(StringUtil::parseComponent).toList()
+                        : getLockedLore().stream().map(string -> StringUtil.parseComponent(player, string)).toList());
             }
-            item.setItemMeta(meta);
-            return item;
+            return builder.build();
         } else {
             return getLockedItem().toItem(plugin, player);
         }
     }
 
-    public static class WrapValues implements IWrapValues {
-
-        private final int modelId;
-        private final Color color;
+    public record WrapValues(int modelId, Color color) implements IWrapValues {
 
         public WrapValues(int modelId, @Nullable Color color) {
             this.modelId = modelId;
             this.color = color;
-        }
-
-        @Override
-        public int getModelId() {
-            return modelId;
-        }
-
-        @Override
-        public Color getColor() {
-            return color;
         }
 
     }

@@ -78,10 +78,10 @@ public class Wrapper implements IWrapper {
             originalModelId = meta.getCustomModelData();
         }
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
-        meta.setCustomModelData(wrap == null ? originalData.getModelId() : wrap.getModelId());
+        meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (meta instanceof LeatherArmorMeta leatherMeta) {
             originalColor = leatherMeta.getColor();
-            leatherMeta.setColor(wrap == null ? originalData.getColor() : wrap.getColor());
+            leatherMeta.setColor(wrap == null ? originalData.color() : wrap.getColor());
             editing.setItemMeta(leatherMeta);
         } else {
             editing.setItemMeta(meta);
@@ -214,9 +214,9 @@ public class Wrapper implements IWrapper {
     public ItemStack setOriginalData(ItemStack item, IWrapValues wrapValues) {
         var editing = item.clone();
         var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(originalModelIdKey, PersistentDataType.INTEGER, wrapValues.getModelId());
-        if (wrapValues.getColor() != null) {
-            meta.getPersistentDataContainer().set(originalColorKey, PersistentDataType.INTEGER, wrapValues.getColor().asRGB());
+        meta.getPersistentDataContainer().set(originalModelIdKey, PersistentDataType.INTEGER, wrapValues.modelId());
+        if (wrapValues.color() != null) {
+            meta.getPersistentDataContainer().set(originalColorKey, PersistentDataType.INTEGER, wrapValues.color().asRGB());
         }
         editing.setItemMeta(meta);
         return editing;

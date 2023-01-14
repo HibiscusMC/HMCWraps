@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class GuiBuilder {
 
@@ -65,10 +64,8 @@ public class GuiBuilder {
     private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, PaginatedGui gui) {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps().forEach((ignored, wrap) -> {
             var wrapItem = wrap.toPermissionItem(plugin, player);
-            wrapItem.setType(item.getType());
-            if (wrapItem.getItemMeta() instanceof LeatherArmorMeta meta) {
-                meta.setColor(wrap.getColor());
-                wrapItem.setItemMeta(meta);
+            if (!plugin.getConfiguration().getPermissionSettings().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
+                wrapItem.setType(item.getType());
             }
 
             GuiItem guiItem = new GuiItem(wrapItem);

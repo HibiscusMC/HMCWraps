@@ -9,13 +9,13 @@ public interface IWrapValues {
      *
      * @return The model id
      */
-    int getModelId();
+    int modelId();
 
     /**
      * Get the color of the wrap value.
      *
      * @return The color
      */
-    Color getColor();
+    Color color();
 
 }
