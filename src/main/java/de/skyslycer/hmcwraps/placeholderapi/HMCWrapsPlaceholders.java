@@ -1,9 +1,11 @@
 package de.skyslycer.hmcwraps.placeholderapi;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.util.ColorUtil;
+import de.skyslycer.hmcwraps.util.StringUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import java.util.Map;
@@ -39,6 +41,12 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 return null;
             }
             return wrap.getUuid();
+        } else if (identifier.equals("filter") && player != null) {
+            if (plugin.getPlayerStorage().get(player)) {
+                return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_ACTIVE)));
+            } else {
+                return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_INACTIVE)));
+            }
         } else if (identifier.split("_").length == 2) {
             var split = identifier.split("_");
             var wrap = plugin.getWraps().get(split[0]);

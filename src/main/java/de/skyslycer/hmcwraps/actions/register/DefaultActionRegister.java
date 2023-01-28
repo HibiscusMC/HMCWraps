@@ -18,6 +18,7 @@ import de.skyslycer.hmcwraps.actions.ActionMethod;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
+import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.md_5.bungee.api.ChatMessageType;
@@ -53,6 +54,7 @@ public class DefaultActionRegister {
         registerScrollBack();
         registerUnwrap();
         registerClose();
+        registerFilterToggle();
     }
 
     private void registerScrollForth() {
@@ -264,6 +266,13 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.CONSOLE_COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "console command", "kill <player>")) return;
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information));
+        });
+    }
+
+    private void registerFilterToggle() {
+        plugin.getActionHandler().subscribe(Action.TOGGLE_FILTER, information -> {
+            plugin.getPlayerStorage().set(information.getPlayer(), !plugin.getPlayerStorage().get(information.getPlayer()));
+            GuiBuilder.open(plugin, information.getPlayer(), information.getPlayer().getInventory().getItemInMainHand());
         });
     }
 

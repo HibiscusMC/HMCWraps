@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class GuiBuilder {
 
-    public static void open(HMCWraps plugin, Player player, ItemStack item, EquipmentSlot slot) {
+    public static void open(HMCWraps plugin, Player player, ItemStack item) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         IInventory inventory = plugin.getConfiguration().getInventory();
@@ -55,15 +55,16 @@ public class GuiBuilder {
             gui.setItem(inventorySlot, guiItem);
         });
 
-        populate(plugin, item, slot, player, gui);
+        populate(plugin, item, player, gui);
 
         gui.setDefaultClickAction(click -> click.setCancelled(true));
         gui.open(player);
     }
 
-    private static void populate(HMCWraps plugin, ItemStack item, EquipmentSlot slot, Player player, PaginatedGui gui) {
+    private static void populate(HMCWraps plugin, ItemStack item, Player player, PaginatedGui gui) {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
-                .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap)).forEach(wrap -> {
+                .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
+                .filter(wrap -> !plugin.getPlayerStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
             var wrapItem = wrap.toPermissionItem(plugin, player);
             if (!plugin.getConfiguration().getPermissionSettings().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
                 wrapItem.setType(item.getType());
@@ -76,7 +77,7 @@ public class GuiBuilder {
                         plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
-                    player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
+                    player.getInventory().setItem(EquipmentSlot.HAND, plugin.getWrapper().setWrap(wrap, item, false, player, true));
                     plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
                     plugin.getActionHandler().pushWrap(wrap, player);
                     plugin.getActionHandler().pushVirtualWrap(wrap, player);

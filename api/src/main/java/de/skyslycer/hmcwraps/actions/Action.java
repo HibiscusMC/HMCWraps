@@ -16,6 +16,7 @@ public enum Action {
     NEXT_PAGE,
     PREVIOUS_PAGE,
     UNWRAP,
-    CLOSE_INVENTORY
+    CLOSE_INVENTORY,
+    TOGGLE_FILTER
 
 }
