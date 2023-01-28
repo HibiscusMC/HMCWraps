@@ -2,6 +2,8 @@
 permission-settings:
   # If the wrap inventory open permission should be checked on wraps inventory open
   inventory-permission: false
+  # If the preview should be disabled if the player doesn't have the permission for the wrap
+  preview-permission: false
   # If permission checks should be performed during usage for...
   # ...physical wraps
   check-permission-physical: false

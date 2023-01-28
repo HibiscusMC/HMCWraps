@@ -26,6 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -156,8 +157,8 @@ public class DefaultActionRegister {
             transitionDustParticle.setFadeColor(StringUtil.colorFromString(split[counter]));
             counter++;
         }
-        if (particle instanceof MaterialParticle materialParticle && Material.getMaterial(split[counter]) != null) {
-            materialParticle.setMaterial(Material.getMaterial(split[counter]));
+        if (particle instanceof ItemStackParticle materialParticle && Material.getMaterial(split[counter]) != null) {
+            materialParticle.setItemStack(new ItemStack(Material.getMaterial(split[counter])));
             counter++;
         }
         if (particle instanceof SpeedModifiableParticle speedModifiableParticle) {

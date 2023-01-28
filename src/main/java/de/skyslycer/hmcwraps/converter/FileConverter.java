@@ -129,7 +129,7 @@ public class FileConverter {
                 WrappableItem item;
                 if (map.containsKey(material)) {
                     item = map.get(material);
-                    item.getWraps().put(item.getWraps().size() + 1 + "", construct.wrap);
+                    item.getWrapsPrivate().put(item.getWraps().size() + 1 + "", construct.wrap);
                 } else {
                     item = new WrappableItem(new HashMap<>(Map.of("1", construct.wrap)));
                 }

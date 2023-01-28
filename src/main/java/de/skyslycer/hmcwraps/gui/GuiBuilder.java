@@ -85,6 +85,10 @@ public class GuiBuilder {
                         plugin.getMessageHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
+                    if (plugin.getConfiguration().getPermissionSettings().isPreviewPermission() && !wrap.hasPermission(player)) {
+                        plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+                        return;
+                    }
                     plugin.getPreviewManager().create(player, gui, wrap);
                     plugin.getActionHandler().pushPreview(wrap, player);
                 }

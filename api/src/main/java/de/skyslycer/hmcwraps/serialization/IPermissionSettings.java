@@ -12,4 +12,5 @@ public interface IPermissionSettings {
 
     boolean isInventoryPermission();
 
+    boolean isPreviewPermission();
 }

@@ -62,7 +62,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private final ObjectPool<UUID, Component> messagePool = new MessagePool();
     private final Set<ItemHook> hooks = new HashSet<>();
-    private final Map<String, IWrap> wraps = new HashMap<>();
+    private final Map<String, IWrap> wraps = new LinkedHashMap<>();
     private final Map<String, List<String>> collections = new HashMap<>();
     private final Map<String, IWrappableItem> wrappableItems = new HashMap<>();
     private final Set<IWrapFile> wrapFiles = new HashSet<>();
