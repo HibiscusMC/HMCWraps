@@ -45,6 +45,9 @@ public interface IWrap extends ISerializableItem {
     @Nullable
     ISerializableItem getLockedItem();
 
+    @Nullable
+    String getWrapName();
+
     /**
      * Get the item for the player according to its permissions.
      * If the player doesn't have the permissions, the locked item will be returned.

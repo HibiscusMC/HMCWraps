@@ -162,6 +162,11 @@ preservation:
     original-enabled: false
     default-enabled: false
     defaults: { }
+  # Still the same, but with the name
+  name:
+    original-enabled: false
+    default-enabled: false
+    defaults: { }
 
 # The inventory (/wraps)
 inventory:

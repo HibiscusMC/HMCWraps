@@ -6,4 +6,6 @@ public interface IPreservationSettings {
 
     IValuePreservationSettings getColor();
 
+    IValuePreservationSettings getName();
+
 }

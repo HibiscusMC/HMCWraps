@@ -5,12 +5,14 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class PreservationSettings implements IPreservationSettings {
 
-    ValuePreservationSettings modelId;
-    ValuePreservationSettings color;
+    private ValuePreservationSettings modelId;
+    private ValuePreservationSettings color;
+    private ValuePreservationSettings name;
 
-    public PreservationSettings(ValuePreservationSettings modelId, ValuePreservationSettings color) {
+    public PreservationSettings(ValuePreservationSettings modelId, ValuePreservationSettings color, ValuePreservationSettings name) {
         this.modelId = modelId;
         this.color = color;
+        this.name = name;
     }
 
     public PreservationSettings() {
@@ -24,6 +26,11 @@ public class PreservationSettings implements IPreservationSettings {
     @Override
     public ValuePreservationSettings getColor() {
         return color;
+    }
+
+    @Override
+    public ValuePreservationSettings getName() {
+        return name;
     }
 
 }

@@ -18,4 +18,11 @@ public interface IWrapValues {
      */
     Color color();
 
+    /**
+     * Get the name of the wrap value.
+     *
+     * @return The name
+     */
+    String name();
+
 }

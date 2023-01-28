@@ -9,6 +9,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -31,6 +32,7 @@ public class Wrapper implements IWrapper {
     private final NamespacedKey physicalWrapperKey;
     private final NamespacedKey originalModelIdKey;
     private final NamespacedKey originalColorKey;
+    private final NamespacedKey originalNameKey;
 
     public Wrapper(HMCWraps plugin) {
         this.plugin = plugin;
@@ -41,6 +43,7 @@ public class Wrapper implements IWrapper {
         physicalWrapperKey = new NamespacedKey(plugin, "wrapper");
         originalModelIdKey = new NamespacedKey(plugin, "original-model-id");
         originalColorKey = new NamespacedKey(plugin, "original-color");
+        originalNameKey = new NamespacedKey(plugin, "original-name");
     }
 
     @Override
@@ -72,6 +75,7 @@ public class Wrapper implements IWrapper {
         }
         var originalData = getOriginalData(item);
         var meta = editing.getItemMeta();
+        var originalName = meta.getDisplayName();
         var originalModelId = -1;
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
@@ -79,18 +83,32 @@ public class Wrapper implements IWrapper {
         }
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
-        if (meta instanceof LeatherArmorMeta leatherMeta) {
-            originalColor = leatherMeta.getColor();
-            leatherMeta.setColor(wrap == null ? originalData.color() : wrap.getColor());
-            editing.setItemMeta(leatherMeta);
+        if (wrap != null) {
+            if (wrap.getWrapName() != null) {
+                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(wrap.getWrapName())));
+            }
+            if (wrap.getColor() != null && meta instanceof LeatherArmorMeta leatherMeta) {
+                originalColor = leatherMeta.getColor();
+                leatherMeta.setColor(wrap.getColor());
+                editing.setItemMeta(leatherMeta);
+            } else {
+                editing.setItemMeta(meta);
+            }
         } else {
-            editing.setItemMeta(meta);
+            meta.setDisplayName(originalData.name());
+            meta.setCustomModelData(originalData.modelId());
+            if (meta instanceof LeatherArmorMeta leatherMeta) {
+                leatherMeta.setColor(originalData.color());
+                editing.setItemMeta(leatherMeta);
+            } else {
+                editing.setItemMeta(meta);
+            }
         }
         editing = setPhysical(editing.clone(), physical);
         if (wrap == null || currentWrap != null) {
             return editing;
         }
-        return setOriginalData(editing, new WrapValues(originalModelId, originalColor));
+        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName));
     }
 
     @Override
@@ -161,7 +179,7 @@ public class Wrapper implements IWrapper {
         } catch (Exception ignored) {
             Bukkit.getLogger().warning("Failed to get original color for " + item.getType() + "! Data may not be a correct color format.");
         }
-        return new WrapValues(modelData, color);
+        return new WrapValues(modelData, color, getOriginalName(item));
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -185,6 +203,29 @@ public class Wrapper implements IWrapper {
             }
         }
         return modelData;
+    }
+
+    private String getOriginalName(ItemStack item) {
+        var meta = item.getItemMeta();
+        String name = null;
+        var nameSettings = plugin.getConfiguration().getPreservation().getName();
+        if (nameSettings.isOriginalEnabled()) {
+            var data = meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.STRING);
+            if (data != null) {
+                name = ChatColor.translateAlternateColorCodes('&', data);
+            }
+        } else if (nameSettings.isDefaultEnabled()) {
+            var map = nameSettings.getDefaults();
+            if (map.containsKey(item.getType().toString())) {
+                name = StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
+            }
+            for (String key : map.keySet()) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
+                    name = StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
+                }
+            }
+        }
+        return name;
     }
 
     private Color getOriginalColor(ItemStack item) {
@@ -217,6 +258,9 @@ public class Wrapper implements IWrapper {
         meta.getPersistentDataContainer().set(originalModelIdKey, PersistentDataType.INTEGER, wrapValues.modelId());
         if (wrapValues.color() != null) {
             meta.getPersistentDataContainer().set(originalColorKey, PersistentDataType.INTEGER, wrapValues.color().asRGB());
+        }
+        if (wrapValues.name() != null) {
+            meta.getPersistentDataContainer().set(originalNameKey, PersistentDataType.STRING, wrapValues.name().replace("§", "&"));
         }
         editing.setItemMeta(meta);
         return editing;
