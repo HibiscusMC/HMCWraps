@@ -30,11 +30,14 @@ public class Wrap extends SerializableItem implements IWrap {
     private @Nullable List<String> lockedLore;
     private @Nullable SerializableItem lockedItem;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
+    private @Nullable List<Integer> modelIdInclude;
+    private @Nullable List<Integer> modelIdExclude;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-                @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, Boolean preview,
-                String uuid, @Nullable String color, @Nullable PhysicalWrap physical, @Nullable String permission, @Nullable String lockedName,
-                @Nullable List<String> lockedLore, @Nullable SerializableItem lockedItem, @Nullable HashMap<String, HashMap<String, List<String>>> actions) {
+                @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color,
+                Boolean preview, String uuid, @Nullable PhysicalWrap physical, @Nullable String permission, @Nullable String lockedName,
+                @Nullable List<String> lockedLore, @Nullable SerializableItem lockedItem, @Nullable HashMap<String, HashMap<String,
+            List<String>>> actions, @Nullable List<Integer> modelIdInclude, @Nullable List<Integer> modelIdExclude) {
         super(id, name, glow, lore, flags, modelId, enchantments, amount, color);
         this.preview = preview;
         this.uuid = uuid;
@@ -44,6 +47,8 @@ public class Wrap extends SerializableItem implements IWrap {
         this.lockedLore = lockedLore;
         this.lockedItem = lockedItem;
         this.actions = actions;
+        this.modelIdInclude = modelIdInclude;
+        this.modelIdExclude = modelIdExclude;
     }
 
     public Wrap() {
@@ -93,6 +98,16 @@ public class Wrap extends SerializableItem implements IWrap {
             return true;
         }
         return sender.hasPermission(getPermission().get());
+    }
+
+    @Override
+    public List<Integer> getModelIdInclude() {
+        return modelIdInclude;
+    }
+
+    @Override
+    public List<Integer> getModelIdExclude() {
+        return modelIdExclude;
     }
 
     @Override

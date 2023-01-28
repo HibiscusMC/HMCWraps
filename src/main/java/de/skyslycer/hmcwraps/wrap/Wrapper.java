@@ -269,4 +269,15 @@ public class Wrapper implements IWrapper {
         return editing;
     }
 
+    @Override
+    public boolean isValidModelId(ItemStack item, IWrap wrap) {
+        var modelData = -1;
+        if (getWrap(item) != null) {
+            modelData = getOriginalModelId(item);
+        } else if (item.getItemMeta().hasCustomModelData()) {
+            modelData = item.getItemMeta().getCustomModelData();
+        }
+        return (wrap.getModelIdExclude() == null || !wrap.getModelIdExclude().contains(modelData)) && (wrap.getModelIdInclude() == null || wrap.getModelIdInclude().contains(modelData));
+    }
+
 }

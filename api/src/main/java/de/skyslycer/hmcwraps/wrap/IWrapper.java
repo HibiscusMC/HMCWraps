@@ -139,4 +139,13 @@ public interface IWrapper {
      */
     boolean isPhysical(ItemStack item);
 
+    /**
+     * Check if the items model id is valid for the wrap.
+     *
+     * @param item The item
+     * @param wrap The wrap
+     * @return If the model id is valid
+     */
+    boolean isValidModelId(ItemStack item, IWrap wrap);
+
 }

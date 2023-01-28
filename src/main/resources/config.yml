@@ -68,6 +68,10 @@ items:
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
+        # If this list contains anything, this wrap will only be able to wrap items with any of the specified model ids
+        model-id-include: []
+        # If this list contains anything, this wrap will only be able to wrap items that don't have any of the specified model ids
+        model-id-exclude: []
         # Item actions, all possible action triggers are listed below. For a full list of actions, see the wiki.
         # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
         # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it

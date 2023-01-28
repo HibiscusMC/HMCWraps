@@ -38,6 +38,10 @@ public interface IWrap extends ISerializableItem {
     @Nullable
     HashMap<String, HashMap<String, List<String>>> getActions();
 
+    List<Integer> getModelIdInclude();
+
+    List<Integer> getModelIdExclude();
+
     @Nullable
     ISerializableItem getLockedItem();
 
