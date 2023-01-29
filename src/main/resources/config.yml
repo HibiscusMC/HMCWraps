@@ -15,7 +15,6 @@ permission-settings:
   # ...virtual wraps
   permission-virtual: true
 
-
 # Preview settings
 preview:
   # Duration of the preview in seconds
@@ -164,9 +163,18 @@ preservation:
     defaults: { }
   # Still the same, but with the name
   name:
-    original-enabled: false
+    original-enabled: true
     default-enabled: false
     defaults: { }
+
+# The version checker configuration
+updater:
+  # If the version checker should be enabled
+  enabled: true
+  # How often the version checker should check for updates
+  frequency: '3h'
+  # Where the version checker should check for updates (POLYMART, SPIGOT_MC)
+  platform: 'POLYMART'
 
 # The inventory (/wraps)
 inventory:
@@ -184,12 +192,19 @@ inventory:
   items:
     # Slots start from 0
     45:
+      id: 'HOPPER'
+      name: '%hmcwraps_filter%'
+      lore:
+        - '<gray>Toggle to see all'
+        - '<gray>or only owned wraps.'
+      actions:
+        any:
+          TOGGLE_FILTER:
+            - ''
+    46:
       # The Bukkit material or hook
       id: 'GRAY_STAINED_GLASS_PANE'
       # The name
-      name: '<gray> '
-    46:
-      id: 'GRAY_STAINED_GLASS_PANE'
       name: '<gray> '
     47:
       id: 'ARROW'

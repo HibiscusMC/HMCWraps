@@ -9,8 +9,11 @@ import de.skyslycer.hmcwraps.serialization.preservation.IPreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preservation.PreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preview.IPreviewSettings;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
+import de.skyslycer.hmcwraps.serialization.updater.IUpdaterSettings;
+import de.skyslycer.hmcwraps.serialization.updater.UpdaterSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +22,9 @@ import java.util.Map;
 @ConfigSerializable
 public class Config implements IConfig {
 
-    private PermissionSettings permissionSettings;
+    private UpdaterSettings updater;
+    @Setting("permission-settings")
+    private PermissionSettings permissions;
     private PreviewSettings preview;
     private Inventory inventory;
     private SerializableItem unwrapper;
@@ -48,13 +53,18 @@ public class Config implements IConfig {
     }
 
     @Override
+    public IUpdaterSettings getUpdater() {
+        return updater;
+    }
+
+    @Override
     public Map<String, List<String>> getCollections() {
         return collections;
     }
 
     @Override
-    public IPermissionSettings getPermissionSettings() {
-        return permissionSettings;
+    public IPermissionSettings getPermissions() {
+        return permissions;
     }
 
     @Override

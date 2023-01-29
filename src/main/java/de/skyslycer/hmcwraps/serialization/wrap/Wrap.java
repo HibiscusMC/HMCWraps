@@ -126,7 +126,7 @@ public class Wrap extends SerializableItem implements IWrap {
 
     @Override
     public ItemStack toPermissionItem(IHMCWraps plugin, Player player) {
-        if (!plugin.getConfiguration().getPermissionSettings().isPermissionVirtual() || hasPermission(player)) {
+        if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player);
         } else if (getLockedItem() == null) {
             var item = super.toItem(plugin, player);

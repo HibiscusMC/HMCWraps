@@ -15,7 +15,6 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import revxrsal.commands.annotation.*;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.help.CommandHelp;
@@ -51,7 +50,7 @@ public class WrapCommand {
     @Default
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
-        if (plugin.getConfiguration().getPermissionSettings().isInventoryPermission() && !PermissionUtil.hasAnyPermission(player, WRAPS_PERMISSION)) {
+        if (plugin.getConfiguration().getPermissions().isInventoryPermission() && !PermissionUtil.hasAnyPermission(player, WRAPS_PERMISSION)) {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
             return;
         }
@@ -64,7 +63,7 @@ public class WrapCommand {
             plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             return;
         }
-        GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand(), EquipmentSlot.HAND);
+        GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand());
     }
 
     @Subcommand("reload")

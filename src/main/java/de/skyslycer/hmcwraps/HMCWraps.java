@@ -26,6 +26,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
+import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
@@ -76,6 +77,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private final IActionHandler actionHandler = new ActionHandler();
     private final FileConverter fileConverter = new FileConverter(this);
     private final Storage<Player, Boolean> playerStorage = new PlayerFilterStorage(this);
+    private final ContinuousUpdateChecker updateChecker = new ContinuousUpdateChecker(this);
     private IConfig config;
     private IMessageHandler messageHandler;
 
@@ -106,6 +108,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryOpenListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 
         PacketEvents.getAPI().init();
 
@@ -144,6 +147,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             return false;
         }
         getPreviewManager().removeAll(true);
+        getUpdateChecker().check();
         return true;
     }
 
@@ -427,10 +431,6 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         return collectionFiles;
     }
 
-    public FileConverter getFileConverter() {
-        return fileConverter;
-    }
-
     @Override
     public ObjectPool<UUID, Component> getMessagePool() {
         return messagePool;
@@ -439,6 +439,14 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @Override
     public Storage<Player, Boolean> getPlayerStorage() {
         return playerStorage;
+    }
+
+    public FileConverter getFileConverter() {
+        return fileConverter;
+    }
+
+    public ContinuousUpdateChecker getUpdateChecker() {
+        return updateChecker;
     }
 
 }

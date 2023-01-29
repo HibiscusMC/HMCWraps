@@ -61,7 +61,7 @@ public class InventoryClickListener implements Listener {
             return;
         }
         var finalCursor = cursor;
-        if (wrap.getPhysical().isPresent() && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissionSettings()
+        if (wrap.getPhysical().isPresent() && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
                 .isPermissionPhysical())) {
             for (IWrappableItem wrappableItem : plugin.getCollectionHelper().getItems(target.getType())) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {

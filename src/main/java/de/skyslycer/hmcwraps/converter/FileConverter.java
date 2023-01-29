@@ -169,7 +169,7 @@ public class FileConverter {
                 itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
                 itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null, null,
                 itemSkinsFile.getCustomModelData(), null, null, null, true, file.getName().replace(".yml", ""),
-                physical, itemSkinsFile.getPermission(), null, null, lockedItem, null, null, null);
+                physical, itemSkinsFile.getPermission(), null, null, lockedItem, null, null, null, null);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
     }
 

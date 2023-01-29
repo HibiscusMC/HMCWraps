@@ -210,18 +210,18 @@ public class Wrapper implements IWrapper {
         String name = null;
         var nameSettings = plugin.getConfiguration().getPreservation().getName();
         if (nameSettings.isOriginalEnabled()) {
-            var data = meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.STRING);
+            var data = meta.getPersistentDataContainer().get(originalNameKey, PersistentDataType.STRING);
             if (data != null) {
                 name = ChatColor.translateAlternateColorCodes('&', data);
             }
         } else if (nameSettings.isDefaultEnabled()) {
             var map = nameSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
-                name = StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
+                name = StringUtil.LEGACY_SERIALIZER_AMPERSAND.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
             }
             for (String key : map.keySet()) {
                 if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
-                    name = StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
+                    name = StringUtil.LEGACY_SERIALIZER_AMPERSAND.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
                 }
             }
         }

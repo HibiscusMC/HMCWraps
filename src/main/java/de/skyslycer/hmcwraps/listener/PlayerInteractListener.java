@@ -28,12 +28,12 @@ public class PlayerInteractListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
                 || plugin.getCollectionHelper().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
                 || !plugin.getConfiguration().getInventory().isOpenShortcut()
-                || (plugin.getConfiguration().getPermissionSettings().isInventoryPermission()
+                || (plugin.getConfiguration().getPermissions().isInventoryPermission()
                 && !PermissionUtil.hasAnyPermission(event.getPlayer(), WrapCommand.WRAPS_PERMISSION))) {
             return;
         }
         event.setCancelled(true);
-        GuiBuilder.open(plugin, event.getPlayer(), event.getItem(), event.getHand());
+        GuiBuilder.open(plugin, event.getPlayer(), event.getItem());
     }
 
 }

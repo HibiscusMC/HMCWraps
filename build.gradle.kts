@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.1.1"
+version = "1.2.0"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -77,6 +77,7 @@ tasks {
 
     compileJava {
         options.compilerArgs.add("-parameters")
+        options.encoding = "UTF-8"
         options.isFork = true
     }
 

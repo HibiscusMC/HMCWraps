@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "de.skyslycer.hmcwraps"
-version = "1.1.1"
+version = rootProject.version
 
 repositories {
     mavenCentral()
@@ -34,6 +34,12 @@ dependencies {
 tasks {
     dokkaHtml {
         moduleName.set("HMCWraps API")
+    }
+
+    compileJava {
+        options.compilerArgs.add("-parameters")
+        options.encoding = "UTF-8"
+        options.isFork = true
     }
 }
 

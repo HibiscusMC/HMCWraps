@@ -22,11 +22,11 @@ public class PermissionUtil {
      */
     static boolean hasPermission(IHMCWraps plugin, IWrap wrap, ItemStack item, Player player) {
         var wrapper = plugin.getWrapper();
-        if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissionSettings().isCheckPermissionPhysical() && !wrap.hasPermission(player)
+        if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
                 && !wrapper.isOwningPlayer(item, player)) {
             return false;
         }
-        return wrapper.isPhysical(item) || !plugin.getConfiguration().getPermissionSettings().isCheckPermissionVirtual() || wrap.hasPermission(player)
+        return wrapper.isPhysical(item) || !plugin.getConfiguration().getPermissions().isCheckPermissionVirtual() || wrap.hasPermission(player)
                 || wrapper.isOwningPlayer(item, player);
     }
 
@@ -50,7 +50,7 @@ public class PermissionUtil {
         }
         if (!hasPermission(plugin, wrap, item, player)) {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
-            return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissionSettings().isPermissionPhysical());
+            return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissions().isPermissionPhysical());
         }
         return null;
     }

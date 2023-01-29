@@ -66,14 +66,14 @@ public class GuiBuilder {
                 .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
                 .filter(wrap -> !plugin.getPlayerStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
             var wrapItem = wrap.toPermissionItem(plugin, player);
-            if (!plugin.getConfiguration().getPermissionSettings().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
+            if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
                 wrapItem.setType(item.getType());
             }
 
             GuiItem guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
                 if (click.getClick() == ClickType.LEFT) {
-                    if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissionSettings().isPermissionVirtual()) {
+                    if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissions().isPermissionVirtual()) {
                         plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
@@ -87,7 +87,7 @@ public class GuiBuilder {
                         plugin.getMessageHandler().send(player, Messages.PREVIEW_DISABLED);
                         return;
                     }
-                    if (plugin.getConfiguration().getPermissionSettings().isPreviewPermission() && !wrap.hasPermission(player)) {
+                    if (plugin.getConfiguration().getPermissions().isPreviewPermission() && !wrap.hasPermission(player)) {
                         plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                         return;
                     }
