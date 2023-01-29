@@ -108,6 +108,11 @@ items:
         glow: true
         flags:
           - 'HIDE_ATTRIBUTES'
+        locked-item:
+          id: 'BARRIER'
+          name: '<red><bold>Locked!'
+          lore:
+            - '<gray>You need to buy this item in our <red>store!'
         physical:
           id: 'PAPER'
           model-id: 3
@@ -163,7 +168,7 @@ preservation:
     defaults: { }
   # Still the same, but with the name
   name:
-    original-enabled: true
+    original-enabled: false
     default-enabled: false
     defaults: { }
 
