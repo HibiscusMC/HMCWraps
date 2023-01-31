@@ -12,12 +12,14 @@ import java.util.Map;
 public class InventoryItem extends SerializableItem implements IInventoryItem {
 
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
+    private @Nullable List<Integer> fills;
 
     public InventoryItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                          @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color,
-                         @Nullable HashMap<String, @Nullable HashMap<String, List<String>>> actions) {
+                         @Nullable HashMap<String, @Nullable HashMap<String, List<String>>> actions, @Nullable List<Integer> fills) {
         super(id, name, glow, lore, flags, modelId, enchantments, amount, color);
         this.actions = actions;
+        this.fills = fills;
     }
 
     public InventoryItem() {
@@ -27,6 +29,12 @@ public class InventoryItem extends SerializableItem implements IInventoryItem {
     @Nullable
     public HashMap<String, HashMap<String, List<String>>> getActions() {
         return actions;
+    }
+
+    @Override
+    @Nullable
+    public List<Integer> getFills() {
+        return fills;
     }
 
 }

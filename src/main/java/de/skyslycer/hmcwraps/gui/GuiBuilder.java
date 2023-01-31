@@ -18,6 +18,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+
 public class GuiBuilder {
 
     private static final String MAGIC_IDENTIFIER = "Sn6sma";
@@ -31,6 +33,13 @@ public class GuiBuilder {
         return item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() &&
                 item.getItemMeta().getDisplayName().equals(MAGIC_IDENTIFIER) && item.getItemMeta().hasCustomModelData()
                 && item.getItemMeta().getCustomModelData() == RANDOM_MODEL_ID;
+    }
+
+    private static void setItemToSlot(PaginatedGui gui, HMCWraps plugin, ItemStack target) {
+        var slot = plugin.getConfiguration().getInventory().getTargetItemSlot();
+        if (slot != -1) {
+            gui.setItem(slot, new GuiItem(target.clone()));
+        }
     }
 
     public static void open(HMCWraps plugin, Player player, ItemStack item) {
@@ -54,9 +63,16 @@ public class GuiBuilder {
 
         populate(plugin, item, player, gui);
 
+        setItemToSlot(gui, plugin, item);
+
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
+            var fills = new ArrayList<Integer>();
+            fills.add(inventorySlot);
+            if (serializableItem.getFills() != null) {
+                fills.addAll(serializableItem.getFills());
+            }
             if (serializableItem.getId().equals("AIR") || serializableItem.getId().equals("EMPTY")) {
-                gui.setItem(inventorySlot, getEmptyItem());
+                gui.setItem(fills, getEmptyItem());
                 return;
             }
             ItemStack stack = serializableItem.toItem(plugin, player);
@@ -74,7 +90,7 @@ public class GuiBuilder {
                     plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("any"), new GuiActionInformation(player, "", gui));
                 });
             }
-            gui.setItem(inventorySlot, guiItem);
+            gui.setItem(fills, guiItem);
         });
 
         gui.setDefaultClickAction(click -> click.setCancelled(true));
@@ -123,7 +139,6 @@ public class GuiBuilder {
             });
             gui.addItem(guiItem);
         }));
-        gui.setItem(plugin.getConfiguration().getInventory().getTargetItemSlot(), new GuiItem(item.clone()));
     }
 
 }

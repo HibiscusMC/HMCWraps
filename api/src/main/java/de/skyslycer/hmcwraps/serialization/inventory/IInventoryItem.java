@@ -11,4 +11,5 @@ public interface IInventoryItem extends ISerializableItem {
     @Nullable
     HashMap<String, HashMap<String, List<String>>> getActions();
 
+    @Nullable List<Integer> getFills();
 }
