@@ -27,4 +27,6 @@ public interface IConfig {
 
     IPreservationSettings getPreservation();
 
+    IToggleable getFavorites();
+
 }

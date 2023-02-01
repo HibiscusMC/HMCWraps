@@ -26,6 +26,7 @@ public class Config implements IConfig {
     @Setting("permission-settings")
     private PermissionSettings permissions;
     private PreviewSettings preview;
+    private Toggleable favorites;
     private Inventory inventory;
     private SerializableItem unwrapper;
     private PreservationSettings preservation;
@@ -70,6 +71,11 @@ public class Config implements IConfig {
     @Override
     public IPreservationSettings getPreservation() {
         return preservation;
+    }
+
+    @Override
+    public IToggleable getFavorites() {
+        return favorites;
     }
 
 }

@@ -146,6 +146,12 @@ unwrapper:
     - '<green>Apply this to an item to unwrap it!'
     - '<gray>You may get the physical wrap back.'
 
+# Store a players preference set using actions (SET_FAVORITE) and apply it on pick up and inventory move
+# This feature shouldn't do anything if you don't use the action, but if you have and don't want it anymore, disable this again
+favorites:
+  # If the feature should be enabled
+  enabled: false
+
 # Settings for model id & color preservation
 preservation:
   model-id:
@@ -191,7 +197,9 @@ inventory:
   type: 'SCROLLING'
   # How many rows the inventory should have
   rows: 6
-  # The slot to set the item the player is holding to
+  # Actions executed when clicking a wrap
+  actions: {}
+  # The slot to set the item the player is holding to (-1 to disable)
   target-item-slot: 49
   # The set items in the inventory, every empty slot will be filled with wraps
   items:
@@ -211,6 +219,11 @@ inventory:
       id: 'GRAY_STAINED_GLASS_PANE'
       # The name
       name: '<gray> '
+      # What slots it should fill
+      fills:
+        - 48
+        - 50
+        - 52
     47:
       id: 'ARROW'
       name: '<green>Previous'
@@ -223,12 +236,6 @@ inventory:
           SCROLL_BACK:
             # No arguments are needed
             - ''
-    48:
-      id: 'GRAY_STAINED_GLASS_PANE'
-      name: '<gray> '
-    50:
-      id: 'GRAY_STAINED_GLASS_PANE'
-      name: '<gray> '
     51:
       id: 'ARROW'
       name: '<green>Next'
@@ -236,9 +243,6 @@ inventory:
         any:
           SCROLL_FORTH:
             - ''
-    52:
-      id: 'GRAY_STAINED_GLASS_PANE'
-      name: '<gray> '
     53:
       id: 'RED_CONCRETE'
       name: '<red>Unwrap'

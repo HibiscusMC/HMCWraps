@@ -75,6 +75,30 @@ public class PermissionUtil {
     }
 
     /**
+     * Apply favorite wraps to all possible items.
+     *
+     * @param plugin The plugin
+     * @param player The player
+     */
+    public static void applyFavorites(IHMCWraps plugin, Player player) {
+        for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
+            var item = player.getInventory().getItem(i);
+            if (item == null) {
+                continue;
+            }
+            var newItem = hasPermission(plugin, item, player);
+            if (newItem != null || plugin.getWrapper().getWrap(item) == null) {
+                int finalI = i;
+                plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
+                        .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
+                        .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst().ifPresent(wrap ->
+                                player.getInventory().setItem(finalI, plugin.getWrapper().setWrap(wrap, item, false, player, true))));
+            }
+        }
+
+    }
+
+    /**
      * Checks if a sender has any of the given permissions.
      *
      * @param sender      The sender to check on

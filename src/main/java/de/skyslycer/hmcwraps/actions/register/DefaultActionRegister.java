@@ -20,6 +20,8 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
@@ -30,7 +32,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class DefaultActionRegister {
 
@@ -55,6 +60,8 @@ public class DefaultActionRegister {
         registerUnwrap();
         registerClose();
         registerFilterToggle();
+        registerFavorite();
+        registerClearFavorites();
     }
 
     private void registerScrollForth() {
@@ -274,6 +281,46 @@ public class DefaultActionRegister {
             plugin.getPlayerStorage().set(information.getPlayer(), !plugin.getPlayerStorage().get(information.getPlayer()));
             GuiBuilder.open(plugin, information.getPlayer(), information.getPlayer().getInventory().getItemInMainHand());
         });
+    }
+
+    private void registerFavorite() {
+        plugin.getActionHandler().subscribe(Action.SET_FAVORITE, (information -> {
+            var player = information.getPlayer();
+            var current = plugin.getFavoriteWrapStorage().get(player);
+            var split = information.getArguments().split(" ");
+            IWrap wrap;
+            System.out.println("yes");
+            if (split.length == 1 && plugin.getWraps().get(split[0]) != null) {
+                wrap = plugin.getWraps().get(split[0]);
+            } else if (information instanceof WrapActionInformation wrapInformation) {
+                wrap = wrapInformation.getWrap();
+            } else {
+                return;
+            }
+            var collections = plugin.getCollectionHelper();
+            (new LinkedList<>(current)).forEach((currentWrap) -> {
+                if (!currentWrap.getUuid().equals(wrap.getUuid())) {
+                    return;
+                }
+                if (ListUtil.containsAny(collections.getMaterials(currentWrap.getId()), collections.getMaterials(wrap.getId()))) {
+                    return;
+                }
+                if (currentWrap.getModelIdInclude() != null && !ListUtil.containsAny(currentWrap.getModelIdInclude(), wrap.getModelIdInclude())) {
+                    return;
+                } else if (currentWrap.getModelIdExclude() != null && !new HashSet<>(currentWrap.getModelIdExclude()).containsAll(wrap.getModelIdExclude())) {
+                    return;
+                }
+                current.remove(currentWrap);
+            });
+            current.add(wrap);
+            plugin.getFavoriteWrapStorage().set(player, current);
+        }));
+    }
+
+    private void registerClearFavorites() {
+        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
+            plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
+        }));
     }
 
     private boolean checkSplit(String[] split, int length, String action, String example) {

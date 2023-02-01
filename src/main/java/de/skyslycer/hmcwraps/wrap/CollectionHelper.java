@@ -35,7 +35,11 @@ public class CollectionHelper implements ICollectionHelper {
     public List<Material> getMaterials(String collection) {
         var list = new ArrayList<Material>();
         if (!plugin.getCollections().containsKey(collection)) {
-            return List.of();
+            if (Material.getMaterial(collection) != null) {
+                return List.of(Material.getMaterial(collection));
+            } else {
+                return List.of();
+            }
         }
         for (String materialName : plugin.getCollections().get(collection)) {
             if (Material.getMaterial(materialName) != null) {

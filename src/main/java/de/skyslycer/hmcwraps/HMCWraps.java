@@ -24,6 +24,7 @@ import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
+import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
@@ -77,6 +78,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private final IActionHandler actionHandler = new ActionHandler();
     private final FileConverter fileConverter = new FileConverter(this);
     private final Storage<Player, Boolean> playerStorage = new PlayerFilterStorage(this);
+    private final Storage<Player, List<IWrap>> favoriteWrapStorage = new FavoriteWrapStorage(this);
     private final ContinuousUpdateChecker updateChecker = new ContinuousUpdateChecker(this);
     private IConfig config;
     private IMessageHandler messageHandler;
@@ -226,7 +228,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
-                    "preservation.model-id.defaults", "preservation.color.defaults", "unwrapper");
+                    "preservation.model-id.defaults", "preservation.color.defaults", "preservation.name.defaults", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);
             loadWrapFiles();
             loadCollectionFiles();
@@ -439,6 +441,11 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @Override
     public Storage<Player, Boolean> getPlayerStorage() {
         return playerStorage;
+    }
+
+    @Override
+    public Storage<Player, List<IWrap>> getFavoriteWrapStorage() {
+        return favoriteWrapStorage;
     }
 
     public FileConverter getFileConverter() {

@@ -1,7 +1,9 @@
 package de.skyslycer.hmcwraps.gui;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
+import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.inventory.InventoryType;
@@ -15,10 +17,13 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class GuiBuilder {
 
@@ -61,10 +66,21 @@ public class GuiBuilder {
                     .create();
         }
 
+        populateStatic(plugin, player, inventory, gui);
         populate(plugin, item, player, gui);
-
         setItemToSlot(gui, plugin, item);
 
+        gui.setDefaultClickAction(click -> click.setCancelled(true));
+        gui.open(player);
+        for (int i = 0; i < gui.getRows() * 9; i++) {
+            var playerInventory = player.getOpenInventory().getTopInventory();
+            if (isEmptyItem(playerInventory.getItem(i))) {
+                playerInventory.setItem(i, new ItemStack(Material.AIR));
+            }
+        }
+    }
+
+    private static void populateStatic(HMCWraps plugin, Player player, IInventory inventory, PaginatedGui gui) {
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
             var fills = new ArrayList<Integer>();
             fills.add(inventorySlot);
@@ -78,29 +94,22 @@ public class GuiBuilder {
             ItemStack stack = serializableItem.toItem(plugin, player);
             GuiItem guiItem = new GuiItem(stack);
             if (serializableItem.getActions() != null) {
-                guiItem.setAction(event -> {
-                    if (event.getClick() == ClickType.LEFT && serializableItem.getActions().containsKey("left")) {
-                        plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("left"), new GuiActionInformation(player, "", gui));
-                    } else if (event.getClick() == ClickType.RIGHT && serializableItem.getActions().containsKey("right")) {
-                        plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("right"), new GuiActionInformation(player, "", gui));
-                    }
-                    if (!serializableItem.getActions().containsKey("any")) {
-                        return;
-                    }
-                    plugin.getActionHandler().pushFromConfig(serializableItem.getActions().get("any"), new GuiActionInformation(player, "", gui));
-                });
+                guiItem.setAction(event -> actions(plugin, new GuiActionInformation(player, "", gui), serializableItem.getActions(), event));
             }
             gui.setItem(fills, guiItem);
         });
+    }
 
-        gui.setDefaultClickAction(click -> click.setCancelled(true));
-        gui.open(player);
-        for (int i = 0; i < gui.getRows() * 9; i++) {
-            var playerInventory = player.getOpenInventory().getTopInventory();
-            if (isEmptyItem(playerInventory.getItem(i))) {
-                playerInventory.setItem(i, new ItemStack(Material.AIR));
-            }
+    private static void actions(HMCWraps plugin, ActionInformation information, HashMap<String, HashMap<String, List<String>>> actions, InventoryClickEvent event) {
+        if (event.getClick() == ClickType.LEFT && actions.containsKey("left")) {
+            plugin.getActionHandler().pushFromConfig(actions.get("left"), information);
+        } else if (event.getClick() == ClickType.RIGHT && actions.containsKey("right")) {
+            plugin.getActionHandler().pushFromConfig(actions.get("right"), information);
         }
+        if (!actions.containsKey("any")) {
+            return;
+        }
+        plugin.getActionHandler().pushFromConfig(actions.get("any"), information);
     }
 
     private static void populate(HMCWraps plugin, ItemStack item, Player player, PaginatedGui gui) {
@@ -114,6 +123,9 @@ public class GuiBuilder {
 
             GuiItem guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
+                if (plugin.getConfiguration().getInventory().getActions() != null) {
+                    actions(plugin, new WrapActionInformation(wrap, player, ""), plugin.getConfiguration().getInventory().getActions(), click);
+                }
                 if (click.getClick() == ClickType.LEFT) {
                     if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissions().isPermissionVirtual()) {
                         plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);

@@ -18,10 +18,15 @@ public class PlayerPickupListener implements Listener {
 
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, ((Player) event.getEntity()).getPlayer()), 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            PermissionUtil.loopThroughInventory(plugin, player);
+            if (plugin.getConfiguration().getFavorites().isEnabled()) {
+                PermissionUtil.applyFavorites(plugin, player);
+            }
+        }, 1L);
     }
 
 }

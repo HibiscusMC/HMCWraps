@@ -1,5 +1,7 @@
 package de.skyslycer.hmcwraps.serialization.inventory;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface IInventory {
@@ -16,4 +18,5 @@ public interface IInventory {
 
     InventoryType getType();
 
+    HashMap<String, HashMap<String, List<String>>> getActions();
 }
