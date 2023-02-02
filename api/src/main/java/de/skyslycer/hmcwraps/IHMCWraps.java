@@ -159,7 +159,7 @@ public interface IHMCWraps extends Plugin {
      */
     ObjectPool<UUID, Component> getMessagePool();
 
-    Storage<Player, Boolean> getPlayerStorage();
+    Storage<Player, Boolean> getFilterStorage();
 
     Storage<Player, List<IWrap>> getFavoriteWrapStorage();
 }

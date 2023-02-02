@@ -152,6 +152,15 @@ favorites:
   # If the feature should be enabled
   enabled: false
 
+# The inventory filter configuration
+# This feature shouldn't do anything if you don't use the action, but if you have and don't want it anymore, disable this
+# If you want the inventory to only show wraps the player owns, enable this feature and set default to 'true' and don't change it using actions
+filter:
+  # If the feature should be enabled
+  enabled: true
+  # If the inventory should be filtered by default
+  default: false
+
 # Settings for model id & color preservation
 preservation:
   model-id:

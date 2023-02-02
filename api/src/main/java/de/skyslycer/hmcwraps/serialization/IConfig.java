@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import de.skyslycer.hmcwraps.serialization.filter.IFilterSettings;
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
 import de.skyslycer.hmcwraps.serialization.preservation.IPreservationSettings;
@@ -29,4 +30,5 @@ public interface IConfig {
 
     IToggleable getFavorites();
 
+    IFilterSettings getFilter();
 }

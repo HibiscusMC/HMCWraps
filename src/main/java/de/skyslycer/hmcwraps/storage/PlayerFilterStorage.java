@@ -8,16 +8,24 @@ import org.bukkit.persistence.PersistentDataType;
 public class PlayerFilterStorage implements Storage<Player, Boolean> {
 
     private final NamespacedKey key;
+    private final HMCWraps plugin;
 
     public PlayerFilterStorage(HMCWraps plugin) {
         this.key = new NamespacedKey(plugin, "filterEnabled");
+        this.plugin = plugin;
     }
 
 
     @Override
     public Boolean get(Player source) {
         var pdc = source.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
-        return pdc != null && pdc == 1;
+        if (!plugin.getConfiguration().getFavorites().isEnabled()) {
+            return false;
+        }
+        if (pdc == null) {
+            return plugin.getConfiguration().getFilter().getDefault();
+        }
+        return pdc == 1;
     }
 
     @Override

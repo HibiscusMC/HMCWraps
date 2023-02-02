@@ -1,5 +1,7 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import de.skyslycer.hmcwraps.serialization.filter.FilterSettings;
+import de.skyslycer.hmcwraps.serialization.filter.IFilterSettings;
 import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.serialization.item.ISerializableItem;
@@ -27,6 +29,7 @@ public class Config implements IConfig {
     private PermissionSettings permissions;
     private PreviewSettings preview;
     private Toggleable favorites;
+    private FilterSettings filter;
     private Inventory inventory;
     private SerializableItem unwrapper;
     private PreservationSettings preservation;
@@ -34,7 +37,8 @@ public class Config implements IConfig {
     private Map<String, List<String>> collections = new HashMap<>();
 
     public Config(UpdaterSettings updater, PermissionSettings permissions, PreviewSettings preview, Toggleable favorites,
-                  Inventory inventory, SerializableItem unwrapper, PreservationSettings preservation, Map<String, WrappableItem> items, Map<String, List<String>> collections) {
+                  Inventory inventory, SerializableItem unwrapper, PreservationSettings preservation, Map<String, WrappableItem> items,
+                  Map<String, List<String>> collections, FilterSettings filter) {
         this.updater = updater;
         this.permissions = permissions;
         this.preview = preview;
@@ -44,6 +48,7 @@ public class Config implements IConfig {
         this.preservation = preservation;
         this.items = items;
         this.collections = collections;
+        this.filter = filter;
     }
 
     public Config() { }
@@ -91,6 +96,11 @@ public class Config implements IConfig {
     @Override
     public IToggleable getFavorites() {
         return favorites;
+    }
+
+    @Override
+    public IFilterSettings getFilter() {
+        return filter;
     }
 
 }

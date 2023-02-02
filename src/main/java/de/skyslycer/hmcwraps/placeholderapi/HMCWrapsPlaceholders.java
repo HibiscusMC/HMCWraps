@@ -42,7 +42,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
             }
             return wrap.getUuid();
         } else if (identifier.equals("filter") && player != null) {
-            if (plugin.getPlayerStorage().get(player)) {
+            if (plugin.getFilterStorage().get(player)) {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_ACTIVE)));
             } else {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_INACTIVE)));

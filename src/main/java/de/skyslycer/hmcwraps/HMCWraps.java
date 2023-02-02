@@ -77,7 +77,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     private final ICollectionHelper collectionHelper = new CollectionHelper(this);
     private final IActionHandler actionHandler = new ActionHandler();
     private final FileConverter fileConverter = new FileConverter(this);
-    private final Storage<Player, Boolean> playerStorage = new PlayerFilterStorage(this);
+    private final Storage<Player, Boolean> filterStorage = new PlayerFilterStorage(this);
     private final Storage<Player, List<IWrap>> favoriteWrapStorage = new FavoriteWrapStorage(this);
     private final ContinuousUpdateChecker updateChecker = new ContinuousUpdateChecker(this);
     private IConfig config;
@@ -469,8 +469,8 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     }
 
     @Override
-    public Storage<Player, Boolean> getPlayerStorage() {
-        return playerStorage;
+    public Storage<Player, Boolean> getFilterStorage() {
+        return filterStorage;
     }
 
     @Override

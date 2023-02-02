@@ -52,7 +52,7 @@ public class DebugCreator {
 
     public static DebugPlayer createDebugPlayer(HMCWraps plugin, Player player) {
         return new DebugPlayer(plugin.getFavoriteWrapStorage().get(player).stream().map(IWrap::getUuid).toList(),
-                plugin.getPlayerStorage().get(player), createDebugItemData(plugin, player));
+                plugin.getFilterStorage().get(player), createDebugItemData(plugin, player));
     }
 
     public static DebugItemData createDebugItemData(HMCWraps plugin, Player player) {
