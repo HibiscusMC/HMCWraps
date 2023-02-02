@@ -289,7 +289,6 @@ public class DefaultActionRegister {
             var current = plugin.getFavoriteWrapStorage().get(player);
             var split = information.getArguments().split(" ");
             IWrap wrap;
-            System.out.println("yes");
             if (split.length == 1 && plugin.getWraps().get(split[0]) != null) {
                 wrap = plugin.getWraps().get(split[0]);
             } else if (information instanceof WrapActionInformation wrapInformation) {
@@ -299,10 +298,10 @@ public class DefaultActionRegister {
             }
             var collections = plugin.getCollectionHelper();
             (new LinkedList<>(current)).forEach((currentWrap) -> {
-                if (!currentWrap.getUuid().equals(wrap.getUuid())) {
+                if (currentWrap.getUuid().equals(wrap.getUuid())) {
                     return;
                 }
-                if (ListUtil.containsAny(collections.getMaterials(currentWrap.getId()), collections.getMaterials(wrap.getId()))) {
+                if (!ListUtil.containsAny(collections.getMaterials(collections.getCollection(currentWrap)), collections.getMaterials(collections.getCollection(wrap)))) {
                     return;
                 }
                 if (currentWrap.getModelIdInclude() != null && !ListUtil.containsAny(currentWrap.getModelIdInclude(), wrap.getModelIdInclude())) {
@@ -312,6 +311,7 @@ public class DefaultActionRegister {
                 }
                 current.remove(currentWrap);
             });
+            current.removeIf(it -> it.getUuid().equals(wrap.getUuid()));
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
         }));

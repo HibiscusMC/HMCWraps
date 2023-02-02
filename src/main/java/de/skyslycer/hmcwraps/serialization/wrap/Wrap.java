@@ -17,7 +17,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @ConfigSerializable
 public class Wrap extends SerializableItem implements IWrap {
@@ -57,8 +56,9 @@ public class Wrap extends SerializableItem implements IWrap {
     }
 
     @Override
-    public Optional<String> getPermission() {
-        return Optional.ofNullable(permission);
+    @Nullable
+    public String getPermission() {
+        return permission;
     }
 
     @Override
@@ -67,8 +67,9 @@ public class Wrap extends SerializableItem implements IWrap {
     }
 
     @Override
-    public Optional<IPhysicalWrap> getPhysical() {
-        return Optional.ofNullable(physical);
+    @Nullable
+    public IPhysicalWrap getPhysical() {
+        return physical;
     }
 
     @Override
@@ -96,18 +97,20 @@ public class Wrap extends SerializableItem implements IWrap {
 
     @Override
     public boolean hasPermission(CommandSender sender) {
-        if (getPermission().isEmpty()) {
+        if (getPermission() == null) {
             return true;
         }
-        return sender.hasPermission(getPermission().get());
+        return sender.hasPermission(getPermission());
     }
 
     @Override
+    @Nullable
     public List<Integer> getModelIdInclude() {
         return modelIdInclude;
     }
 
     @Override
+    @Nullable
     public List<Integer> getModelIdExclude() {
         return modelIdExclude;
     }

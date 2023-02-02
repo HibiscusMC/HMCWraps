@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class PermissionUtil {
 
     /**
@@ -80,10 +82,12 @@ public class PermissionUtil {
      * @param plugin The plugin
      * @param player The player
      */
-    public static void applyFavorites(IHMCWraps plugin, Player player) {
-        for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
-            var item = player.getInventory().getItem(i);
-            if (item == null) {
+    public static void applyFavorites(IHMCWraps plugin, Player player, ItemStack item) {
+        if (!plugin.getConfiguration().getFavorites().isEnabled()) {
+            return;
+        }
+        for (int i = 0; i < player.getInventory().getSize() - 1; i++) {
+            if (!Objects.equals(player.getInventory().getItem(i), item)) {
                 continue;
             }
             var newItem = hasPermission(plugin, item, player);
@@ -94,6 +98,7 @@ public class PermissionUtil {
                         .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst().ifPresent(wrap ->
                                 player.getInventory().setItem(finalI, plugin.getWrapper().setWrap(wrap, item, false, player, true))));
             }
+            break;
         }
 
     }

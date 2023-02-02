@@ -3,8 +3,8 @@ package de.skyslycer.hmcwraps.updater;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import org.bukkit.plugin.java.JavaPlugin;
 import de.skyslycer.hmcwraps.updater.version.PluginVersion;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.net.URI;

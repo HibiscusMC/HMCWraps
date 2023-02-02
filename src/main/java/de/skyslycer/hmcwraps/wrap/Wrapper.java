@@ -69,9 +69,9 @@ public class Wrapper implements IWrapper {
     private ItemStack setWrapPrivate(@Nullable IWrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
         var editing = item.clone();
         var currentWrap = getWrap(editing);
-        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical().isPresent() && currentWrap.getPhysical().get().isKeepAfterUnwrap()
+        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()
                 && giveBack) {
-            PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().get().toItem(plugin, player), currentWrap));
+            PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
         var originalData = getOriginalData(item);
         var meta = editing.getItemMeta();

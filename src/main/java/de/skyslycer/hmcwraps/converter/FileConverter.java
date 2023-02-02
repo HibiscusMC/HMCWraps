@@ -175,7 +175,7 @@ public class FileConverter {
 
     private Path getUnusedFile(Path path) {
         var file = path;
-        if (!Files.exists(file)) {
+        if (Files.notExists(file)) {
             return path;
         }
         var i = 1;

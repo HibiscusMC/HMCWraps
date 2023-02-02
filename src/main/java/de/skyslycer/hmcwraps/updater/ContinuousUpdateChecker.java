@@ -70,11 +70,7 @@ public class ContinuousUpdateChecker {
         if (defaultResult != null) {
             result = defaultResult;
         } else {
-            if (System.currentTimeMillis() - lastResultTime < 1000 * 60 * 10) {
-                result = lastResult;
-            } else {
-                result = updater.check(plugin);
-            }
+            result = getLatest();
         }
         if (result == null) {
             return;
@@ -88,6 +84,14 @@ public class ContinuousUpdateChecker {
                 """, plugin.getDescription().getVersion(), result.version(),
                 String.format(PluginPlatform.SPIGOT_MC.url(), SPIGOT_ID), String.format(PluginPlatform.POLYMART.url(), POLYMART_ID)));
         StringUtil.sendComponent(player, component);
+    }
+
+    public CheckResult getLatest() {
+        if (System.currentTimeMillis() - lastResultTime < 1000 * 60 * 10 && lastResult != null) {
+            return lastResult;
+        } else {
+            return updater.check(plugin);
+        }
     }
 
 }

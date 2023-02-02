@@ -31,4 +31,12 @@ public interface ICollectionHelper {
      */
     Material getMaterial(IWrap wrap);
 
+    /**
+     * Get the collection or material name of a wrap.
+     *
+     * @param wrap The wrap to get the collection from
+     * @return The collection or material name
+     */
+    String getCollection(IWrap wrap);
+
 }

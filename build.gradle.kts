@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.2.0"
+version = "1.3.0"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -142,6 +142,9 @@ bukkit {
         register("hmcwraps.wraps") {
             description = "Gives access to the wraps inventory (has to be enabled in config)."
             children = listOf("hmcwraps.management", "hmcwraps.admin")
+        }
+        register("hmcwraps.debug") {
+            description = "Gives access to debug commands."
         }
     }
 }

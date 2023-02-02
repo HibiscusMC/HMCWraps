@@ -9,15 +9,14 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 public interface IWrap extends ISerializableItem {
 
-    Optional<String> getPermission();
+    String getPermission();
 
     String getUuid();
 
-    Optional<IPhysicalWrap> getPhysical();
+    IPhysicalWrap getPhysical();
 
     Boolean isPreview();
 
@@ -38,8 +37,10 @@ public interface IWrap extends ISerializableItem {
     @Nullable
     HashMap<String, HashMap<String, List<String>>> getActions();
 
+    @Nullable
     List<Integer> getModelIdInclude();
 
+    @Nullable
     List<Integer> getModelIdExclude();
 
     @Nullable

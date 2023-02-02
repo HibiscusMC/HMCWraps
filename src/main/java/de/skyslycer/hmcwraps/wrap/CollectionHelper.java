@@ -33,7 +33,6 @@ public class CollectionHelper implements ICollectionHelper {
 
     @Override
     public List<Material> getMaterials(String collection) {
-        var list = new ArrayList<Material>();
         if (!plugin.getCollections().containsKey(collection)) {
             if (Material.getMaterial(collection) != null) {
                 return List.of(Material.getMaterial(collection));
@@ -41,6 +40,7 @@ public class CollectionHelper implements ICollectionHelper {
                 return List.of();
             }
         }
+        var list = new ArrayList<Material>();
         for (String materialName : plugin.getCollections().get(collection)) {
             if (Material.getMaterial(materialName) != null) {
                 list.add(Material.getMaterial(materialName));
@@ -51,15 +51,8 @@ public class CollectionHelper implements ICollectionHelper {
 
     @Override
     public Material getMaterial(IWrap wrap) {
-        var currentCollection = "";
+        var currentCollection = getCollection(wrap);
         var itemMaterial = Material.AIR;
-        for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
-            currentCollection = entry.getKey();
-            if (entry.getValue().getWraps().containsValue(wrap)) {
-                break;
-            }
-        }
-
         if (Material.getMaterial(currentCollection) != null) {
             itemMaterial = Material.getMaterial(currentCollection);
         } else if (plugin.getCollectionHelper().getMaterials(currentCollection).stream().findFirst().isPresent()) {
@@ -68,6 +61,18 @@ public class CollectionHelper implements ICollectionHelper {
             return null;
         }
         return itemMaterial;
+    }
+
+    @Override
+    public String getCollection(IWrap wrap) {
+        var currentCollection = "";
+        for (Map.Entry<String, IWrappableItem> entry : plugin.getWrappableItems().entrySet()) {
+            currentCollection = entry.getKey();
+            if (entry.getValue().getWraps().containsValue(wrap)) {
+                break;
+            }
+        }
+        return currentCollection;
     }
 
 }

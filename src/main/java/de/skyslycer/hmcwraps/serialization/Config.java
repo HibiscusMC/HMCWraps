@@ -33,6 +33,21 @@ public class Config implements IConfig {
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
 
+    public Config(UpdaterSettings updater, PermissionSettings permissions, PreviewSettings preview, Toggleable favorites,
+                  Inventory inventory, SerializableItem unwrapper, PreservationSettings preservation, Map<String, WrappableItem> items, Map<String, List<String>> collections) {
+        this.updater = updater;
+        this.permissions = permissions;
+        this.preview = preview;
+        this.favorites = favorites;
+        this.inventory = inventory;
+        this.unwrapper = unwrapper;
+        this.preservation = preservation;
+        this.items = items;
+        this.collections = collections;
+    }
+
+    public Config() { }
+
     @Override
     public IInventory getInventory() {
         return inventory;

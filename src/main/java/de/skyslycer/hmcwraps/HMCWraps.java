@@ -133,7 +133,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     public boolean load() {
-        if (!Files.exists(PLUGIN_PATH)) {
+        if (Files.notExists(PLUGIN_PATH)) {
             try {
                 Files.createDirectory(PLUGIN_PATH);
             } catch (IOException exception) {
@@ -178,9 +178,39 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         commandHandler.getAutoCompleter().registerParameterSuggestions(Integer.class, SuggestionProvider.of(IntStream.range(1, 65).boxed().map(
                 Object::toString).sorted().toList()));
         commandHandler.getAutoCompleter().registerSuggestion("physicalWraps",
-                (args, sender, command) -> getWraps().values().stream().filter(wrap -> wrap.getPhysical().isPresent()).map(IWrap::getUuid).toList());
+                (args, sender, command) -> getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null).map(IWrap::getUuid).toList());
         commandHandler.getAutoCompleter()
                 .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(IWrap::getUuid).toList()));
+        commandHandler.getAutoCompleter().registerSuggestion("upload", "-upload");
+        commandHandler.getAutoCompleter().registerSuggestion("file", (args, sender, command) -> {
+            var current = args.get(3);
+            var path = PLUGIN_PATH;
+            if (current.contains("/")) {
+                for (String folder : current.substring(0, current.lastIndexOf("/")).split("/")) {
+                    path = path.resolve(folder);
+                }
+            }
+            List<String> fileList;
+            try (var files = Files.list(path)) {
+                var additional = PLUGIN_PATH.relativize(path);
+                var additionalText = additional.toString().equals("") ? "" : additional + "/";
+                fileList = files.map(filePath -> Files.isDirectory(filePath) ? additionalText + filePath.getFileName() + "/" : additionalText + filePath.getFileName()).toList();
+            } catch (Exception exception) {
+                return Collections.emptyList();
+            }
+            return fileList.stream().map(string -> string.replace('\\', '/')).toList();
+        });
+        commandHandler.getAutoCompleter().registerSuggestion("log", (args, sender, command) -> {
+            var current = args.get(3);
+            List<String> fileList;
+            try (var files = Files.list(Path.of("logs"))) {
+                fileList = files.filter(path -> !Files.isDirectory(path)).map(Path::getFileName).map(Path::toString)
+                        .filter(name -> current.equals("") || name.startsWith(current)).toList();
+            } catch (Exception exception) {
+                return Collections.emptyList();
+            }
+            return fileList;
+        });
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
                 (actor, context) -> getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
         commandHandler.registerExceptionHandler(MissingArgumentException.class,
@@ -197,7 +227,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private boolean loadMessages() {
         try {
-            if (!Files.exists(MESSAGES_PATH)) {
+            if (Files.notExists(MESSAGES_PATH)) {
                 Files.copy(this.getClassLoader().getResourceAsStream("messages.properties"), MESSAGES_PATH);
             }
         } catch (IOException exception) {
@@ -213,18 +243,18 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private boolean loadConfig() {
         try {
-            if (!Files.exists(WRAP_FILES_PATH)) {
+            if (Files.notExists(WRAP_FILES_PATH)) {
                 Files.createDirectory(WRAP_FILES_PATH);
                 Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
             }
-            if (!Files.exists(COLLECTION_FILES_PATH)) {
+            if (Files.notExists(COLLECTION_FILES_PATH)) {
                 Files.createDirectory(COLLECTION_FILES_PATH);
                 Files.copy(getResource("some_collections.yml"), COLLECTION_FILES_PATH.resolve("some_collections.yml"));
             }
-            if (!Files.exists(CONVERT_PATH)) {
+            if (Files.notExists(CONVERT_PATH)) {
                 Files.createDirectory(CONVERT_PATH);
             }
-            if (!Files.exists(CONFIG_PATH)) {
+            if (Files.notExists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",

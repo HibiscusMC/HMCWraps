@@ -1,17 +1,23 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.debug.DebugCreator;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+import de.skyslycer.hmcwraps.serialization.debug.Debuggable;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,6 +25,8 @@ import revxrsal.commands.annotation.*;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.help.CommandHelp;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +46,7 @@ public class WrapCommand {
     public static final String PREVIEW_PERMISSION = "hmcwraps.commands.preview";
     public static final String LIST_PERMISSION = "hmcwraps.commands.list";
     public static final String WRAPS_PERMISSION = "hmcwraps.wraps";
+    public static final String DEBUG_PERMISSION = "hmcwraps.debug";
 
     private final Set<String> confirmingPlayers = new HashSet<>();
 
@@ -107,7 +116,7 @@ public class WrapCommand {
     @Description("Wrap the item a player is holding in their main hand.")
     @CommandPermission(WRAP_PERMISSION)
     @AutoComplete("@wraps * *")
-    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
+    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch boolean actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -118,7 +127,7 @@ public class WrapCommand {
                 item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
                 player.getInventory().setItemInMainHand(item);
-                if (actions) {
+                if (!actions) {
                     plugin.getActionHandler().pushWrap(wrap, player);
                     plugin.getActionHandler().pushVirtualWrap(wrap, player);
                 }
@@ -133,7 +142,7 @@ public class WrapCommand {
     @Description("Unwrap the item a player is holding in their main hand.")
     @CommandPermission(UNWRAP_PERMISSION)
     @AutoComplete("@players *")
-    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Switch @Default("true") boolean actions) {
+    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Switch boolean actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -146,7 +155,7 @@ public class WrapCommand {
         }
         item = plugin.getWrapper().removeWrap(item, player, true);
         player.getInventory().setItemInMainHand(item);
-        if (actions) {
+        if (!actions) {
             plugin.getActionHandler().pushUnwrap(wrap, player);
             plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
         }
@@ -157,14 +166,14 @@ public class WrapCommand {
     @Description("Preview a wrap for the specified player.")
     @CommandPermission(PREVIEW_PERMISSION)
     @AutoComplete("@wraps *")
-    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch @Default("true") boolean actions) {
+    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch boolean actions) {
         var material = plugin.getCollectionHelper().getMaterial(wrap);
         if (material == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NO_MATCHING_ITEM);
             return;
         }
         plugin.getPreviewManager().create(player, null, wrap);
-        if (actions) {
+        if (!actions) {
             plugin.getActionHandler().pushPreview(wrap, player);
         }
         plugin.getMessageHandler().send(sender, Messages.COMMAND_PREVIEW_CREATED);
@@ -175,11 +184,11 @@ public class WrapCommand {
     @CommandPermission(GIVE_WRAPPER_PERMISSION)
     @AutoComplete("@physicalWraps * *")
     public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
-        if (wrap.getPhysical().isEmpty()) {
+        if (wrap.getPhysical() == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
         }
-        var item = wrap.getPhysical().get().toItem(plugin, player);
+        var item = wrap.getPhysical().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setPhysicalWrapper(item, wrap));
         plugin.getMessageHandler().send(sender, Messages.COMMAND_GIVEN_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
@@ -215,10 +224,10 @@ public class WrapCommand {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
             wraps.getWraps().forEach((ignored, wrap) -> {
                 var uuid = wrap.getUuid();
-                var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission().orElse("None")),
+                var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission() == null ? "None" : wrap.getPermission()),
                         Placeholder.parsed("modelid", String.valueOf(wrap.getModelId())),
                         Placeholder.parsed("player", sender instanceof Player player ? player.getName() : " "),
-                        Placeholder.parsed("physical", String.valueOf(wrap.getPhysical().isPresent())),
+                        Placeholder.parsed("physical", String.valueOf(wrap.getPhysical() != null)),
                         Placeholder.parsed("preview", String.valueOf(wrap.isPreview())));
                 set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS_FORMAT), placeholders.toArray(Single[]::new)));
             });
@@ -240,6 +249,122 @@ public class WrapCommand {
         } else {
             filteredEntries.get().forEach((line) -> StringUtil.send(sender, line));
         }
+    }
+
+    @Subcommand("debug info")
+    @Description("Debugs plugin and server information.")
+    @AutoComplete("@upload")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugInformation(CommandSender sender, @Optional String upload) {
+        uploadAndSend(sender, DebugCreator.createDebugInformation(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
+    }
+
+    @Subcommand("debug config")
+    @Description("Debugs plugin configuration.")
+    @AutoComplete("@upload")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugConfig(CommandSender sender, @Optional String upload) {
+        uploadAndSend(sender, DebugCreator.createDebugConfig(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
+    }
+
+    @Subcommand("debug wraps")
+    @Description("Debugs wraps and collections.")
+    @AutoComplete("@upload")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugWraps(CommandSender sender, @Optional String upload) {
+        uploadAndSend(sender, DebugCreator.createDebugWraps(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
+    }
+
+    @Subcommand("debug wrap")
+    @Description("Debugs one wrap.")
+    @AutoComplete("@wraps @upload")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugWrap(CommandSender sender, Wrap wrap, @Optional String upload) {
+        uploadAndSend(sender, DebugCreator.createDebugWrap(plugin, wrap), upload != null && upload.equalsIgnoreCase("-upload"));
+    }
+
+    @Subcommand("debug player")
+    @Description("Debugs a player.")
+    @AutoComplete("* @upload")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugPlayer(CommandSender sender, Player player, @Optional String upload) {
+        uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), upload != null && upload.equalsIgnoreCase("-upload"));
+    }
+
+    @Subcommand("debug log")
+    @Description("Uploads a server log.")
+    @AutoComplete("@log")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugLog(CommandSender sender, String log) {
+        var path = Path.of("logs").resolve(log);
+        if (!checkFile(sender, path)) {
+            return;
+        }
+        handleLink(sender, DebugCreator.uploadLog(path).orElse(null), "log");
+    }
+
+    @Subcommand("debug upload")
+    @Description("Uploads a configuration file.")
+    @AutoComplete("@file")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugUpload(CommandSender sender, String file) {
+        var path = HMCWraps.PLUGIN_PATH;
+        if (file.contains("/")) {
+            for (String folder : file.substring(0, file.lastIndexOf("/")).split("/")) {
+                path = path.resolve(folder);
+            }
+            path = path.resolve(file.substring(file.lastIndexOf("/") + 1));
+        } else {
+            path = path.resolve(file);
+        }
+        if (!checkFile(sender, path)) {
+            return;
+        }
+        try {
+            var contents = Files.readString(path);
+            var type = "plain";
+            if (path.toString().endsWith(".yml") || path.toString().endsWith(".yaml")) {
+                type = "yaml";
+            }
+            handleLink(sender, DebugCreator.upload(contents, type).orElse(null), path.getFileName().toString());
+        } catch (Exception exception) {
+            StringUtil.sendComponent(sender, Component.text("Failed to upload file! Please check the console.").color(NamedTextColor.RED));
+            plugin.logSevere("Failed to upload file " + path + "!");
+            exception.printStackTrace();
+        }
+    }
+
+    private void uploadAndSend(CommandSender sender, Debuggable debuggable, boolean upload) {
+        plugin.getLogger().info("Debug information (" + debuggable.getClass().getSimpleName() + "): \n" + DebugCreator.debugToJson(debuggable));
+        StringUtil.sendComponent(sender, Component.text("Debug information (" + debuggable.getClass().getSimpleName() + ") printed to console.").color(NamedTextColor.GREEN));
+        if (upload) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                var link = DebugCreator.upload(DebugCreator.debugToJson(debuggable), "json");
+                handleLink(sender, link.orElse(null), debuggable.getClass().getSimpleName());
+            }, 0L);
+        }
+    }
+
+    private void handleLink(CommandSender sender, String link, String type) {
+        if (link != null && !link.equals("Too large")) {
+            StringUtil.sendComponent(sender, Component.text("Successfully uploaded (" + type + "): ").color(NamedTextColor.GRAY)
+                    .append(Component.text(link).clickEvent(ClickEvent.openUrl(link))
+                            .hoverEvent(HoverEvent.showText(Component.text("Click to open!").color(NamedTextColor.AQUA))).color(NamedTextColor.BLUE)));
+        } else {
+            StringUtil.sendComponent(sender, Component.text("Failed to upload debug information or file! Please check the console.").color(NamedTextColor.RED));
+        }
+    }
+
+    private boolean checkFile(CommandSender sender, Path path) {
+        if (Files.notExists(path)) {
+            StringUtil.sendComponent(sender, Component.text("This file does not exist!").color(NamedTextColor.RED));
+            return false;
+        }
+        if (Files.isDirectory(path)) {
+            StringUtil.sendComponent(sender, Component.text("This file is a directory!").color(NamedTextColor.RED));
+            return false;
+        }
+        return true;
     }
 
 }

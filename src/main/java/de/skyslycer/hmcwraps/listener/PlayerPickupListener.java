@@ -23,9 +23,7 @@ public class PlayerPickupListener implements Listener {
         }
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PermissionUtil.loopThroughInventory(plugin, player);
-            if (plugin.getConfiguration().getFavorites().isEnabled()) {
-                PermissionUtil.applyFavorites(plugin, player);
-            }
+            PermissionUtil.applyFavorites(plugin, player, event.getItem().getItemStack());
         }, 1L);
     }
 
