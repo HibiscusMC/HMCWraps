@@ -182,6 +182,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         commandHandler.getAutoCompleter()
                 .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(IWrap::getUuid).toList()));
         commandHandler.getAutoCompleter().registerSuggestion("upload", "-upload");
+        commandHandler.getAutoCompleter().registerSuggestion("actions", "-actions");
         commandHandler.getAutoCompleter().registerSuggestion("file", (args, sender, command) -> {
             var current = args.get(3);
             var path = PLUGIN_PATH;

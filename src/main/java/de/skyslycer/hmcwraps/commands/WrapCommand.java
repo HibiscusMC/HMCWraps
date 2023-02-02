@@ -115,8 +115,8 @@ public class WrapCommand {
     @Subcommand("wrap")
     @Description("Wrap the item a player is holding in their main hand.")
     @CommandPermission(WRAP_PERMISSION)
-    @AutoComplete("@wraps * *")
-    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch boolean actions) {
+    @AutoComplete("@wraps @players @actions")
+    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -127,7 +127,7 @@ public class WrapCommand {
                 item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
                 player.getInventory().setItemInMainHand(item);
-                if (!actions) {
+                if (actions == null || !actions.equals("-actions")) {
                     plugin.getActionHandler().pushWrap(wrap, player);
                     plugin.getActionHandler().pushVirtualWrap(wrap, player);
                 }
@@ -141,8 +141,8 @@ public class WrapCommand {
     @Subcommand("unwrap")
     @Description("Unwrap the item a player is holding in their main hand.")
     @CommandPermission(UNWRAP_PERMISSION)
-    @AutoComplete("@players *")
-    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Switch boolean actions) {
+    @AutoComplete("@players @actions")
+    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional String actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType() == Material.AIR) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -155,7 +155,7 @@ public class WrapCommand {
         }
         item = plugin.getWrapper().removeWrap(item, player, true);
         player.getInventory().setItemInMainHand(item);
-        if (!actions) {
+        if (actions == null || !actions.equals("-actions")) {
             plugin.getActionHandler().pushUnwrap(wrap, player);
             plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
         }
@@ -165,15 +165,15 @@ public class WrapCommand {
     @Subcommand("preview")
     @Description("Preview a wrap for the specified player.")
     @CommandPermission(PREVIEW_PERMISSION)
-    @AutoComplete("@wraps *")
-    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Switch boolean actions) {
+    @AutoComplete("@wraps @players @actions")
+    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
         var material = plugin.getCollectionHelper().getMaterial(wrap);
         if (material == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NO_MATCHING_ITEM);
             return;
         }
         plugin.getPreviewManager().create(player, null, wrap);
-        if (!actions) {
+        if (actions == null || !actions.equals("-actions")) {
             plugin.getActionHandler().pushPreview(wrap, player);
         }
         plugin.getMessageHandler().send(sender, Messages.COMMAND_PREVIEW_CREATED);
@@ -182,7 +182,7 @@ public class WrapCommand {
     @Subcommand("give wrapper")
     @Description("Give a wrapper to a player.")
     @CommandPermission(GIVE_WRAPPER_PERMISSION)
-    @AutoComplete("@physicalWraps * *")
+    @AutoComplete("@physicalWraps @players *")
     public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
         if (wrap.getPhysical() == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
@@ -197,7 +197,7 @@ public class WrapCommand {
     @Subcommand("give unwrapper")
     @Description("Give an unwrapper to a player.")
     @CommandPermission(GIVE_UNWRAPPER_PERMISSION)
-    @AutoComplete("* *")
+    @AutoComplete("@players *")
     public void onGiveUnwrapper(CommandSender sender, @Default("self") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
@@ -285,7 +285,7 @@ public class WrapCommand {
 
     @Subcommand("debug player")
     @Description("Debugs a player.")
-    @AutoComplete("* @upload")
+    @AutoComplete("@players @upload")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugPlayer(CommandSender sender, Player player, @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), upload != null && upload.equalsIgnoreCase("-upload"));
