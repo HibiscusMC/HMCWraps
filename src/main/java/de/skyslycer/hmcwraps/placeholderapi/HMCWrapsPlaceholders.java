@@ -2,8 +2,8 @@ package de.skyslycer.hmcwraps.placeholderapi;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrap;
-import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -64,8 +64,8 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                     return ColorUtil.colorToHex(wrap.getColor());
                 }
                 case "type" -> {
-                    for (Map.Entry<String, IWrappableItem> wrappableItem : plugin.getWrappableItems().entrySet()) {
-                        if (!wrappableItem.getValue().getWraps().values().stream().map(IWrap::getUuid).toList().isEmpty()) {
+                    for (Map.Entry<String, WrappableItem> wrappableItem : plugin.getWrappableItems().entrySet()) {
+                        if (!wrappableItem.getValue().getWraps().values().stream().map(Wrap::getUuid).toList().isEmpty()) {
                             return wrappableItem.getKey();
                         }
                     }

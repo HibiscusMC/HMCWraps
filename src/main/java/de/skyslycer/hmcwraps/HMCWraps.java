@@ -3,7 +3,6 @@ package de.skyslycer.hmcwraps;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
-import de.skyslycer.hmcwraps.actions.IActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.converter.FileConverter;
@@ -11,15 +10,15 @@ import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
 import de.skyslycer.hmcwraps.listener.*;
-import de.skyslycer.hmcwraps.messages.IMessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
+import de.skyslycer.hmcwraps.messages.MessageHandlerImpl;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.placeholderapi.HMCWrapsPlaceholders;
 import de.skyslycer.hmcwraps.pool.MessagePool;
 import de.skyslycer.hmcwraps.pool.ObjectPool;
-import de.skyslycer.hmcwraps.preview.IPreviewManager;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
-import de.skyslycer.hmcwraps.serialization.*;
+import de.skyslycer.hmcwraps.serialization.Config;
+import de.skyslycer.hmcwraps.serialization.Toggleable;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -28,10 +27,10 @@ import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
-import de.skyslycer.hmcwraps.wrap.CollectionHelper;
+import de.skyslycer.hmcwraps.wrap.CollectionHelperImpl;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
-import de.skyslycer.hmcwraps.wrap.Wrapper;
+import de.skyslycer.hmcwraps.wrap.WrapperImpl;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -54,6 +53,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -66,22 +66,22 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private final ObjectPool<UUID, Component> messagePool = new MessagePool();
     private final Set<ItemHook> hooks = new HashSet<>();
-    private final Map<String, IWrap> wraps = new LinkedHashMap<>();
-    private final Map<String, List<String>> collections = new HashMap<>();
-    private final Map<String, IWrappableItem> wrappableItems = new HashMap<>();
-    private final Set<IWrapFile> wrapFiles = new HashSet<>();
-    private final Set<ICollectionFile> collectionFiles = new HashSet<>();
+    private final Map<String, Wrap> wraps = new ConcurrentHashMap<>();
+    private final Map<String, List<String>> collections = new ConcurrentHashMap<>();
+    private final Map<String, WrappableItem> wrappableItems = new ConcurrentHashMap<>();
+    private final Set<WrapFile> wrapFiles = new HashSet<>();
+    private final Set<CollectionFile> collectionFiles = new HashSet<>();
     private final Set<String> loadedHooks = new HashSet<>();
-    private final IWrapper wrapper = new Wrapper(this);
-    private final IPreviewManager previewManager = new PreviewManager(this);
-    private final ICollectionHelper collectionHelper = new CollectionHelper(this);
-    private final IActionHandler actionHandler = new ActionHandler();
+    private final IWrapper wrapper = new WrapperImpl(this);
+    private final PreviewManager previewManager = new PreviewManager(this);
+    private final ICollectionHelper collectionHelper = new CollectionHelperImpl(this);
+    private final ActionHandler actionHandler = new ActionHandler();
     private final FileConverter fileConverter = new FileConverter(this);
     private final Storage<Player, Boolean> filterStorage = new PlayerFilterStorage(this);
-    private final Storage<Player, List<IWrap>> favoriteWrapStorage = new FavoriteWrapStorage(this);
+    private final Storage<Player, List<Wrap>> favoriteWrapStorage = new FavoriteWrapStorage(this);
     private final ContinuousUpdateChecker updateChecker = new ContinuousUpdateChecker(this);
-    private IConfig config;
-    private IMessageHandler messageHandler;
+    private Config config;
+    private MessageHandler messageHandler;
 
     @Override
     public void onLoad() {
@@ -165,7 +165,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         BukkitCommandHandler commandHandler = BukkitCommandHandler.create(this);
 
         commandHandler.registerValueResolver(Wrap.class, context -> {
-            var wrap = (Wrap) getWraps().get(context.pop());
+            var wrap = getWraps().get(context.pop());
             if (wrap == null) {
                 getMessageHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
                         Placeholder.parsed("uuid", context.pop()));
@@ -178,9 +178,9 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
         commandHandler.getAutoCompleter().registerParameterSuggestions(Integer.class, SuggestionProvider.of(IntStream.range(1, 65).boxed().map(
                 Object::toString).sorted().toList()));
         commandHandler.getAutoCompleter().registerSuggestion("physicalWraps",
-                (args, sender, command) -> getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null).map(IWrap::getUuid).toList());
+                (args, sender, command) -> getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null).map(Wrap::getUuid).toList());
         commandHandler.getAutoCompleter()
-                .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(IWrap::getUuid).toList()));
+                .registerSuggestion("wraps", ((args, sender, command) -> getWraps().values().stream().map(Wrap::getUuid).toList()));
         commandHandler.getAutoCompleter().registerSuggestion("upload", "-upload");
         commandHandler.getAutoCompleter().registerSuggestion("actions", "-actions");
         commandHandler.getAutoCompleter().registerSuggestion("file", (args, sender, command) -> {
@@ -237,7 +237,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
             exception.printStackTrace();
             return false;
         }
-        messageHandler = new MessageHandler(this);
+        messageHandler = new MessageHandlerImpl(this);
         messageHandler.update(MESSAGES_PATH);
         return messageHandler.load(MESSAGES_PATH);
     }
@@ -275,14 +275,14 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     private void combineFiles() {
         collections.putAll(getConfiguration().getCollections());
-        collectionFiles.stream().filter(IToggleable::isEnabled).forEach(collectionFile -> collections.putAll(collectionFile.getCollections()));
+        collectionFiles.stream().filter(Toggleable::isEnabled).forEach(collectionFile -> collections.putAll(collectionFile.getCollections()));
 
         wrappableItems.putAll(getConfiguration().getItems());
         wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
             if (wrappableItems.containsKey(type)) {
-                var current = (WrappableItem) wrappableItems.get(type);
-                var toAdd = (WrappableItem) wrappableItem;
-                toAdd.getWrapsPrivate().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
+                var current = wrappableItems.get(type);
+                var toAdd = wrappableItem;
+                toAdd.getWraps().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
                 wrappableItems.put(type, current);
             } else {
                 wrappableItems.put(type, wrappableItem);
@@ -392,7 +392,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     @Override
     public int getWrapAmount() {
         int count = 0;
-        for (IWrappableItem item : getWrappableItems().values()) {
+        for (WrappableItem item : getWrappableItems().values()) {
             count += item.getWraps().size();
         }
         return count;
@@ -400,31 +400,31 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     @NotNull
-    public IConfig getConfiguration() {
+    public Config getConfiguration() {
         return config;
     }
 
     @Override
     @NotNull
-    public IMessageHandler getMessageHandler() {
+    public MessageHandler getMessageHandler() {
         return messageHandler;
     }
 
     @Override
     @NotNull
-    public Map<String, IWrap> getWraps() {
+    public Map<String, Wrap> getWraps() {
         return wraps;
     }
 
     @Override
     @NotNull
-    public Set<IWrapFile> getWrapFiles() {
+    public Set<WrapFile> getWrapFiles() {
         return wrapFiles;
     }
 
     @Override
     @NotNull
-    public Map<String, IWrappableItem> getWrappableItems() {
+    public Map<String, WrappableItem> getWrappableItems() {
         return wrappableItems;
     }
 
@@ -436,7 +436,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     @NotNull
-    public IPreviewManager getPreviewManager() {
+    public PreviewManager getPreviewManager() {
         return previewManager;
     }
 
@@ -448,7 +448,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     @NotNull
-    public IActionHandler getActionHandler() {
+    public ActionHandler getActionHandler() {
         return actionHandler;
     }
 
@@ -460,7 +460,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
 
     @Override
     @NotNull
-    public Set<ICollectionFile> getCollectionFiles() {
+    public Set<CollectionFile> getCollectionFiles() {
         return collectionFiles;
     }
 
@@ -475,7 +475,7 @@ public class HMCWraps extends JavaPlugin implements IHMCWraps {
     }
 
     @Override
-    public Storage<Player, List<IWrap>> getFavoriteWrapStorage() {
+    public Storage<Player, List<Wrap>> getFavoriteWrapStorage() {
         return favoriteWrapStorage;
     }
 

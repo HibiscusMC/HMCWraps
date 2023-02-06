@@ -35,11 +35,12 @@ dependencies {
     implementation("com.github.Revxrsal.Lamp:bukkit:3.1.1")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
-    implementation("dev.triumphteam:triumph-gui:3.1.4") {
-        exclude("com.google.code.gson")
-    }
+    implementation("dev.triumphteam:triumph-gui:3.1.4")
     implementation("org.spongepowered:configurate-yaml:4.1.2") {
         exclude("org.yaml")
+    }
+    implementation("com.github.aternosorg:mclogs-java:v2.2.0") {
+        exclude("com.google.code.gson")
     }
     compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")

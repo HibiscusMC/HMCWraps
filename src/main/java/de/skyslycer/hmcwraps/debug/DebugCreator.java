@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.debug.log.McLogsAPI;
 import de.skyslycer.hmcwraps.serialization.Config;
-import de.skyslycer.hmcwraps.serialization.IWrap;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import gs.mclo.java.MclogsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -51,7 +50,7 @@ public class DebugCreator {
     }
 
     public static DebugPlayer createDebugPlayer(HMCWraps plugin, Player player) {
-        return new DebugPlayer(plugin.getFavoriteWrapStorage().get(player).stream().map(IWrap::getUuid).toList(),
+        return new DebugPlayer(plugin.getFavoriteWrapStorage().get(player).stream().map(Wrap::getUuid).toList(),
                 plugin.getFilterStorage().get(player), createDebugItemData(plugin, player));
     }
 
@@ -103,9 +102,9 @@ public class DebugCreator {
 
     public static Optional<String> uploadLog(Path path) {
         try {
-            var response = McLogsAPI.share(path);
-            if (response != null && response.isSuccess()) {
-                return Optional.of(response.getUrl());
+            var response = MclogsAPI.share(path);
+            if (response != null && response.success) {
+                return Optional.of(response.url);
             }
         } catch (Exception exception) {
             Bukkit.getLogger().severe("Failed to upload server log through HMCWraps! Please check the error below and report this!");

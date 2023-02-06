@@ -20,7 +20,7 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.md_5.bungee.api.ChatMessageType;
@@ -288,7 +288,7 @@ public class DefaultActionRegister {
             var player = information.getPlayer();
             var current = plugin.getFavoriteWrapStorage().get(player);
             var split = information.getArguments().split(" ");
-            IWrap wrap;
+            Wrap wrap;
             if (split.length == 1 && plugin.getWraps().get(split[0]) != null) {
                 wrap = plugin.getWraps().get(split[0]);
             } else if (information instanceof WrapActionInformation wrapInformation) {

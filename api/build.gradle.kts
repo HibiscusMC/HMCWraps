@@ -29,6 +29,9 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.2.0")
     compileOnly("org.jetbrains:annotations:23.1.0")
+    compileOnly("org.spongepowered:configurate-yaml:4.1.2") {
+        exclude("org.yaml")
+    }
 }
 
 tasks {

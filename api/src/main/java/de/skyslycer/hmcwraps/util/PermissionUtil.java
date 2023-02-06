@@ -2,7 +2,7 @@ package de.skyslycer.hmcwraps.util;
 
 import de.skyslycer.hmcwraps.IHMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class PermissionUtil {
      * @param player The player
      * @return If the player has permission to use the wrap on the item
      */
-    static boolean hasPermission(IHMCWraps plugin, IWrap wrap, ItemStack item, Player player) {
+    static boolean hasPermission(IHMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
         var wrapper = plugin.getWrapper();
         if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
                 && !wrapper.isOwningPlayer(item, player)) {

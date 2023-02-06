@@ -4,9 +4,9 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.debug.DebugCreator;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrappableItem;
 import de.skyslycer.hmcwraps.serialization.debug.Debuggable;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -122,7 +122,7 @@ public class WrapCommand {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
             return;
         }
-        for (IWrappableItem wrappableItem : plugin.getCollectionHelper().getItems(item.getType())) {
+        for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(item.getType())) {
             if (wrappableItem.getWraps().containsValue(wrap)) {
                 item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());

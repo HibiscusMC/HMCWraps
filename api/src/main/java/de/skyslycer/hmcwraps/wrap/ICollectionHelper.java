@@ -1,7 +1,8 @@
 package de.skyslycer.hmcwraps.wrap;
 
-import de.skyslycer.hmcwraps.serialization.IWrap;
-import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface ICollectionHelper {
      * @param material The material to search for
      * @return A list of all wraps
      */
-    List<IWrappableItem> getItems(Material material);
+    List<WrappableItem> getItems(Material material);
 
     /**
      * Get all materials in a collection.
@@ -29,7 +30,7 @@ public interface ICollectionHelper {
      * @param wrap The wrap to get the material from
      * @return One possible material
      */
-    Material getMaterial(IWrap wrap);
+    Material getMaterial(Wrap wrap);
 
     /**
      * Get the collection or material name of a wrap.
@@ -37,6 +38,6 @@ public interface ICollectionHelper {
      * @param wrap The wrap to get the collection from
      * @return The collection or material name
      */
-    String getCollection(IWrap wrap);
+    String getCollection(Wrap wrap);
 
 }

@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.wrap;
 
-import de.skyslycer.hmcwraps.serialization.IWrap;
-import de.skyslycer.hmcwraps.serialization.IWrapValues;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +43,7 @@ public interface IWrapper {
      * @return The wrap
      */
     @Nullable
-    IWrap getWrap(ItemStack item);
+    Wrap getWrap(ItemStack item);
 
     /**
      * Wrap an item. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
@@ -57,7 +56,7 @@ public interface IWrapper {
      * @param giveBack If the player should get his physical wrapper back
      * @return The newly wrapped item
      */
-    ItemStack setWrap(IWrap wrap, ItemStack target, boolean physical, Player player, boolean giveBack);
+    ItemStack setWrap(Wrap wrap, ItemStack target, boolean physical, Player player, boolean giveBack);
 
     /**
      * Remove a wrap. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
@@ -102,7 +101,7 @@ public interface IWrapper {
      * @param wrap The wrap the wrapper should give other items
      * @return The new wrapper
      */
-    ItemStack setPhysicalWrapper(ItemStack item, IWrap wrap);
+    ItemStack setPhysicalWrapper(ItemStack item, Wrap wrap);
 
     /**
      * Get the saved model id of the item.
@@ -112,7 +111,7 @@ public interface IWrapper {
      * @param item The item
      * @return The model id
      */
-    IWrapValues getOriginalData(ItemStack item);
+    Wrap.WrapValues getOriginalData(ItemStack item);
 
     /**
      * Set the saved model id of the item.
@@ -120,7 +119,7 @@ public interface IWrapper {
      * @param wrapValues All values to set
      * @return The changed item
      */
-    ItemStack setOriginalData(ItemStack item, IWrapValues wrapValues);
+    ItemStack setOriginalData(ItemStack item, Wrap.WrapValues wrapValues);
 
     /**
      * Set if the wrap was applied physically.
@@ -146,6 +145,6 @@ public interface IWrapper {
      * @param wrap The wrap
      * @return If the model id is valid
      */
-    boolean isValidModelId(ItemStack item, IWrap wrap);
+    boolean isValidModelId(ItemStack item, Wrap wrap);
 
 }

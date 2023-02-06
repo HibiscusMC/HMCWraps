@@ -19,6 +19,10 @@
     <a href="https://discord.gg/pcm8kWrdNt">
         <img alt="discord" src="https://img.shields.io/badge/Discord Support-blue?style=for-the-badge"/>
     </a>
+    <br>
+    <a href="https://repo.skyslycer.de/#/releases/de/skyslycer/hmcwraps/api">
+        <img alt="version" src="https://img.shields.io/maven-metadata/v?color=orange&label=version&metadataUrl=https%3A%2F%2Frepo.skyslycer.de%2Freleases%2Fde%2Fskyslycer%2Fhmcwraps%2Fapi%2Fmaven-metadata.xml&style=for-the-badge"/>
+    </a>
 </p>
 
 Say hello to the latest plugin entry, **HMCWraps**, in the HCS plugin family!
@@ -67,7 +71,7 @@ repositories {
 }
 
 dependencies {
-    compile "de.skyslycer.hmcwraps:api:1.0.0"
+    compile "de.skyslycer.hmcwraps:api:VERSION"
 }
 ```
 
@@ -79,7 +83,7 @@ repositories {
 }
 
 dependencies {
-    compile("de.skyslycer.hmcwraps:api:1.0.0")
+    compile("de.skyslycer.hmcwraps:api:VERSION")
 }
 ```
 
@@ -97,7 +101,7 @@ dependencies {
   <dependency>
     <groupId>de.skyslycer.hmcwraps</groupId>
     <artifactId>api</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
   </dependency>
 </dependencies>
 ```

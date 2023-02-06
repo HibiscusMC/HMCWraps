@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.events;
 
-import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -18,9 +18,9 @@ public class ItemPreviewEvent extends Event implements Cancellable {
     private Player player;
     private ItemStack item;
     private PaginatedGui gui;
-    private final IWrap wrap;
+    private final Wrap wrap;
 
-    public ItemPreviewEvent(Player player, ItemStack item, PaginatedGui gui, IWrap wrap) {
+    public ItemPreviewEvent(Player player, ItemStack item, PaginatedGui gui, Wrap wrap) {
         this.player = player;
         this.item = item;
         this.gui = gui;
@@ -43,6 +43,10 @@ public class ItemPreviewEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -55,7 +59,7 @@ public class ItemPreviewEvent extends Event implements Cancellable {
         return gui;
     }
 
-    public IWrap getWrap() {
+    public Wrap getWrap() {
         return wrap;
     }
 

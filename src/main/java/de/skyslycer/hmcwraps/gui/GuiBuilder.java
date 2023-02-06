@@ -5,8 +5,7 @@ import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.inventory.IInventory;
-import de.skyslycer.hmcwraps.serialization.inventory.InventoryType;
+import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.ScrollType;
@@ -50,9 +49,9 @@ public class GuiBuilder {
     public static void open(HMCWraps plugin, Player player, ItemStack item) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
-        IInventory inventory = plugin.getConfiguration().getInventory();
+        Inventory inventory = plugin.getConfiguration().getInventory();
         PaginatedGui gui;
-        if (plugin.getConfiguration().getInventory().getType() == InventoryType.PAGINATED) {
+        if (plugin.getConfiguration().getInventory().getType() == Inventory.Type.PAGINATED) {
             gui = Gui.paginated()
                     .title(StringUtil.parseComponent(player, inventory.getTitle()))
                     .rows(inventory.getRows())
@@ -80,7 +79,7 @@ public class GuiBuilder {
         }
     }
 
-    private static void populateStatic(HMCWraps plugin, Player player, IInventory inventory, PaginatedGui gui) {
+    private static void populateStatic(HMCWraps plugin, Player player, Inventory inventory, PaginatedGui gui) {
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
             var fills = new ArrayList<Integer>();
             fills.add(inventorySlot);

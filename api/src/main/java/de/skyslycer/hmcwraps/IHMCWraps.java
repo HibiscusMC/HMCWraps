@@ -1,10 +1,14 @@
 package de.skyslycer.hmcwraps;
 
-import de.skyslycer.hmcwraps.actions.IActionHandler;
-import de.skyslycer.hmcwraps.messages.IMessageHandler;
+import de.skyslycer.hmcwraps.actions.ActionHandler;
+import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.pool.ObjectPool;
-import de.skyslycer.hmcwraps.preview.IPreviewManager;
-import de.skyslycer.hmcwraps.serialization.*;
+import de.skyslycer.hmcwraps.preview.PreviewManager;
+import de.skyslycer.hmcwraps.serialization.Config;
+import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
+import de.skyslycer.hmcwraps.serialization.files.WrapFile;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
@@ -78,21 +82,21 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The config
      */
-    @NotNull IConfig getConfiguration();
+    @NotNull Config getConfiguration();
 
     /**
      * Get the message handler.
      *
      * @return The message handler
      */
-    @NotNull IMessageHandler getMessageHandler();
+    @NotNull MessageHandler getMessageHandler();
 
     /**
      * All wraps currently configured.
      *
      * @return All wraps
      */
-    @NotNull Map<String, IWrap> getWraps();
+    @NotNull Map<String, Wrap> getWraps();
 
     /**
      * All wrap files currently loaded.
@@ -100,7 +104,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return All currently loaded wrap files
      */
-    @NotNull Set<IWrapFile> getWrapFiles();
+    @NotNull Set<WrapFile> getWrapFiles();
 
     /**
      * All currently loaded wrappable items.
@@ -108,7 +112,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return All currently loaded wrappable items
      */
-    @NotNull Map<String, IWrappableItem> getWrappableItems();
+    @NotNull Map<String, WrappableItem> getWrappableItems();
 
     /**
      * Get the wrapper.
@@ -122,7 +126,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The preview manager
      */
-    @NotNull IPreviewManager getPreviewManager();
+    @NotNull PreviewManager getPreviewManager();
 
     /**
      * Get the collection helper.
@@ -136,7 +140,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return The action handler
      */
-    @NotNull IActionHandler getActionHandler();
+    @NotNull ActionHandler getActionHandler();
 
     /**
      * Get all currently loaded collections.
@@ -150,7 +154,7 @@ public interface IHMCWraps extends Plugin {
      *
      * @return All collection files
      */
-    @NotNull Set<ICollectionFile> getCollectionFiles();
+    @NotNull Set<CollectionFile> getCollectionFiles();
 
     /**
      * Get the message pool.
@@ -161,5 +165,6 @@ public interface IHMCWraps extends Plugin {
 
     Storage<Player, Boolean> getFilterStorage();
 
-    Storage<Player, List<IWrap>> getFavoriteWrapStorage();
+    Storage<Player, List<Wrap>> getFavoriteWrapStorage();
+
 }

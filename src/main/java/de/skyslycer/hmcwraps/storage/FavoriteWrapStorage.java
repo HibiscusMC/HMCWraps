@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.storage;
 
 import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FavoriteWrapStorage implements Storage<Player, List<IWrap>> {
+public class FavoriteWrapStorage implements Storage<Player, List<Wrap>> {
 
     private static final String SEPARATOR = ";!;";
 
@@ -24,7 +24,7 @@ public class FavoriteWrapStorage implements Storage<Player, List<IWrap>> {
     }
 
     @Override
-    public List<IWrap> get(Player source) {
+    public List<Wrap> get(Player source) {
         var pdc = source.getPersistentDataContainer().get(key, PersistentDataType.STRING);
         if (pdc == null) {
             return new ArrayList<>();
@@ -34,8 +34,8 @@ public class FavoriteWrapStorage implements Storage<Player, List<IWrap>> {
     }
 
     @Override
-    public void set(Player source, List<IWrap> value) {
-        var newValue = String.join(SEPARATOR, value.stream().map(IWrap::getUuid).toList());
+    public void set(Player source, List<Wrap> value) {
+        var newValue = String.join(SEPARATOR, value.stream().map(Wrap::getUuid).toList());
         source.getPersistentDataContainer().set(key, PersistentDataType.STRING, newValue);
     }
 
