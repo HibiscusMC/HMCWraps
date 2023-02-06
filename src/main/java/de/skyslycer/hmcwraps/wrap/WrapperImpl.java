@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.wrap;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.events.ItemUnwrapEvent;
 import de.skyslycer.hmcwraps.events.ItemWrapEvent;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public class WrapperImpl implements IWrapper {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
     private final NamespacedKey physicalKey;
     private final NamespacedKey wrapIdKey;
@@ -33,7 +33,7 @@ public class WrapperImpl implements IWrapper {
     private final NamespacedKey originalColorKey;
     private final NamespacedKey originalNameKey;
 
-    public WrapperImpl(HMCWraps plugin) {
+    public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
         physicalKey = new NamespacedKey(plugin, "wrap-physical");
         wrapIdKey = new NamespacedKey(plugin, "wrap-id");

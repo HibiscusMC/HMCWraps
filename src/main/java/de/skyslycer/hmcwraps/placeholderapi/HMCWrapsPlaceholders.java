@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.placeholderapi;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class HMCWrapsPlaceholders extends PlaceholderExpansion {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public HMCWrapsPlaceholders(HMCWraps plugin) {
+    public HMCWrapsPlaceholders(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

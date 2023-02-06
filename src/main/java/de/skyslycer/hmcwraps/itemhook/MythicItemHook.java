@@ -1,24 +1,26 @@
 package de.skyslycer.hmcwraps.itemhook;
 
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.items.MythicItem;
 import io.th0rgal.oraxen.api.OraxenItems;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Nullable;
 
-public class OraxenItemHook implements ItemHook {
+public class MythicItemHook implements ItemHook {
 
     @Override
     public String getPrefix() {
-        return "oraxen:";
+        return "mythic:";
     }
 
     @Override
     public ItemStack get(String id) {
-        if (OraxenItems.getItemById(id) == null) {
+        if (MythicBukkit.inst().getItemManager().getItem(id).isEmpty()) {
             return null;
         }
-        return OraxenItems.getItemById(id).build();
+        return MythicBukkit.inst().getItemManager().getItemStack(id);
     }
 
     @Override

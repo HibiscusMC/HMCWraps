@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.listener;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 
 public class PlayerPickupListener implements Listener {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public PlayerPickupListener(HMCWraps plugin) {
+    public PlayerPickupListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

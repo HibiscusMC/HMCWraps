@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.preview;
 
-import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -15,11 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PreviewManager {
 
-    private final IHMCWraps plugin;
+    private final HMCWraps plugin;
 
     private final Map<UUID, Preview> previews = new ConcurrentHashMap<>();
 
-    public PreviewManager(IHMCWraps plugin) {
+    public PreviewManager(HMCWraps plugin) {
         this.plugin = plugin;
     }
 

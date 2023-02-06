@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.messages;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import org.bukkit.command.CommandSender;
@@ -17,18 +17,18 @@ import java.util.PropertyResourceBundle;
 
 public class MessageHandlerImpl implements MessageHandler {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
     private PropertyResourceBundle bundle;
     private PropertyResourceBundle fallback;
 
-    public MessageHandlerImpl(HMCWraps plugin) {
+    public MessageHandlerImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean load(Path path) {
         try {
-            fallback = new PropertyResourceBundle(HMCWraps.class.getClassLoader().getResource("messages.properties").openStream());
+            fallback = new PropertyResourceBundle(HMCWrapsPlugin.class.getClassLoader().getResource("messages.properties").openStream());
         } catch (IOException | NullPointerException exception) {
             plugin.logSevere("An error occurred while trying to load the fallback messages (please report this to the developers):");
             exception.printStackTrace();
@@ -62,7 +62,7 @@ public class MessageHandlerImpl implements MessageHandler {
     @Override
     public void update(Path path) {
         try {
-            var stream = HMCWraps.class.getClassLoader().getResource("messages.properties").openStream();
+            var stream = HMCWrapsPlugin.class.getClassLoader().getResource("messages.properties").openStream();
             var lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines();
             var checkLines = Files.readAllLines(path);
             lines.forEach(line -> {

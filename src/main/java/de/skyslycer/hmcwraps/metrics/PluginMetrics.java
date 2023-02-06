@@ -1,5 +1,6 @@
-package de.skyslycer.hmcwraps;
+package de.skyslycer.hmcwraps.metrics;
 
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 
@@ -7,10 +8,10 @@ public class PluginMetrics {
 
     private static final int PLUGIN_ID = 14554;
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
     private final Metrics metrics;
 
-    public PluginMetrics(HMCWraps plugin) {
+    public PluginMetrics(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
         this.metrics = new Metrics(plugin, PLUGIN_ID);
     }

@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.commands;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.debug.DebugCreator;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
@@ -50,9 +50,9 @@ public class WrapCommand {
 
     private final Set<String> confirmingPlayers = new HashSet<>();
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public WrapCommand(HMCWraps plugin) {
+    public WrapCommand(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -308,7 +308,7 @@ public class WrapCommand {
     @AutoComplete("@file")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugUpload(CommandSender sender, String file) {
-        var path = HMCWraps.PLUGIN_PATH;
+        var path = HMCWrapsPlugin.PLUGIN_PATH;
         if (file.contains("/")) {
             for (String folder : file.substring(0, file.lastIndexOf("/")).split("/")) {
                 path = path.resolve(folder);

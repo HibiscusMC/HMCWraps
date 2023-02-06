@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.gui;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
@@ -39,14 +39,14 @@ public class GuiBuilder {
                 && item.getItemMeta().getCustomModelData() == RANDOM_MODEL_ID;
     }
 
-    private static void setItemToSlot(PaginatedGui gui, HMCWraps plugin, ItemStack target) {
+    private static void setItemToSlot(PaginatedGui gui, HMCWrapsPlugin plugin, ItemStack target) {
         var slot = plugin.getConfiguration().getInventory().getTargetItemSlot();
         if (slot != -1) {
             gui.setItem(slot, new GuiItem(target.clone()));
         }
     }
 
-    public static void open(HMCWraps plugin, Player player, ItemStack item) {
+    public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         Inventory inventory = plugin.getConfiguration().getInventory();
@@ -79,7 +79,7 @@ public class GuiBuilder {
         }
     }
 
-    private static void populateStatic(HMCWraps plugin, Player player, Inventory inventory, PaginatedGui gui) {
+    private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui) {
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
             var fills = new ArrayList<Integer>();
             fills.add(inventorySlot);
@@ -99,7 +99,7 @@ public class GuiBuilder {
         });
     }
 
-    private static void actions(HMCWraps plugin, ActionInformation information, HashMap<String, HashMap<String, List<String>>> actions, InventoryClickEvent event) {
+    private static void actions(HMCWrapsPlugin plugin, ActionInformation information, HashMap<String, HashMap<String, List<String>>> actions, InventoryClickEvent event) {
         if (event.getClick() == ClickType.LEFT && actions.containsKey("left")) {
             plugin.getActionHandler().pushFromConfig(actions.get("left"), information);
         } else if (event.getClick() == ClickType.RIGHT && actions.containsKey("right")) {
@@ -111,7 +111,7 @@ public class GuiBuilder {
         plugin.getActionHandler().pushFromConfig(actions.get("any"), information);
     }
 
-    private static void populate(HMCWraps plugin, ItemStack item, Player player, PaginatedGui gui) {
+    private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui) {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
                 .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {

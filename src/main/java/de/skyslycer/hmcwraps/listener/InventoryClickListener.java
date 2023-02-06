@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.listener;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.Bukkit;
@@ -12,9 +12,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventoryClickListener implements Listener {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public InventoryClickListener(HMCWraps plugin) {
+    public InventoryClickListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

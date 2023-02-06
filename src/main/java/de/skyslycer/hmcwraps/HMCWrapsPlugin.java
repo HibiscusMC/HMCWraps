@@ -13,6 +13,7 @@ import de.skyslycer.hmcwraps.listener.*;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandlerImpl;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.metrics.PluginMetrics;
 import de.skyslycer.hmcwraps.placeholderapi.HMCWrapsPlaceholders;
 import de.skyslycer.hmcwraps.pool.MessagePool;
 import de.skyslycer.hmcwraps.pool.ObjectPool;
@@ -57,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class HMCWraps extends JavaPlugin implements IHMCWraps {
+public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     private static final YamlConfigurationLoader LOADER = YamlConfigurationLoader.builder()
             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))

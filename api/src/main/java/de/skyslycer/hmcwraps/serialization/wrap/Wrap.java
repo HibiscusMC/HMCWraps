@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.serialization.wrap;
 
-import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -112,7 +112,7 @@ public class Wrap extends SerializableItem {
         return wrapName;
     }
 
-    public ItemStack toPermissionItem(IHMCWraps plugin, Player player) {
+    public ItemStack toPermissionItem(HMCWraps plugin, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player);
         } else if (getLockedItem() == null) {

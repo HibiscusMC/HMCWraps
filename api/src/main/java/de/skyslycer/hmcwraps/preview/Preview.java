@@ -8,7 +8,7 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
-import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.VectorUtil;
 import dev.triumphteam.gui.guis.BaseGui;
@@ -31,11 +31,11 @@ public class Preview {
     private final Player player;
     private final ItemStack item;
     private final BaseGui gui;
-    private final IHMCWraps plugin;
+    private final HMCWraps plugin;
     private BukkitTask task;
     private BukkitTask cancelTask;
 
-    Preview(Player player, ItemStack item, BaseGui gui, IHMCWraps plugin) {
+    Preview(Player player, ItemStack item, BaseGui gui, HMCWraps plugin) {
         this.player = player;
         this.item = item;
         this.gui = gui;

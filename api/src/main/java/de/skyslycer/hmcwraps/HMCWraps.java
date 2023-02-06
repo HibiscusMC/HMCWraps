@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public interface IHMCWraps extends Plugin {
+public interface HMCWraps extends Plugin {
 
     Path PLUGIN_PATH = Path.of("plugins", "HMCWraps");
     Path CONFIG_PATH = PLUGIN_PATH.resolve("config.yml");

@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.listener;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerInteractListener implements Listener {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public PlayerInteractListener(HMCWraps plugin) {
+    public PlayerInteractListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

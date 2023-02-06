@@ -1,7 +1,10 @@
 package de.skyslycer.hmcwraps.itemhook;
 
+import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 
 public interface ItemHook {
 
@@ -31,5 +34,14 @@ public interface ItemHook {
      * @return The model id
      */
     int getModelId(String id);
+
+    /**
+     * Get the color corresponding to the input.
+     *
+     * @param id The input
+     * @return The color
+     */
+    @Nullable
+    Color getColor(String id);
 
 }

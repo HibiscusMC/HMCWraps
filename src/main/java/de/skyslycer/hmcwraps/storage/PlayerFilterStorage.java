@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.storage;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -8,9 +8,9 @@ import org.bukkit.persistence.PersistentDataType;
 public class PlayerFilterStorage implements Storage<Player, Boolean> {
 
     private final NamespacedKey key;
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public PlayerFilterStorage(HMCWraps plugin) {
+    public PlayerFilterStorage(HMCWrapsPlugin plugin) {
         this.key = new NamespacedKey(plugin, "filterEnabled");
         this.plugin = plugin;
     }

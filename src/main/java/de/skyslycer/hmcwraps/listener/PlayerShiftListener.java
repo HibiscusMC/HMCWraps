@@ -1,15 +1,15 @@
 package de.skyslycer.hmcwraps.listener;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public class PlayerShiftListener implements Listener {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public PlayerShiftListener(HMCWraps plugin) {
+    public PlayerShiftListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

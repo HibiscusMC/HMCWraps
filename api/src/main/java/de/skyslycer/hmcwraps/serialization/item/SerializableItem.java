@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.serialization.item;
 
-import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -49,7 +49,7 @@ public class SerializableItem {
     }
 
     @NotNull
-    public ItemStack toItem(IHMCWraps plugin, Player player) {
+    public ItemStack toItem(HMCWraps plugin, Player player) {
         ItemStack origin = plugin.getItemFromHook(getId());
         if (origin == null) {
             origin = new ItemStack(Material.STRUCTURE_VOID);
@@ -117,7 +117,7 @@ public class SerializableItem {
 
     public int getModelId() {
         if (modelId == null) {
-            modelId = ((IHMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getModelIdFromHook(getId());
+            modelId = ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getModelIdFromHook(getId());
         }
         return modelId;
     }

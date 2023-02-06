@@ -12,7 +12,7 @@ import com.owen1212055.particlehelper.api.particle.types.note.MultiNoteParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
 import com.owen1212055.particlehelper.api.particle.types.vibration.VibrationParticle;
 import com.owen1212055.particlehelper.api.type.Particles;
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.actions.Action;
 import de.skyslycer.hmcwraps.actions.ActionMethod;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
@@ -39,9 +39,9 @@ import java.util.LinkedList;
 
 public class DefaultActionRegister {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public DefaultActionRegister(HMCWraps plugin) {
+    public DefaultActionRegister(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

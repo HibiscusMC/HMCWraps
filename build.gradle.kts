@@ -22,6 +22,7 @@ repositories {
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.bytecode.space/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven-public/")
 }
 
 dependencies {
@@ -42,10 +43,12 @@ dependencies {
     implementation("com.github.aternosorg:mclogs-java:v2.2.0") {
         exclude("com.google.code.gson")
     }
+
     compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
+    compileOnly("io.lumine:Mythic-Dist:5.2.1")
 }
 
 java {

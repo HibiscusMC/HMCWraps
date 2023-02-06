@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.wrap;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.Material;
@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class CollectionHelperImpl implements ICollectionHelper {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public CollectionHelperImpl(HMCWraps plugin) {
+    public CollectionHelperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

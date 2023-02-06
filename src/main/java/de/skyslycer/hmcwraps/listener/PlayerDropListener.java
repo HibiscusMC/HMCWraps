@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.listener;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,9 +9,9 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 
 public class PlayerDropListener implements Listener {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public PlayerDropListener(HMCWraps plugin) {
+    public PlayerDropListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

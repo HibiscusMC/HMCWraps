@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.storage;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -16,9 +16,9 @@ public class FavoriteWrapStorage implements Storage<Player, List<Wrap>> {
     private static final String SEPARATOR = ";!;";
 
     private final NamespacedKey key;
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public FavoriteWrapStorage(HMCWraps plugin) {
+    public FavoriteWrapStorage(HMCWrapsPlugin plugin) {
         this.key = new NamespacedKey(plugin, "favorites");
         this.plugin = plugin;
     }

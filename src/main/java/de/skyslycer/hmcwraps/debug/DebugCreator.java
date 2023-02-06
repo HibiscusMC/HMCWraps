@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.debug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -25,11 +25,11 @@ public class DebugCreator {
     private static final URI UPLOAD_URL = URI.create("https://pasteapi.skyslycer.de/post");
     private static final String DEBUG_URL = "https://paste.skyslycer.de/%s";
 
-    public static DebugConfig createDebugConfig(HMCWraps plugin) {
+    public static DebugConfig createDebugConfig(HMCWrapsPlugin plugin) {
         return new DebugConfig((Config) plugin.getConfiguration());
     }
 
-    public static DebugInformation createDebugInformation(HMCWraps plugin) {
+    public static DebugInformation createDebugInformation(HMCWrapsPlugin plugin) {
         var latest = plugin.getUpdateChecker().getLatest();
         String protocolLib = "Not found";
         if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
@@ -38,23 +38,23 @@ public class DebugCreator {
         return new DebugInformation(plugin.getDescription().getVersion(), latest == null ? "Current" : latest.version(), protocolLib, Bukkit.getBukkitVersion());
     }
 
-    public static DebugWraps createDebugWraps(HMCWraps plugin) {
+    public static DebugWraps createDebugWraps(HMCWrapsPlugin plugin) {
         return new DebugWraps(plugin.getCollections(), plugin.getWraps().entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> plugin.getCollectionHelper().getCollection(entry.getValue()))));
     }
 
-    public static DebugWrap createDebugWrap(HMCWraps plugin, Wrap wrap) {
+    public static DebugWrap createDebugWrap(HMCWrapsPlugin plugin, Wrap wrap) {
         var collection = plugin.getCollectionHelper().getCollection(wrap);
         return new DebugWrap(wrap, collection, plugin.getCollectionHelper().getMaterials(collection));
     }
 
-    public static DebugPlayer createDebugPlayer(HMCWraps plugin, Player player) {
+    public static DebugPlayer createDebugPlayer(HMCWrapsPlugin plugin, Player player) {
         return new DebugPlayer(plugin.getFavoriteWrapStorage().get(player).stream().map(Wrap::getUuid).toList(),
                 plugin.getFilterStorage().get(player), createDebugItemData(plugin, player));
     }
 
-    public static DebugItemData createDebugItemData(HMCWraps plugin, Player player) {
+    public static DebugItemData createDebugItemData(HMCWrapsPlugin plugin, Player player) {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType().isAir()) {
             return null;

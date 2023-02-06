@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.preview;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
-import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.MathUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -14,13 +14,13 @@ public class RotateRunnable implements Runnable {
 
     private final Player player;
     private final int entityId;
-    private final IHMCWraps plugin;
+    private final HMCWraps plugin;
 
     private int currentSinAngle = 0;
     private float currentAngle = 0;
     private double oldHeight = 0;
 
-    public RotateRunnable(Player player, int entityId, IHMCWraps plugin) {
+    public RotateRunnable(Player player, int entityId, HMCWraps plugin) {
         this.player = player;
         this.entityId = entityId;
         this.plugin = plugin;

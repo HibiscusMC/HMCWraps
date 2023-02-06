@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.updater;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,14 +11,14 @@ public class ContinuousUpdateChecker {
     private static final int SPIGOT_ID = 107099;
     private static final int POLYMART_ID = 3216;
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
     private PluginUpdater updater;
     private long lastResultTime = 0;
     private CheckResult lastResult;
     private BukkitTask task;
 
-    public ContinuousUpdateChecker(HMCWraps plugin) {
+    public ContinuousUpdateChecker(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 

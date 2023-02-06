@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.util;
 
-import de.skyslycer.hmcwraps.IHMCWraps;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import org.bukkit.Material;
@@ -22,7 +22,7 @@ public class PermissionUtil {
      * @param player The player
      * @return If the player has permission to use the wrap on the item
      */
-    static boolean hasPermission(IHMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
+    static boolean hasPermission(HMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
         var wrapper = plugin.getWrapper();
         if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
                 && !wrapper.isOwningPlayer(item, player)) {
@@ -42,7 +42,7 @@ public class PermissionUtil {
      * permission
      */
     @Nullable
-    public static ItemStack hasPermission(IHMCWraps plugin, ItemStack item, Player player) {
+    public static ItemStack hasPermission(HMCWraps plugin, ItemStack item, Player player) {
         if (item.getType() == Material.AIR) {
             return null;
         }
@@ -63,7 +63,7 @@ public class PermissionUtil {
      * @param plugin The plugin
      * @param player The player
      */
-    public static void loopThroughInventory(IHMCWraps plugin, Player player) {
+    public static void loopThroughInventory(HMCWraps plugin, Player player) {
         for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
             var item = player.getInventory().getItem(i);
             if (item == null) {
@@ -82,7 +82,7 @@ public class PermissionUtil {
      * @param plugin The plugin
      * @param player The player
      */
-    public static void applyFavorites(IHMCWraps plugin, Player player, ItemStack item) {
+    public static void applyFavorites(HMCWraps plugin, Player player, ItemStack item) {
         if (!plugin.getConfiguration().getFavorites().isEnabled()) {
             return;
         }
