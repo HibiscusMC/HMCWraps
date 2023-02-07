@@ -104,17 +104,15 @@ public interface Wrapper {
     ItemStack setPhysicalWrapper(ItemStack item, Wrap wrap);
 
     /**
-     * Get the saved model id of the item.
-     * If the item doesn't have a saved model id, or it's disabled, it will use the default model id.
-     * If that is disabled, or it doesn't exist, it will return -1;
+     * Get the saved data of the item.
      *
      * @param item The item
-     * @return The model id
+     * @return The data
      */
     Wrap.WrapValues getOriginalData(ItemStack item);
 
     /**
-     * Set the saved model id of the item.
+     * Set the saved data of the item.
      *
      * @param wrapValues All values to set
      * @return The changed item

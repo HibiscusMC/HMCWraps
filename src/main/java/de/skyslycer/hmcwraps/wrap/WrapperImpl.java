@@ -18,9 +18,15 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class WrapperImpl implements Wrapper {
+
+    private static final String SEPARATOR = ";!;";
 
     private final HMCWrapsPlugin plugin;
 
@@ -32,6 +38,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalModelIdKey;
     private final NamespacedKey originalColorKey;
     private final NamespacedKey originalNameKey;
+    private final NamespacedKey originalLoreKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -43,6 +50,7 @@ public class WrapperImpl implements Wrapper {
         originalModelIdKey = new NamespacedKey(plugin, "original-model-id");
         originalColorKey = new NamespacedKey(plugin, "original-color");
         originalNameKey = new NamespacedKey(plugin, "original-name");
+        originalLoreKey = new NamespacedKey(plugin, "original-lore");
     }
 
     @Override
@@ -76,6 +84,7 @@ public class WrapperImpl implements Wrapper {
         var meta = editing.getItemMeta();
         var originalName = meta.getDisplayName();
         var originalModelId = -1;
+        var originalLore = meta.getLore();
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
@@ -84,7 +93,11 @@ public class WrapperImpl implements Wrapper {
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (wrap != null) {
             if (wrap.getWrapName() != null) {
-                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(wrap.getWrapName())));
+                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
+            }
+            if (wrap.getWrapLore() != null) {
+                var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
+                meta.setLore(lore);
             }
             if (wrap.getColor() != null && meta instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
@@ -96,6 +109,7 @@ public class WrapperImpl implements Wrapper {
         } else {
             meta.setDisplayName(originalData.name());
             meta.setCustomModelData(originalData.modelId());
+            meta.setLore(originalData.lore());
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
@@ -107,7 +121,7 @@ public class WrapperImpl implements Wrapper {
         if (wrap == null || currentWrap != null) {
             return editing;
         }
-        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName));
+        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore));
     }
 
     @Override
@@ -166,19 +180,7 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public WrapValues getOriginalData(ItemStack item) {
-        int modelData = -1;
-        try {
-            modelData = getOriginalModelId(item);
-        } catch (Exception ignored) {
-            Bukkit.getLogger().warning("Failed to get original model data for " + item.getType() + "! Data may not be a number.");
-        }
-        Color color = null;
-        try {
-            color = getOriginalColor(item);
-        } catch (Exception ignored) {
-            Bukkit.getLogger().warning("Failed to get original color for " + item.getType() + "! Data may not be a correct color format.");
-        }
-        return new WrapValues(modelData, color, getOriginalName(item));
+        return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item), getOriginalLore(item));
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -193,11 +195,11 @@ public class WrapperImpl implements Wrapper {
         } else if (modelDataSettings.isDefaultEnabled()) {
             var map = modelDataSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
-                modelData = Integer.parseInt(map.get(item.getType().toString()));
+                modelData = map.get(item.getType().toString());
             }
             for (String key : map.keySet()) {
                 if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
-                    modelData = Integer.parseInt(map.get(key));
+                    modelData = map.get(key);
                 }
             }
         }
@@ -220,11 +222,34 @@ public class WrapperImpl implements Wrapper {
             }
             for (String key : map.keySet()) {
                 if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
-                    name = StringUtil.LEGACY_SERIALIZER_AMPERSAND.serialize(StringUtil.parseComponent(map.get(item.getType().toString())));
+                    name = StringUtil.LEGACY_SERIALIZER_AMPERSAND.serialize(StringUtil.parseComponent(map.get(key)));
                 }
             }
         }
         return name;
+    }
+
+    private List<String> getOriginalLore(ItemStack item) {
+        var meta = item.getItemMeta();
+        var lore = new ArrayList<String>();
+        var loreSettings = plugin.getConfiguration().getPreservation().getLore();
+        if (loreSettings.isOriginalEnabled()) {
+            var data = meta.getPersistentDataContainer().get(originalLoreKey, PersistentDataType.STRING);
+            if (data != null) {
+                Arrays.stream(data.split(SEPARATOR)).map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
+            }
+        } else if (loreSettings.isDefaultEnabled()) {
+            var map = loreSettings.getDefaults();
+            if (map.containsKey(item.getType().toString())) {
+                map.get(item.getType().toString()).stream().map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
+            }
+            for (String key : map.keySet()) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
+                    map.get(key).stream().map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
+                }
+            }
+        }
+        return lore;
     }
 
     private Color getOriginalColor(ItemStack item) {
@@ -260,6 +285,10 @@ public class WrapperImpl implements Wrapper {
         }
         if (wrapValues.name() != null) {
             meta.getPersistentDataContainer().set(originalNameKey, PersistentDataType.STRING, wrapValues.name().replace("§", "&"));
+        }
+        if (wrapValues.lore() != null) {
+            meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING,
+                    wrapValues.lore().stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
         }
         editing.setItemMeta(meta);
         return editing;

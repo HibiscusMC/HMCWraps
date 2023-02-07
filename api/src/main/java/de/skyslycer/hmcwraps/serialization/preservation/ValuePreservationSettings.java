@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ConfigSerializable
-public class ValuePreservationSettings {
+public class ValuePreservationSettings<T> {
 
     private boolean defaultEnabled;
     private boolean originalEnabled;
-    private Map<String, String> defaults = new HashMap<>();
+    private Map<String, T> defaults = new HashMap<>();
 
-    public ValuePreservationSettings(boolean defaultEnabled, boolean originalEnabled, Map<String, String> defaults) {
+    public ValuePreservationSettings(boolean defaultEnabled, boolean originalEnabled, Map<String, T> defaults) {
         this.defaultEnabled = defaultEnabled;
         this.originalEnabled = originalEnabled;
         this.defaults = defaults;
@@ -21,7 +21,7 @@ public class ValuePreservationSettings {
     public ValuePreservationSettings() {
     }
 
-    public Map<String, String> getDefaults() {
+    public Map<String, T> getDefaults() {
         return defaults;
     }
 

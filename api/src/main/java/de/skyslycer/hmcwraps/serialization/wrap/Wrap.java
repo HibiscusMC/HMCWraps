@@ -29,12 +29,13 @@ public class Wrap extends SerializableItem {
     private @Nullable List<Integer> modelIdInclude;
     private @Nullable List<Integer> modelIdExclude;
     private @Nullable String wrapName;
+    private @Nullable List<String> wrapLore;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                 @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color,
                 Boolean preview, String uuid, @Nullable PhysicalWrap physical, @Nullable String permission, @Nullable String lockedName,
                 @Nullable List<String> lockedLore, @Nullable SerializableItem lockedItem, @Nullable HashMap<String, HashMap<String,
-            List<String>>> actions, @Nullable List<Integer> modelIdInclude, @Nullable List<Integer> modelIdExclude, @Nullable String wrapName) {
+            List<String>>> actions, @Nullable List<Integer> modelIdInclude, @Nullable List<Integer> modelIdExclude, @Nullable String wrapName, @Nullable List<String> wrapLore) {
         super(id, name, glow, lore, flags, modelId, enchantments, amount, color);
         this.preview = preview;
         this.uuid = uuid;
@@ -47,6 +48,7 @@ public class Wrap extends SerializableItem {
         this.modelIdInclude = modelIdInclude;
         this.modelIdExclude = modelIdExclude;
         this.wrapName = wrapName;
+        this.wrapLore = wrapLore;
     }
 
     public Wrap() {
@@ -112,6 +114,11 @@ public class Wrap extends SerializableItem {
         return wrapName;
     }
 
+    @Nullable
+    public List<String> getWrapLore() {
+        return wrapLore;
+    }
+
     public ItemStack toPermissionItem(HMCWraps plugin, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player);
@@ -131,6 +138,6 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name) { }
+    public record WrapValues(int modelId, Color color, String name, List<String> lore) { }
 
 }

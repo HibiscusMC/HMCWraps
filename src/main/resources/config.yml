@@ -186,6 +186,11 @@ preservation:
     original-enabled: false
     default-enabled: false
     defaults: { }
+  # I think you get the idea
+  lore:
+    original-enabled: false
+    default-enabled: false
+    defaults: { }
 
 # The version checker configuration
 updater:
