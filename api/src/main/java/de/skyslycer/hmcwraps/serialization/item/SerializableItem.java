@@ -50,7 +50,7 @@ public class SerializableItem {
 
     @NotNull
     public ItemStack toItem(HMCWraps plugin, Player player) {
-        ItemStack origin = plugin.getItemFromHook(getId());
+        ItemStack origin = plugin.getHookAccessor().getItemFromHook(getId());
         if (origin == null) {
             origin = new ItemStack(Material.STRUCTURE_VOID);
         }
@@ -108,7 +108,7 @@ public class SerializableItem {
 
     public int getModelId() {
         if (modelId == null) {
-            modelId = ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getModelIdFromHook(getId());
+            modelId = ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getModelIdFromHook(getId());
         }
         return modelId;
     }
@@ -131,7 +131,7 @@ public class SerializableItem {
     @Nullable
     public Color getColor() {
         if (color == null) {
-            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getColorFromHook(getId());
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getColorFromHook(getId());
         }
         return StringUtil.colorFromString(color);
     }

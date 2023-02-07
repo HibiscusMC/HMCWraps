@@ -213,14 +213,14 @@ public class WrapCommand {
         var set = new ArrayList<Component>();
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_HEADER)));
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS)));
-        plugin.getCollections().forEach((key, list) -> {
+        plugin.getWrapsLoader().getCollections().forEach((key, list) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", key)));
             list.forEach(entry -> set.add(
                     StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_COLLECTIONS_FORMAT), Placeholder.parsed("value", entry))));
         });
         set.add(Component.space());
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
-        plugin.getWrappableItems().forEach((material, wraps) -> {
+        plugin.getWrapsLoader().getWrappableItems().forEach((material, wraps) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
             wraps.getWraps().forEach((ignored, wrap) -> {
                 var uuid = wrap.getUuid();

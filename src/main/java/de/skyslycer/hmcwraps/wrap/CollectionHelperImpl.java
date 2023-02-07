@@ -20,12 +20,12 @@ public class CollectionHelperImpl implements CollectionHelper {
     @Override
     public List<WrappableItem> getItems(Material material) {
         var list = new ArrayList<WrappableItem>();
-        if (plugin.getWrappableItems().containsKey(material.toString())) {
-            list.add(plugin.getWrappableItems().get(material.toString()));
+        if (plugin.getWrapsLoader().getWrappableItems().containsKey(material.toString())) {
+            list.add(plugin.getWrapsLoader().getWrappableItems().get(material.toString()));
         }
-        plugin.getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
-            if (plugin.getWrappableItems().containsKey(it.getKey())) {
-                list.add(plugin.getWrappableItems().get(it.getKey()));
+        plugin.getWrapsLoader().getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
+            if (plugin.getWrapsLoader().getWrappableItems().containsKey(it.getKey())) {
+                list.add(plugin.getWrapsLoader().getWrappableItems().get(it.getKey()));
             }
         });
         return list;
@@ -33,7 +33,7 @@ public class CollectionHelperImpl implements CollectionHelper {
 
     @Override
     public List<Material> getMaterials(String collection) {
-        if (!plugin.getCollections().containsKey(collection)) {
+        if (!plugin.getWrapsLoader().getCollections().containsKey(collection)) {
             if (Material.getMaterial(collection) != null) {
                 return List.of(Material.getMaterial(collection));
             } else {
@@ -41,7 +41,7 @@ public class CollectionHelperImpl implements CollectionHelper {
             }
         }
         var list = new ArrayList<Material>();
-        for (String materialName : plugin.getCollections().get(collection)) {
+        for (String materialName : plugin.getWrapsLoader().getCollections().get(collection)) {
             if (Material.getMaterial(materialName) != null) {
                 list.add(Material.getMaterial(materialName));
             }
@@ -66,7 +66,7 @@ public class CollectionHelperImpl implements CollectionHelper {
     @Override
     public String getCollection(Wrap wrap) {
         var currentCollection = "";
-        for (Map.Entry<String, WrappableItem> entry : plugin.getWrappableItems().entrySet()) {
+        for (Map.Entry<String, WrappableItem> entry : plugin.getWrapsLoader().getWrappableItems().entrySet()) {
             currentCollection = entry.getKey();
             if (entry.getValue().getWraps().containsValue(wrap)) {
                 break;

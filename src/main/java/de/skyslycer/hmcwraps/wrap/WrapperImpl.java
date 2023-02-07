@@ -58,7 +58,7 @@ public class WrapperImpl implements Wrapper {
         if (data == null || data.equals("-")) {
             return null;
         }
-        return plugin.getWraps().get(data);
+        return plugin.getWrapsLoader().getWraps().get(data);
     }
 
     @Override

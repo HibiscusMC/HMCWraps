@@ -30,7 +30,7 @@ public class FavoriteWrapStorage implements Storage<Player, List<Wrap>> {
             return new ArrayList<>();
         }
         return Arrays.stream(pdc.split(SEPARATOR))
-                .filter(uuid -> plugin.getWraps().containsKey(uuid)).map(uuid -> plugin.getWraps().get(uuid)).collect(Collectors.toList());
+                .filter(uuid -> plugin.getWrapsLoader().getWraps().containsKey(uuid)).map(uuid -> plugin.getWrapsLoader().getWraps().get(uuid)).collect(Collectors.toList());
     }
 
     @Override

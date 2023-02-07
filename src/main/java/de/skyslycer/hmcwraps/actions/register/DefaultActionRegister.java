@@ -291,8 +291,8 @@ public class DefaultActionRegister {
             var current = plugin.getFavoriteWrapStorage().get(player);
             var split = information.getArguments().split(" ");
             Wrap wrap;
-            if (split.length == 1 && plugin.getWraps().get(split[0]) != null) {
-                wrap = plugin.getWraps().get(split[0]);
+            if (split.length == 1 && plugin.getWrapsLoader().getWraps().get(split[0]) != null) {
+                wrap = plugin.getWrapsLoader().getWraps().get(split[0]);
             } else if (information instanceof WrapActionInformation wrapInformation) {
                 wrap = wrapInformation.getWrap();
             } else {

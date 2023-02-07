@@ -106,7 +106,7 @@ public class FileConverter {
                 if (construct.materials.size() == 1) {
                     material = construct.materials.get(0);
                 } else {
-                    var matchingCollections = plugin.getCollections().entrySet().stream()
+                    var matchingCollections = plugin.getWrapsLoader().getCollections().entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
                     var matchingGeneratedCollections = newCollections.entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
@@ -117,7 +117,7 @@ public class FileConverter {
                     } else {
                         var i = 1;
                         var generatedCollection = "GENERATED_COLLECTION_1";
-                        var allCollections = new HashMap<>(plugin.getCollections());
+                        var allCollections = new HashMap<>(plugin.getWrapsLoader().getCollections());
                         allCollections.putAll(newCollections);
                         while (allCollections.containsKey("GENERATED_COLLECTION_" + i)) {
                             generatedCollection = "GENERATED_COLLECTION_" + ++i;

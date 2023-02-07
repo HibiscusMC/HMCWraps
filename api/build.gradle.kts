@@ -23,6 +23,7 @@ dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
     compileOnly(depends.spigot)
     compileOnly(depends.annotations)
+    compileOnly(depends.placeholderapi)
     compileOnly(libs.packets)
     compileOnly(libs.gui)
     compileOnly(libs.bundles.adventure)

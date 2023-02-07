@@ -39,7 +39,7 @@ public class DebugCreator {
     }
 
     public static DebugWraps createDebugWraps(HMCWrapsPlugin plugin) {
-        return new DebugWraps(plugin.getCollections(), plugin.getWraps().entrySet().stream().collect(Collectors.toMap(
+        return new DebugWraps(plugin.getWrapsLoader().getCollections(), plugin.getWrapsLoader().getWraps().entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> plugin.getCollectionHelper().getCollection(entry.getValue()))));
     }

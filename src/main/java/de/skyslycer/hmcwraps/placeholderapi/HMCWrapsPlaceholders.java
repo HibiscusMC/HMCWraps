@@ -49,7 +49,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
             }
         } else if (identifier.split("_").length == 2) {
             var split = identifier.split("_");
-            var wrap = plugin.getWraps().get(split[0]);
+            var wrap = plugin.getWrapsLoader().getWraps().get(split[0]);
             if (wrap == null) {
                 return null;
             }
@@ -64,7 +64,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                     return ColorUtil.colorToHex(wrap.getColor());
                 }
                 case "type" -> {
-                    for (Map.Entry<String, WrappableItem> wrappableItem : plugin.getWrappableItems().entrySet()) {
+                    for (Map.Entry<String, WrappableItem> wrappableItem : plugin.getWrapsLoader().getWrappableItems().entrySet()) {
                         if (!wrappableItem.getValue().getWraps().values().stream().map(Wrap::getUuid).toList().isEmpty()) {
                             return wrappableItem.getKey();
                         }
