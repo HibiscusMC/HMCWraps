@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public interface IWrapper {
+public interface Wrapper {
 
     /**
      * Get the player UUID the wrap belongs to.

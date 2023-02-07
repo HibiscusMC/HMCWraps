@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CollectionHelperImpl implements ICollectionHelper {
+public class CollectionHelperImpl implements CollectionHelper {
 
     private final HMCWrapsPlugin plugin;
 

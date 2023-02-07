@@ -30,8 +30,8 @@ import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.wrap.CollectionHelperImpl;
-import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
-import de.skyslycer.hmcwraps.wrap.IWrapper;
+import de.skyslycer.hmcwraps.wrap.CollectionHelper;
+import de.skyslycer.hmcwraps.wrap.Wrapper;
 import de.skyslycer.hmcwraps.wrap.WrapperImpl;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.kyori.adventure.text.Component;
@@ -75,9 +75,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private final Set<WrapFile> wrapFiles = new HashSet<>();
     private final Set<CollectionFile> collectionFiles = new HashSet<>();
     private final Set<String> loadedHooks = new HashSet<>();
-    private final IWrapper wrapper = new WrapperImpl(this);
+    private final Wrapper wrapper = new WrapperImpl(this);
     private final PreviewManager previewManager = new PreviewManager(this);
-    private final ICollectionHelper collectionHelper = new CollectionHelperImpl(this);
+    private final CollectionHelper collectionHelper = new CollectionHelperImpl(this);
     private final ActionHandler actionHandler = new ActionHandler();
     private final FileConverter fileConverter = new FileConverter(this);
     private final Storage<Player, Boolean> filterStorage = new PlayerFilterStorage(this);
@@ -284,8 +284,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
             if (wrappableItems.containsKey(type)) {
                 var current = wrappableItems.get(type);
-                var toAdd = wrappableItem;
-                toAdd.getWraps().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
+                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
                 wrappableItems.put(type, current);
             } else {
                 wrappableItems.put(type, wrappableItem);
@@ -384,13 +383,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     }
 
     @Override
-    public Color getColorFromHook(String color) {
-        try {
-            return StringUtil.colorFromString(color);
-        } catch (NumberFormatException ignored) {
-            var possible = hooks.stream().filter(it -> color.startsWith(it.getPrefix())).findFirst();
-            return possible.map(itemHook -> itemHook.getColor(color.replace(possible.get().getPrefix(), ""))).orElse(null);
-        }
+    public Color getColorFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getColor(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Override
@@ -443,7 +438,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     @NotNull
-    public IWrapper getWrapper() {
+    public Wrapper getWrapper() {
         return wrapper;
     }
 
@@ -455,7 +450,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     @NotNull
-    public ICollectionHelper getCollectionHelper() {
+    public CollectionHelper getCollectionHelper() {
         return collectionHelper;
     }
 

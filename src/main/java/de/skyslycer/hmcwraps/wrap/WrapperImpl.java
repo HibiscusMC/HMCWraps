@@ -20,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class WrapperImpl implements IWrapper {
+public class WrapperImpl implements Wrapper {
 
     private final HMCWrapsPlugin plugin;
 

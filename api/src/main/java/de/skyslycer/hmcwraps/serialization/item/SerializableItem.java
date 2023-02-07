@@ -59,7 +59,7 @@ public class SerializableItem {
         }
 
         ItemBuilder builder = ItemBuilder.from(origin);
-        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName(player)))
+        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
                 .amount(getAmount() == null ? 1 : getAmount())
                 .model(getModelId());
 
@@ -68,7 +68,7 @@ public class SerializableItem {
         }
         if (getLore() != null) {
             builder.lore(player == null ? getLore().stream().map(StringUtil::parseComponent).toList()
-                    : getLore(player).stream().map(string -> StringUtil.parseComponent(player, string)).toList());
+                    : getLore().stream().map(string -> StringUtil.parseComponent(player, string)).toList());
         }
         if (getFlags() != null) {
             List<ItemFlag> parsed = Arrays.asList(ItemFlag.values());
@@ -92,17 +92,8 @@ public class SerializableItem {
         return id;
     }
 
-    public String getName(Player player) {
-        return name;
-    }
-
     public String getName() {
         return name;
-    }
-
-    @Nullable
-    public List<String> getLore(Player player) {
-        return lore;
     }
 
     @Nullable
@@ -139,6 +130,9 @@ public class SerializableItem {
 
     @Nullable
     public Color getColor() {
+        if (color == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getColorFromHook(getId());
+        }
         return StringUtil.colorFromString(color);
     }
 

@@ -7,7 +7,7 @@ import org.bukkit.Material;
 
 import java.util.List;
 
-public interface ICollectionHelper {
+public interface CollectionHelper {
 
     /**
      * Get all wraps for a material.

@@ -10,14 +10,13 @@ import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.storage.Storage;
-import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
-import de.skyslycer.hmcwraps.wrap.IWrapper;
+import de.skyslycer.hmcwraps.wrap.CollectionHelper;
+import de.skyslycer.hmcwraps.wrap.Wrapper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -64,6 +63,13 @@ public interface HMCWraps extends Plugin {
      */
     int getModelIdFromHook(String id);
 
+    /**
+     * Get the color corresponding to the input.
+     *
+     * @param color The input
+     * @return The color, may return null when none is available
+     */
+    @Nullable
     Color getColorFromHook(String color);
 
     /**
@@ -85,21 +91,21 @@ public interface HMCWraps extends Plugin {
      *
      * @return The config
      */
-    @NotNull Config getConfiguration();
+    Config getConfiguration();
 
     /**
      * Get the message handler.
      *
      * @return The message handler
      */
-    @NotNull MessageHandler getMessageHandler();
+    MessageHandler getMessageHandler();
 
     /**
      * All wraps currently configured.
      *
      * @return All wraps
      */
-    @NotNull Map<String, Wrap> getWraps();
+    Map<String, Wrap> getWraps();
 
     /**
      * All wrap files currently loaded.
@@ -107,7 +113,7 @@ public interface HMCWraps extends Plugin {
      *
      * @return All currently loaded wrap files
      */
-    @NotNull Set<WrapFile> getWrapFiles();
+    Set<WrapFile> getWrapFiles();
 
     /**
      * All currently loaded wrappable items.
@@ -115,49 +121,49 @@ public interface HMCWraps extends Plugin {
      *
      * @return All currently loaded wrappable items
      */
-    @NotNull Map<String, WrappableItem> getWrappableItems();
+    Map<String, WrappableItem> getWrappableItems();
 
     /**
      * Get the wrapper.
      *
      * @return The wrapper
      */
-    @NotNull IWrapper getWrapper();
+    Wrapper getWrapper();
 
     /**
      * Get the preview manager.
      *
      * @return The preview manager
      */
-    @NotNull PreviewManager getPreviewManager();
+    PreviewManager getPreviewManager();
 
     /**
      * Get the collection helper.
      *
      * @return The collection helper.
      */
-    @NotNull ICollectionHelper getCollectionHelper();
+    CollectionHelper getCollectionHelper();
 
     /**
      * Get the action handler.
      *
      * @return The action handler
      */
-    @NotNull ActionHandler getActionHandler();
+    ActionHandler getActionHandler();
 
     /**
      * Get all currently loaded collections.
      *
      * @return All currently loaded collections
      */
-    @NotNull Map<String, List<String>> getCollections();
+    Map<String, List<String>> getCollections();
 
     /**
      * Get all currently loaded collection files.
      *
      * @return All collection files
      */
-    @NotNull Set<CollectionFile> getCollectionFiles();
+    Set<CollectionFile> getCollectionFiles();
 
     /**
      * Get the message pool.
