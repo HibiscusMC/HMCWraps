@@ -121,7 +121,7 @@ public class Wrap extends SerializableItem {
             if (getLockedName() != null) {
                 builder.name(player != null ? StringUtil.parseComponent(player, getLockedName()) : StringUtil.parseComponent(getLockedName()));
             }
-            if (getLockedName() != null) {
+            if (getLockedLore() != null) {
                 builder.lore(player == null ? getLockedLore().stream().map(StringUtil::parseComponent).toList()
                         : getLockedLore().stream().map(string -> StringUtil.parseComponent(player, string)).toList());
             }
