@@ -9,15 +9,6 @@ public class Bobbing extends Toggleable {
     private double speed;
     private double intensity;
 
-    public Bobbing(double speed, double intensity, boolean enabled) {
-        super(enabled);
-        this.speed = speed;
-        this.intensity = intensity;
-    }
-
-    public Bobbing() {
-    }
-
     public double getSpeed() {
         return speed;
     }

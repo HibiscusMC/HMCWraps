@@ -12,17 +12,6 @@ public class PreservationSettings {
     private ValuePreservationSettings<String> name;
     private ValuePreservationSettings<List<String>> lore;
 
-    public PreservationSettings(ValuePreservationSettings<Integer> modelId, ValuePreservationSettings<String> color,
-                                ValuePreservationSettings<String> name, ValuePreservationSettings<List<String>> lore) {
-        this.modelId = modelId;
-        this.color = color;
-        this.name = name;
-        this.lore = lore;
-    }
-
-    public PreservationSettings() {
-    }
-
     public ValuePreservationSettings<Integer> getModelId() {
         return modelId;
     }

@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps.wrap;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.events.ItemUnwrapEvent;
 import de.skyslycer.hmcwraps.events.ItemWrapEvent;
+import de.skyslycer.hmcwraps.serialization.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
@@ -18,10 +19,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WrapperImpl implements Wrapper {
@@ -349,7 +347,29 @@ public class WrapperImpl implements Wrapper {
         } else if (item.getItemMeta().hasCustomModelData()) {
             modelData = item.getItemMeta().getCustomModelData();
         }
-        return (wrap.getModelIdExclude() == null || !wrap.getModelIdExclude().contains(modelData)) && (wrap.getModelIdInclude() == null || wrap.getModelIdInclude().contains(modelData));
+        Color color = null;
+        if (getWrap(item) != null) {
+            color = getOriginalColor(item);
+        } else if (item.getItemMeta() instanceof LeatherArmorMeta meta) {
+            color = meta.getColor();
+        }
+        return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), modelData) && isValidColor(wrap.getRange().getColor(), color));
+    }
+
+    private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
+        return (settings.getExclude() == null || !settings.getExclude().contains(value)) && (settings.getInclude() == null || settings.getInclude().contains(value));
+    }
+
+    private boolean isValidColor(ValueRangeSettings<String> settings, Color value) {
+        List<Color> exclude = null;
+        List<Color> include = null;
+        if (settings.getExclude() != null) {
+            exclude = settings.getExclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
+        }
+        if (settings.getInclude() != null) {
+            include = settings.getInclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
+        }
+        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value));
     }
 
 }

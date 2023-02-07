@@ -12,15 +12,6 @@ public class ValuePreservationSettings<T> {
     private boolean originalEnabled;
     private Map<String, T> defaults = new HashMap<>();
 
-    public ValuePreservationSettings(boolean defaultEnabled, boolean originalEnabled, Map<String, T> defaults) {
-        this.defaultEnabled = defaultEnabled;
-        this.originalEnabled = originalEnabled;
-        this.defaults = defaults;
-    }
-
-    public ValuePreservationSettings() {
-    }
-
     public Map<String, T> getDefaults() {
         return defaults;
     }

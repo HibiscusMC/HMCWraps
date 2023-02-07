@@ -10,13 +10,6 @@ public class FilterSettings extends Toggleable {
     @Setting("default")
     private boolean defaultFilter;
 
-    public FilterSettings(boolean enabled, boolean defaultFilter) {
-        super(enabled);
-        this.defaultFilter = defaultFilter;
-    }
-
-    public FilterSettings() {}
-
     public boolean getDefault() {
         return defaultFilter;
     }

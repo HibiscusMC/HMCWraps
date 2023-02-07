@@ -18,20 +18,6 @@ public class Inventory {
     private Map<Integer, InventoryItem> items;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
 
-    public Inventory(boolean openShortcut, String title, Type type, int rows, int targetItemSlot, Map<Integer, InventoryItem> items,
-                     @Nullable HashMap<String, HashMap<String, List<String>>> actions) {
-        this.openShortcut = openShortcut;
-        this.title = title;
-        this.type = type;
-        this.rows = rows;
-        this.targetItemSlot = targetItemSlot;
-        this.items = items;
-        this.actions = actions;
-    }
-
-    public Inventory() {
-    }
-
     public String getTitle() {
         return title;
     }

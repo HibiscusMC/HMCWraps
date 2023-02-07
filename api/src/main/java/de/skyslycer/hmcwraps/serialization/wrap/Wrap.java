@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.serialization.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.range.RangeSettings;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
@@ -13,7 +14,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ConfigSerializable
 public class Wrap extends SerializableItem {
@@ -26,29 +26,19 @@ public class Wrap extends SerializableItem {
     private @Nullable List<String> lockedLore;
     private @Nullable SerializableItem lockedItem;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
-    private @Nullable List<Integer> modelIdInclude;
-    private @Nullable List<Integer> modelIdExclude;
     private @Nullable String wrapName;
     private @Nullable List<String> wrapLore;
+    private @Nullable RangeSettings range;
 
-    public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-                @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color,
-                Boolean preview, String uuid, @Nullable PhysicalWrap physical, @Nullable String permission, @Nullable String lockedName,
-                @Nullable List<String> lockedLore, @Nullable SerializableItem lockedItem, @Nullable HashMap<String, HashMap<String,
-            List<String>>> actions, @Nullable List<Integer> modelIdInclude, @Nullable List<Integer> modelIdExclude, @Nullable String wrapName, @Nullable List<String> wrapLore) {
-        super(id, name, glow, lore, flags, modelId, enchantments, amount, color);
-        this.preview = preview;
+    public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
+                @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
+                @Nullable String permission, @Nullable SerializableItem lockedItem) {
+        super(id, name, glow, lore, null, modelId, null, null, null);
+        this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
         this.permission = permission;
-        this.lockedName = lockedName;
-        this.lockedLore = lockedLore;
         this.lockedItem = lockedItem;
-        this.actions = actions;
-        this.modelIdInclude = modelIdInclude;
-        this.modelIdExclude = modelIdExclude;
-        this.wrapName = wrapName;
-        this.wrapLore = wrapLore;
     }
 
     public Wrap() {
@@ -95,16 +85,6 @@ public class Wrap extends SerializableItem {
     }
 
     @Nullable
-    public List<Integer> getModelIdInclude() {
-        return modelIdInclude;
-    }
-
-    @Nullable
-    public List<Integer> getModelIdExclude() {
-        return modelIdExclude;
-    }
-
-    @Nullable
     public SerializableItem getLockedItem() {
         return lockedItem;
     }
@@ -117,6 +97,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public List<String> getWrapLore() {
         return wrapLore;
+    }
+
+    @Nullable
+    public RangeSettings getRange() {
+        return range;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Player player) {

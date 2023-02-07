@@ -20,6 +20,8 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.serialization.range.RangeSettings;
+import de.skyslycer.hmcwraps.serialization.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -304,9 +306,9 @@ public class DefaultActionRegister {
                 if (!ListUtil.containsAny(collections.getMaterials(collections.getCollection(currentWrap)), collections.getMaterials(collections.getCollection(wrap)))) {
                     return;
                 }
-                if (currentWrap.getModelIdInclude() != null && !ListUtil.containsAny(currentWrap.getModelIdInclude(), wrap.getModelIdInclude())) {
-                    return;
-                } else if (currentWrap.getModelIdExclude() != null && !new HashSet<>(currentWrap.getModelIdExclude()).containsAll(wrap.getModelIdExclude())) {
+                var range = wrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(), new ValueRangeSettings<>()) : wrap.getRange();
+                var currentRange = currentWrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(null, null), new ValueRangeSettings<>(null, null)) : currentWrap.getRange();
+                if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())) {
                     return;
                 }
                 current.remove(currentWrap);
@@ -315,6 +317,23 @@ public class DefaultActionRegister {
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
         }));
+    }
+
+    private <T> boolean isSameRange(ValueRangeSettings<T> first, ValueRangeSettings<T> second) {
+        if (first.getInclude() != null) {
+            if (second.getInclude() != null) {
+                return ListUtil.containsAny(first.getInclude(), second.getInclude());
+            } else if (second.getExclude() != null) {
+                return !new HashSet<>(second.getExclude()).containsAll(first.getInclude());
+            }
+        } else if (first.getExclude() != null) {
+            if (second.getInclude() != null) {
+                return !new HashSet<>(first.getExclude()).containsAll(second.getInclude());
+            } else if (second.getExclude() != null) {
+                return !new HashSet<>(second.getExclude()).containsAll(first.getExclude());
+            }
+        }
+        return true;
     }
 
     private void registerClearFavorites() {

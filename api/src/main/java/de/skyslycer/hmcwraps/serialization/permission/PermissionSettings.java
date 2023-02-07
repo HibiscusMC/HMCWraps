@@ -12,19 +12,6 @@ public class PermissionSettings {
     private boolean inventoryPermission;
     private boolean previewPermission;
 
-    public PermissionSettings(boolean checkPermissionPhysical, boolean checkPermissionVirtual, boolean permissionPhysical, boolean permissionVirtual,
-                              boolean inventoryPermission, boolean previewPermission) {
-        this.checkPermissionPhysical = checkPermissionPhysical;
-        this.checkPermissionVirtual = checkPermissionVirtual;
-        this.permissionPhysical = permissionPhysical;
-        this.permissionVirtual = permissionVirtual;
-        this.inventoryPermission = inventoryPermission;
-        this.previewPermission = previewPermission;
-    }
-
-    public PermissionSettings() {
-    }
-
     public boolean isCheckPermissionPhysical() {
         return checkPermissionPhysical;
     }
