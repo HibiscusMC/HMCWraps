@@ -13,6 +13,7 @@ import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -62,6 +63,8 @@ public interface HMCWraps extends Plugin {
      * @return The model id, may return -1 when none is available
      */
     int getModelIdFromHook(String id);
+
+    Color getColorFromHook(String color);
 
     /**
      * Log an error that stands out from other system messages.
@@ -163,8 +166,18 @@ public interface HMCWraps extends Plugin {
      */
     ObjectPool<UUID, Component> getMessagePool();
 
+    /**
+     * Get the storage storing the state of the filter.
+     *
+     * @return The filter storage
+     */
     Storage<Player, Boolean> getFilterStorage();
 
+    /**
+     * Get the storage storing the favorite wraps of a player.
+     *
+     * @return The filter storage
+     */
     Storage<Player, List<Wrap>> getFavoriteWrapStorage();
 
 }

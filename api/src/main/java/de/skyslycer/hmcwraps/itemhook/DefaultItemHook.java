@@ -5,8 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-
 public class DefaultItemHook implements ItemHook {
 
     @Override

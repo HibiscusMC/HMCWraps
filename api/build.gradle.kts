@@ -21,17 +21,12 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
-    compileOnly("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.2")
-    compileOnly("dev.triumphteam:triumph-gui:3.1.4")
-    compileOnly("net.kyori:adventure-api:4.12.0")
-    compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
-    compileOnly("net.kyori:adventure-platform-bukkit:4.2.0")
-    compileOnly("org.jetbrains:annotations:23.1.0")
-    compileOnly("org.spongepowered:configurate-yaml:4.1.2") {
-        exclude("org.yaml")
-    }
+    compileOnly(depends.spigot)
+    compileOnly(depends.annotations)
+    compileOnly(libs.packets)
+    compileOnly(libs.gui)
+    compileOnly(libs.bundles.adventure)
+    compileOnly(libs.configurate)
 }
 
 tasks {

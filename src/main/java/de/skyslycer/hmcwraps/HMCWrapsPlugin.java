@@ -28,6 +28,7 @@ import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
+import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.wrap.CollectionHelperImpl;
 import de.skyslycer.hmcwraps.wrap.ICollectionHelper;
 import de.skyslycer.hmcwraps.wrap.IWrapper;
@@ -36,6 +37,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -378,6 +380,16 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         } catch (NumberFormatException ignored) {
             var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
             return possible.map(itemHook -> itemHook.getModelId(id.replace(possible.get().getPrefix(), ""))).orElse(-1);
+        }
+    }
+
+    @Override
+    public Color getColorFromHook(String color) {
+        try {
+            return StringUtil.colorFromString(color);
+        } catch (NumberFormatException ignored) {
+            var possible = hooks.stream().filter(it -> color.startsWith(it.getPrefix())).findFirst();
+            return possible.map(itemHook -> itemHook.getColor(color.replace(possible.get().getPrefix(), ""))).orElse(null);
         }
     }
 
