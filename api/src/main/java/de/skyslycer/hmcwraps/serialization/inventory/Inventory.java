@@ -10,7 +10,7 @@ import java.util.Map;
 @ConfigSerializable
 public class Inventory {
 
-    private boolean openShortcut;
+    private ShortcutSettings shortcut;
     private String title;
     private Type type;
     private int rows;
@@ -38,10 +38,11 @@ public class Inventory {
         return type;
     }
 
-    public boolean isOpenShortcut() {
-        return openShortcut;
+    public ShortcutSettings getShortcut() {
+        return shortcut;
     }
 
+    @Nullable
     public HashMap<String, HashMap<String, List<String>>> getActions() {
         return actions;
     }

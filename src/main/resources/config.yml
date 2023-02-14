@@ -199,8 +199,12 @@ updater:
 
 # The inventory (/wraps)
 inventory:
-  # If the shortcut to open the wrap inventory when shift & right-clicking and should be enabled
-  open-shortcut: true
+  # Shortcut settings
+  shortcut:
+    # If the shortcut to open the wrap inventory when shift & right-clicking should be enabled
+    enabled: true
+    # What items can't be used to open the inventory
+    exclude: []
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED

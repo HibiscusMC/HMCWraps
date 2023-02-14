@@ -23,11 +23,15 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        PermissionUtil.loopThroughInventory(plugin, event.getPlayer());
+        var newItem = PermissionUtil.hasPermission(plugin, event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
+        if (newItem != null) {
+            event.getPlayer().getInventory().setItemInMainHand(newItem);
+        }
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
                 || plugin.getCollectionHelper().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
-                || !plugin.getConfiguration().getInventory().isOpenShortcut()
+                || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
+                || plugin.getConfiguration().getInventory().getShortcut().getExclude().contains(event.getItem().getType().toString())
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
                 && !PermissionUtil.hasAnyPermission(event.getPlayer(), WrapCommand.WRAPS_PERMISSION))) {
             return;

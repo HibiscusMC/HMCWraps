@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.wrap;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.events.ItemUnwrapEvent;
 import de.skyslycer.hmcwraps.events.ItemWrapEvent;
-import de.skyslycer.hmcwraps.serialization.range.ValueRangeSettings;
+import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.util.PlayerUtil;

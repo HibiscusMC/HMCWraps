@@ -2,7 +2,7 @@ package de.skyslycer.hmcwraps.serialization.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
-import de.skyslycer.hmcwraps.serialization.range.RangeSettings;
+import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;

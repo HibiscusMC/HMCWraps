@@ -295,7 +295,7 @@ public class WrapCommand {
     @Description("Uploads a server log.")
     @AutoComplete("@log")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugLog(CommandSender sender, String log) {
+    public void onDebugLog(CommandSender sender, @Default("latest.log") @Optional String log) {
         var path = Path.of("logs").resolve(log);
         if (!checkFile(sender, path)) {
             return;

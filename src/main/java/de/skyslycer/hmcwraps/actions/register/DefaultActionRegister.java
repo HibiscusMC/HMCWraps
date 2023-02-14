@@ -20,8 +20,8 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.range.RangeSettings;
-import de.skyslycer.hmcwraps.serialization.range.ValueRangeSettings;
+import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
+import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -337,9 +337,7 @@ public class DefaultActionRegister {
     }
 
     private void registerClearFavorites() {
-        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
-            plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
-        }));
+        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>())));
     }
 
     private boolean checkSplit(String[] split, int length, String action, String example) {

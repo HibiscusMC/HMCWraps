@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps.serialization.range;
+package de.skyslycer.hmcwraps.serialization.wrap.range;
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -11,9 +11,6 @@ public class RangeSettings {
     public RangeSettings(ValueRangeSettings<Integer> modelId, ValueRangeSettings<String> color) {
         this.modelId = modelId;
         this.color = color;
-    }
-
-    public RangeSettings() {
     }
 
     public ValueRangeSettings<Integer> getModelId() {

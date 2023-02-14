@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps.serialization.range;
+package de.skyslycer.hmcwraps.serialization.wrap.range;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
