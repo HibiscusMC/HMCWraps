@@ -29,6 +29,7 @@ public class Wrap extends SerializableItem {
     private @Nullable String wrapName;
     private @Nullable List<String> wrapLore;
     private @Nullable RangeSettings range;
+    private @Nullable String nbt;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -102,6 +103,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public RangeSettings getRange() {
         return range;
+    }
+
+    @Nullable
+    public String getNbt() {
+        return nbt;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Player player) {

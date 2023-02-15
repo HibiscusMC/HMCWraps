@@ -23,6 +23,7 @@ repositories {
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.bytecode.space/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven-public/")
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 dependencies {
@@ -34,6 +35,7 @@ dependencies {
     implementation(libs.bstats)
     implementation(libs.particles)
     implementation(libs.gui)
+    implementation(libs.nbtapi)
     implementation(libs.configurate) {
         exclude("org.yaml")
     }
@@ -62,6 +64,7 @@ tasks {
         relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
+        relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")
@@ -146,6 +149,7 @@ bukkit {
         }
         register("hmcwraps.debug") {
             description = "Gives access to debug commands."
+            children = listOf("hmcwraps.admin")
         }
     }
 }

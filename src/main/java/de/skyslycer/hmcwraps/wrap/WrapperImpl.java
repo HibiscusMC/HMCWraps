@@ -8,6 +8,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.WrapNBTUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -104,6 +105,9 @@ public class WrapperImpl implements Wrapper {
             } else {
                 editing.setItemMeta(meta);
             }
+            if (wrap.getNbt() != null) {
+                WrapNBTUtil.wrap(editing, wrap.getNbt());
+            }
         } else {
             meta.setDisplayName(originalData.name());
             meta.setCustomModelData(originalData.modelId());
@@ -114,6 +118,7 @@ public class WrapperImpl implements Wrapper {
             } else {
                 editing.setItemMeta(meta);
             }
+            WrapNBTUtil.unwrap(editing);
         }
         editing = setPhysical(editing.clone(), physical);
         if (wrap == null || currentWrap != null) {

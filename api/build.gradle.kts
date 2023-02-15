@@ -17,6 +17,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 dependencies {
@@ -28,6 +29,7 @@ dependencies {
     compileOnly(libs.gui)
     compileOnly(libs.bundles.adventure)
     compileOnly(libs.configurate)
+    compileOnly(libs.nbtapi)
 }
 
 tasks {

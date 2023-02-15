@@ -83,7 +83,7 @@ public class CommandRegister {
                 (command, actor) -> command.getPermission().canExecute(actor) ? plugin.getMessageHandler().get(Messages.COMMAND_HELP_FORMAT)
                         .replace("<command>", command.getPath().toRealString())
                         .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : "");
-        commandHandler.register(new WrapCommand(plugin));
+        commandHandler.register(new WrapCommand(plugin), new DebugCommand(plugin));
         commandHandler.registerBrigadier();
     }
 
