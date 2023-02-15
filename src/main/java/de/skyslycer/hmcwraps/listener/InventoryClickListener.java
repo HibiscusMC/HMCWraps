@@ -7,12 +7,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class InventoryClickListener implements Listener {
 
     private final HMCWrapsPlugin plugin;
+
+    private final Set<UUID> pickUp = new HashSet<>();
 
     public InventoryClickListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -22,7 +29,18 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, player), 1L);
+        if (event.getCurrentItem() != null) {
+            var newItem = PermissionUtil.hasPermission(plugin, event.getCurrentItem(), player);
+            if (newItem != null) {
+                event.setCurrentItem(newItem);
+            }
+        }
+        if (event.getCursor() != null) {
+            var newItem = PermissionUtil.hasPermission(plugin, event.getCursor(), player);
+            if (newItem != null) {
+                event.setCursor(newItem);
+            }
+        }
 
         switch (event.getAction()) {
             case MOVE_TO_OTHER_INVENTORY -> {
@@ -30,8 +48,14 @@ public class InventoryClickListener implements Listener {
                     runFavorites(event.getCurrentItem().clone(), player);
                 }
             }
+            case PICKUP_SOME, PICKUP_ONE, PICKUP_HALF, PICKUP_ALL -> {
+                if (event.getClickedInventory() != event.getWhoClicked().getInventory()) {
+                    pickUp.add(player.getUniqueId());
+                }
+            }
             case PLACE_ALL, PLACE_ONE, PLACE_SOME, SWAP_WITH_CURSOR -> {
-                if (event.getClickedInventory() == event.getWhoClicked().getInventory() && event.getCursor() != null) {
+                if (event.getClickedInventory() == event.getWhoClicked().getInventory() && event.getCursor() != null &&
+                        (pickUp.contains(player.getUniqueId()) || event.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
                     runFavorites(event.getCursor().clone(), player);
                 }
             }
