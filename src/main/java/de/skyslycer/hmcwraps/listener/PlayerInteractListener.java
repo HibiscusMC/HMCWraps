@@ -22,10 +22,15 @@ public class PlayerInteractListener implements Listener {
         if (event.getItem() == null) {
             return;
         }
-
+        var inventory = event.getPlayer().getInventory();
         var newItem = PermissionUtil.hasPermission(plugin, event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
-        if (newItem != null) {
-            event.getPlayer().getInventory().setItemInMainHand(newItem);
+        if (newItem != null || plugin.getWrapper().getWrap(inventory.getItemInMainHand()) == null) {
+            var favoriteItem = PermissionUtil.applyFavorite(plugin, event.getPlayer(), inventory.getItemInMainHand());
+            if (favoriteItem != null) {
+                inventory.setItemInMainHand(favoriteItem);
+            } else if (newItem != null) {
+                inventory.setItemInMainHand(newItem);
+            }
         }
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK

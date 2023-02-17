@@ -345,7 +345,7 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
-    public boolean isValidModelId(ItemStack item, Wrap wrap) {
+    public boolean isValid(ItemStack item, Wrap wrap) {
         var modelData = -1;
         if (getWrap(item) != null) {
             modelData = getOriginalModelId(item);

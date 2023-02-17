@@ -91,7 +91,7 @@ tasks {
 }
 
 bukkit {
-    main = "de.skyslycer.hmcwraps.HMCWraps"
+    main = "de.skyslycer.hmcwraps.HMCWrapsPlugin"
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     authors = listOf("Skyslycer")

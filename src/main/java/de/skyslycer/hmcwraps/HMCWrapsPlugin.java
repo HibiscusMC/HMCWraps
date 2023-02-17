@@ -11,6 +11,7 @@ import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
 import de.skyslycer.hmcwraps.listener.*;
+import de.skyslycer.hmcwraps.logger.NoInfoLogger;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandlerImpl;
 import de.skyslycer.hmcwraps.metrics.PluginMetrics;
@@ -25,6 +26,9 @@ import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
 import de.skyslycer.hmcwraps.wrap.*;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -35,7 +39,10 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
@@ -65,6 +72,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
         PacketEvents.getAPI().getSettings().checkForUpdates(false);
+        MinecraftVersion.replaceLogger(new NoInfoLogger("HMCWraps-NBT", null));
+        VersionChecker.hideOk = true;
+        new NBTContainer();
     }
 
     @Override
@@ -180,8 +190,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         }
         return true;
     }
-
-
 
     private boolean checkDependency(String name, boolean needed) {
         if (Bukkit.getPluginManager().getPlugin(name) == null) {

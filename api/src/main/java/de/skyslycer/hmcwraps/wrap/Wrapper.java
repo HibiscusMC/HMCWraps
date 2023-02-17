@@ -143,6 +143,6 @@ public interface Wrapper {
      * @param wrap The wrap
      * @return If the model id is valid
      */
-    boolean isValidModelId(ItemStack item, Wrap wrap);
+    boolean isValid(ItemStack item, Wrap wrap);
 
 }

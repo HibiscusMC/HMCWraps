@@ -3,13 +3,12 @@ package de.skyslycer.hmcwraps.util;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class PermissionUtil {
 
@@ -58,7 +57,7 @@ public class PermissionUtil {
     }
 
     /**
-     * Loops through a players inventory and unwraps items the player doesn't have access to.
+     * Loops through a players inventory and unwraps items the player doesn't have access to and apply favorites if possible.
      *
      * @param plugin The plugin
      * @param player The player
@@ -70,37 +69,26 @@ public class PermissionUtil {
                 continue;
             }
             var newItem = hasPermission(plugin, item, player);
-            if (newItem != null) {
-                player.getInventory().setItem(i, newItem);
+            if (newItem != null || plugin.getWrapper().getWrap(item) == null) {
+                var favoriteItem = applyFavorite(plugin, player, item);
+                if (favoriteItem != null) {
+                    player.getInventory().setItem(i, favoriteItem);
+                } else if (newItem != null) {
+                    player.getInventory().setItem(i, newItem);
+                }
             }
         }
     }
 
-    /**
-     * Apply favorite wraps to all possible items.
-     *
-     * @param plugin The plugin
-     * @param player The player
-     */
-    public static void applyFavorites(HMCWraps plugin, Player player, ItemStack item) {
-        if (!plugin.getConfiguration().getFavorites().isEnabled()) {
-            return;
-        }
-        for (int i = 0; i < player.getInventory().getSize() - 1; i++) {
-            if (!Objects.equals(player.getInventory().getItem(i), item)) {
-                continue;
+    public static ItemStack applyFavorite(HMCWraps plugin, Player player, ItemStack item) {
+        for (WrappableItem wraps : plugin.getCollectionHelper().getItems(item.getType())) {
+            var matchingWrap = wraps.getWraps().values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
+                    .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst();
+            if (matchingWrap.isPresent()) {
+                return plugin.getWrapper().setWrap(matchingWrap.get(), item, false, player, true);
             }
-            var newItem = hasPermission(plugin, item, player);
-            if (newItem != null || plugin.getWrapper().getWrap(item) == null) {
-                int finalI = i;
-                plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
-                        .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
-                        .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst().ifPresent(wrap ->
-                                player.getInventory().setItem(finalI, plugin.getWrapper().setWrap(wrap, item, false, player, true))));
-            }
-            break;
         }
-
+        return item;
     }
 
     /**

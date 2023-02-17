@@ -113,7 +113,7 @@ public class GuiBuilder {
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui) {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
-                .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
+                .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
             var wrapItem = wrap.toPermissionItem(plugin, player);
             if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {

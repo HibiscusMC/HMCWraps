@@ -3,13 +3,11 @@ package de.skyslycer.hmcwraps.listener;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
-import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,34 +27,25 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
-        if (event.getCurrentItem() != null) {
+        if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
             var newItem = PermissionUtil.hasPermission(plugin, event.getCurrentItem(), player);
-            if (newItem != null) {
-                event.setCurrentItem(newItem);
+            if (newItem != null || plugin.getWrapper().getWrap(event.getCurrentItem()) == null) {
+                var favoriteItem = PermissionUtil.applyFavorite(plugin, player, event.getCurrentItem());
+                if (favoriteItem != null) {
+                    event.setCurrentItem(favoriteItem);
+                } else if (newItem != null) {
+                    event.setCurrentItem(newItem);
+                }
             }
         }
-        if (event.getCursor() != null) {
+        if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
             var newItem = PermissionUtil.hasPermission(plugin, event.getCursor(), player);
-            if (newItem != null) {
-                event.setCursor(newItem);
-            }
-        }
-
-        switch (event.getAction()) {
-            case MOVE_TO_OTHER_INVENTORY -> {
-                if (event.getClickedInventory() != event.getWhoClicked().getInventory() && event.getCurrentItem() != null) {
-                    runFavorites(event.getCurrentItem().clone(), player);
-                }
-            }
-            case PICKUP_SOME, PICKUP_ONE, PICKUP_HALF, PICKUP_ALL -> {
-                if (event.getClickedInventory() != event.getWhoClicked().getInventory()) {
-                    pickUp.add(player.getUniqueId());
-                }
-            }
-            case PLACE_ALL, PLACE_ONE, PLACE_SOME, SWAP_WITH_CURSOR -> {
-                if (event.getClickedInventory() == event.getWhoClicked().getInventory() && event.getCursor() != null &&
-                        (pickUp.contains(player.getUniqueId()) || event.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
-                    runFavorites(event.getCursor().clone(), player);
+            if (newItem != null || plugin.getWrapper().getWrap(event.getCursor()) == null) {
+                var favoriteItem = PermissionUtil.applyFavorite(plugin, player, event.getCursor());
+                if (favoriteItem != null) {
+                    event.setCursor(favoriteItem);
+                } else if (newItem != null) {
+                    event.setCursor(newItem);
                 }
             }
         }
@@ -108,10 +97,6 @@ public class InventoryClickListener implements Listener {
                 }
             }
         }
-    }
-
-    private void runFavorites(ItemStack target, Player player) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.applyFavorites(plugin, player, target), 1L);
     }
 
 }
