@@ -1,10 +1,8 @@
 package de.skyslycer.hmcwraps.util;
 
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.NBTType;
+import de.tr7zw.changeme.nbtapi.*;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 public class WrapNBTUtil {
@@ -16,28 +14,37 @@ public class WrapNBTUtil {
      *
      * @param stack The item to apply the NBT to
      * @param nbt The NBT to apply
+     * @return The item with the applied NBT data
      */
-    public static void wrap(ItemStack stack, String nbt) {
+    public static ItemStack wrap(ItemStack stack, String nbt) {
+        try {
+            new NBTContainer(nbt);
+        } catch (NbtApiException e) {
+            Bukkit.getLogger().warning("A provided NBT data is invalid in a HMCWraps wrap!");
+        }
         var itemNbt = new NBTItem(stack);
         var newNbt = NBT.parseNBT(nbt);
         var difference = itemNbt.getOrCreateCompound(SAVE_KEY);
         difference.clearNBT();
         apply(itemNbt, newNbt, difference);
+        return itemNbt.getItem();
     }
 
     /**
      * Restore the original NBT data.
      *
      * @param stack The item to restore the NBT from
+     * @return The item with the original NBT data
      */
-    public static void unwrap(ItemStack stack) {
+    public static ItemStack unwrap(ItemStack stack) {
         var itemNbt = new NBTItem(stack);
         if (!itemNbt.hasTag(SAVE_KEY)) {
-            return;
+            return stack;
         }
         var originalNbt = itemNbt.getCompound(SAVE_KEY);
         rollback(originalNbt, itemNbt);
-        originalNbt.clearNBT();
+        itemNbt.removeKey(SAVE_KEY);
+        return itemNbt.getItem();
     }
 
     private static void apply(NBTCompound original, ReadableNBT config, NBTCompound difference) {
@@ -45,8 +52,8 @@ public class WrapNBTUtil {
             if (key.equals(SAVE_KEY)) {
                 return;
             }
-            if (original.getType(key) == NBTType.NBTTagCompound && config.getType(key) == NBTType.NBTTagCompound) {
-                var originalCompound = original.getCompound(key);
+            if ((!original.hasTag(key) || original.getType(key) == NBTType.NBTTagCompound) && config.getType(key) == NBTType.NBTTagCompound) {
+                var originalCompound = original.getOrCreateCompound(key);
                 var configCompound = config.getCompound(key);
                 var differenceCompound = difference.addCompound(key);
                 apply(originalCompound, configCompound, differenceCompound);
@@ -67,6 +74,9 @@ public class WrapNBTUtil {
                 var sourceCompound = source.getCompound(key);
                 var targetCompound = target.getOrCreateCompound(key);
                 rollback(sourceCompound, targetCompound);
+                if (targetCompound.getKeys().isEmpty()) {
+                    target.removeKey(key);
+                }
             } else {
                 if (key.endsWith(".hmcwraps") && source.getType(key) == NBTType.NBTTagByte && source.getByte(key) == 12 && target.hasTag(key.replace(".hmcwraps", ""))) {
                     target.removeKey(key.replace(".hmcwraps", ""));

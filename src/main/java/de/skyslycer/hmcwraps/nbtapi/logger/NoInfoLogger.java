@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps.logger;
+package de.skyslycer.hmcwraps.nbtapi.logger;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

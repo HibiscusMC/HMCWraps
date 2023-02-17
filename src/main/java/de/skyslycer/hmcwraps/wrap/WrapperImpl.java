@@ -106,7 +106,7 @@ public class WrapperImpl implements Wrapper {
                 editing.setItemMeta(meta);
             }
             if (wrap.getNbt() != null) {
-                WrapNBTUtil.wrap(editing, wrap.getNbt());
+                editing = WrapNBTUtil.wrap(editing, wrap.getNbt());
             }
         } else {
             meta.setDisplayName(originalData.name());
@@ -118,7 +118,7 @@ public class WrapperImpl implements Wrapper {
             } else {
                 editing.setItemMeta(meta);
             }
-            WrapNBTUtil.unwrap(editing);
+            editing = WrapNBTUtil.unwrap(editing);
         }
         editing = setPhysical(editing.clone(), physical);
         if (wrap == null || currentWrap != null) {

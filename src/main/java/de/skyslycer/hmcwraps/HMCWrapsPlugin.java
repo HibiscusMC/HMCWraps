@@ -11,7 +11,7 @@ import de.skyslycer.hmcwraps.itemhook.ItemHook;
 import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
 import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
 import de.skyslycer.hmcwraps.listener.*;
-import de.skyslycer.hmcwraps.logger.NoInfoLogger;
+import de.skyslycer.hmcwraps.nbtapi.logger.NoInfoLogger;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandlerImpl;
 import de.skyslycer.hmcwraps.metrics.PluginMetrics;
