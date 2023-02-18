@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -80,9 +81,14 @@ public class CommandRegister {
                         Placeholder.parsed("argument", context.getParameter().getName())));
         commandHandler.disableStackTraceSanitizing();
         commandHandler.setHelpWriter(
-                (command, actor) -> command.getPermission().canExecute(actor) ? plugin.getMessageHandler().get(Messages.COMMAND_HELP_FORMAT)
-                        .replace("<command>", command.getPath().toRealString())
-                        .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : "");
+                (command, actor) -> {
+                    if (command.hasAnnotation(NoHelp.class)) {
+                        return null;
+                    }
+                    return command.getPermission().canExecute(actor) ? plugin.getMessageHandler().get(Messages.COMMAND_HELP_FORMAT)
+                            .replace("<command>", command.getPath().toRealString())
+                            .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : null;
+                });
         commandHandler.register(new WrapCommand(plugin), new DebugCommand(plugin));
         commandHandler.registerBrigadier();
     }
