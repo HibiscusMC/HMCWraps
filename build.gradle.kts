@@ -61,6 +61,7 @@ tasks {
         relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
+        relocate("kotlin", "$shadePattern.kotlin")
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")
