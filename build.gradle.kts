@@ -2,7 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 
 plugins {
     java
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("xyz.jpenilla.run-paper") version "2.0.1"
 }
@@ -42,7 +42,6 @@ dependencies {
     implementation(libs.mclogs) {
         exclude("com.google.code.gson")
     }
-
     compileOnly(depends.spigot)
     compileOnly(depends.placeholderapi)
     compileOnly(depends.oraxen)
@@ -94,7 +93,7 @@ bukkit {
     main = "de.skyslycer.hmcwraps.HMCWrapsPlugin"
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
-    authors = listOf("Skyslycer")
+    author = "Skyslycer"
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs")
     apiVersion = "1.17"
     permissions {

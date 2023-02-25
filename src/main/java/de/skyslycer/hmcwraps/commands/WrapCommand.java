@@ -5,9 +5,14 @@ import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
-import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
@@ -15,16 +20,15 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import revxrsal.commands.annotation.*;
+import revxrsal.commands.annotation.AutoComplete;
+import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.Default;
+import revxrsal.commands.annotation.Description;
+import revxrsal.commands.annotation.Optional;
+import revxrsal.commands.annotation.Range;
+import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.help.CommandHelp;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @Command("wraps")
 public class WrapCommand {
@@ -50,7 +54,7 @@ public class WrapCommand {
     @Default
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
-        if (plugin.getConfiguration().getPermissions().isInventoryPermission() && !PermissionUtil.hasAnyPermission(player, WRAPS_PERMISSION)) {
+        if (plugin.getConfiguration().getPermissions().isInventoryPermission() && !player.hasPermission(WRAPS_PERMISSION)) {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
             return;
         }

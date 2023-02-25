@@ -38,7 +38,7 @@ public class PlayerInteractListener implements Listener {
                 || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
                 || plugin.getConfiguration().getInventory().getShortcut().getExclude().contains(event.getItem().getType().toString())
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
-                && !PermissionUtil.hasAnyPermission(event.getPlayer(), WrapCommand.WRAPS_PERMISSION))) {
+                && !event.getPlayer().hasPermission(WrapCommand.WRAPS_PERMISSION))) {
             return;
         }
         event.setCancelled(true);

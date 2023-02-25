@@ -5,7 +5,6 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -89,22 +88,6 @@ public class PermissionUtil {
             }
         }
         return item;
-    }
-
-    /**
-     * Checks if a sender has any of the given permissions.
-     *
-     * @param sender      The sender to check on
-     * @param permissions The permissions to check for
-     * @return If the sender has any permissions
-     */
-    public static boolean hasAnyPermission(CommandSender sender, String... permissions) {
-        for (String permission : permissions) {
-            if (sender.hasPermission(permission)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

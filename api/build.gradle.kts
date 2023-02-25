@@ -66,7 +66,7 @@ publishing {
                 }
             }
 
-            name = "SkyRepository"
+            name = "HibiscusMC"
             url = uri(publishData.getRepository())
         }
     }
@@ -102,9 +102,9 @@ class PublishData(private val project: Project) {
     fun getRepository(): String = type.repo
 
     enum class Type(private val append: String, val repo: String, private val addCommit: Boolean) {
-        RELEASE("", "https://repo.skyslycer.de/releases/", false),
-        DEV("-DEV", "https://repo.skyslycer.de/development/", true),
-        SNAPSHOT("-SNAPSHOT", "https://repo.skyslycer.de/snapshots/", true);
+        RELEASE("", "https://repo.hibiscusmc.com/releases/", false),
+        DEV("-DEV", "https://repo.hibiscusmc.come/snapshots/", true),
+        SNAPSHOT("-SNAPSHOT", "https://repo.hibiscusmc.com/snapshots/", true);
 
         fun append(name: String, appendCommit: Boolean, commitHash: String): String =
             name.plus(append).plus(if (appendCommit && addCommit) "-".plus(commitHash) else "")
