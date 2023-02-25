@@ -66,7 +66,7 @@ For any other questions regarding the API, join our Discord server: https://disc
 ```groovy
 repositories {
     maven {
-        url "https://repo.skyslycer.de/releases/"
+        url "https://repo.hibiscusmc.com/releases/"
     }
 }
 
@@ -79,7 +79,7 @@ dependencies {
 
 ```groovy
 repositories {
-    maven("https://repo.skyslycer.de/releases/")
+    maven("https://repo.hibiscusmc.com/releases/")
 }
 
 dependencies {
@@ -92,8 +92,8 @@ dependencies {
 ```xml
 <repositories>
   <repository>
-    <name>SkyRepo</name>
-    <url>https://repo.skyslycer.de/releases/</url>
+    <name>HibiscusRepository</name>
+    <url>https://repo.hibiscusmc.com/releases/</url>
   </repository>  
 </repositories>
 
