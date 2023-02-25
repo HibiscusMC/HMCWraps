@@ -212,7 +212,13 @@ inventory:
   # How many rows the inventory should have
   rows: 6
   # Actions executed when clicking a wrap
-  actions: {}
+  actions:
+    left:
+      WRAP:
+        - ''
+    right:
+      PREVIEW:
+        - ''
   # The slot to set the item the player is holding to (-1 to disable)
   target-item-slot: 49
   # The set items in the inventory, every empty slot will be filled with wraps

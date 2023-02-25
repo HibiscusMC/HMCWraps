@@ -7,13 +7,21 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.util.Vector3f;
-import com.github.retrooper.packetevents.wrapper.play.server.*;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.VectorUtil;
-import dev.triumphteam.gui.guis.BaseGui;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -21,24 +29,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 public class Preview {
 
     private final int entityId = SpigotReflectionUtil.generateEntityId();
     private final Player player;
     private final ItemStack item;
-    private final BaseGui gui;
+    private final Consumer<Player> onClose;
     private final HMCWraps plugin;
     private BukkitTask task;
     private BukkitTask cancelTask;
 
-    Preview(Player player, ItemStack item, BaseGui gui, HMCWraps plugin) {
+    Preview(Player player, ItemStack item, Consumer<Player> onClose, HMCWraps plugin) {
         this.player = player;
         this.item = item;
-        this.gui = gui;
+        this.onClose = onClose;
         this.plugin = plugin;
     }
 
@@ -46,9 +50,7 @@ public class Preview {
      * Start the preview.
      */
     public void preview() {
-        if (gui != null) {
-            gui.close(player);
-        }
+        player.closeInventory();
 
         sendSpawnPacket();
         sendMetadataPacket();
@@ -71,8 +73,8 @@ public class Preview {
     public void cancel(boolean open) {
         task.cancel();
         cancelTask.cancel();
-        if (open && gui != null) {
-            gui.open(player);
+        if (open && onClose != null) {
+            onClose.accept(player);
         }
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));

@@ -4,14 +4,13 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.guis.PaginatedGui;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class PreviewManager {
 
@@ -40,25 +39,25 @@ public class PreviewManager {
      * Create a preview.
      *
      * @param player The player
-     * @param gui The GUI to open again
+     * @param onClose The consumer to run when the GUI should be opened again
      * @param wrap The wrap to preview
      */
-    public void create(Player player, PaginatedGui gui, Wrap wrap) {
+    public void create(Player player, Consumer<Player> onClose, Wrap wrap) {
         var item = ItemBuilder.from(plugin.getCollectionHelper().getMaterial(wrap)).model(wrap.getModelId());
         if (wrap.getColor() != null) {
             item.color(wrap.getColor());
         }
-        var event = new ItemPreviewEvent(player, item.build(), gui, wrap);
+        var event = new ItemPreviewEvent(player, item.build(), onClose, wrap);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
-        createPrivate(event.getPlayer(), event.getItem(), event.getGui());
+        createPrivate(event.getPlayer(), event.getItem(), event.getOnClose());
     }
 
 
-    private void createPrivate(Player player, ItemStack item, PaginatedGui gui) {
-        var preview = new Preview(player, item, gui, plugin);
+    private void createPrivate(Player player, ItemStack item, Consumer<Player> onClose) {
+        var preview = new Preview(player, item, onClose, plugin);
         previews.put(player.getUniqueId(), preview);
         preview.preview();
     }
