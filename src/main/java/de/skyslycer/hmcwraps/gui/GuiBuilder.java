@@ -88,10 +88,19 @@ public class GuiBuilder {
         } else if (event.getClick() == ClickType.MIDDLE && actions.containsKey("middle")) {
             plugin.getActionHandler().pushFromConfig(actions.get("middle"), information);
         }
-        if (!actions.containsKey("any")) {
-            return;
+        if (event.getClick() == ClickType.LEFT && actions.containsKey("left-shift") && information.getPlayer().isSneaking()) {
+            plugin.getActionHandler().pushFromConfig(actions.get("left-shift"), information);
+        } else if (event.getClick() == ClickType.RIGHT && actions.containsKey("right-shift") && information.getPlayer().isSneaking()) {
+            plugin.getActionHandler().pushFromConfig(actions.get("right-shift"), information);
+        } else if (event.getClick() == ClickType.MIDDLE && actions.containsKey("middle-shift") && information.getPlayer().isSneaking()) {
+            plugin.getActionHandler().pushFromConfig(actions.get("middle-shift"), information);
         }
-        plugin.getActionHandler().pushFromConfig(actions.get("any"), information);
+        if (actions.containsKey("any-shift") && information.getPlayer().isSneaking()) {
+            plugin.getActionHandler().pushFromConfig(actions.get("any-shift"), information);
+        }
+        if (actions.containsKey("any")) {
+            plugin.getActionHandler().pushFromConfig(actions.get("any"), information);
+        }
     }
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui) {
