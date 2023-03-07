@@ -1,13 +1,14 @@
 package de.skyslycer.hmcwraps.events;
 
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import java.util.function.Consumer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public class ItemPreviewEvent extends Event implements Cancellable {
 

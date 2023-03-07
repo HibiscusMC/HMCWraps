@@ -6,15 +6,12 @@ import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
 import de.skyslycer.hmcwraps.converter.FileConverter;
-import de.skyslycer.hmcwraps.itemhook.HookAccessor;
-import de.skyslycer.hmcwraps.itemhook.ItemHook;
-import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
-import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
+import de.skyslycer.hmcwraps.itemhook.*;
 import de.skyslycer.hmcwraps.listener.*;
-import de.skyslycer.hmcwraps.nbtapi.logger.NoInfoLogger;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandlerImpl;
 import de.skyslycer.hmcwraps.metrics.PluginMetrics;
+import de.skyslycer.hmcwraps.nbtapi.logger.NoInfoLogger;
 import de.skyslycer.hmcwraps.placeholderapi.HMCWrapsPlaceholders;
 import de.skyslycer.hmcwraps.pool.MessagePool;
 import de.skyslycer.hmcwraps.pool.ObjectPool;
@@ -86,6 +83,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (checkDependency("Oraxen", false)) {
             hooks.add(new OraxenItemHook());
         }
+        if (checkDependency("Crucible", false)) {
+            hooks.add(new MythicItemHook());
+        };
         hookAccessor = new HookAccessor(hooks);
 
         if (!load()) {
@@ -97,7 +97,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new InventoryOpenListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 
         PacketEvents.getAPI().init();

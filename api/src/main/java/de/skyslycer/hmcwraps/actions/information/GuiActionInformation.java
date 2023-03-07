@@ -5,9 +5,9 @@ import org.bukkit.entity.Player;
 
 public class GuiActionInformation implements ActionInformation {
 
-    Player player;
-    String arguments;
-    PaginatedGui gui;
+    private PaginatedGui gui;
+    private Player player;
+    private String arguments;
 
     public GuiActionInformation(Player player, String arguments, PaginatedGui gui) {
         this.player = player;

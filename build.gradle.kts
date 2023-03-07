@@ -64,6 +64,7 @@ tasks {
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
         relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
+        relocate("kotlin", "$shadePattern.kotlin")
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")

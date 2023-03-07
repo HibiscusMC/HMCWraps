@@ -13,7 +13,7 @@ public class WrapNBTUtil {
      * Applies the NBT to the item and saves the original NBT data in the item.
      *
      * @param stack The item to apply the NBT to
-     * @param nbt The NBT to apply
+     * @param nbt   The NBT to apply
      * @return The item with the applied NBT data
      */
     public static ItemStack wrap(ItemStack stack, String nbt) {

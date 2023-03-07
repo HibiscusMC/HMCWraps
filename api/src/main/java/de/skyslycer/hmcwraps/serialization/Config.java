@@ -45,7 +45,8 @@ public class Config {
         this.filter = filter;
     }
 
-    public Config() { }
+    public Config() {
+    }
 
     public Inventory getInventory() {
         return inventory;

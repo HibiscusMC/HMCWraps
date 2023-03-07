@@ -1,8 +1,6 @@
 package de.skyslycer.hmcwraps.itemhook;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.items.MythicItem;
-import io.th0rgal.oraxen.api.OraxenItems;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;

@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.gui;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
-import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
+import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -11,15 +11,16 @@ import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class GuiBuilder {
 
@@ -97,19 +98,19 @@ public class GuiBuilder {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
                 .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
-            var wrapItem = wrap.toPermissionItem(plugin, player);
-            if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
-                wrapItem.setType(item.getType());
-            }
+                    var wrapItem = wrap.toPermissionItem(plugin, player);
+                    if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
+                        wrapItem.setType(item.getType());
+                    }
 
-            var guiItem = new GuiItem(wrapItem);
-            guiItem.setAction(click -> {
-                if (plugin.getConfiguration().getInventory().getActions() != null) {
-                    actions(plugin, new WrapActionInformation(wrap, player, ""), plugin.getConfiguration().getInventory().getActions(), click);
-                }
-            });
-            gui.addItem(guiItem);
-        }));
+                    var guiItem = new GuiItem(wrapItem);
+                    guiItem.setAction(click -> {
+                        if (plugin.getConfiguration().getInventory().getActions() != null) {
+                            actions(plugin, new WrapGuiActionInformation(gui, wrap, player, ""), plugin.getConfiguration().getInventory().getActions(), click);
+                        }
+                    });
+                    gui.addItem(guiItem);
+                }));
     }
 
     private static GuiItem getEmptyItem() {

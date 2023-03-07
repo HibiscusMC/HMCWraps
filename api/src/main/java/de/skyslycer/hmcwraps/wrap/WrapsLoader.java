@@ -4,7 +4,6 @@ import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;

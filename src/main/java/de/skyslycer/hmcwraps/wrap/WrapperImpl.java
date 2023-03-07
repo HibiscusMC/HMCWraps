@@ -9,12 +9,6 @@ import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.WrapNBTUtil;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -24,6 +18,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class WrapperImpl implements Wrapper {
 
@@ -56,6 +57,9 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public Wrap getWrap(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return null;
+        }
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
         var data = container.get(wrapIdKey, PersistentDataType.STRING);
         if (data == null || data.equals("-")) {

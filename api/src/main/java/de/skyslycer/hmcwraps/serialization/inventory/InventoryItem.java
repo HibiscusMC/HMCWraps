@@ -6,7 +6,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ConfigSerializable
 public class InventoryItem extends SerializableItem {

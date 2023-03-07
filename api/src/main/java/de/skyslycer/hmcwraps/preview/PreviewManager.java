@@ -4,13 +4,14 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class PreviewManager {
 
@@ -38,9 +39,9 @@ public class PreviewManager {
     /**
      * Create a preview.
      *
-     * @param player The player
+     * @param player  The player
      * @param onClose The consumer to run when the GUI should be opened again
-     * @param wrap The wrap to preview
+     * @param wrap    The wrap to preview
      */
     public void create(Player player, Consumer<Player> onClose, Wrap wrap) {
         var item = ItemBuilder.from(plugin.getCollectionHelper().getMaterial(wrap)).model(wrap.getModelId());

@@ -69,7 +69,8 @@ public abstract class PluginUpdater {
                     return new CheckResult(version, String.format(platform().url(), pluginId()), platform());
                 }
             }
-        } catch (IOException | InterruptedException | NullPointerException ignored) { }
+        } catch (IOException | InterruptedException | NullPointerException ignored) {
+        }
         return null;
     }
 

@@ -1,11 +1,10 @@
 package de.skyslycer.hmcwraps.itemhook;
 
 import dev.lone.itemsadder.api.CustomStack;
+import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Nullable;
-
-import org.bukkit.Color;
 
 
 public class ItemsAdderItemHook implements ItemHook {

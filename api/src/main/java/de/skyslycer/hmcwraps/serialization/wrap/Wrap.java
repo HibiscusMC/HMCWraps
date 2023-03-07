@@ -129,6 +129,7 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name, List<String> lore) { }
+    public record WrapValues(int modelId, Color color, String name, List<String> lore) {
+    }
 
 }

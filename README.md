@@ -90,19 +90,21 @@ dependencies {
 ### Maven
 
 ```xml
-<repositories>
-  <repository>
-    <name>HibiscusRepository</name>
-    <url>https://repo.hibiscusmc.com/releases/</url>
-  </repository>  
-</repositories>
 
+<repositories>
+    <repository>
+        <name>HibiscusRepository</name>
+        <url>https://repo.hibiscusmc.com/releases/</url>
+    </repository>
+</repositories>
+```
+```xml
 <dependencies>
-  <dependency>
-    <groupId>de.skyslycer.hmcwraps</groupId>
-    <artifactId>api</artifactId>
-    <version>VERSION</version>
-  </dependency>
+        <dependency>
+        <groupId>de.skyslycer.hmcwraps</groupId>
+        <artifactId>api</artifactId>
+        <version>VERSION</version>
+    </dependency>
 </dependencies>
 ```
 

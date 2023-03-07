@@ -6,14 +6,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetTitleTimes;
 import com.owen1212055.particlehelper.api.particle.MultiParticle;
 import com.owen1212055.particlehelper.api.particle.Particle;
-import com.owen1212055.particlehelper.api.particle.types.BlockDataParticle;
-import com.owen1212055.particlehelper.api.particle.types.ColorableParticle;
-import com.owen1212055.particlehelper.api.particle.types.DelayableParticle;
-import com.owen1212055.particlehelper.api.particle.types.DestinationParticle;
-import com.owen1212055.particlehelper.api.particle.types.ItemStackParticle;
-import com.owen1212055.particlehelper.api.particle.types.RollableParticle;
-import com.owen1212055.particlehelper.api.particle.types.SizeableParticle;
-import com.owen1212055.particlehelper.api.particle.types.SpeedModifiableParticle;
+import com.owen1212055.particlehelper.api.particle.types.*;
 import com.owen1212055.particlehelper.api.particle.types.dust.transition.TransitionDustParticle;
 import com.owen1212055.particlehelper.api.particle.types.note.MultiNoteParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
@@ -25,6 +18,7 @@ import de.skyslycer.hmcwraps.actions.ActionMethod;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
+import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -32,11 +26,6 @@ import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -45,6 +34,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class DefaultActionRegister {
 
@@ -356,13 +351,14 @@ public class DefaultActionRegister {
                 plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                 return;
             }
-            plugin.getPreviewManager().create(player, (ignored) -> openIfPossible(plugin, player), wrap);
+            plugin.getPreviewManager().create(player, (ignored) -> openIfPossible(plugin, information, player), wrap);
             plugin.getActionHandler().pushPreview(wrap, player);
         }));
     }
 
-    private void openIfPossible(HMCWrapsPlugin plugin, Player player) {
-        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItemInMainHand().getType()).isEmpty()) {
+    private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
+        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItemInMainHand().getType()).isEmpty()
+                && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
             GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand());
         }
     }
@@ -416,6 +412,8 @@ public class DefaultActionRegister {
         if (split.length == 1 && plugin.getWrapsLoader().getWraps().get(split[0]) != null) {
             wrap = plugin.getWrapsLoader().getWraps().get(split[0]);
         } else if (information instanceof WrapActionInformation wrapInformation) {
+            wrap = wrapInformation.getWrap();
+        } else if (information instanceof WrapGuiActionInformation wrapInformation) {
             wrap = wrapInformation.getWrap();
         }
         return wrap;

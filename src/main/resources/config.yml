@@ -204,7 +204,7 @@ inventory:
     # If the shortcut to open the wrap inventory when shift & right-clicking should be enabled
     enabled: true
     # What items can't be used to open the inventory
-    exclude: []
+    exclude: [ ]
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED

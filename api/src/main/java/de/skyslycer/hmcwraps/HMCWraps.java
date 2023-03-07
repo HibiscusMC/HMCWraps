@@ -6,25 +6,17 @@ import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.pool.ObjectPool;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
-import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
-import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import de.skyslycer.hmcwraps.wrap.WrapsLoader;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Color;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public interface HMCWraps extends Plugin {

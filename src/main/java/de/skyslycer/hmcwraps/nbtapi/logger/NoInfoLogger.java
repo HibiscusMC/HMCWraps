@@ -10,7 +10,8 @@ public class NoInfoLogger extends Logger {
     }
 
     @Override
-    public void info(String msg) { }
+    public void info(String msg) {
+    }
 
     @Override
     public void log(Level level, String msg) {

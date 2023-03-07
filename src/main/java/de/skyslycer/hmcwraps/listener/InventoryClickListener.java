@@ -3,21 +3,15 @@ package de.skyslycer.hmcwraps.listener;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 public class InventoryClickListener implements Listener {
 
     private final HMCWrapsPlugin plugin;
-
-    private final Set<UUID> pickUp = new HashSet<>();
 
     public InventoryClickListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -27,30 +21,32 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
-        if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-            var newItem = PermissionUtil.hasPermission(plugin, event.getCurrentItem(), player);
-            if (newItem != null || plugin.getWrapper().getWrap(event.getCurrentItem()) == null) {
-                var favoriteItem = PermissionUtil.applyFavorite(plugin, player, event.getCurrentItem());
-                if (favoriteItem != null) {
-                    event.setCurrentItem(favoriteItem);
-                } else if (newItem != null) {
-                    event.setCurrentItem(newItem);
-                }
-            }
+        if (event.getClickedInventory() != player.getInventory()) {
+            return;
         }
-        if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
-            var newItem = PermissionUtil.hasPermission(plugin, event.getCursor(), player);
-            if (newItem != null || plugin.getWrapper().getWrap(event.getCursor()) == null) {
-                var favoriteItem = PermissionUtil.applyFavorite(plugin, player, event.getCursor());
-                if (favoriteItem != null) {
-                    event.setCursor(favoriteItem);
-                } else if (newItem != null) {
-                    event.setCursor(newItem);
-                }
+
+        switch (event.getAction()) {
+            case PLACE_ALL, PLACE_SOME, PLACE_ONE -> {
+                var slot = event.getRawSlot();
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    var item = player.getInventory().getItem(slot);
+                    if (item == null || item.getType().isAir()) {
+                        return;
+                    }
+                    var newItem = PermissionUtil.hasPermission(plugin, item, player);
+                    if (newItem != null || plugin.getWrapper().getWrap(event.getCursor()) == null) {
+                        var favoriteItem = PermissionUtil.applyFavorite(plugin, player, item);
+                        if (favoriteItem != null) {
+                            player.getInventory().setItem(slot, favoriteItem);
+                        } else if (newItem != null) {
+                            player.getInventory().setItem(slot, newItem);
+                        }
+                    }
+                }, 1);
             }
         }
 
-        if (event.getCursor() == null || event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
+        if (event.getCursor() == null || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
             return;
         }
 

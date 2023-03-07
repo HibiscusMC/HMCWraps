@@ -40,7 +40,7 @@ public interface Wrapper {
      * Get the wrap on an item.
      *
      * @param item The item
-     * @return The wrap
+     * @return The wrap, null if the item isn't wrapped
      */
     @Nullable
     Wrap getWrap(ItemStack item);

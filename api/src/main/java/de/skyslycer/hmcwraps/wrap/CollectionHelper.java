@@ -27,6 +27,7 @@ public interface CollectionHelper {
 
     /**
      * Get a possible material from a wrap.
+     *
      * @param wrap The wrap to get the material from
      * @return One possible material
      */

@@ -4,8 +4,6 @@ import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-
 public interface ItemHook {
 
 
