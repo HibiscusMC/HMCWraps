@@ -85,7 +85,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         }
         if (checkDependency("Crucible", false)) {
             hooks.add(new MythicItemHook());
-        };
+        }
         hookAccessor = new HookAccessor(hooks);
 
         if (!load()) {
@@ -178,7 +178,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
-                    "preservation.model-id.defaults", "preservation.color.defaults", "preservation.name.defaults", "unwrapper", "inventory.actions");
+                    "preservation.model-id.defaults", "preservation.color.defaults", "preservation.name.defaults", "unwrapper", "inventory.actions", "inventory.shortcut.exclude");
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
         } catch (IOException exception) {

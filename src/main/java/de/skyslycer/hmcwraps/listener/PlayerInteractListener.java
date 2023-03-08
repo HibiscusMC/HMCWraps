@@ -3,11 +3,14 @@ package de.skyslycer.hmcwraps.listener;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
+import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.List;
 
 public class PlayerInteractListener implements Listener {
 
@@ -19,13 +22,14 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
+        var player = event.getPlayer();
         if (event.getItem() == null) {
             return;
         }
-        var inventory = event.getPlayer().getInventory();
-        var newItem = PermissionUtil.hasPermission(plugin, event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
+        var inventory = player.getInventory();
+        var newItem = PermissionUtil.hasPermission(plugin, player.getInventory().getItemInMainHand(), player);
         if (newItem != null || plugin.getWrapper().getWrap(inventory.getItemInMainHand()) == null) {
-            var favoriteItem = PermissionUtil.applyFavorite(plugin, event.getPlayer(), inventory.getItemInMainHand());
+            var favoriteItem = PermissionUtil.applyFavorite(plugin, player, inventory.getItemInMainHand());
             if (favoriteItem != null) {
                 inventory.setItemInMainHand(favoriteItem);
             } else if (newItem != null) {
@@ -33,16 +37,18 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
+        var excludes = plugin.getConfiguration().getInventory().getShortcut().getExclude();
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || plugin.getCollectionHelper().getItems(event.getItem().getType()).isEmpty() || !event.getPlayer().isSneaking()
+                || plugin.getCollectionHelper().getItems(event.getItem().getType()).isEmpty() || !player.isSneaking()
                 || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
-                || plugin.getConfiguration().getInventory().getShortcut().getExclude().contains(event.getItem().getType().toString())
+                || ListUtil.containsAny(List.of(player.getInventory().getItemInMainHand().getType().toString(),
+                player.getInventory().getItemInOffHand().getType().toString()), excludes)
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
-                && !event.getPlayer().hasPermission(WrapCommand.WRAPS_PERMISSION))) {
+                && !player.hasPermission(WrapCommand.WRAPS_PERMISSION))) {
             return;
         }
         event.setCancelled(true);
-        GuiBuilder.open(plugin, event.getPlayer(), event.getItem());
+        GuiBuilder.open(plugin, player, event.getItem());
     }
 
 }

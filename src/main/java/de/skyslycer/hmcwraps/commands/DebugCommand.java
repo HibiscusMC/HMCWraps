@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
 import de.skyslycer.hmcwraps.debug.DebugCreator;
 import de.skyslycer.hmcwraps.serialization.debug.Debuggable;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -18,6 +19,7 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@NoHelp
 @Command("wraps")
 public class DebugCommand {
 
