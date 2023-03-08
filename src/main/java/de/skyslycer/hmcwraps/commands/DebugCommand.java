@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
 import de.skyslycer.hmcwraps.debug.DebugCreator;
 import de.skyslycer.hmcwraps.serialization.debug.Debuggable;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -30,7 +29,6 @@ public class DebugCommand {
         this.plugin = plugin;
     }
 
-    @NoHelp
     @Subcommand("debug info")
     @Description("Debugs plugin and server information.")
     @AutoComplete("@upload")
@@ -39,7 +37,6 @@ public class DebugCommand {
         uploadAndSend(sender, DebugCreator.createDebugInformation(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
     }
 
-    @NoHelp
     @Subcommand("debug config")
     @Description("Debugs plugin configuration.")
     @AutoComplete("@upload")
@@ -48,7 +45,6 @@ public class DebugCommand {
         uploadAndSend(sender, DebugCreator.createDebugConfig(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
     }
 
-    @NoHelp
     @Subcommand("debug wraps")
     @Description("Debugs wraps and collections.")
     @AutoComplete("@upload")
@@ -57,7 +53,6 @@ public class DebugCommand {
         uploadAndSend(sender, DebugCreator.createDebugWraps(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
     }
 
-    @NoHelp
     @Subcommand("debug wrap")
     @Description("Debugs one wrap.")
     @AutoComplete("@wraps @upload")
@@ -66,7 +61,6 @@ public class DebugCommand {
         uploadAndSend(sender, DebugCreator.createDebugWrap(plugin, wrap), upload != null && upload.equalsIgnoreCase("-upload"));
     }
 
-    @NoHelp
     @Subcommand("debug player")
     @Description("Debugs a player.")
     @AutoComplete("@players @upload")
@@ -75,7 +69,6 @@ public class DebugCommand {
         uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), upload != null && upload.equalsIgnoreCase("-upload"));
     }
 
-    @NoHelp
     @Subcommand("debug log")
     @Description("Uploads a server log.")
     @AutoComplete("@log")
@@ -88,7 +81,6 @@ public class DebugCommand {
         handleLink(sender, DebugCreator.uploadLog(path).orElse(null), "log");
     }
 
-    @NoHelp
     @Subcommand("debug upload")
     @Description("Uploads a configuration file.")
     @AutoComplete("@file")
