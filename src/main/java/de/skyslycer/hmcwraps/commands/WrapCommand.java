@@ -11,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.*;
@@ -54,7 +53,7 @@ public class WrapCommand {
             return;
         }
         var item = player.getInventory().getItemInMainHand();
-        if (item.getType() == Material.AIR) {
+        if (item.getType().isAir()) {
             plugin.getMessageHandler().send(player, Messages.NO_ITEM);
             return;
         }
@@ -108,7 +107,7 @@ public class WrapCommand {
     @AutoComplete("@wraps @players @actions")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
         var item = player.getInventory().getItemInMainHand().clone();
-        if (item.getType() == Material.AIR) {
+        if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
             return;
         }
@@ -134,7 +133,7 @@ public class WrapCommand {
     @AutoComplete("@players @actions")
     public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional String actions) {
         var item = player.getInventory().getItemInMainHand().clone();
-        if (item.getType() == Material.AIR) {
+        if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
             return;
         }
