@@ -34,7 +34,7 @@ dependencies {
     implementation("com.github.Revxrsal.Lamp:common:3.1.1")
     implementation("com.github.Revxrsal.Lamp:bukkit:3.1.1")
     implementation("org.bstats:bstats-bukkit:3.0.0")
-    implementation("com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
+    implementation("com.owen1212055:particlehelper:1.3.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.4") {
         exclude("com.google.code.gson")
     }
