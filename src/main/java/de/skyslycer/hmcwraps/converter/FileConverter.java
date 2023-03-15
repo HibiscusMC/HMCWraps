@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.converter;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
@@ -23,9 +23,9 @@ import java.util.stream.Stream;
 
 public class FileConverter {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public FileConverter(HMCWraps plugin) {
+    public FileConverter(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -33,7 +33,7 @@ public class FileConverter {
         var success = true;
         var collections = new HashMap<String, List<String>>();
         var wrapFiles = new HashMap<String, WrapFile>();
-        try (Stream<Path> paths = Files.find(HMCWraps.CONVERT_PATH, 1, ((filterFile, attributes) -> attributes.isDirectory() && !filterFile.equals(HMCWraps.CONVERT_PATH)))) {
+        try (Stream<Path> paths = Files.find(HMCWrapsPlugin.CONVERT_PATH, 1, ((filterFile, attributes) -> attributes.isDirectory() && !filterFile.equals(HMCWrapsPlugin.CONVERT_PATH)))) {
             for (Path path : paths.toList()) {
                 plugin.getLogger().info("Converting folder: " + path.toString());
                 try {
@@ -52,7 +52,7 @@ public class FileConverter {
             exception.printStackTrace();
             success = false;
         }
-        var generatedPath = HMCWraps.WRAP_FILES_PATH.resolve("generated");
+        var generatedPath = HMCWrapsPlugin.WRAP_FILES_PATH.resolve("generated");
         for (Map.Entry<String, WrapFile> entry : wrapFiles.entrySet()) {
             try {
                 Files.createDirectories(generatedPath);
@@ -70,7 +70,7 @@ public class FileConverter {
             }
         }
         if (!collections.isEmpty()) {
-            var generatedCollectionPath = HMCWraps.COLLECTION_FILES_PATH.resolve("generated");
+            var generatedCollectionPath = HMCWrapsPlugin.COLLECTION_FILES_PATH.resolve("generated");
             try {
                 Files.createDirectories(generatedCollectionPath);
                 var filePath = getUnusedFile(generatedCollectionPath.resolve("collection.yml"));
@@ -106,7 +106,7 @@ public class FileConverter {
                 if (construct.materials.size() == 1) {
                     material = construct.materials.get(0);
                 } else {
-                    var matchingCollections = plugin.getCollections().entrySet().stream()
+                    var matchingCollections = plugin.getWrapsLoader().getCollections().entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
                     var matchingGeneratedCollections = newCollections.entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
@@ -117,7 +117,7 @@ public class FileConverter {
                     } else {
                         var i = 1;
                         var generatedCollection = "GENERATED_COLLECTION_1";
-                        var allCollections = new HashMap<>(plugin.getCollections());
+                        var allCollections = new HashMap<>(plugin.getWrapsLoader().getCollections());
                         allCollections.putAll(newCollections);
                         while (allCollections.containsKey("GENERATED_COLLECTION_" + i)) {
                             generatedCollection = "GENERATED_COLLECTION_" + ++i;
@@ -129,7 +129,7 @@ public class FileConverter {
                 WrappableItem item;
                 if (map.containsKey(material)) {
                     item = map.get(material);
-                    item.getWrapsPrivate().put(item.getWraps().size() + 1 + "", construct.wrap);
+                    item.getWraps().put(item.getWraps().size() + 1 + "", construct.wrap);
                 } else {
                     item = new WrappableItem(new HashMap<>(Map.of("1", construct.wrap)));
                 }
@@ -167,9 +167,8 @@ public class FileConverter {
         }
         var wrap = new Wrap(
                 itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
-                itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null, null,
-                itemSkinsFile.getCustomModelData(), null, null, null, true, file.getName().replace(".yml", ""),
-                physical, itemSkinsFile.getPermission(), null, null, lockedItem, null, null, null, null);
+                itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
+                itemSkinsFile.getCustomModelData(), file.getName().replace(".yml", ""), physical, itemSkinsFile.getPermission(), lockedItem);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
     }
 

@@ -12,15 +12,18 @@ import com.owen1212055.particlehelper.api.particle.types.note.MultiNoteParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
 import com.owen1212055.particlehelper.api.particle.types.vibration.VibrationParticle;
 import com.owen1212055.particlehelper.api.type.Particles;
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.actions.Action;
 import de.skyslycer.hmcwraps.actions.ActionMethod;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
+import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrap;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
+import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.md_5.bungee.api.ChatMessageType;
@@ -29,6 +32,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
@@ -39,9 +43,9 @@ import java.util.LinkedList;
 
 public class DefaultActionRegister {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public DefaultActionRegister(HMCWraps plugin) {
+    public DefaultActionRegister(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -62,6 +66,8 @@ public class DefaultActionRegister {
         registerFilterToggle();
         registerFavorite();
         registerClearFavorites();
+        registerPreview();
+        registerWrap();
     }
 
     private void registerScrollForth() {
@@ -287,15 +293,9 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.SET_FAVORITE, (information -> {
             var player = information.getPlayer();
             var current = plugin.getFavoriteWrapStorage().get(player);
-            var split = information.getArguments().split(" ");
-            IWrap wrap;
-            if (split.length == 1 && plugin.getWraps().get(split[0]) != null) {
-                wrap = plugin.getWraps().get(split[0]);
-            } else if (information instanceof WrapActionInformation wrapInformation) {
-                wrap = wrapInformation.getWrap();
-            } else {
-                return;
-            }
+            var wrap = getWrap(information);
+            if (wrap == null) return;
+
             var collections = plugin.getCollectionHelper();
             (new LinkedList<>(current)).forEach((currentWrap) -> {
                 if (currentWrap.getUuid().equals(wrap.getUuid())) {
@@ -304,9 +304,9 @@ public class DefaultActionRegister {
                 if (!ListUtil.containsAny(collections.getMaterials(collections.getCollection(currentWrap)), collections.getMaterials(collections.getCollection(wrap)))) {
                     return;
                 }
-                if (currentWrap.getModelIdInclude() != null && !ListUtil.containsAny(currentWrap.getModelIdInclude(), wrap.getModelIdInclude())) {
-                    return;
-                } else if (currentWrap.getModelIdExclude() != null && !new HashSet<>(currentWrap.getModelIdExclude()).containsAll(wrap.getModelIdExclude())) {
+                var range = wrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(), new ValueRangeSettings<>()) : wrap.getRange();
+                var currentRange = currentWrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(null, null), new ValueRangeSettings<>(null, null)) : currentWrap.getRange();
+                if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())) {
                     return;
                 }
                 current.remove(currentWrap);
@@ -317,9 +317,67 @@ public class DefaultActionRegister {
         }));
     }
 
+    private <T> boolean isSameRange(ValueRangeSettings<T> first, ValueRangeSettings<T> second) {
+        if (first.getInclude() != null) {
+            if (second.getInclude() != null) {
+                return ListUtil.containsAny(first.getInclude(), second.getInclude());
+            } else if (second.getExclude() != null) {
+                return !new HashSet<>(second.getExclude()).containsAll(first.getInclude());
+            }
+        } else if (first.getExclude() != null) {
+            if (second.getInclude() != null) {
+                return !new HashSet<>(first.getExclude()).containsAll(second.getInclude());
+            } else if (second.getExclude() != null) {
+                return !new HashSet<>(second.getExclude()).containsAll(first.getExclude());
+            }
+        }
+        return true;
+    }
+
     private void registerClearFavorites() {
-        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
-            plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
+        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>())));
+    }
+
+    private void registerPreview() {
+        plugin.getActionHandler().subscribe(Action.PREVIEW, (information -> {
+            var player = information.getPlayer();
+            var wrap = getWrap(information);
+            if (wrap == null) return;
+            if (!wrap.isPreview()) {
+                plugin.getMessageHandler().send(player, Messages.PREVIEW_DISABLED);
+                return;
+            }
+            if (plugin.getConfiguration().getPermissions().isPreviewPermission() && !wrap.hasPermission(player)) {
+                plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+                return;
+            }
+            plugin.getPreviewManager().create(player, (ignored) -> openIfPossible(plugin, information, player), wrap);
+            plugin.getActionHandler().pushPreview(wrap, player);
+        }));
+    }
+
+    private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
+        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItemInMainHand().getType()).isEmpty()
+                && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
+            GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand());
+        }
+    }
+
+    private void registerWrap() {
+        plugin.getActionHandler().subscribe(Action.WRAP, (information -> {
+            var player = information.getPlayer();
+            var wrap = getWrap(information);
+            if (wrap == null) return;
+            if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissions().isPermissionVirtual()) {
+                plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+                return;
+            }
+            var item = player.getInventory().getItemInMainHand();
+            player.getInventory().setItem(EquipmentSlot.HAND, plugin.getWrapper().setWrap(wrap, item, false, player, true));
+            plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
+            plugin.getActionHandler().pushWrap(wrap, player);
+            plugin.getActionHandler().pushVirtualWrap(wrap, player);
+            player.getOpenInventory().close();
         }));
     }
 
@@ -346,6 +404,19 @@ public class DefaultActionRegister {
             string = string.replace("<wrap_id>", wrapInformation.getWrap().getUuid()).replace("<wrap>", wrapInformation.getWrap().getName());
         }
         return string;
+    }
+
+    private Wrap getWrap(ActionInformation information) {
+        var split = information.getArguments().split(" ");
+        Wrap wrap = null;
+        if (split.length == 1 && plugin.getWrapsLoader().getWraps().get(split[0]) != null) {
+            wrap = plugin.getWrapsLoader().getWraps().get(split[0]);
+        } else if (information instanceof WrapActionInformation wrapInformation) {
+            wrap = wrapInformation.getWrap();
+        } else if (information instanceof WrapGuiActionInformation wrapInformation) {
+            wrap = wrapInformation.getWrap();
+        }
+        return wrap;
     }
 
     private String parseMessage(ActionInformation information) {

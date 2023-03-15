@@ -1,15 +1,11 @@
 package de.skyslycer.hmcwraps.util;
 
-import de.skyslycer.hmcwraps.IHMCWraps;
-import de.skyslycer.hmcwraps.messages.Messages;
-import de.skyslycer.hmcwraps.serialization.IWrap;
-import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
+import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class PermissionUtil {
 
@@ -22,7 +18,7 @@ public class PermissionUtil {
      * @param player The player
      * @return If the player has permission to use the wrap on the item
      */
-    static boolean hasPermission(IHMCWraps plugin, IWrap wrap, ItemStack item, Player player) {
+    static boolean hasPermission(HMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
         var wrapper = plugin.getWrapper();
         if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
                 && !wrapper.isOwningPlayer(item, player)) {
@@ -42,8 +38,8 @@ public class PermissionUtil {
      * permission
      */
     @Nullable
-    public static ItemStack hasPermission(IHMCWraps plugin, ItemStack item, Player player) {
-        if (item.getType() == Material.AIR) {
+    public static ItemStack hasPermission(HMCWraps plugin, ItemStack item, Player player) {
+        if (item.getType().isAir()) {
             return null;
         }
         var wrap = plugin.getWrapper().getWrap(item);
@@ -51,72 +47,67 @@ public class PermissionUtil {
             return null;
         }
         if (!hasPermission(plugin, wrap, item, player)) {
-            plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
             return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissions().isPermissionPhysical());
         }
         return null;
     }
 
     /**
-     * Loops through a players inventory and unwraps items the player doesn't have access to.
+     * Loops through a players inventory and unwraps items the player doesn't have access to and apply favorites if possible.
      *
      * @param plugin The plugin
      * @param player The player
      */
-    public static void loopThroughInventory(IHMCWraps plugin, Player player) {
+    public static void loopThroughInventory(HMCWraps plugin, Player player) {
         for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
             var item = player.getInventory().getItem(i);
-            if (item == null) {
+            if (item == null || item.getType().isAir()) {
                 continue;
             }
-            var newItem = hasPermission(plugin, item, player);
-            if (newItem != null) {
-                player.getInventory().setItem(i, newItem);
-            }
+            player.getInventory().setItem(i, check(plugin, player, item));
         }
     }
 
     /**
-     * Apply favorite wraps to all possible items.
+     * Apply a favorite wrap to an item if possible.
      *
      * @param plugin The plugin
      * @param player The player
+     * @param item   The item
+     * @return The item with the favorite wrap applied or the same if no favorite wrap was applied
      */
-    public static void applyFavorites(IHMCWraps plugin, Player player, ItemStack item) {
-        if (!plugin.getConfiguration().getFavorites().isEnabled()) {
-            return;
-        }
-        for (int i = 0; i < player.getInventory().getSize() - 1; i++) {
-            if (!Objects.equals(player.getInventory().getItem(i), item)) {
-                continue;
+    public static ItemStack applyFavorite(HMCWraps plugin, Player player, ItemStack item) {
+        for (WrappableItem wraps : plugin.getCollectionHelper().getItems(item.getType())) {
+            var matchingWrap = wraps.getWraps().values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
+                    .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst();
+            if (matchingWrap.isPresent()) {
+                return plugin.getWrapper().setWrap(matchingWrap.get(), item, false, player, true);
             }
-            var newItem = hasPermission(plugin, item, player);
-            if (newItem != null || plugin.getWrapper().getWrap(item) == null) {
-                int finalI = i;
-                plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
-                        .values().stream().filter(wrap -> plugin.getWrapper().isValidModelId(item, wrap))
-                        .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst().ifPresent(wrap ->
-                                player.getInventory().setItem(finalI, plugin.getWrapper().setWrap(wrap, item, false, player, true))));
-            }
-            break;
         }
-
+        return item;
     }
 
     /**
-     * Checks if a sender has any of the given permissions.
+     * This combines permission checks and favorite wrap applications.
      *
-     * @param sender      The sender to check on
-     * @param permissions The permissions to check for
-     * @return If the sender has any permissions
+     * @param plugin The plugin
+     * @param player The player
+     * @param item   The item
+     * @return The item to set
      */
-    public static boolean hasAnyPermission(CommandSender sender, String... permissions) {
-        for (String permission : permissions) {
-            if (sender.hasPermission(permission)) {
-                return true;
-            }
+    public static ItemStack check(HMCWraps plugin, Player player, ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return item;
         }
-        return false;
+        var itemInHand = item;
+        if (plugin.getWrapper().getWrap(item) == null) {
+            itemInHand = PermissionUtil.applyFavorite(plugin, player, item);
+        }
+        var newItem = PermissionUtil.hasPermission(plugin, itemInHand, player);
+        if (newItem != null) {
+            return newItem;
+        }
+        return itemInHand;
     }
 
 }

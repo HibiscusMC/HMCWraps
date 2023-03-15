@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.10"
     id("org.jetbrains.dokka") version ("1.7.20")
 }
 
@@ -17,18 +17,19 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
-    compileOnly("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.2")
-    compileOnly("dev.triumphteam:triumph-gui:3.1.4")
-    compileOnly("net.kyori:adventure-api:4.12.0")
-    compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
-    compileOnly("net.kyori:adventure-platform-bukkit:4.2.0")
-    compileOnly("org.jetbrains:annotations:23.1.0")
+    compileOnly(depends.spigot)
+    compileOnly(depends.annotations)
+    compileOnly(depends.placeholderapi)
+    compileOnly(libs.packets)
+    compileOnly(libs.gui)
+    compileOnly(libs.bundles.adventure)
+    compileOnly(libs.configurate)
+    compileOnly(libs.nbtapi)
 }
 
 tasks {
@@ -65,7 +66,7 @@ publishing {
                 }
             }
 
-            name = "SkyRepository"
+            name = "HibiscusMC"
             url = uri(publishData.getRepository())
         }
     }
@@ -101,9 +102,9 @@ class PublishData(private val project: Project) {
     fun getRepository(): String = type.repo
 
     enum class Type(private val append: String, val repo: String, private val addCommit: Boolean) {
-        RELEASE("", "https://repo.skyslycer.de/releases/", false),
-        DEV("-DEV", "https://repo.skyslycer.de/development/", true),
-        SNAPSHOT("-SNAPSHOT", "https://repo.skyslycer.de/snapshots/", true);
+        RELEASE("", "https://repo.hibiscusmc.com/releases/", false),
+        DEV("-DEV", "https://repo.hibiscusmc.come/snapshots/", true),
+        SNAPSHOT("-SNAPSHOT", "https://repo.hibiscusmc.com/snapshots/", true);
 
         fun append(name: String, appendCommit: Boolean, commitHash: String): String =
             name.plus(append).plus(if (appendCommit && addCommit) "-".plus(commitHash) else "")

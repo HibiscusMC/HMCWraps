@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.itemhook;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,12 @@ public class DefaultItemHook implements ItemHook {
     @Override
     public int getModelId(String id) {
         return -1;
+    }
+
+    @Override
+    @Nullable
+    public Color getColor(String id) {
+        return null;
     }
 
 }

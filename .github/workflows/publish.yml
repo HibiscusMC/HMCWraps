@@ -23,7 +23,7 @@ jobs:
         run: ./gradlew api:clean api:build --no-daemon --stacktrace
       - name: Publish to Nexus
         if: ${{ env.HAS_TOKEN == 'true' }}
-        run: ./gradlew api:publishMavenPublicationToSkyRepositoryRepository
+        run: ./gradlew api:publishMavenPublicationToHibiscusMCRepository
         env:
           REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
           REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}

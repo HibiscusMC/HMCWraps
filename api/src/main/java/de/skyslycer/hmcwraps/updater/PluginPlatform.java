@@ -18,8 +18,8 @@ public enum PluginPlatform {
     /**
      * Create a new plugin platform.
      *
-     * @param name The name of the platform
-     * @param url The URL of the platform
+     * @param name   The name of the platform
+     * @param url    The URL of the platform
      * @param apiUrl The API URL of the platform
      */
     PluginPlatform(String name, String url, String apiUrl) {

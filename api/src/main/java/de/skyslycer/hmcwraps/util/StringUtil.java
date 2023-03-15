@@ -36,7 +36,7 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string and replace placeholders.
      *
-     * @param message The string to parse
+     * @param message      The string to parse
      * @param placeholders The placeholders
      * @return The parsed component
      */
@@ -49,8 +49,8 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders.
      *
-     * @param sender The sender
-     * @param message The string to parse
+     * @param sender       The sender
+     * @param message      The string to parse
      * @param placeholders The placeholders
      * @return The parsed component
      */
@@ -64,8 +64,8 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders and return a Spigot friendly component.
      *
-     * @param sender The sender
-     * @param message The string to parse
+     * @param sender       The sender
+     * @param message      The string to parse
      * @param placeholders The placeholders
      * @return The BaseComponent array used in Spigot
      */
@@ -76,8 +76,8 @@ public class StringUtil {
     /**
      * Parse MiniMessage from a string, replace placeholders and replace and PlaceholderAPI placeholders and send it to the sender.
      *
-     * @param sender The sender
-     * @param message The string to parse
+     * @param sender       The sender
+     * @param message      The string to parse
      * @param placeholders The placeholders
      */
     public static void send(CommandSender sender, String message, TagResolver... placeholders) {
@@ -156,8 +156,8 @@ public class StringUtil {
     /**
      * Convert short time to seconds. (9h, 20s, 4m)
      *
-     * @param shortTime The short time string
-     * @param minSeconds The minimum amount of seconds
+     * @param shortTime      The short time string
+     * @param minSeconds     The minimum amount of seconds
      * @param defaultSeconds The default seconds when it can't be parsed
      * @return The amount of seconds
      */

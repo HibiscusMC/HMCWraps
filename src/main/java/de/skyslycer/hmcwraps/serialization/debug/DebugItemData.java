@@ -1,6 +1,5 @@
 package de.skyslycer.hmcwraps.serialization.debug;
 
-import de.skyslycer.hmcwraps.serialization.IWrapValues;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 
 import java.util.UUID;
@@ -14,7 +13,7 @@ public class DebugItemData implements Debuggable {
     private String physicalWrapper;
     private Wrap.WrapValues wrapValues;
 
-    public DebugItemData(boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper, String physicalWrapper, IWrapValues wrapValues) {
+    public DebugItemData(boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper, String physicalWrapper, Wrap.WrapValues wrapValues) {
         this.physical = physical;
         this.wrap = wrap;
         this.owningPlayer = owningPlayer;

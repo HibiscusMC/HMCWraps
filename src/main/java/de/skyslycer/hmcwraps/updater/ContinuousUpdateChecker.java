@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.updater;
 
-import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,14 +11,14 @@ public class ContinuousUpdateChecker {
     private static final int SPIGOT_ID = 107099;
     private static final int POLYMART_ID = 3216;
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
     private PluginUpdater updater;
     private long lastResultTime = 0;
     private CheckResult lastResult;
     private BukkitTask task;
 
-    public ContinuousUpdateChecker(HMCWraps plugin) {
+    public ContinuousUpdateChecker(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -34,14 +34,14 @@ public class ContinuousUpdateChecker {
             if (result != null) {
                 plugin.getLogger().warning(String.format(
                         """
-                        
-                        ++++++++++++++++++++++++++++++
-                        + There is a new update for HMCWraps available!
-                        + Please download it as soon as possible for possible fixes and new features.
-                        + Current version: %s | Latest version: %s
-                        + SpigotMC: %s
-                        + Polymart: %s
-                        ++++++++++++++++++++++++++++++""",
+                                                        
+                                ++++++++++++++++++++++++++++++
+                                + There is a new update for HMCWraps available!
+                                + Please download it as soon as possible for possible fixes and new features.
+                                + Current version: %s | Latest version: %s
+                                + SpigotMC: %s
+                                + Polymart: %s
+                                ++++++++++++++++++++++++++++++""",
                         plugin.getDescription().getVersion(), result.version(),
                         String.format(PluginPlatform.SPIGOT_MC.url(), SPIGOT_ID), String.format(PluginPlatform.POLYMART.url(), POLYMART_ID)));
                 Bukkit.getOnlinePlayers().forEach(player -> checkPlayer(player, result));
@@ -77,11 +77,11 @@ public class ContinuousUpdateChecker {
         }
         var component = StringUtil.parseComponent(player, String.format(
                 """
-                
-                <gray>There is a new version of <green><bold>HMCWraps</bold></green> available!
-                <gray>Current version: <red>%s</red> | Latest version: <green>%s</green>
-                <gray>Download it on <gold><hover:show_text:"<blue>Click to open!"><click:open_url:%s>SpigotMC</gold> or <gold><hover:show_text:"<blue>Click to open!"><click:open_url:%s>Polymart</gold>!
-                """, plugin.getDescription().getVersion(), result.version(),
+                                        
+                        <gray>There is a new version of <green><bold>HMCWraps</bold></green> available!
+                        <gray>Current version: <red>%s</red> | Latest version: <green>%s</green>
+                        <gray>Download it on <gold><hover:show_text:"<blue>Click to open!"><click:open_url:%s>SpigotMC</gold> or <gold><hover:show_text:"<blue>Click to open!"><click:open_url:%s>Polymart</gold>!
+                        """, plugin.getDescription().getVersion(), result.version(),
                 String.format(PluginPlatform.SPIGOT_MC.url(), SPIGOT_ID), String.format(PluginPlatform.POLYMART.url(), POLYMART_ID)));
         StringUtil.sendComponent(player, component);
     }

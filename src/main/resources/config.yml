@@ -67,10 +67,6 @@ items:
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
-        # If this list contains anything, this wrap will only be able to wrap items with any of the specified model ids
-        model-id-include: []
-        # If this list contains anything, this wrap will only be able to wrap items that don't have any of the specified model ids
-        model-id-exclude: []
         # Item actions, all possible action triggers are listed below. For a full list of actions, see the wiki.
         # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
         # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
@@ -186,6 +182,11 @@ preservation:
     original-enabled: false
     default-enabled: false
     defaults: { }
+  # I think you get the idea
+  lore:
+    original-enabled: false
+    default-enabled: false
+    defaults: { }
 
 # The version checker configuration
 updater:
@@ -198,8 +199,12 @@ updater:
 
 # The inventory (/wraps)
 inventory:
-  # If the shortcut to open the wrap inventory when shift & right-clicking and should be enabled
-  open-shortcut: true
+  # Shortcut settings
+  shortcut:
+    # If the shortcut to open the wrap inventory when shift & right-clicking should be enabled
+    enabled: true
+    # What items can't be used to open the inventory
+    exclude: [ ]
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
@@ -207,7 +212,13 @@ inventory:
   # How many rows the inventory should have
   rows: 6
   # Actions executed when clicking a wrap
-  actions: {}
+  actions:
+    left:
+      WRAP:
+        - ''
+    right:
+      PREVIEW:
+        - ''
   # The slot to set the item the player is holding to (-1 to disable)
   target-item-slot: 49
   # The set items in the inventory, every empty slot will be filled with wraps

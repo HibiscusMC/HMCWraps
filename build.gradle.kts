@@ -2,7 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 
 plugins {
     java
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("xyz.jpenilla.run-paper") version "2.0.1"
 }
@@ -22,29 +22,31 @@ repositories {
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.bytecode.space/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven-public/")
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 dependencies {
     implementation(project(":api"))
-    implementation("com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
-    implementation("net.kyori:adventure-api:4.12.0")
-    implementation("net.kyori:adventure-text-minimessage:4.12.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.2.0")
-    implementation("com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
-    implementation("com.github.Revxrsal.Lamp:common:3.1.1")
-    implementation("com.github.Revxrsal.Lamp:bukkit:3.1.1")
-    implementation("org.bstats:bstats-bukkit:3.0.0")
-    implementation("com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
-    implementation("dev.triumphteam:triumph-gui:3.1.4") {
-        exclude("com.google.code.gson")
-    }
-    implementation("org.spongepowered:configurate-yaml:4.1.2") {
+    implementation(libs.packets)
+    implementation(libs.bundles.adventure)
+    implementation(libs.configupdater)
+    implementation(libs.bundles.lamp)
+    implementation(libs.bstats)
+    implementation(libs.particles)
+    implementation(libs.gui)
+    implementation(libs.nbtapi)
+    implementation(libs.configurate) {
         exclude("org.yaml")
     }
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.2")
-    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
+    implementation(libs.mclogs) {
+        exclude("com.google.code.gson")
+    }
+    compileOnly(depends.spigot)
+    compileOnly(depends.placeholderapi)
+    compileOnly(depends.oraxen)
+    compileOnly(depends.itemsadder)
+    compileOnly(depends.mythicmobs)
 }
 
 java {
@@ -61,6 +63,7 @@ tasks {
         relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
+        relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
         relocate("kotlin", "$shadePattern.kotlin")
 
         exclude("com/google/**")
@@ -88,11 +91,11 @@ tasks {
 }
 
 bukkit {
-    main = "de.skyslycer.hmcwraps.HMCWraps"
+    main = "de.skyslycer.hmcwraps.HMCWrapsPlugin"
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
-    authors = listOf("Skyslycer")
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen")
+    author = "Skyslycer"
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs")
     apiVersion = "1.17"
     permissions {
         register("hmcwraps.admin") {
@@ -146,6 +149,7 @@ bukkit {
         }
         register("hmcwraps.debug") {
             description = "Gives access to debug commands."
+            children = listOf("hmcwraps.admin")
         }
     }
 }

@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.util;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,8 +26,8 @@ public class PlayerUtil {
     public static Location getLookBlock(Player player) {
         var twoBlocks = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone().multiply(2)).subtract(0, 0.5, 0), player);
         var oneBlock = fixLocation(player.getEyeLocation().add(player.getLocation().getDirection().clone()).subtract(0, 0.5, 0), player);
-        if (oneBlock.getWorld().getBlockAt(oneBlock).getType() == Material.AIR) {
-            if (twoBlocks.getWorld().getBlockAt(twoBlocks).getType() == Material.AIR) {
+        if (oneBlock.getWorld().getBlockAt(oneBlock).getType().isAir()) {
+            if (twoBlocks.getWorld().getBlockAt(twoBlocks).getType().isAir()) {
                 return twoBlocks;
             }
             return oneBlock;

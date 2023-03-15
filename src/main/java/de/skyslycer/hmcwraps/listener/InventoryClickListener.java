@@ -1,20 +1,19 @@
 package de.skyslycer.hmcwraps.listener;
 
-import de.skyslycer.hmcwraps.HMCWraps;
-import de.skyslycer.hmcwraps.serialization.IWrappableItem;
+import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class InventoryClickListener implements Listener {
 
-    private final HMCWraps plugin;
+    private final HMCWrapsPlugin plugin;
 
-    public InventoryClickListener(HMCWraps plugin) {
+    public InventoryClickListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -22,22 +21,18 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, player), 1L);
+        if (event.getClickedInventory() != player.getInventory()) {
+            return;
+        }
 
         switch (event.getAction()) {
-            case MOVE_TO_OTHER_INVENTORY -> {
-                if (event.getClickedInventory() != event.getWhoClicked().getInventory() && event.getCurrentItem() != null) {
-                    runFavorites(event.getCurrentItem().clone(), player);
-                }
-            }
-            case PLACE_ALL, PLACE_ONE, PLACE_SOME, SWAP_WITH_CURSOR -> {
-                if (event.getClickedInventory() == event.getWhoClicked().getInventory() && event.getCursor() != null) {
-                    runFavorites(event.getCursor().clone(), player);
-                }
+            case PLACE_ALL, PLACE_SOME, PLACE_ONE -> {
+                var slot = event.getRawSlot();
+                Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().setItem(slot, PermissionUtil.check(plugin, player, player.getInventory().getItem(slot))), 1);
             }
         }
 
-        if (event.getCursor() == null || event.getClickedInventory() != event.getWhoClicked().getInventory() || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
+        if (event.getCursor() == null || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
             return;
         }
 
@@ -65,14 +60,14 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        var wrap = plugin.getWraps().get(wrapId);
+        var wrap = plugin.getWrapsLoader().getWraps().get(wrapId);
         if (wrap == null) {
             return;
         }
         var finalCursor = cursor;
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
                 .isPermissionPhysical())) {
-            for (IWrappableItem wrappableItem : plugin.getCollectionHelper().getItems(target.getType())) {
+            for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(target.getType())) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true,
                             player, true));
@@ -84,10 +79,6 @@ public class InventoryClickListener implements Listener {
                 }
             }
         }
-    }
-
-    private void runFavorites(ItemStack target, Player player) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.applyFavorites(plugin, player, target), 1L);
     }
 
 }
