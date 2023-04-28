@@ -187,6 +187,11 @@ preservation:
     original-enabled: false
     default-enabled: false
     defaults: { }
+  # Now with flags
+  flags:
+    original-enabled: false
+    default-enabled: false
+    defaults: { }
 
 # The version checker configuration
 updater:

@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -41,6 +42,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalColorKey;
     private final NamespacedKey originalNameKey;
     private final NamespacedKey originalLoreKey;
+    private final NamespacedKey originalFlagsKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -53,6 +55,7 @@ public class WrapperImpl implements Wrapper {
         originalColorKey = new NamespacedKey(plugin, "original-color");
         originalNameKey = new NamespacedKey(plugin, "original-name");
         originalLoreKey = new NamespacedKey(plugin, "original-lore");
+        originalFlagsKey = new NamespacedKey(plugin, "original-flags");
     }
 
     @Override
@@ -93,6 +96,7 @@ public class WrapperImpl implements Wrapper {
         var originalName = meta.getDisplayName();
         var originalModelId = -1;
         var originalLore = meta.getLore();
+        var originalFlags = meta.getItemFlags().stream().toList();
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
@@ -106,6 +110,9 @@ public class WrapperImpl implements Wrapper {
             if (wrap.getWrapLore() != null) {
                 var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
                 meta.setLore(lore);
+            }
+            if (wrap.getFlags() != null) {
+                meta.addItemFlags(wrap.getFlags().toArray(ItemFlag[]::new));
             }
             if (wrap.getColor() != null && meta instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
@@ -121,6 +128,8 @@ public class WrapperImpl implements Wrapper {
             meta.setDisplayName(originalData.name());
             meta.setCustomModelData(originalData.modelId());
             meta.setLore(originalData.lore());
+            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
@@ -133,7 +142,7 @@ public class WrapperImpl implements Wrapper {
         if (wrap == null || currentWrap != null) {
             return editing;
         }
-        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore));
+        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore, originalFlags));
     }
 
     @Override
@@ -192,7 +201,7 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public WrapValues getOriginalData(ItemStack item) {
-        return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item), getOriginalLore(item));
+        return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item), getOriginalLore(item), getOriginalFlags(item));
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -287,6 +296,43 @@ public class WrapperImpl implements Wrapper {
         return color;
     }
 
+    private List<ItemFlag> getOriginalFlags(ItemStack item) {
+        var settings = plugin.getConfiguration().getPreservation().getFlags();
+        var list = new ArrayList<ItemFlag>();
+        var meta = item.getItemMeta();
+        if (settings.isOriginalEnabled()) {
+            var data = meta.getPersistentDataContainer().get(originalFlagsKey, PersistentDataType.STRING);
+            if (data != null) {
+                var flags = data.split(SEPARATOR);
+                for (String flag : flags) {
+                    try {
+                        list.add(ItemFlag.valueOf(flag));
+                    } catch (IllegalArgumentException ignored) { }
+                }
+            }
+        } else if (settings.isDefaultEnabled()) {
+            var map = settings.getDefaults();
+            if (map.containsKey(item.getType().toString())) {
+                for (String flag : map.get(item.getType().toString())) {
+                    try {
+                        list.add(ItemFlag.valueOf(flag));
+                    } catch (IllegalArgumentException ignored) { }
+                }
+            }
+            for (String key : map.keySet()) {
+                if (plugin.getCollectionHelper().getMaterials(key).contains(item.getType())) {
+                    for (String flag : map.get(key)) {
+                        try {
+                            list.add(ItemFlag.valueOf(flag));
+                        } catch (IllegalArgumentException ignored) { }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+
     @Override
     public ItemStack setOriginalData(ItemStack item, WrapValues wrapValues) {
         var editing = item.clone();
@@ -301,6 +347,10 @@ public class WrapperImpl implements Wrapper {
         if (wrapValues.lore() != null) {
             meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING,
                     wrapValues.lore().stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
+        }
+        if (wrapValues.flags() != null) {
+            meta.getPersistentDataContainer().set(originalFlagsKey, PersistentDataType.STRING,
+                    wrapValues.flags().stream().map(ItemFlag::toString).collect(Collectors.joining(SEPARATOR)));
         }
         editing.setItemMeta(meta);
         return editing;
