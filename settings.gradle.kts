@@ -14,7 +14,7 @@ dependencyResolutionManagement {
         create("libs") {
             library("packets", "com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT")
             library("particles", "com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
-            library("configupdater", "com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT")
+            library("configupdater", "com.tchristofferson:ConfigUpdater:2.1-SNAPSHOT")
             library("bstats", "org.bstats:bstats-bukkit:3.0.1")
             library("gui", "dev.triumphteam:triumph-gui:3.1.4")
             library("configurate", "org.spongepowered:configurate-yaml:4.1.2")

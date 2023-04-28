@@ -24,9 +24,6 @@ import java.util.List;
 
 public class GuiBuilder {
 
-    private static final String MAGIC_IDENTIFIER = "Sn6sma";
-    private static final int RANDOM_MODEL_ID = Integer.MAX_VALUE - 7239462;
-
     public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
@@ -36,28 +33,19 @@ public class GuiBuilder {
             gui = Gui.paginated()
                     .title(StringUtil.parseComponent(player, inventory.getTitle()))
                     .rows(inventory.getRows())
-                    .pageSize((inventory.getRows() * 9) - inventory.getItems().size())
                     .create();
         } else {
             gui = Gui.scrolling().scrollType(ScrollType.VERTICAL)
                     .title(StringUtil.parseComponent(player, inventory.getTitle()))
                     .rows(inventory.getRows())
-                    .pageSize((inventory.getRows() * 9) - inventory.getItems().size())
                     .create();
         }
 
-        populateStatic(plugin, player, inventory, gui);
         populate(plugin, item, player, gui);
+        populateStatic(plugin, player, inventory, gui);
         setItemToSlot(gui, plugin, item);
-
         gui.setDefaultClickAction(click -> click.setCancelled(true));
         gui.open(player);
-        for (int i = 0; i < gui.getRows() * 9; i++) {
-            var playerInventory = player.getOpenInventory().getTopInventory();
-            if (isEmptyItem(playerInventory.getItem(i))) {
-                playerInventory.setItem(i, new ItemStack(Material.AIR));
-            }
-        }
     }
 
     private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui) {
@@ -68,7 +56,7 @@ public class GuiBuilder {
                 fills.addAll(serializableItem.getFills());
             }
             if (serializableItem.getId().equals("AIR") || serializableItem.getId().equals("EMPTY")) {
-                gui.setItem(fills, getEmptyItem());
+                gui.setItem(fills, new GuiItem(Material.AIR));
                 return;
             }
             ItemStack stack = serializableItem.toItem(plugin, player);
@@ -120,16 +108,6 @@ public class GuiBuilder {
                     });
                     gui.addItem(guiItem);
                 }));
-    }
-
-    private static GuiItem getEmptyItem() {
-        return new GuiItem(ItemBuilder.from(Material.CAVE_SPIDER_SPAWN_EGG).name(Component.text(MAGIC_IDENTIFIER)).model(RANDOM_MODEL_ID).build());
-    }
-
-    private static boolean isEmptyItem(ItemStack item) {
-        return item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() &&
-                item.getItemMeta().getDisplayName().equals(MAGIC_IDENTIFIER) && item.getItemMeta().hasCustomModelData()
-                && item.getItemMeta().getCustomModelData() == RANDOM_MODEL_ID;
     }
 
     private static void setItemToSlot(PaginatedGui gui, HMCWrapsPlugin plugin, ItemStack target) {

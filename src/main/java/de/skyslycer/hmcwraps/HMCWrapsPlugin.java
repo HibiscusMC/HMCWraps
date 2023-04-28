@@ -178,7 +178,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
             ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
-                    "preservation.model-id.defaults", "preservation.color.defaults", "preservation.name.defaults", "unwrapper", "inventory.actions", "inventory.shortcut.exclude");
+                    "preservation.model-id", "preservation.color", "preservation.name", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
         } catch (IOException exception) {

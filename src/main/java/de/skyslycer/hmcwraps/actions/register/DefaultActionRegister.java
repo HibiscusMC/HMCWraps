@@ -285,7 +285,7 @@ public class DefaultActionRegister {
     private void registerFilterToggle() {
         plugin.getActionHandler().subscribe(Action.TOGGLE_FILTER, information -> {
             plugin.getFilterStorage().set(information.getPlayer(), !plugin.getFilterStorage().get(information.getPlayer()));
-            GuiBuilder.open(plugin, information.getPlayer(), information.getPlayer().getInventory().getItemInMainHand());
+            openIfPossible(plugin, information, information.getPlayer());
         });
     }
 
