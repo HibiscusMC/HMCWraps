@@ -112,7 +112,11 @@ public class WrapperImpl implements Wrapper {
                 meta.setLore(lore);
             }
             if (wrap.getFlags() != null) {
-                meta.addItemFlags(wrap.getFlags().toArray(ItemFlag[]::new));
+                for (String flag : wrap.getFlags()) {
+                    try {
+                        meta.addItemFlags(ItemFlag.valueOf(flag));
+                    } catch (IllegalArgumentException ignored) { }
+                }
             }
             if (wrap.getColor() != null && meta instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
