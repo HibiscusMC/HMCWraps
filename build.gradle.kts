@@ -75,6 +75,12 @@ tasks {
         exclude("assets/mappings/block/**")
         exclude("assets/mappings/particle/**")
         exclude("assets/mappings/potion/**")
+        exclude("lamp_pt.properties")
+        exclude("lamp_it.properties")
+        exclude("lamp_fr.properties")
+        exclude("lamp-bukkit_pt.properties")
+        exclude("lamp-bukkit_it.properties")
+        exclude("lamp-bukkit_fr.properties")
 
         archiveClassifier.set("")
         minimize()
