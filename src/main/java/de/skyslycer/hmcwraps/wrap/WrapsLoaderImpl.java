@@ -59,7 +59,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
         wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
             if (wrappableItems.containsKey(type)) {
                 var current = wrappableItems.get(type);
-                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
+                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(String.valueOf(current.getWraps().size() + 1), wrap));
                 wrappableItems.put(type, current);
             } else {
                 wrappableItems.put(type, wrappableItem);
