@@ -56,7 +56,7 @@ java {
 tasks {
     shadowJar {
         relocate("net.kyori", "$shadePattern.kyori")
-        relocate("com.tchristofferson.configupdater", "$shadePattern.configupdater")
+        relocate("com.bgsoftware.common.config", "$shadePattern.configupdater")
         relocate("revxrsal.commands", "$shadePattern.commands")
         relocate("dev.triumphteam.gui", "$shadePattern.gui")
         relocate("org.spongepowered.configurate", "$shadePattern.config")
@@ -67,7 +67,8 @@ tasks {
         relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
         relocate("kotlin", "$shadePattern.kotlin")
         relocate("gs.mclo.java", "$shadePattern.mclogs")
-        relocate("org", "$shadePattern.annotations")
+        relocate("org.intellij", "$shadePattern.annotations")
+        relocate("org.jetbrains", "$shadePattern.annotations")
         relocate("io.leangen", "$shadePattern.leangen")
 
         exclude("com/google/**")

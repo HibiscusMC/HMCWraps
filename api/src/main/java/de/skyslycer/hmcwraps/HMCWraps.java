@@ -44,6 +44,14 @@ public interface HMCWraps extends Plugin {
      * Log an error that stands out from other system messages.
      *
      * @param message The message to display
+     * @param thrown  The exception that was thrown (null if none)
+     */
+    void logSevere(String message, Throwable thrown);
+
+    /**
+     * Log an error that stands out from other system messages.
+     *
+     * @param message The message to display
      */
     void logSevere(String message);
 

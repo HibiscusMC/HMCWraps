@@ -84,14 +84,11 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     }
                 } catch (ConfigurateException exception) {
                     plugin.logSevere(
-                            "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!");
-                    exception.printStackTrace();
+                            "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!", exception);
                 }
             });
         } catch (IOException exception) {
-            plugin.logSevere(
-                    "Could not find the wrap files (please report this to the developers)!");
-            exception.printStackTrace();
+            plugin.logSevere("Could not find the wrap files (please report this to the developers)!", exception);
         }
     }
 
@@ -109,14 +106,11 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     }
                 } catch (ConfigurateException exception) {
                     plugin.logSevere(
-                            "Could not load the collection file " + path.getFileName().toString() + " (please report this to the developers)!");
-                    exception.printStackTrace();
+                            "Could not load the collection file " + path.getFileName().toString() + " (please report this to the developers)!", exception);
                 }
             });
         } catch (IOException exception) {
-            plugin.logSevere(
-                    "Could not find the wrap files (please report this to the developers)!");
-            exception.printStackTrace();
+            plugin.logSevere("Could not find the wrap files (please report this to the developers)!", exception);
         }
     }
 

@@ -30,15 +30,13 @@ public class MessageHandlerImpl implements MessageHandler {
         try {
             fallback = new PropertyResourceBundle(HMCWrapsPlugin.class.getClassLoader().getResource("messages.properties").openStream());
         } catch (IOException | NullPointerException exception) {
-            plugin.logSevere("An error occurred while trying to load the fallback messages (please report this to the developers):");
-            exception.printStackTrace();
+            plugin.logSevere("An error occurred while trying to load the fallback messages (please report this to the developers):", exception);
         }
 
         try {
             bundle = new PropertyResourceBundle(Files.newInputStream(path));
         } catch (IOException exception) {
-            plugin.logSevere("An error occurred while trying to load the messages (please report this to the developers):");
-            exception.printStackTrace();
+            plugin.logSevere("An error occurred while trying to load the messages (please report this to the developers):", exception);
         }
 
         if (bundle == null && fallback == null) {
@@ -71,14 +69,12 @@ public class MessageHandlerImpl implements MessageHandler {
                     try {
                         Files.writeString(path, '\n' + line, StandardOpenOption.APPEND);
                     } catch (IOException exception) {
-                        plugin.logSevere("Could not append the following line: \n" + line);
-                        exception.printStackTrace();
+                        plugin.logSevere("Could not append the following line: \n" + line, exception);
                     }
                 }
             });
         } catch (Exception exception) {
-            plugin.logSevere("Could not load the message files to update them!");
-            exception.printStackTrace();
+            plugin.logSevere("Could not load the message files to update them!", exception);
         }
     }
 

@@ -117,6 +117,8 @@ items:
           lore:
             - '<green>Apply this to an item to wrap it!'
 
+# A wrap with a collection as the id can be applied to all items in that collection.
+# All the items in the collection need to have the same custom model data for that wrap.
 collections:
   SWORDS:
     - 'NETHERITE_SWORD'
