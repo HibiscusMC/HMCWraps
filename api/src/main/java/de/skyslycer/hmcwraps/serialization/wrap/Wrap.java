@@ -8,6 +8,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -129,7 +130,7 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name, List<String> lore) {
+    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags) {
     }
 
 }

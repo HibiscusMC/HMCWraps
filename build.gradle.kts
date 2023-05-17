@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.3.1"
+version = "1.3.2"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -61,10 +61,14 @@ tasks {
         relocate("dev.triumphteam.gui", "$shadePattern.gui")
         relocate("org.spongepowered.configurate", "$shadePattern.config")
         relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
+        relocate("io.github.retrooper.packetevents", "$shadePattern.packets.io")
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
         relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
         relocate("kotlin", "$shadePattern.kotlin")
+        relocate("gs.mclo.java", "$shadePattern.mclogs")
+        relocate("org", "$shadePattern.annotations")
+        relocate("io.leangen", "$shadePattern.leangen")
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")
@@ -86,7 +90,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.19.3")
+        minecraftVersion("1.19.4")
     }
 }
 

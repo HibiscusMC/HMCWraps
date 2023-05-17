@@ -100,7 +100,7 @@ public class PermissionUtil {
             return item;
         }
         var itemInHand = item;
-        if (plugin.getWrapper().getWrap(item) == null) {
+        if (plugin.getWrapper().getWrap(item) == null && plugin.getConfiguration().getFavorites().isEnabled()) {
             itemInHand = PermissionUtil.applyFavorite(plugin, player, item);
         }
         var newItem = PermissionUtil.hasPermission(plugin, itemInHand, player);

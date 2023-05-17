@@ -7,6 +7,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import dev.triumphteam.gui.guis.BaseGui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
@@ -68,6 +69,11 @@ public class WrapCommand {
     @CommandPermission(RELOAD_PERMISSION)
     @Description("Reload configuration and messages.")
     public void onReload(CommandSender sender) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof BaseGui) {
+                player.closeInventory();
+            }
+        }
         plugin.unload();
         plugin.load();
         plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD);

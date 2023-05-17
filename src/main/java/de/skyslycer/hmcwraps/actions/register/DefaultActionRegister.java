@@ -271,7 +271,7 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "command", "say HMCWraps")) return;
             var player = information.getPlayer();
-            Bukkit.dispatchCommand(player, parseCommand(information));
+            player.chat(parseCommand(information));
         });
     }
 
@@ -285,7 +285,7 @@ public class DefaultActionRegister {
     private void registerFilterToggle() {
         plugin.getActionHandler().subscribe(Action.TOGGLE_FILTER, information -> {
             plugin.getFilterStorage().set(information.getPlayer(), !plugin.getFilterStorage().get(information.getPlayer()));
-            GuiBuilder.open(plugin, information.getPlayer(), information.getPlayer().getInventory().getItemInMainHand());
+            openIfPossible(plugin, information, information.getPlayer());
         });
     }
 
@@ -391,8 +391,8 @@ public class DefaultActionRegister {
 
     private String parseCommand(ActionInformation information) {
         var string = parseMessage(information);
-        if (string.startsWith("/")) {
-            string = string.substring(1);
+        if (!string.startsWith("/")) {
+            string = "/" + string;
         }
         return string;
     }
