@@ -4,11 +4,11 @@ plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.0.1"
+    id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "de.skyslycer"
-version = "1.3.1"
+version = "1.3.2"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -56,20 +56,31 @@ java {
 tasks {
     shadowJar {
         relocate("net.kyori", "$shadePattern.kyori")
-        relocate("com.tchristofferson.configupdater", "$shadePattern.configupdater")
+        relocate("com.bgsoftware.common.config", "$shadePattern.configupdater")
         relocate("revxrsal.commands", "$shadePattern.commands")
         relocate("dev.triumphteam.gui", "$shadePattern.gui")
         relocate("org.spongepowered.configurate", "$shadePattern.config")
         relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
+        relocate("io.github.retrooper.packetevents", "$shadePattern.packets.io")
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
         relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
         relocate("kotlin", "$shadePattern.kotlin")
+        relocate("gs.mclo.java", "$shadePattern.mclogs")
+        relocate("org.intellij", "$shadePattern.annotations")
+        relocate("org.jetbrains", "$shadePattern.annotations")
+        relocate("io.leangen", "$shadePattern.leangen")
 
         exclude("com/google/**")
         exclude("assets/mappings/block/**")
         exclude("assets/mappings/particle/**")
         exclude("assets/mappings/potion/**")
+        exclude("lamp_pt.properties")
+        exclude("lamp_it.properties")
+        exclude("lamp_fr.properties")
+        exclude("lamp-bukkit_pt.properties")
+        exclude("lamp-bukkit_it.properties")
+        exclude("lamp-bukkit_fr.properties")
 
         archiveClassifier.set("")
         minimize()
@@ -86,7 +97,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.19.3")
+        minecraftVersion("1.19.4")
     }
 }
 

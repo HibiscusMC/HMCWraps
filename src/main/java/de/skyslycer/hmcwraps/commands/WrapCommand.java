@@ -7,10 +7,12 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import dev.triumphteam.gui.guis.BaseGui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.*;
@@ -68,9 +70,20 @@ public class WrapCommand {
     @CommandPermission(RELOAD_PERMISSION)
     @Description("Reload configuration and messages.")
     public void onReload(CommandSender sender) {
-        plugin.unload();
-        plugin.load();
-        plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD);
+        var current = System.nanoTime();
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof BaseGui) {
+                player.closeInventory();
+            }
+        }
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            plugin.unload();
+            plugin.load();
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD,
+                    Placeholder.parsed("time", String.format("%.2f", (System.nanoTime() - current) / 1_000_000.0)),
+                    Placeholder.parsed("wraps", String.valueOf(plugin.getWrapsLoader().getWraps().size())),
+                    Placeholder.parsed("collections", String.valueOf(plugin.getWrapsLoader().getCollections().size())));
+        }, 0L);
     }
 
     @Subcommand("convert")

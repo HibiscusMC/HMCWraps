@@ -21,7 +21,7 @@
     </a>
     <br>
     <a href="https://repo.skyslycer.de/#/releases/de/skyslycer/hmcwraps/api">
-        <img alt="version" src="https://img.shields.io/maven-metadata/v?color=orange&label=version&metadataUrl=https%3A%2F%2Frepo.skyslycer.de%2Freleases%2Fde%2Fskyslycer%2Fhmcwraps%2Fapi%2Fmaven-metadata.xml&style=for-the-badge"/>
+        <img alt="version" src="https://img.shields.io/maven-metadata/v?color=orange&label=version&metadataUrl=https%3A%2F%2Frepo.hibiscusmc.com%2Freleases%2Fde%2Fskyslycer%2Fhmcwraps%2Fapi%2Fmaven-metadata.xml&style=for-the-badge"/>
     </a>
 </p>
 

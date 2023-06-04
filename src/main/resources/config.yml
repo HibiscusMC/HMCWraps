@@ -117,6 +117,8 @@ items:
           lore:
             - '<green>Apply this to an item to wrap it!'
 
+# A wrap with a collection as the id can be applied to all items in that collection.
+# All the items in the collection need to have the same custom model data for that wrap.
 collections:
   SWORDS:
     - 'NETHERITE_SWORD'
@@ -163,7 +165,7 @@ preservation:
     # If the model id should be restored after it gets unwrapped from before the item got wrapped
     # NOTE: If there is an original model id stored on the item, that will get preferred over original model ids
     # NOTE: Disabling both options will result in all items ending up with the model id '-1' when unwrapped
-    original-enabled: false
+    original-enabled: true
     # If the model id should be set to the id below when the item is unwrapped
     default-enabled: false
     # The default model ids for items that get unwrapped
@@ -174,17 +176,22 @@ preservation:
       IRON_SHOVEL: 0
   # Basically the same as model-id preservation, but with the color
   color:
-    original-enabled: false
+    original-enabled: true
     default-enabled: false
     defaults: { }
   # Still the same, but with the name
   name:
-    original-enabled: false
+    original-enabled: true
     default-enabled: false
     defaults: { }
   # I think you get the idea
   lore:
-    original-enabled: false
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
+  # Now with flags
+  flags:
+    original-enabled: true
     default-enabled: false
     defaults: { }
 
