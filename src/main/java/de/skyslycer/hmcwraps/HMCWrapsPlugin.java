@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps;
 
+import com.bgsoftware.common.config.CommentedConfiguration;
 import com.github.retrooper.packetevents.PacketEvents;
-import com.tchristofferson.configupdater.ConfigUpdater;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
@@ -124,8 +125,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             try {
                 Files.createDirectory(PLUGIN_PATH);
             } catch (IOException exception) {
-                logSevere("Could not create the folder (please report this to the developers)! The plugin will shut down now.");
-                exception.printStackTrace();
+                logSevere("Could not create the folder (please report this to the developers)! The plugin will shut down now.", exception);
                 return false;
             }
         }
@@ -152,8 +152,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             }
         } catch (IOException exception) {
             logSevere(
-                    "Could not copy the configuration (please report this to the developers)! The plugin will shut down now.");
-            exception.printStackTrace();
+                    "Could not copy the configuration (please report this to the developers)! The plugin will shut down now.", exception);
             return false;
         }
         messageHandler = new MessageHandlerImpl(this);
@@ -177,14 +176,12 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             if (Files.notExists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
-            ConfigUpdater.update(this, "config.yml", CONFIG_PATH.toFile(), "items", "inventory.items", "collections",
-                    "preservation.model-id.defaults", "preservation.color.defaults", "preservation.name.defaults", "unwrapper", "inventory.actions", "inventory.shortcut.exclude");
+            CommentedConfiguration.loadConfiguration(CONFIG_PATH.toFile()).syncWithConfig(CONFIG_PATH.toFile(), getResource("config.yml"),
+                    "items", "inventory.items", "collections", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
         } catch (IOException exception) {
-            logSevere(
-                    "Could not load the configuration (please report this to the developers)! The plugin will shut down now.");
-            exception.printStackTrace();
+            logSevere("Could not load the configuration (please report this to the developers)! The plugin will shut down now.", exception);
             return false;
         }
         return true;
@@ -208,12 +205,23 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     }
 
     @Override
+    public void logSevere(String message, Throwable thrown) {
+        if (thrown != null) {
+            getLogger().log(Level.SEVERE,
+                    "\n=============================\n" +
+                            message + "\n" +
+                            "=============================", thrown);
+        } else {
+            getLogger().log(Level.SEVERE,
+                    "\n=============================\n" +
+                            message + "\n" +
+                            "=============================");
+        }
+    }
+
+    @Override
     public void logSevere(String message) {
-        getLogger().severe(
-                "\n=============================\n" +
-                        message + "\n" +
-                        "============================="
-        );
+        logSevere(message, null);
     }
 
     @Override

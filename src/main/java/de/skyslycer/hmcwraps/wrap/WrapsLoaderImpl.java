@@ -59,7 +59,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
         wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
             if (wrappableItems.containsKey(type)) {
                 var current = wrappableItems.get(type);
-                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(current.getWraps().size() + 1 + "", wrap));
+                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(String.valueOf(current.getWraps().size() + 1), wrap));
                 wrappableItems.put(type, current);
             } else {
                 wrappableItems.put(type, wrappableItem);
@@ -84,14 +84,11 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     }
                 } catch (ConfigurateException exception) {
                     plugin.logSevere(
-                            "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!");
-                    exception.printStackTrace();
+                            "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!", exception);
                 }
             });
         } catch (IOException exception) {
-            plugin.logSevere(
-                    "Could not find the wrap files (please report this to the developers)!");
-            exception.printStackTrace();
+            plugin.logSevere("Could not find the wrap files (please report this to the developers)!", exception);
         }
     }
 
@@ -109,14 +106,11 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     }
                 } catch (ConfigurateException exception) {
                     plugin.logSevere(
-                            "Could not load the collection file " + path.getFileName().toString() + " (please report this to the developers)!");
-                    exception.printStackTrace();
+                            "Could not load the collection file " + path.getFileName().toString() + " (please report this to the developers)!", exception);
                 }
             });
         } catch (IOException exception) {
-            plugin.logSevere(
-                    "Could not find the wrap files (please report this to the developers)!");
-            exception.printStackTrace();
+            plugin.logSevere("Could not find the wrap files (please report this to the developers)!", exception);
         }
     }
 

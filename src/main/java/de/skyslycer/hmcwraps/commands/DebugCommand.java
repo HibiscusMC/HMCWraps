@@ -109,8 +109,7 @@ public class DebugCommand {
             handleLink(sender, DebugCreator.upload(contents, type).orElse(null), path.getFileName().toString());
         } catch (Exception exception) {
             StringUtil.sendComponent(sender, Component.text("Failed to upload file! Please check the console.").color(NamedTextColor.RED));
-            plugin.logSevere("Failed to upload file " + path + "!");
-            exception.printStackTrace();
+            plugin.logSevere("Failed to upload file " + path + "!", exception);
         }
     }
 

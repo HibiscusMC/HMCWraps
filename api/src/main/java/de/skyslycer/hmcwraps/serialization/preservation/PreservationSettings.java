@@ -11,6 +11,7 @@ public class PreservationSettings {
     private ValuePreservationSettings<String> color;
     private ValuePreservationSettings<String> name;
     private ValuePreservationSettings<List<String>> lore;
+    private ValuePreservationSettings<List<String>> flags;
 
     public ValuePreservationSettings<Integer> getModelId() {
         return modelId;
@@ -26,6 +27,10 @@ public class PreservationSettings {
 
     public ValuePreservationSettings<List<String>> getLore() {
         return lore;
+    }
+
+    public ValuePreservationSettings<List<String>> getFlags() {
+        return flags;
     }
 
 }
