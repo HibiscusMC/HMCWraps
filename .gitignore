@@ -3,3 +3,5 @@
 build
 api/build
 run
+bin
+api/bin

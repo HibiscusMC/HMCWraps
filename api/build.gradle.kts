@@ -1,8 +1,8 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.8.21"
-    id("org.jetbrains.dokka") version ("1.8.10")
+    kotlin("jvm") version "1.8.22"
+    id("org.jetbrains.dokka") version ("1.8.20")
 }
 
 group = "de.skyslycer.hmcwraps"
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.10")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20")
     compileOnly(depends.spigot)
     compileOnly(depends.annotations)
     compileOnly(depends.placeholderapi)

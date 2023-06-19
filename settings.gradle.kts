@@ -4,7 +4,7 @@ include("api")
 dependencyResolutionManagement {
     versionCatalogs {
         create("depends") {
-            library("spigot", "org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
+            library("spigot", "org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
             library("placeholderapi", "me.clip:placeholderapi:2.11.2")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.2.5")
@@ -19,7 +19,7 @@ dependencyResolutionManagement {
             library("gui", "dev.triumphteam:triumph-gui:3.1.5")
             library("configurate", "org.spongepowered:configurate-yaml:4.1.2")
             library("mclogs", "com.github.aternosorg:mclogs-java:v2.2.0")
-            library("nbtapi", "de.tr7zw:item-nbt-api:2.11.1")
+            library("nbtapi", "de.tr7zw:item-nbt-api:2.11.3")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
