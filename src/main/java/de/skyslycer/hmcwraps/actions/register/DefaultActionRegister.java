@@ -278,7 +278,7 @@ public class DefaultActionRegister {
     private void registerConsoleCommand() {
         plugin.getActionHandler().subscribe(Action.CONSOLE_COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "console command", "kill <player>")) return;
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information).substring(1));
         });
     }
 
