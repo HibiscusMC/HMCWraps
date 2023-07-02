@@ -6,7 +6,7 @@ public class DebugConfig extends Config implements Debuggable {
 
     public DebugConfig(Config config) {
         super(config.getUpdater(), config.getPermissions(), config.getPreview(), config.getFavorites(), config.getInventory(), config.getUnwrapper(),
-                config.getPreservation(), null, null, config.getFilter());
+                config.getPreservation(), null, null, config.getFilter(), config.getWrapping());
     }
 
 }

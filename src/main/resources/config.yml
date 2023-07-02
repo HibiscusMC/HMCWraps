@@ -204,6 +204,16 @@ updater:
   # Where the version checker should check for updates (POLYMART, SPIGOT_MC)
   platform: 'POLYMART'
 
+# Settings related to wrapping
+wrapping:
+  # If wraps should be able to be rewrapped (wrapped again while wrapped)
+  rewrap:
+    # If rewrapping should be enabled for...
+    # ...virtual wrapping
+    virtual-enabled: true
+    # ...physical wrapping
+    physical-enabled: true
+
 # The inventory (/wraps)
 inventory:
   # Shortcut settings

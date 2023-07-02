@@ -10,6 +10,7 @@ public enum Messages {
     REMOVE_WRAP("remove-wrap"),
     NO_ITEM("no-item"),
     NO_WRAPS("no-wraps"),
+    NO_REWRAP("no-rewrap"),
     INVENTORY_FILTER_ACTIVE("inventory.filter.active"),
     INVENTORY_FILTER_INACTIVE("inventory.filter.inactive"),
     PREVIEW_DISABLED("preview.disabled"),

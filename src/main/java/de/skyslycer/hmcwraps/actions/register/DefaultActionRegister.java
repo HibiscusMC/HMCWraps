@@ -373,6 +373,10 @@ public class DefaultActionRegister {
                 return;
             }
             var item = player.getInventory().getItemInMainHand();
+            if (!plugin.getConfiguration().getWrapping().getRewrap().isVirtualEnabled() && plugin.getWrapper().getWrap(item) != null) {
+                plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
+                return;
+            }
             player.getInventory().setItem(EquipmentSlot.HAND, plugin.getWrapper().setWrap(wrap, item, false, player, true));
             plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
             plugin.getActionHandler().pushWrap(wrap, player);

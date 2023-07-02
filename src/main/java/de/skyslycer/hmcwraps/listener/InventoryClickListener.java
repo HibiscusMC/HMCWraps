@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.Bukkit;
@@ -69,6 +70,10 @@ public class InventoryClickListener implements Listener {
                 .isPermissionPhysical())) {
             for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(target.getType())) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
+                    if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && plugin.getWrapper().getWrap(target) != null) {
+                        plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
+                        return;
+                    }
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true,
                             player, true));
                     plugin.getActionHandler().pushWrap(wrap, player);

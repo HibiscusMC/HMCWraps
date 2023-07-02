@@ -26,7 +26,7 @@ public class DebugCreator {
     private static final String DEBUG_URL = "https://paste.skyslycer.de/%s";
 
     public static DebugConfig createDebugConfig(HMCWrapsPlugin plugin) {
-        return new DebugConfig((Config) plugin.getConfiguration());
+        return new DebugConfig(plugin.getConfiguration());
     }
 
     public static DebugInformation createDebugInformation(HMCWrapsPlugin plugin) {

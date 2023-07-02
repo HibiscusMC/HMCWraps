@@ -8,6 +8,7 @@ import de.skyslycer.hmcwraps.serialization.preservation.PreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
 import de.skyslycer.hmcwraps.serialization.updater.UpdaterSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
+import de.skyslycer.hmcwraps.serialization.wrapping.WrappingSettings;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 public class Config {
 
     private UpdaterSettings updater;
+    private WrappingSettings wrapping;
     @Setting("permission-settings")
     private PermissionSettings permissions;
     private PreviewSettings preview;
@@ -32,7 +34,7 @@ public class Config {
 
     public Config(UpdaterSettings updater, PermissionSettings permissions, PreviewSettings preview, Toggleable favorites,
                   Inventory inventory, SerializableItem unwrapper, PreservationSettings preservation, Map<String, WrappableItem> items,
-                  Map<String, List<String>> collections, FilterSettings filter) {
+                  Map<String, List<String>> collections, FilterSettings filter, WrappingSettings wrapping) {
         this.updater = updater;
         this.permissions = permissions;
         this.preview = preview;
@@ -43,6 +45,7 @@ public class Config {
         this.items = items;
         this.collections = collections;
         this.filter = filter;
+        this.wrapping = wrapping;
     }
 
     public Config() {
@@ -50,6 +53,10 @@ public class Config {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public WrappingSettings getWrapping() {
+        return wrapping;
     }
 
     public SerializableItem getUnwrapper() {
