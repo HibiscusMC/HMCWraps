@@ -24,6 +24,9 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         var player = event.getPlayer();
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK && plugin.getPreviewManager().isPreviewing(player)) {
+            plugin.getPreviewManager().remove(player.getUniqueId(), false);
+        }
         if (player.getInventory().getItemInMainHand().getType().isAir()) {
             return;
         }

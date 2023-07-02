@@ -6,6 +6,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class UpdaterSettings extends Toggleable {
+
     private String frequency;
     private PluginPlatform platform;
 

@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.messages.Messages;
+import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.Bukkit;
@@ -23,6 +24,13 @@ public class InventoryClickListener implements Listener {
         var player = (Player) event.getWhoClicked();
 
         if (event.getClickedInventory() != player.getInventory()) {
+            return;
+        }
+
+        // Avoid possible issues such as client server inventory desync when moving a desynced inventory
+        if (plugin.getPreviewManager().isPreviewing(player) && plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
+            plugin.getPreviewManager().remove(player.getUniqueId(), false);
+            event.setCancelled(true);
             return;
         }
 

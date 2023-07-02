@@ -2,6 +2,9 @@ package de.skyslycer.hmcwraps.preview;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
+import de.skyslycer.hmcwraps.preview.floating.FloatingPreview;
+import de.skyslycer.hmcwraps.preview.hand.HandPreview;
+import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -58,7 +61,12 @@ public class PreviewManager {
 
 
     private void createPrivate(Player player, ItemStack item, Consumer<Player> onClose) {
-        var preview = new Preview(player, item, onClose, plugin);
+        Preview preview;
+        if (plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
+            preview = new HandPreview(player, item, onClose, plugin);
+        } else {
+            preview = new FloatingPreview(player, item, onClose, plugin);
+        }
         previews.put(player.getUniqueId(), preview);
         preview.preview();
     }
@@ -70,6 +78,16 @@ public class PreviewManager {
      */
     public void removeAll(boolean open) {
         previews.keySet().forEach(uuid -> this.remove(uuid, open));
+    }
+
+    /**
+     * Check if a player is previewing.
+     *
+     * @param player The player
+     * @return If the player is previewing
+     */
+    public boolean isPreviewing(Player player) {
+        return previews.containsKey(player.getUniqueId());
     }
 
 }

@@ -99,6 +99,8 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDropListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerHitEntityListener(this), this);
 
         PacketEvents.getAPI().init();
 

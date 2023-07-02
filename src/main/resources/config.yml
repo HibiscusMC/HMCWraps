@@ -17,6 +17,10 @@ permission-settings:
 
 # Preview settings
 preview:
+  # The type of the preview, either 'FLOATING' or 'HAND', floating being the item turning in the air and
+  # item being the players item in hand turning into the wrap temporarily.
+  # When using 'HAND', rotation and bobbing will be ignored. (The preview item is client-side only)
+  type: 'FLOATING'
   # Duration of the preview in seconds
   duration: 5
   # Rotation per tick (50ms)
