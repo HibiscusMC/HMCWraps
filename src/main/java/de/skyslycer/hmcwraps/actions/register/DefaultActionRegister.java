@@ -93,13 +93,18 @@ public class DefaultActionRegister {
     private void registerUnwrap() {
         plugin.getActionHandler().subscribe(Action.UNWRAP, (actionInformation) -> {
             var player = actionInformation.getPlayer();
-            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItemInMainHand());
-            player.getInventory().setItemInMainHand(plugin.getWrapper().removeWrap(player.getInventory().getItemInMainHand(), player, true));
-            player.getOpenInventory().close();
+            var slot = getSlot(actionInformation);
+            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItem(slot));
+            player.getInventory().setItem(slot, plugin.getWrapper().removeWrap(player.getInventory().getItem(slot), player, true));
             plugin.getMessageHandler().send(player, Messages.REMOVE_WRAP);
             if (wrap != null) {
                 plugin.getActionHandler().pushUnwrap(wrap, player);
                 plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
+            }
+            if (plugin.getConfiguration().getInventory().isItemChangeEnabled()) {
+                openIfPossible(plugin, actionInformation, player);
+            } else {
+                player.closeInventory();
             }
         });
     }
@@ -357,9 +362,10 @@ public class DefaultActionRegister {
     }
 
     private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
-        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItemInMainHand().getType()).isEmpty()
+        var slot = getSlot(information);
+        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItem(slot).getType()).isEmpty()
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
-            GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand());
+            GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
         }
     }
 
@@ -367,21 +373,26 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.WRAP, (information -> {
             var player = information.getPlayer();
             var wrap = getWrap(information);
+            var slot = getSlot(information);
             if (wrap == null) return;
             if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissions().isPermissionVirtual()) {
                 plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                 return;
             }
-            var item = player.getInventory().getItemInMainHand();
+            var item = player.getInventory().getItem(slot);
             if (!plugin.getConfiguration().getWrapping().getRewrap().isVirtualEnabled() && plugin.getWrapper().getWrap(item) != null) {
                 plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
                 return;
             }
-            player.getInventory().setItem(EquipmentSlot.HAND, plugin.getWrapper().setWrap(wrap, item, false, player, true));
+            player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
             plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
             plugin.getActionHandler().pushWrap(wrap, player);
             plugin.getActionHandler().pushVirtualWrap(wrap, player);
-            player.getOpenInventory().close();
+            if (plugin.getConfiguration().getInventory().isItemChangeEnabled()) {
+                openIfPossible(plugin, information, player);
+            } else {
+                player.closeInventory();
+            }
         }));
     }
 
@@ -421,6 +432,18 @@ public class DefaultActionRegister {
             wrap = wrapInformation.getWrap();
         }
         return wrap;
+    }
+
+    private int getSlot(ActionInformation information) {
+        int slot;
+        if (information instanceof GuiActionInformation guiInformation) {
+            slot = guiInformation.getSlot();
+        } else if (information instanceof WrapGuiActionInformation wrapInformation) {
+            slot = wrapInformation.getSlot();
+        } else {
+            slot = information.getPlayer().getInventory().getHeldItemSlot();
+        }
+        return slot;
     }
 
     private String parseMessage(ActionInformation information) {

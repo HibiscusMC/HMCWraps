@@ -11,6 +11,7 @@ import java.util.Map;
 public class Inventory {
 
     private ShortcutSettings shortcut;
+    private boolean itemChangeEnabled;
     private String title;
     private Type type;
     private int rows;
@@ -45,6 +46,10 @@ public class Inventory {
     @Nullable
     public HashMap<String, HashMap<String, List<String>>> getActions() {
         return actions;
+    }
+
+    public boolean isItemChangeEnabled() {
+        return itemChangeEnabled;
     }
 
     public enum Type {

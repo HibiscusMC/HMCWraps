@@ -8,11 +8,13 @@ public class GuiActionInformation implements ActionInformation {
     private PaginatedGui gui;
     private Player player;
     private String arguments;
+    private int slot;
 
-    public GuiActionInformation(Player player, String arguments, PaginatedGui gui) {
+    public GuiActionInformation(Player player, String arguments, PaginatedGui gui, int slot) {
         this.player = player;
         this.arguments = arguments;
         this.gui = gui;
+        this.slot = slot;
     }
 
     @Override
@@ -27,6 +29,14 @@ public class GuiActionInformation implements ActionInformation {
 
     public PaginatedGui getGui() {
         return gui;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
     @Override

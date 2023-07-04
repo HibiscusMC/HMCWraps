@@ -51,7 +51,7 @@ public class PlayerInteractListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        GuiBuilder.open(plugin, player, newItem);
+        GuiBuilder.open(plugin, player, newItem, player.getInventory().getHeldItemSlot());
     }
 
 }

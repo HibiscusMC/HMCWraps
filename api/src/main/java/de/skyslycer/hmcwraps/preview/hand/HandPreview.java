@@ -1,9 +1,6 @@
 package de.skyslycer.hmcwraps.preview.hand;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerHeldItemChange;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
@@ -13,7 +10,6 @@ import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;

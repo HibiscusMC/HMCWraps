@@ -63,7 +63,8 @@ public class WrapCommand {
             plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             return;
         }
-        GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand());
+        var slot = player.getInventory().getHeldItemSlot();
+        GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
     }
 
     @Subcommand("reload")

@@ -4,6 +4,7 @@ import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
+import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.components.ScrollType;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class GuiBuilder {
 
-    public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item) {
+    public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         var inventory = plugin.getConfiguration().getInventory();
@@ -39,14 +40,27 @@ public class GuiBuilder {
                     .create();
         }
 
-        populate(plugin, item, player, gui);
-        populateStatic(plugin, player, inventory, gui);
+        populate(plugin, item, player, gui, slot);
+        populateStatic(plugin, player, inventory, gui, slot);
         setItemToSlot(gui, plugin, item);
-        gui.setDefaultClickAction(click -> click.setCancelled(true));
+        gui.setDefaultClickAction(click -> {
+            click.setCancelled(true);
+            if (click.getClickedInventory() == player.getInventory()) {
+                var clicked = click.getCurrentItem();
+                if (clicked == null || clicked.getType().isAir()) {
+                    return;
+                }
+                if (plugin.getCollectionHelper().getItems(clicked.getType()).isEmpty()) {
+                    plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+                    return;
+                }
+                GuiBuilder.open(plugin, player, click.getCurrentItem(), click.getSlot());
+            }
+        });
         gui.open(player);
     }
 
-    private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui) {
+    private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui, int slot) {
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
             var fills = new ArrayList<Integer>();
             fills.add(inventorySlot);
@@ -60,7 +74,7 @@ public class GuiBuilder {
             ItemStack stack = serializableItem.toItem(plugin, player);
             GuiItem guiItem = new GuiItem(stack);
             if (serializableItem.getActions() != null) {
-                guiItem.setAction(event -> actions(plugin, new GuiActionInformation(player, "", gui), serializableItem.getActions(), event));
+                guiItem.setAction(event -> actions(plugin, new GuiActionInformation(player, "", gui, slot), serializableItem.getActions(), event));
             }
             gui.setItem(fills, guiItem);
         });
@@ -89,7 +103,7 @@ public class GuiBuilder {
         }
     }
 
-    private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui) {
+    private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui, int slot) {
         plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
                 .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
@@ -97,11 +111,10 @@ public class GuiBuilder {
                     if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
                         wrapItem.setType(item.getType());
                     }
-
                     var guiItem = new GuiItem(wrapItem);
                     guiItem.setAction(click -> {
                         if (plugin.getConfiguration().getInventory().getActions() != null) {
-                            actions(plugin, new WrapGuiActionInformation(gui, wrap, player, ""), plugin.getConfiguration().getInventory().getActions(), click);
+                            actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), plugin.getConfiguration().getInventory().getActions(), click);
                         }
                     });
                     gui.addItem(guiItem);

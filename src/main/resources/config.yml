@@ -226,6 +226,9 @@ inventory:
     enabled: true
     # What items can't be used to open the inventory
     exclude: [ ]
+  # If the player should be able to switch the wrapping item in the inventory.
+  # When enabled, the inventory won't close after wrapping or unwrapping.
+  item-change-enabled: true
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
