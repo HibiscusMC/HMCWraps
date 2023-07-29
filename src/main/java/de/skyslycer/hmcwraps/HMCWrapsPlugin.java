@@ -6,8 +6,18 @@ import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
 import de.skyslycer.hmcwraps.converter.FileConverter;
-import de.skyslycer.hmcwraps.itemhook.*;
-import de.skyslycer.hmcwraps.listener.*;
+import de.skyslycer.hmcwraps.itemhook.HookAccessor;
+import de.skyslycer.hmcwraps.itemhook.ItemHook;
+import de.skyslycer.hmcwraps.itemhook.ItemsAdderItemHook;
+import de.skyslycer.hmcwraps.itemhook.MythicItemHook;
+import de.skyslycer.hmcwraps.itemhook.OraxenItemHook;
+import de.skyslycer.hmcwraps.listener.InventoryClickListener;
+import de.skyslycer.hmcwraps.listener.PlayerDropListener;
+import de.skyslycer.hmcwraps.listener.PlayerHitEntityListener;
+import de.skyslycer.hmcwraps.listener.PlayerInteractListener;
+import de.skyslycer.hmcwraps.listener.PlayerJoinListener;
+import de.skyslycer.hmcwraps.listener.PlayerPickupListener;
+import de.skyslycer.hmcwraps.listener.PlayerShiftListener;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
 import de.skyslycer.hmcwraps.messages.MessageHandlerImpl;
 import de.skyslycer.hmcwraps.metrics.PluginMetrics;
@@ -22,18 +32,16 @@ import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
-import de.skyslycer.hmcwraps.wrap.*;
+import de.skyslycer.hmcwraps.wrap.CollectionHelper;
+import de.skyslycer.hmcwraps.wrap.CollectionHelperImpl;
+import de.skyslycer.hmcwraps.wrap.Wrapper;
+import de.skyslycer.hmcwraps.wrap.WrapperImpl;
+import de.skyslycer.hmcwraps.wrap.WrapsLoader;
+import de.skyslycer.hmcwraps.wrap.WrapsLoaderImpl;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashSet;
@@ -41,6 +49,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
@@ -167,6 +181,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             if (Files.notExists(WRAP_FILES_PATH)) {
                 Files.createDirectory(WRAP_FILES_PATH);
                 Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
+            }
+            if (Files.notExists(WRAP_FILES_PATH)) {
+                Files.createDirectory(WRAP_FILES_PATH);
+                Files.copy(getResource("emerald_wraps.yml"), WRAP_FILES_PATH.resolve("emerald_wraps.yml"));
             }
             if (Files.notExists(COLLECTION_FILES_PATH)) {
                 Files.createDirectory(COLLECTION_FILES_PATH);

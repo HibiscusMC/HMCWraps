@@ -11,13 +11,12 @@ import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import de.skyslycer.hmcwraps.wrap.WrapsLoader;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public interface HMCWraps extends Plugin {
 
@@ -26,6 +25,7 @@ public interface HMCWraps extends Plugin {
     Path WRAP_FILES_PATH = PLUGIN_PATH.resolve("wraps");
     Path MESSAGES_PATH = PLUGIN_PATH.resolve("messages.properties");
     Path CONVERT_PATH = PLUGIN_PATH.resolve("convert");
+    Path COMMAND_PATH = WRAP_FILES_PATH.resolve("command");
     Path COLLECTION_FILES_PATH = PLUGIN_PATH.resolve("collections");
 
     /**
