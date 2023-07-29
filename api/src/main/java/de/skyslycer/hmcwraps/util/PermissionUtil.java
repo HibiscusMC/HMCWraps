@@ -64,7 +64,11 @@ public class PermissionUtil {
             if (item == null || item.getType().isAir()) {
                 continue;
             }
-            player.getInventory().setItem(i, check(plugin, player, item));
+            var updatedItem = check(plugin, player, item);
+            if (updatedItem.equals(item)) {
+                continue;
+            }
+            player.getInventory().setItem(i, updatedItem);
         }
     }
 

@@ -37,7 +37,11 @@ public class InventoryClickListener implements Listener {
         switch (event.getAction()) {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE -> {
                 var slot = event.getRawSlot();
-                Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().setItem(slot, PermissionUtil.check(plugin, player, player.getInventory().getItem(slot))), 1);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
+                    if (updatedItem.equals(player.getInventory().getItem(slot))) return;
+                    player.getInventory().setItem(slot, updatedItem);
+                }, 1);
             }
         }
 
