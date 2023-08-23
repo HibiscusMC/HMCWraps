@@ -162,5 +162,9 @@ bukkit {
             description = "Gives access to debug commands."
             children = listOf("hmcwraps.admin")
         }
+        register("hmcwraps.commands.create") {
+            description = "Gives access to the create command."
+            children = listOf("hmcwraps.admin")
+        }
     }
 }

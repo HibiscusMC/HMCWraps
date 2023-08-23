@@ -8,6 +8,12 @@ import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.guis.BaseGui;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
@@ -15,16 +21,15 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import revxrsal.commands.annotation.*;
+import revxrsal.commands.annotation.AutoComplete;
+import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.Default;
+import revxrsal.commands.annotation.Description;
+import revxrsal.commands.annotation.Optional;
+import revxrsal.commands.annotation.Range;
+import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.help.CommandHelp;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @Command("wraps")
 public class WrapCommand {
@@ -37,6 +42,7 @@ public class WrapCommand {
     public static final String GIVE_UNWRAPPER_PERMISSION = "hmcwraps.commands.give.unwrapper";
     public static final String PREVIEW_PERMISSION = "hmcwraps.commands.preview";
     public static final String LIST_PERMISSION = "hmcwraps.commands.list";
+    public static final String CREATE_PERMISSION = "hmcwraps.commands.create";
     public static final String WRAPS_PERMISSION = "hmcwraps.wraps";
 
     private final Set<String> confirmingPlayers = new HashSet<>();
@@ -242,11 +248,19 @@ public class WrapCommand {
         sender.spigot().sendMessage(BungeeComponentSerializer.get().serialize(component));
     }
 
+    @Subcommand("create")
+    @Description("Create a wrap from an item in hand!")
+    @CommandPermission(CREATE_PERMISSION)
+    public void onCreate(Player player, String file, String uuid) {
+        var item = player.getInventory().getItemInMainHand();
+        var meta = item.getItemMeta();
+    }
+
     @Subcommand("help")
     @Description("Shows the help page.")
     public void onHelp(CommandSender sender, CommandHelp<String> helpEntries) {
         plugin.getMessageHandler().send(sender, Messages.COMMAND_HELP_HEADER);
-        Supplier<Stream<String>> filteredEntries = () -> helpEntries.paginate(1, 100).stream().filter(string -> !string.equals(""));
+        Supplier<Stream<String>> filteredEntries = () -> helpEntries.paginate(1, 100).stream().filter(string -> !string.isEmpty());
         if (filteredEntries.get().findAny().isEmpty()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_HELP_NO_PERMISSION);
         } else {
