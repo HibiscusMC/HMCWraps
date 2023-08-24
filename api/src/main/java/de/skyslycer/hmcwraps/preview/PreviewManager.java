@@ -61,6 +61,7 @@ public class PreviewManager {
 
 
     private void createPrivate(Player player, ItemStack item, Consumer<Player> onClose) {
+        this.remove(player.getUniqueId(), false);
         Preview preview;
         if (plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             preview = new HandPreview(player, item, onClose, plugin);
