@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.configuration.ConfigTransformations;
+import de.skyslycer.hmcwraps.configuration.WrapFileTransformations;
 import de.skyslycer.hmcwraps.serialization.Toggleable;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
@@ -75,10 +77,13 @@ public class WrapsLoaderImpl implements WrapsLoader {
                 ((path, attributes) -> attributes.isRegularFile() && (path.toString().endsWith(".yml") || path.toString().endsWith(".yaml"))))) {
             paths.forEach(path -> {
                 try {
-                    var wrapFile = YamlConfigurationLoader.builder()
+                    var loader = YamlConfigurationLoader.builder()
                             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                             .path(path)
-                            .build().load().get(WrapFile.class);
+                            .build();
+                    loader.save(WrapFileTransformations.updateNode(loader.load()));
+                    var wrapFile = loader.load().get(WrapFile.class);
+
                     if (wrapFile != null && wrapFile.isEnabled()) {
                         wrapFiles.add(wrapFile);
                     }

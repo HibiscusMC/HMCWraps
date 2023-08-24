@@ -21,7 +21,6 @@ public class Config {
 
     private UpdaterSettings updater;
     private WrappingSettings wrapping;
-    @Setting("permission-settings")
     private PermissionSettings permissions;
     private PreviewSettings preview;
     private Toggleable favorites;

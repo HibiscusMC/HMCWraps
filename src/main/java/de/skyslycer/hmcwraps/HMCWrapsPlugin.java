@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
+import de.skyslycer.hmcwraps.configuration.ConfigTransformations;
 import de.skyslycer.hmcwraps.converter.FileConverter;
 import de.skyslycer.hmcwraps.itemhook.HookAccessor;
 import de.skyslycer.hmcwraps.itemhook.ItemHook;
@@ -196,6 +197,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             if (Files.notExists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
+            LOADER.save(ConfigTransformations.updateNode(LOADER.load()));
             CommentedConfiguration.loadConfiguration(CONFIG_PATH.toFile()).syncWithConfig(CONFIG_PATH.toFile(), getResource("config.yml"),
                     "items", "inventory.items", "collections", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);

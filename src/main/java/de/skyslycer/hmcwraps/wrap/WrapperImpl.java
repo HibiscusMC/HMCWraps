@@ -125,8 +125,8 @@ public class WrapperImpl implements Wrapper {
             } else {
                 editing.setItemMeta(meta);
             }
-            if (wrap.getNbt() != null) {
-                editing = WrapNBTUtil.wrap(editing, wrap.getNbt());
+            if (wrap.getWrapNbt() != null) {
+                editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
         } else {
             meta.setDisplayName(originalData.name());
