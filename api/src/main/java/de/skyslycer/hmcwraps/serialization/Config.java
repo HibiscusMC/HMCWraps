@@ -10,7 +10,6 @@ import de.skyslycer.hmcwraps.serialization.updater.UpdaterSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.serialization.wrapping.WrappingSettings;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.HashMap;
 import java.util.List;

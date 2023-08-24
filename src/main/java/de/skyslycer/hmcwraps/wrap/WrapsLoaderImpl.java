@@ -2,7 +2,6 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.configuration.ConfigTransformations;
 import de.skyslycer.hmcwraps.configuration.WrapFileTransformations;
 import de.skyslycer.hmcwraps.serialization.Toggleable;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;

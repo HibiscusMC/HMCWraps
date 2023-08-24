@@ -2,6 +2,10 @@ package de.skyslycer.hmcwraps.serialization.item;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NbtApiException;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -31,9 +35,10 @@ public class SerializableItem {
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
     private @Nullable String color;
+    private @Nullable String nbt;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color) {
+                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color, @Nullable String nbt) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -43,6 +48,7 @@ public class SerializableItem {
         this.enchantments = enchantments;
         this.amount = amount;
         this.color = color;
+        this.nbt = nbt;
     }
 
     public SerializableItem() {
@@ -85,7 +91,19 @@ public class SerializableItem {
         if (Boolean.TRUE.equals(isGlow())) {
             builder.glow();
         }
-        return builder.build();
+        var item = builder.build();
+        if (getNbt() != null) {
+            try {
+                new NBTContainer(getNbt());
+            } catch (NbtApiException e) {
+                Bukkit.getLogger().warning("A provided NBT data is invalid in an item!");
+            }
+            var itemNbt = new NBTItem(item);
+            var newNbt = NBT.parseNBT(getNbt());
+            itemNbt.mergeCompound(newNbt);
+            item = itemNbt.getItem();
+        }
+        return item;
     }
 
     public String getId() {
@@ -134,6 +152,11 @@ public class SerializableItem {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getColorFromHook(getId());
         }
         return StringUtil.colorFromString(color);
+    }
+
+    @Nullable
+    public String getNbt() {
+        return nbt;
     }
 
 }
