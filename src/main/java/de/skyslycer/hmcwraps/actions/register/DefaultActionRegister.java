@@ -32,7 +32,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
@@ -309,9 +308,11 @@ public class DefaultActionRegister {
                 if (!ListUtil.containsAny(collections.getMaterials(collections.getCollection(currentWrap)), collections.getMaterials(collections.getCollection(wrap)))) {
                     return;
                 }
-                var range = wrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(), new ValueRangeSettings<>()) : wrap.getRange();
-                var currentRange = currentWrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(null, null), new ValueRangeSettings<>(null, null)) : currentWrap.getRange();
-                if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())) {
+                var range = wrap.getRange() == null ? RangeSettings.empty() : wrap.getRange();
+                var currentRange = currentWrap.getRange() == null ? RangeSettings.empty() : currentWrap.getRange();
+                if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())
+                        || !isSameRange(range.getOraxen(), currentRange.getOraxen()) || !isSameRange(range.getItemsAdder(), currentRange.getItemsAdder())
+                        || !isSameRange(range.getMythic(), currentRange.getMythic())) {
                     return;
                 }
                 current.remove(currentWrap);
