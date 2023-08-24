@@ -35,7 +35,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
                 @Nullable String permission, @Nullable SerializableItem lockedItem) {
-        super(id, name, glow, lore, null, modelId, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null, null);
         this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
