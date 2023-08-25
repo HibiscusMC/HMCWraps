@@ -89,7 +89,7 @@ public class FileConverter {
         return success;
     }
 
-    public FolderConstruct loadFolder(Path path, Map<String, List<String>> collections) throws Exception {
+    FolderConstruct loadFolder(Path path, Map<String, List<String>> collections) throws Exception {
         var file = path.toFile();
         if (!file.exists() || !file.isDirectory()) {
             return null;
@@ -110,9 +110,9 @@ public class FileConverter {
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
                     var matchingGeneratedCollections = newCollections.entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
-                    if (matchingCollections.size() >= 1) {
+                    if (!matchingCollections.isEmpty()) {
                         material = matchingCollections.stream().findFirst().get().getKey();
-                    } else if (matchingGeneratedCollections.size() >= 1) {
+                    } else if (!matchingGeneratedCollections.isEmpty()) {
                         material = matchingGeneratedCollections.stream().findFirst().get().getKey();
                     } else {
                         var i = 1;
@@ -139,7 +139,7 @@ public class FileConverter {
         }
     }
 
-    public ConvertConstruct convert(Path path) throws ConfigurateException {
+    ConvertConstruct convert(Path path) throws ConfigurateException {
         var file = path.toFile();
         if (!file.exists() || file.isDirectory()) {
             return null;
