@@ -15,6 +15,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigSerializable
 public class Wrap extends SerializableItem {
@@ -41,6 +42,14 @@ public class Wrap extends SerializableItem {
         this.physical = physical;
         this.permission = permission;
         this.lockedItem = lockedItem;
+    }
+
+    public Wrap(String id, String name, @Nullable List<String> lore,
+                @Nullable Integer modelId, String uuid, @Nullable String color, int amount, @Nullable List<String> flags,
+                @Nullable Map<String, Integer> enchantments) {
+        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null);
+        this.preview = true;
+        this.uuid = uuid;
     }
 
     public Wrap() {

@@ -41,7 +41,9 @@ public enum Messages {
     COMMAND_CONVERT_SUCCESS("command.convert.success"),
     COMMAND_CONVERT_CONFIRM("command.convert.confirm"),
     COMMAND_CONVERT_NO_CONFIRM("command.convert.no-confirm"),
-    COMMAND_CONVERT_FAILED("command.convert.failed");
+    COMMAND_CONVERT_FAILED("command.convert.failed"),
+    COMMAND_CREATE_FAILED("command.create.failed"),
+    COMMAND_CREATE_SUCCESS("command.create.success");
 
     private final String key;
 

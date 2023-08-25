@@ -507,7 +507,7 @@ public class WrapperImpl implements Wrapper {
         } else if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
             var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
             if (id != null) {
-                itemsAdderId = id;
+                mythicId = id;
             }
         }
         return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), modelData) && isValidColor(wrap.getRange().getColor(), color) &&

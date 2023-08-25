@@ -166,9 +166,9 @@ public class FileConverter {
             lockedItem = unavailableItem.toItem();
         }
         var wrap = new Wrap(
-                itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
+                String.valueOf(itemSkinsFile.getCustomModelData()), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
                 itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
-                itemSkinsFile.getCustomModelData(), file.getName().replace(".yml", ""), physical, itemSkinsFile.getPermission(), lockedItem);
+                null, file.getName().replace(".yml", ""), physical, itemSkinsFile.getPermission(), lockedItem);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
     }
 
