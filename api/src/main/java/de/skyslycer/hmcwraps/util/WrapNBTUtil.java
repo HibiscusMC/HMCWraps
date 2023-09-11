@@ -27,6 +27,8 @@ public class WrapNBTUtil {
         var difference = itemNbt.getOrCreateCompound(SAVE_KEY);
         difference.clearNBT();
         apply(itemNbt, newNbt, difference);
+        System.out.println(nbt); // TODO remove
+        System.out.println(itemNbt);
         return itemNbt.getItem();
     }
 
@@ -99,6 +101,22 @@ public class WrapNBTUtil {
             case NBTTagByteArray -> target.setByteArray(key, source.getByteArray(key));
             case NBTTagIntArray -> target.setIntArray(key, source.getIntArray(key));
             case NBTTagString -> target.setString(key, source.getString(key));
+            case NBTTagList -> {
+                setList(source, key, target);
+            }
+        }
+    }
+
+    private static void setList(ReadableNBT source, String key, NBTCompound target) {
+        var type = source.getListType(key);
+        switch (type) {
+            case NBTTagInt -> target.getIntegerList(key).addAll(source.getIntegerList(key).toListCopy());
+            case NBTTagFloat -> target.getFloatList(key).addAll(source.getFloatList(key).toListCopy());
+            case NBTTagDouble -> target.getDoubleList(key).addAll(source.getDoubleList(key).toListCopy());
+            case NBTTagIntArray -> target.getIntArrayList(key).addAll(source.getIntArrayList(key).toListCopy());
+            case NBTTagString -> target.getStringList(key).addAll(source.getStringList(key).toListCopy());
+            case NBTTagCompound -> target.getCompoundList(key).addAll(source.getCompoundList(key).toListCopy());
+            case NBTTagLong -> target.getLongList(key).addAll(source.getLongList(key).toListCopy());
         }
     }
 

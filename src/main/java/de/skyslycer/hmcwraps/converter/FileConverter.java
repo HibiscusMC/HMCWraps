@@ -158,7 +158,7 @@ public class FileConverter {
             physical = new PhysicalWrap(
                     itemSkinsPhysical.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsPhysical.getDisplayName()), itemSkinsPhysical.getGlowing(),
                     itemSkinsPhysical.getLore() != null ? itemSkinsPhysical.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
-                    null, itemSkinsPhysical.getCustomModelData(), null, null, null, true);
+                    null, itemSkinsPhysical.getCustomModelData(), null, null, null, true, null);
         }
         SerializableItem lockedItem = null;
         if (itemSkinsFile.getUnavailableItem() != null) {
