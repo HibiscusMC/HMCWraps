@@ -1,5 +1,5 @@
 # Settings on how permissions should be handled
-permission-settings:
+permissions:
   # If the wrap inventory open permission should be checked on wraps inventory open
   inventory-permission: false
   # If the preview should be disabled if the player doesn't have the permission for the wrap
@@ -297,3 +297,7 @@ inventory:
         any:
           UNWRAP:
             - ''
+
+# DON'T TOUCH THIS
+config: 1
+# DON'T TOUCH THIS

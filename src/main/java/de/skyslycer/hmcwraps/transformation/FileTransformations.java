@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 public class FileTransformations {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("config: (?<ver>\\d)");
-    private static final int LATEST = 1;
 
+    private int latest = -1;
     private final Map<Integer, UpdateMethod> updateMethods = new HashMap<>();
 
     @FunctionalInterface
@@ -33,7 +33,7 @@ public class FileTransformations {
 
     public void updateToLatest(Path path) throws IOException {
         var currentVersion = getConfigVersion(path);
-        while (currentVersion < LATEST) {
+        while (currentVersion < latest) {
             var method = updateMethods.get(currentVersion);
             if (method != null) {
                 method.update(path);
@@ -46,6 +46,10 @@ public class FileTransformations {
 
     protected void addUpdateMethod(int version, UpdateMethod method) {
         updateMethods.put(version, method);
+    }
+
+    protected void setLatest(int latest) {
+        this.latest = latest;
     }
 
 }

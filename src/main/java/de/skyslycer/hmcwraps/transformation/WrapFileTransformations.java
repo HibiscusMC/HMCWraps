@@ -7,7 +7,8 @@ import java.nio.file.Path;
 public class WrapFileTransformations extends FileTransformations {
 
     public WrapFileTransformations() {
-        super.addUpdateMethod(0, this::zeroToOne);
+        setLatest(1);
+        addUpdateMethod(0, this::zeroToOne);
     }
 
     private void zeroToOne(Path path) throws IOException {

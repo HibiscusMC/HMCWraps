@@ -7,7 +7,8 @@ import java.nio.file.Path;
 public class ConfigFileTransformations extends FileTransformations {
 
     public ConfigFileTransformations() {
-        super.addUpdateMethod(0, this::zeroToOne);
+        setLatest(1);
+        addUpdateMethod(0, this::zeroToOne);
     }
 
     private void zeroToOne(Path path) throws IOException {
@@ -16,6 +17,7 @@ public class ConfigFileTransformations extends FileTransformations {
         config = config.replace("permission-settings:", "permissions:");
         config = config + "\nconfig: 1";
         Files.writeString(path, config);
+        System.out.println(config);
     }
 
 }

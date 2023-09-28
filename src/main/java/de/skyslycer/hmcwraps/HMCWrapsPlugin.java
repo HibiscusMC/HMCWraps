@@ -185,7 +185,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             }
             new ConfigFileTransformations().updateToLatest(CONFIG_PATH);
             CommentedConfiguration.loadConfiguration(CONFIG_PATH.toFile()).syncWithConfig(CONFIG_PATH.toFile(), getResource("config.yml"),
-                   "items", "inventory.items", "collections", "unwrapper", "inventory.actions"); // TODO uncomment
+                   "items", "inventory.items", "collections", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
         } catch (IOException exception) {
