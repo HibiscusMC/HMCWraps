@@ -120,8 +120,8 @@ public class WrapperImpl implements Wrapper {
                 var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
                 meta.setLore(lore);
             }
-            if (wrap.getFlags() != null) {
-                for (String flag : wrap.getFlags()) {
+            if (wrap.getWrapFlags() != null) {
+                for (String flag : wrap.getWrapFlags()) {
                     try {
                         meta.addItemFlags(ItemFlag.valueOf(flag));
                     } catch (IllegalArgumentException ignored) { }

@@ -1,0 +1,20 @@
+package de.skyslycer.hmcwraps.transformation;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class WrapFileTransformations extends FileTransformations {
+
+    public WrapFileTransformations() {
+        super.addUpdateMethod(0, this::zeroToOne);
+    }
+
+    private void zeroToOne(Path path) throws IOException {
+        var config = Files.readString(path);
+        config = config.replace("        nbt: ", "        wrap-nbt: ");
+        config = config + "\nconfig: 1";
+        Files.writeString(path, config);
+    }
+
+}

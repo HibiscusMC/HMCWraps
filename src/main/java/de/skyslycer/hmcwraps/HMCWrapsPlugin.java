@@ -1,10 +1,10 @@
 package de.skyslycer.hmcwraps;
 
+import com.bgsoftware.common.config.CommentedConfiguration;
 import com.github.retrooper.packetevents.PacketEvents;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
-import de.skyslycer.hmcwraps.configuration.ConfigTransformations;
 import de.skyslycer.hmcwraps.converter.FileConverter;
 import de.skyslycer.hmcwraps.itemhook.*;
 import de.skyslycer.hmcwraps.listener.*;
@@ -21,6 +21,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
+import de.skyslycer.hmcwraps.transformation.ConfigFileTransformations;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
 import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
@@ -182,9 +183,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             if (Files.notExists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
-            LOADER.save(ConfigTransformations.updateNode(LOADER.load()));
-            //CommentedConfiguration.loadConfiguration(CONFIG_PATH.toFile()).syncWithConfig(CONFIG_PATH.toFile(), getResource("config.yml"),
-             //       "items", "inventory.items", "collections", "unwrapper", "inventory.actions"); // TODO uncomment
+            new ConfigFileTransformations().updateToLatest(CONFIG_PATH);
+            CommentedConfiguration.loadConfiguration(CONFIG_PATH.toFile()).syncWithConfig(CONFIG_PATH.toFile(), getResource("config.yml"),
+                   "items", "inventory.items", "collections", "unwrapper", "inventory.actions"); // TODO uncomment
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
         } catch (IOException exception) {

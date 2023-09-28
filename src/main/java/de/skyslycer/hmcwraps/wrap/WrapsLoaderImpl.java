@@ -2,12 +2,12 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.configuration.WrapFileTransformations;
 import de.skyslycer.hmcwraps.serialization.Toggleable;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
+import de.skyslycer.hmcwraps.transformation.WrapFileTransformations;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
@@ -80,13 +80,12 @@ public class WrapsLoaderImpl implements WrapsLoader {
                             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                             .path(path)
                             .build();
-                    loader.save(WrapFileTransformations.updateNode(loader.load()));
+                    new WrapFileTransformations().updateToLatest(path);
                     var wrapFile = loader.load().get(WrapFile.class);
-
                     if (wrapFile != null && wrapFile.isEnabled()) {
                         wrapFiles.add(wrapFile);
                     }
-                } catch (ConfigurateException exception) {
+                } catch (IOException exception) {
                     plugin.logSevere(
                             "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!", exception);
                 }
