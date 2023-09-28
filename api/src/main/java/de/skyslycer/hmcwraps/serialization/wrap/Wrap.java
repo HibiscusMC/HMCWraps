@@ -33,6 +33,7 @@ public class Wrap extends SerializableItem {
     private @Nullable RangeSettings range;
     private @Nullable String wrapNbt;
     private @Nullable List<String> wrapFlags;
+    private Boolean armorImitationEnabled = false;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -126,6 +127,10 @@ public class Wrap extends SerializableItem {
         return wrapFlags;
     }
 
+    public Boolean isArmorImitationEnabled() {
+        return armorImitationEnabled;
+    }
+
     public ItemStack toPermissionItem(HMCWraps plugin, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player);
@@ -145,7 +150,7 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder, String oraxen, String mythic) {
+    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder, String oraxen, String mythic, String material) {
     }
 
 }

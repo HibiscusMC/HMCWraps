@@ -10,8 +10,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+
+import java.util.List;
 
 public class InventoryClickListener implements Listener {
+
+    private static final List<InventoryType> FORBIDDEN_INVENTORIES = List.of(
+            InventoryType.ANVIL,
+            InventoryType.WORKBENCH,
+            InventoryType.ENCHANTING,
+            InventoryType.GRINDSTONE,
+            InventoryType.SMITHING,
+            InventoryType.CRAFTING
+    );
 
     private final HMCWrapsPlugin plugin;
 
@@ -30,6 +42,12 @@ public class InventoryClickListener implements Listener {
         // Avoid possible issues such as client server inventory desync when moving a desynced inventory
         if (plugin.getPreviewManager().isPreviewing(player) && plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);
+            event.setCancelled(true);
+            return;
+        }
+
+        if (FORBIDDEN_INVENTORIES.contains(player.getOpenInventory().getType()) && event.getCurrentItem() != null
+                && !event.getCurrentItem().getType().isAir() && !plugin.getWrapper().getOriginalData(event.getCurrentItem()).material().isBlank()) {
             event.setCancelled(true);
             return;
         }

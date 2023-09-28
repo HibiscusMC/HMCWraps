@@ -49,6 +49,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalItemsAdderKey;
     private final NamespacedKey originalOraxenKey;
     private final NamespacedKey originalMythicKey;
+    private final NamespacedKey originalMaterialKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -65,6 +66,7 @@ public class WrapperImpl implements Wrapper {
         originalItemsAdderKey = new NamespacedKey(plugin, "original-itemsadder-id");
         originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
         originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
+        originalMaterialKey = new NamespacedKey(plugin, "original-material");
     }
 
     @Override
@@ -106,6 +108,7 @@ public class WrapperImpl implements Wrapper {
         var originalModelId = -1;
         var originalLore = meta.getLore();
         var originalFlags = meta.getItemFlags().stream().toList();
+        var originalMaterial = "";
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
@@ -137,12 +140,19 @@ public class WrapperImpl implements Wrapper {
             if (wrap.getWrapNbt() != null) {
                 editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
+            if (wrap.isArmorImitationEnabled()) {
+                originalMaterial = editing.getType().toString();
+                // TODO do stuff
+            }
         } else {
             meta.setDisplayName(originalData.name());
             meta.setCustomModelData(originalData.modelId());
             meta.setLore(originalData.lore());
             meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
             meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            if (originalData.material() != null && !originalData.material().isEmpty()) {
+                // TODO set type back
+            }
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
@@ -183,7 +193,7 @@ public class WrapperImpl implements Wrapper {
             mythicId = getOriginalMythicId(item);
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
-                originalFlags, itemsAdderId, oraxenId, mythicId));
+                originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
     }
 
     @Override
@@ -244,7 +254,7 @@ public class WrapperImpl implements Wrapper {
     public WrapValues getOriginalData(ItemStack item) {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
-                getOriginalMythicId(item));
+                getOriginalMythicId(item), getOriginalMaterial(item));
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -390,6 +400,11 @@ public class WrapperImpl implements Wrapper {
         return container.get(originalMythicKey, PersistentDataType.STRING);
     }
 
+    private String getOriginalMaterial(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalMaterialKey, PersistentDataType.STRING);
+    }
+
     @Override
     public ItemStack setOriginalData(ItemStack item, WrapValues wrapValues) {
         var editing = item.clone();
@@ -417,6 +432,9 @@ public class WrapperImpl implements Wrapper {
         }
         if (wrapValues.mythic() != null) {
             meta.getPersistentDataContainer().set(originalMythicKey, PersistentDataType.STRING, wrapValues.mythic());
+        }
+        if (wrapValues.material() != null) {
+            meta.getPersistentDataContainer().set(originalMaterialKey, PersistentDataType.STRING, wrapValues.material());
         }
         editing.setItemMeta(meta);
         return editing;
