@@ -17,10 +17,10 @@ public enum ArmorModifiers {
     TURTLE(0, 0, new ArmorValues(2, 6, 5, 2), new ArmorValues(75, 200, 150, 75)),
     NETHERITE(3, 1, new ArmorValues(3, 8, 6, 3), new ArmorValues(111, 296, 222, 111));
 
-    private int toughness;
-    private int knockback;
-    private ArmorValues defense;
-    private ArmorValues durability;
+    private final int toughness;
+    private final int knockback;
+    private final ArmorValues defense;
+    private final ArmorValues durability;
 
     ArmorModifiers(int tougness, int knockback, ArmorValues defense, ArmorValues durability) {
         this.toughness = tougness;
@@ -42,7 +42,7 @@ public enum ArmorModifiers {
     }
 
     public static ItemStack applyAttributes(ItemStack item, EquipmentSlot slot, int toughness, int knockback, int defense) {
-        var meta = item.getItemMeta();;
+        var meta = item.getItemMeta();
         if (meta.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS) == null) {
            addModifier(meta, slot, Attribute.GENERIC_ARMOR_TOUGHNESS, toughness);
         } else {

@@ -99,9 +99,7 @@ public class WrapNBTUtil {
             case NBTTagByteArray -> target.setByteArray(key, source.getByteArray(key));
             case NBTTagIntArray -> target.setIntArray(key, source.getIntArray(key));
             case NBTTagString -> target.setString(key, source.getString(key));
-            case NBTTagList -> {
-                setList(source, key, target);
-            }
+            case NBTTagList -> setList(source, key, target);
         }
     }
 
