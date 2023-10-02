@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -46,8 +47,7 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        if (FORBIDDEN_INVENTORIES.contains(player.getOpenInventory().getType()) && event.getCurrentItem() != null
-                && !event.getCurrentItem().getType().isAir() && !plugin.getWrapper().getOriginalData(event.getCurrentItem()).material().isBlank()) {
+        if (FORBIDDEN_INVENTORIES.contains(player.getOpenInventory().getType()) && (isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem()))) {
             event.setCancelled(true);
             return;
         }
@@ -114,6 +114,10 @@ public class InventoryClickListener implements Listener {
                 }
             }
         }
+    }
+
+    private boolean isImitatedArmor(ItemStack item) {
+        return item != null && !item.getType().isAir() && !plugin.getWrapper().getOriginalData(item).material().isBlank();
     }
 
 }

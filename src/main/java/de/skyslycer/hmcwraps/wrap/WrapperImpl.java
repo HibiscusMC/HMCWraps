@@ -12,10 +12,7 @@ import de.skyslycer.hmcwraps.util.WrapNBTUtil;
 import dev.lone.itemsadder.api.CustomStack;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.th0rgal.oraxen.api.OraxenItems;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -141,23 +138,27 @@ public class WrapperImpl implements Wrapper {
                 editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
             if (wrap.isArmorImitationEnabled()) {
-                originalMaterial = editing.getType().toString();
-                // TODO do stuff
+                var temp = editing.getType().toString();
+                if (switchToLeather(editing)) {
+                    originalMaterial = temp;
+                }
+                // TODO durability
             }
         } else {
             meta.setDisplayName(originalData.name());
             meta.setCustomModelData(originalData.modelId());
             meta.setLore(originalData.lore());
             meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
-            if (originalData.material() != null && !originalData.material().isEmpty()) {
-                // TODO set type back
-            }
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
             } else {
                 editing.setItemMeta(meta);
+            }
+            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            if (originalData.material() != null && !originalData.material().isBlank()) {
+                switchFromLeather(editing, originalData.material());
+                // TODO remove durability
             }
             editing = WrapNBTUtil.unwrap(editing);
         }
@@ -194,6 +195,34 @@ public class WrapperImpl implements Wrapper {
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
                 originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
+    }
+
+    private boolean switchToLeather(ItemStack editing) {
+        if (editing.getType().toString().contains("_HELMET")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_HELMET);
+            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
+        } else if (editing.getType().toString().contains("_CHESTPLATE")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_CHESTPLATE);
+            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
+        } else if (editing.getType().toString().contains("_LEGGINGS")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_LEGGINGS);
+            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
+        } else if (editing.getType().toString().contains("_BOOTS")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_BOOTS);
+            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private void switchFromLeather(ItemStack editing, String material) {
+        editing.setType(Material.valueOf(material));
+        ArmorModifiers.removeAttributes(editing);
     }
 
     @Override
