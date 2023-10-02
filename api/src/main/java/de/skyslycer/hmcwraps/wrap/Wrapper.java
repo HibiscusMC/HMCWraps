@@ -70,6 +70,23 @@ public interface Wrapper {
     ItemStack removeWrap(ItemStack itemStack, Player player, boolean giveBack);
 
     /**
+     * Get the fake durability of the item.
+     * If the item isn't imitating armor, it will return -1.
+     *
+     * @param item The item
+     * @return The fake durability
+     */
+    int getFakeDurability(ItemStack item);
+
+    /**
+     * Set the fake durability of the item.
+     *
+     * @param item The item
+     * @param durability The durability to set
+     */
+    void setFakeDurability(ItemStack item, int durability);
+
+    /**
      * Check if the item is an unwrapper.
      *
      * @param item The item

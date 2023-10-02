@@ -16,6 +16,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -47,6 +48,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalOraxenKey;
     private final NamespacedKey originalMythicKey;
     private final NamespacedKey originalMaterialKey;
+    private final NamespacedKey fakeDurabilityKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -64,6 +66,7 @@ public class WrapperImpl implements Wrapper {
         originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
         originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
         originalMaterialKey = new NamespacedKey(plugin, "original-material");
+        fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
     }
 
     @Override
@@ -138,27 +141,40 @@ public class WrapperImpl implements Wrapper {
                 editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
             if (wrap.isArmorImitationEnabled()) {
+                var maxDurability = editing.getType().getMaxDurability();
+                var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();
                 if (switchToLeather(editing)) {
+                    var newDurability = editing.getType().getMaxDurability();
+                    var modelDurability = (currentDurability / maxDurability) * newDurability;
+                    var newMeta = ((Damageable) editing.getItemMeta());
+                    newMeta.setDamage(modelDurability);
+                    editing.setItemMeta(newMeta);
                     originalMaterial = temp;
+                    meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                 }
-                // TODO durability
             }
         } else {
             meta.setDisplayName(originalData.name());
             meta.setCustomModelData(originalData.modelId());
             meta.setLore(originalData.lore());
             meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
             } else {
                 editing.setItemMeta(meta);
             }
-            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
             if (originalData.material() != null && !originalData.material().isBlank()) {
                 switchFromLeather(editing, originalData.material());
-                // TODO remove durability
+                var newMeta = (Damageable) editing.getItemMeta();
+                if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
+                    var currentDurability = newMeta.getPersistentDataContainer().get(fakeDurabilityKey, PersistentDataType.INTEGER);
+                    newMeta.setDamage(editing.getType().getMaxDurability() - currentDurability);
+                    newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+                    editing.setItemMeta(newMeta);
+                }
             }
             editing = WrapNBTUtil.unwrap(editing);
         }
@@ -223,6 +239,28 @@ public class WrapperImpl implements Wrapper {
     private void switchFromLeather(ItemStack editing, String material) {
         editing.setType(Material.valueOf(material));
         ArmorModifiers.removeAttributes(editing);
+    }
+
+    @Override
+    public int getFakeDurability(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return -1;
+        }
+        var data = meta.getPersistentDataContainer().get(fakeDurabilityKey, PersistentDataType.INTEGER);
+        if (data == null) {
+            return -1;
+        }
+        return data;
+    }
+
+    public void setFakeDurability(ItemStack item, int durability) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, durability);
+        item.setItemMeta(meta);
     }
 
     @Override
