@@ -27,6 +27,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.*;
@@ -260,7 +261,7 @@ public class WrapCommand {
     @Description("Create a wrap from an item in hand!")
     @CommandPermission(CREATE_PERMISSION)
     public void onCreate(Player player, String file, String uuid) {
-        var path = HMCWraps.COMMAND_PATH.resolve(file + ".yml");
+        var path = HMCWraps.COMMAND_PATH.resolve(file + (file.endsWith(".yml") ? "" : ".yml"));
         var item = player.getInventory().getItemInMainHand();
         if (item == null || item.getType().isAir()) {
             plugin.getMessageHandler().send(player, Messages.COMMAND_NEED_ITEM);
@@ -285,19 +286,21 @@ public class WrapCommand {
             color = ColorUtil.colorToHex(leatherArmorMeta.getColor());
         }
         String id = getHookId(item);
-        String name = StringUtil.legacyToMiniMessage(meta.hasDisplayName() ? meta.getDisplayName().replace("§", "&") : "");
+        String name = StringUtil.legacyToMiniMessage(meta.hasDisplayName() ? meta.getDisplayName().replace("§", "&") : StringUtil.convertToTitleCase(item.getType().name()));
         List<String> lore = extractLore(meta);
         int amount = item.getAmount();
         List<String> flags = meta.getItemFlags().stream().map(Enum::name).toList();
         Map<String, Integer> enchantments = extractEnchantments(item);
 
-        return new Wrap(id, name, lore, null, uuid, color, amount, flags, enchantments);
+        return new Wrap(id, name, lore, null, uuid, color, amount == 1 ? null : amount, flags.isEmpty() ? null : flags, enchantments);
     }
 
     private List<String> extractLore(ItemMeta meta) {
         List<String> lore = new ArrayList<>();
         if (meta.hasLore()) {
             meta.getLore().forEach(line -> lore.add(StringUtil.legacyToMiniMessage(line.replace("§", "&"))));
+        } else {
+            return null;
         }
         return lore;
     }
@@ -305,6 +308,9 @@ public class WrapCommand {
     private Map<String, Integer> extractEnchantments(ItemStack item) {
         Map<String, Integer> enchantments = new HashMap<>();
         item.getEnchantments().forEach((enchantment, integer) -> enchantments.put(enchantment.getKey().getKey().toUpperCase(), integer));
+        if (enchantments.isEmpty()) {
+            return null;
+        }
         return enchantments;
     }
 
@@ -341,8 +347,9 @@ public class WrapCommand {
             YamlConfigurationLoader.builder()
                     .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                     .path(path).indent(2)
+                    .nodeStyle(NodeStyle.BLOCK)
                     .build().save(BasicConfigurationNode.factory().createNode().set(wrapFile));
-            plugin.getMessageHandler().send(player, Messages.COMMAND_CREATE_SUCCESS, Placeholder.parsed("file", "plugins/HMCWraps/wraps/command" + path.getFileName().toString()));
+            plugin.getMessageHandler().send(player, Messages.COMMAND_CREATE_SUCCESS, Placeholder.parsed("path", "plugins/HMCWraps/wraps/command/" + path.getFileName().toString()));
         } catch (ConfigurateException exception) {
             handleException(player, exception, "saving the wrap file");
         }

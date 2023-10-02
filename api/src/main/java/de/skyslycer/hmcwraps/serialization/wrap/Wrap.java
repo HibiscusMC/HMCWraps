@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -20,7 +21,7 @@ import java.util.Map;
 @ConfigSerializable
 public class Wrap extends SerializableItem {
 
-    private Boolean preview = true;
+    private @Nullable Boolean preview;
     private String uuid;
     private @Nullable PhysicalWrap physical;
     private @Nullable String permission;
@@ -33,7 +34,7 @@ public class Wrap extends SerializableItem {
     private @Nullable RangeSettings range;
     private @Nullable String wrapNbt;
     private @Nullable List<String> wrapFlags;
-    private Boolean armorImitationEnabled = false;
+    private @Nullable Boolean armorImitation;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -47,10 +48,9 @@ public class Wrap extends SerializableItem {
     }
 
     public Wrap(String id, String name, @Nullable List<String> lore,
-                @Nullable Integer modelId, String uuid, @Nullable String color, int amount, @Nullable List<String> flags,
+                @Nullable Integer modelId, String uuid, @Nullable String color, Integer amount, @Nullable List<String> flags,
                 @Nullable Map<String, Integer> enchantments) {
         super(id, name, null, lore, flags, modelId, enchantments, amount, color, null);
-        this.preview = true;
         this.uuid = uuid;
     }
 
@@ -72,7 +72,7 @@ public class Wrap extends SerializableItem {
     }
 
     public Boolean isPreview() {
-        return preview;
+        return preview == null || preview;
     }
 
     @Nullable
@@ -128,12 +128,14 @@ public class Wrap extends SerializableItem {
     }
 
     public Boolean isArmorImitationEnabled() {
-        return armorImitationEnabled;
+        return armorImitation != null && armorImitation;
     }
 
-    public ItemStack toPermissionItem(HMCWraps plugin, Player player) {
+    public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
-            return super.toItem(plugin, player);
+            var item = super.toItem(plugin, player);
+            item.setType(type);
+            return item;
         } else if (getLockedItem() == null) {
             var item = super.toItem(plugin, player);
             var builder = ItemBuilder.from(item);

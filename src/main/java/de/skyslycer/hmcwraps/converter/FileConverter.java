@@ -11,6 +11,7 @@ import de.skyslycer.hmcwraps.util.StringUtil;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.nio.file.Files;
@@ -61,6 +62,7 @@ public class FileConverter {
                 YamlConfigurationLoader.builder()
                         .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                         .path(filePath).indent(2)
+                        .nodeStyle(NodeStyle.BLOCK)
                         .build().save(BasicConfigurationNode.factory().createNode().set(entry.getValue()));
             } catch (Exception exception) {
                 plugin.getLogger().warning("Could not save generated wrap file! Please report this.\n"
@@ -78,6 +80,7 @@ public class FileConverter {
                 YamlConfigurationLoader.builder()
                         .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                         .path(filePath).indent(2)
+                        .nodeStyle(NodeStyle.BLOCK)
                         .build().save(BasicConfigurationNode.factory().createNode().set(new CollectionFile(collections, true)));
             } catch (Exception exception) {
                 plugin.getLogger().warning("Could not save generated collection file! Please report this.\n"

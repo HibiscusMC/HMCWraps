@@ -14,6 +14,7 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import io.th0rgal.oraxen.api.OraxenItems;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -116,6 +117,9 @@ public class WrapperImpl implements Wrapper {
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (wrap != null) {
+            if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
+                undoArmorImitation(editing, originalData);
+            }
             if (wrap.getWrapName() != null) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
             }
@@ -148,7 +152,7 @@ public class WrapperImpl implements Wrapper {
                     var newDurability = editing.getType().getMaxDurability();
                     var modelDurability = (currentDurability / maxDurability) * newDurability;
                     var newMeta = ((Damageable) editing.getItemMeta());
-                    newMeta.setDamage(modelDurability);
+                    newMeta.setDamage(newDurability - modelDurability);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
                     meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
@@ -167,14 +171,7 @@ public class WrapperImpl implements Wrapper {
                 editing.setItemMeta(meta);
             }
             if (originalData.material() != null && !originalData.material().isBlank()) {
-                switchFromLeather(editing, originalData.material());
-                var newMeta = (Damageable) editing.getItemMeta();
-                if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
-                    var currentDurability = newMeta.getPersistentDataContainer().get(fakeDurabilityKey, PersistentDataType.INTEGER);
-                    newMeta.setDamage(editing.getType().getMaxDurability() - currentDurability);
-                    newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
-                    editing.setItemMeta(newMeta);
-                }
+                undoArmorImitation(editing, originalData);
             }
             editing = WrapNBTUtil.unwrap(editing);
         }
@@ -213,23 +210,34 @@ public class WrapperImpl implements Wrapper {
                 originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
     }
 
+    private void undoArmorImitation(ItemStack editing, WrapValues originalData) {
+        switchFromLeather(editing, originalData.material());
+        var newMeta = (Damageable) editing.getItemMeta();
+        if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
+            var currentDurability = newMeta.getPersistentDataContainer().get(fakeDurabilityKey, PersistentDataType.INTEGER);
+            newMeta.setDamage(editing.getType().getMaxDurability() - currentDurability);
+            newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+            editing.setItemMeta(newMeta);
+        }
+    }
+
     private boolean switchToLeather(ItemStack editing) {
         if (editing.getType().toString().contains("_HELMET")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_HELMET);
-            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
         } else if (editing.getType().toString().contains("_CHESTPLATE")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_CHESTPLATE);
-            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
         } else if (editing.getType().toString().contains("_LEGGINGS")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_LEGGINGS);
-            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
         } else if (editing.getType().toString().contains("_BOOTS")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_BOOTS);
-            ArmorModifiers.applyAttributes(editing, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
         } else {
             return false;
         }
@@ -469,7 +477,8 @@ public class WrapperImpl implements Wrapper {
 
     private String getOriginalMaterial(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalMaterialKey, PersistentDataType.STRING);
+        var value = container.get(originalMaterialKey, PersistentDataType.STRING);
+        return value == null ? "" : value;
     }
 
     @Override

@@ -364,7 +364,16 @@ public class DefaultActionRegister {
 
     private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
         var slot = getSlot(information);
-        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItem(slot).getType()).isEmpty()
+        var item = player.getInventory().getItem(slot);
+        if (item == null) {
+            player.closeInventory();
+            return;
+        }
+        var type = item.getType();
+        if (plugin.getWrapper().getWrap(item) != null && plugin.getWrapper().getOriginalData(item).material() != null) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        }
+        if (!plugin.getCollectionHelper().getItems(type).isEmpty()
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
             GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
         }

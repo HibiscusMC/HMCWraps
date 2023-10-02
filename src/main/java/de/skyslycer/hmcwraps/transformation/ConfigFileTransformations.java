@@ -17,7 +17,6 @@ public class ConfigFileTransformations extends FileTransformations {
         config = config.replace("permission-settings:", "permissions:");
         config = config + "\nconfig: 1";
         Files.writeString(path, config);
-        System.out.println(config);
     }
 
 }

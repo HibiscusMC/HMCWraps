@@ -27,8 +27,6 @@ public class WrapNBTUtil {
         var difference = itemNbt.getOrCreateCompound(SAVE_KEY);
         difference.clearNBT();
         apply(itemNbt, newNbt, difference);
-        System.out.println(nbt); // TODO remove
-        System.out.println(itemNbt);
         return itemNbt.getItem();
     }
 

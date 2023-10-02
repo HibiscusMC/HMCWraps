@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,8 +23,7 @@ public class InventoryClickListener implements Listener {
             InventoryType.WORKBENCH,
             InventoryType.ENCHANTING,
             InventoryType.GRINDSTONE,
-            InventoryType.SMITHING,
-            InventoryType.CRAFTING
+            InventoryType.SMITHING
     );
 
     private final HMCWrapsPlugin plugin;
@@ -36,6 +36,12 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
+        if (isForbiddenInventory(event) && (isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem()))) {
+            event.setCancelled(true);
+            plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
+            return;
+        }
+
         if (event.getClickedInventory() != player.getInventory()) {
             return;
         }
@@ -43,11 +49,6 @@ public class InventoryClickListener implements Listener {
         // Avoid possible issues such as client server inventory desync when moving a desynced inventory
         if (plugin.getPreviewManager().isPreviewing(player) && plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);
-            event.setCancelled(true);
-            return;
-        }
-
-        if (FORBIDDEN_INVENTORIES.contains(player.getOpenInventory().getType()) && (isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem()))) {
             event.setCancelled(true);
             return;
         }
@@ -96,16 +97,19 @@ public class InventoryClickListener implements Listener {
             return;
         }
         var finalCursor = cursor;
+        var type = target.getType();
+        if (plugin.getWrapper().getWrap(target) != null && plugin.getWrapper().getOriginalData(target).material() != null) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(target).material());
+        }
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
                 .isPermissionPhysical())) {
-            for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(target.getType())) {
+            for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(type)) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
                     if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && plugin.getWrapper().getWrap(target) != null) {
                         plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
                         return;
                     }
-                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true,
-                            player, true));
+                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player, true));
                     plugin.getActionHandler().pushWrap(wrap, player);
                     plugin.getActionHandler().pushPhysicalWrap(wrap, player);
                     event.getWhoClicked().setItemOnCursor(finalCursor);
@@ -118,6 +122,10 @@ public class InventoryClickListener implements Listener {
 
     private boolean isImitatedArmor(ItemStack item) {
         return item != null && !item.getType().isAir() && !plugin.getWrapper().getOriginalData(item).material().isBlank();
+    }
+
+    private boolean isForbiddenInventory(InventoryClickEvent event) {
+        return FORBIDDEN_INVENTORIES.contains(event.getWhoClicked().getOpenInventory().getType()) || (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.CRAFTING);
     }
 
 }

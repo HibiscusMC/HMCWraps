@@ -104,13 +104,15 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui, int slot) {
-        plugin.getCollectionHelper().getItems(item.getType()).forEach(it -> it.getWraps()
+        var type = item.getType();
+        if (plugin.getWrapper().getWrap(item) != null && plugin.getWrapper().getOriginalData(item).material() != null) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        }
+        var finalType = type; // Why :(
+        plugin.getCollectionHelper().getItems(type).forEach(it -> it.getWraps()
                 .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
-                    var wrapItem = wrap.toPermissionItem(plugin, player);
-                    if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player) || wrap.getLockedItem() == null) {
-                        wrapItem.setType(item.getType());
-                    }
+                    var wrapItem = wrap.toPermissionItem(plugin, wrap.isArmorImitationEnabled() ? getLeatherAlternative(item) : finalType, player);
                     var guiItem = new GuiItem(wrapItem);
                     guiItem.setAction(click -> {
                         if (plugin.getConfiguration().getInventory().getActions() != null) {
@@ -125,6 +127,20 @@ public class GuiBuilder {
         var slot = plugin.getConfiguration().getInventory().getTargetItemSlot();
         if (slot != -1) {
             gui.setItem(slot, new GuiItem(target.clone()));
+        }
+    }
+
+    private static Material getLeatherAlternative(ItemStack item) {
+        if (item.getType().toString().contains("_HELMET")) {
+            return Material.LEATHER_HELMET;
+        } else if (item.getType().toString().contains("_CHESTPLATE")) {
+            return Material.LEATHER_CHESTPLATE;
+        } else if (item.getType().toString().contains("_LEGGINGS")) {
+            return Material.LEATHER_LEGGINGS;
+        } else if (item.getType().toString().contains("_BOOTS")) {
+            return Material.LEATHER_BOOTS;
+        } else {
+            return item.getType();
         }
     }
 

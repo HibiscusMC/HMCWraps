@@ -41,10 +41,14 @@ public class PlayerInteractListener implements Listener {
         }
 
         var excludes = plugin.getConfiguration().getInventory().getShortcut().getExclude();
+        var type = newItem.getType();
+        if (plugin.getWrapper().getWrap(newItem) != null && plugin.getWrapper().getOriginalData(newItem).material() != null) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(newItem).material());
+        }
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || plugin.getCollectionHelper().getItems(newItem.getType()).isEmpty() || !player.isSneaking()
+                || plugin.getCollectionHelper().getItems(type).isEmpty() || !player.isSneaking()
                 || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
-                || ListUtil.containsAny(List.of(newItem.getType().toString(),
+                || ListUtil.containsAny(List.of(type.toString(),
                 player.getInventory().getItemInOffHand().getType().toString()), excludes)
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
                 && !player.hasPermission(WrapCommand.WRAPS_PERMISSION))) {
