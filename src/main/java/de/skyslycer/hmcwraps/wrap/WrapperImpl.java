@@ -159,8 +159,8 @@ public class WrapperImpl implements Wrapper {
                 }
             }
         } else {
+            meta.setCustomModelData(0);
             meta.setDisplayName(originalData.name());
-            meta.setCustomModelData(originalData.modelId());
             meta.setLore(originalData.lore());
             meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
             meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
@@ -364,6 +364,7 @@ public class WrapperImpl implements Wrapper {
             if (data != null) {
                 name = ChatColor.translateAlternateColorCodes('&', data);
             }
+            return name;
         } else if (nameSettings.isDefaultEnabled()) {
             var map = nameSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -374,8 +375,9 @@ public class WrapperImpl implements Wrapper {
                     name = StringUtil.LEGACY_SERIALIZER_AMPERSAND.serialize(StringUtil.parseComponent(map.get(key)));
                 }
             }
+            return name;
         }
-        return name;
+        return item.getItemMeta().getDisplayName();
     }
 
     private List<String> getOriginalLore(ItemStack item) {
@@ -387,6 +389,7 @@ public class WrapperImpl implements Wrapper {
             if (data != null) {
                 Arrays.stream(data.split(SEPARATOR)).map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
             }
+            return lore;
         } else if (loreSettings.isDefaultEnabled()) {
             var map = loreSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -397,8 +400,9 @@ public class WrapperImpl implements Wrapper {
                     map.get(key).stream().map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
                 }
             }
+            return lore;
         }
-        return lore;
+        return item.getItemMeta().getLore();
     }
 
     private Color getOriginalColor(ItemStack item) {
@@ -438,6 +442,7 @@ public class WrapperImpl implements Wrapper {
                     } catch (IllegalArgumentException ignored) { }
                 }
             }
+            return list;
         } else if (settings.isDefaultEnabled()) {
             var map = settings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -456,8 +461,9 @@ public class WrapperImpl implements Wrapper {
                     }
                 }
             }
+            return list;
         }
-        return list;
+        return item.getItemMeta().getItemFlags().stream().toList();
     }
 
     private String getOriginalItemsAdderId(ItemStack item) {
