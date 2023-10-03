@@ -370,7 +370,7 @@ public class DefaultActionRegister {
             return;
         }
         var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && plugin.getWrapper().getOriginalData(item).material() != null) {
+        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
         }
         if (!plugin.getCollectionHelper().getItems(type).isEmpty()

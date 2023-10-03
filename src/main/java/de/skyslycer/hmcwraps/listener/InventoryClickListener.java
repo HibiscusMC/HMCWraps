@@ -98,7 +98,7 @@ public class InventoryClickListener implements Listener {
         }
         var finalCursor = cursor;
         var type = target.getType();
-        if (plugin.getWrapper().getWrap(target) != null && plugin.getWrapper().getOriginalData(target).material() != null) {
+        if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getOriginalData(target).material().isEmpty()) {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(target).material());
         }
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()

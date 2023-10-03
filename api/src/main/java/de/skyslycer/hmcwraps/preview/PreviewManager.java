@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.preview.floating.FloatingPreview;
 import de.skyslycer.hmcwraps.preview.hand.HandPreview;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.util.MaterialUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -47,7 +48,9 @@ public class PreviewManager {
      * @param wrap    The wrap to preview
      */
     public void create(Player player, Consumer<Player> onClose, Wrap wrap) {
-        var item = ItemBuilder.from(plugin.getCollectionHelper().getMaterial(wrap)).model(wrap.getModelId());
+        var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
+        var type = wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(wrapType) : wrapType;
+        var item = ItemBuilder.from(type).model(wrap.getModelId());
         if (wrap.getColor() != null) {
             item.color(wrap.getColor());
         }
