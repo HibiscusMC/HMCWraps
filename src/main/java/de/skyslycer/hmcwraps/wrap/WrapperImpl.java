@@ -134,29 +134,28 @@ public class WrapperImpl implements Wrapper {
                     } catch (IllegalArgumentException ignored) { }
                 }
             }
-            if (wrap.getColor() != null && meta instanceof LeatherArmorMeta leatherMeta) {
-                originalColor = leatherMeta.getColor();
-                leatherMeta.setColor(wrap.getColor());
-                editing.setItemMeta(leatherMeta);
-            } else {
-                editing.setItemMeta(meta);
-            }
-            if (wrap.getWrapNbt() != null) {
-                editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
-            }
+            editing.setItemMeta(meta);
             if (wrap.isArmorImitationEnabled()) {
                 var maxDurability = editing.getType().getMaxDurability();
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();
                 if (switchToLeather(editing)) {
                     var newDurability = editing.getType().getMaxDurability();
-                    var modelDurability = (currentDurability / maxDurability) * newDurability;
+                    var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
                     var newMeta = ((Damageable) editing.getItemMeta());
-                    newMeta.setDamage(newDurability - modelDurability);
+                    newMeta.setDamage(newDurability - (int) modelDurability);
+                    newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
-                    meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                 }
+            }
+            if (wrap.getColor() != null && editing.getItemMeta() instanceof LeatherArmorMeta leatherMeta) {
+                originalColor = leatherMeta.getColor();
+                leatherMeta.setColor(wrap.getColor());
+                editing.setItemMeta(leatherMeta);
+            }
+            if (wrap.getWrapNbt() != null) {
+                editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
         } else {
             meta.setCustomModelData(0);

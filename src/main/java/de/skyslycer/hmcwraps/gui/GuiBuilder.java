@@ -51,7 +51,11 @@ public class GuiBuilder {
                 if (clicked == null || clicked.getType().isAir()) {
                     return;
                 }
-                if (plugin.getCollectionHelper().getItems(clicked.getType()).isEmpty()) {
+                var type = clicked.getType();
+                if (plugin.getWrapper().getWrap(clicked) != null && !plugin.getWrapper().getOriginalData(clicked).material().isEmpty()) {
+                    type = Material.valueOf(plugin.getWrapper().getOriginalData(clicked).material());
+                }
+                if (plugin.getCollectionHelper().getItems(type).isEmpty()) {
                     plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
                     return;
                 }

@@ -22,8 +22,8 @@ public enum ArmorModifiers {
     private final ArmorValues defense;
     private final ArmorValues durability;
 
-    ArmorModifiers(int tougness, int knockback, ArmorValues defense, ArmorValues durability) {
-        this.toughness = tougness;
+    ArmorModifiers(int toughness, int knockback, ArmorValues defense, ArmorValues durability) {
+        this.toughness = toughness;
         this.knockback = knockback;
         this.defense = defense;
         this.durability = durability;
@@ -41,7 +41,7 @@ public enum ArmorModifiers {
         return null;
     }
 
-    public static ItemStack applyAttributes(ItemStack item, EquipmentSlot slot, int toughness, int knockback, int defense) {
+    public static void applyAttributes(ItemStack item, EquipmentSlot slot, int toughness, int knockback, int defense) {
         var meta = item.getItemMeta();
         if (meta.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS) == null) {
            addModifier(meta, slot, Attribute.GENERIC_ARMOR_TOUGHNESS, toughness);
@@ -70,7 +70,6 @@ public enum ArmorModifiers {
             });
         }
         item.setItemMeta(meta);
-        return item;
     }
 
     public static ItemStack removeAttributes(ItemStack item) {

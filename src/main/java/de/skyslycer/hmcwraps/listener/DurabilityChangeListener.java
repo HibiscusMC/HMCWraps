@@ -39,13 +39,13 @@ public class DurabilityChangeListener implements Listener {
         var material = Material.valueOf(originalData.material());
         var maxDurability = material.getMaxDurability();
         var newDurability = Math.min(durability + changed, maxDurability);
-        var modelDurability = (newDurability / maxDurability) * item.getType().getMaxDurability();
+        var modelDurability = ((double) newDurability / maxDurability) * item.getType().getMaxDurability();
         if (modelDurability == 0 && newDurability > 0) {
             modelDurability = 1;
         }
         plugin.getWrapper().setFakeDurability(item, newDurability);
         var meta = (Damageable) item.getItemMeta();
-        meta.setDamage(item.getType().getMaxDurability() - modelDurability);
+        meta.setDamage(item.getType().getMaxDurability() - (int) modelDurability);
         item.setItemMeta(meta);
         if (newDurability <= 0) {
             item.setAmount(0);
