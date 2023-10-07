@@ -7,56 +7,56 @@ enabled: true
 # All the wraps in this file
 # The configuration is exactly the same as in config.yml
 items:
-  IRON_SWORD:
+  DIAMOND_SWORD:
     wraps:
       1:
         permission: 'hmcwraps.emerald_sword'
         uuid: 'emerald_sword'
-        id: '3'
+        id: '2'
         name: '<green>Emerald <gray>Wrap'
         lore:
           - '<gray>Apply this wrap to make your sword look emerald!'
         flags:
           - 'HIDE_ATTRIBUTES'
-  IRON_PICKAXE:
+  DIAMOND_PICKAXE:
     wraps:
       1:
         permission: 'hmcwraps.emerald_pickaxe'
         uuid: 'emerald_pickaxe'
-        id: '3'
+        id: '2'
         name: '<green>Emerald <gray>Wrap'
         lore:
           - '<gray>Apply this wrap to make your pickaxe look emerald!'
         flags:
           - 'HIDE_ATTRIBUTES'
-  IRON_AXE:
+  DIAMOND_AXE:
     wraps:
       1:
         permission: 'hmcwraps.emerald_axe'
         uuid: 'emerald_axe'
-        id: '2'
+        id: '1'
         name: '<green>Emerald <gray>Wrap'
         lore:
           - '<gray>Apply this wrap to make your axe look emerald!'
         flags:
           - 'HIDE_ATTRIBUTES'
-  IRON_SHOVEL:
+  DIAMOND_SHOVEL:
     wraps:
       1:
         permission: 'hmcwraps.emerald_shovel'
         uuid: 'emerald_shovel'
-        id: '2'
+        id: '1'
         name: '<green>Emerald <gray>Wrap'
         lore:
           - '<gray>Apply this wrap to make your shovel look emerald!'
         flags:
           - 'HIDE_ATTRIBUTES'
-  IRON_HOE:
+  DIAMOND_HOE:
     wraps:
       1:
         permission: 'hmcwraps.emerald_hoe'
         uuid: 'emerald_hoe'
-        id: '2'
+        id: '1'
         name: '<green>Emerald <gray>Wrap'
         lore:
           - '<gray>Apply this wrap to make your hoe look emerald!'
