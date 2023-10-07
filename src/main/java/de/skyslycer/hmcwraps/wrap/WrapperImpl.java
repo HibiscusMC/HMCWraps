@@ -135,7 +135,7 @@ public class WrapperImpl implements Wrapper {
                 }
             }
             editing.setItemMeta(meta);
-            if (wrap.isArmorImitationEnabled()) {
+            if (wrap.isArmorImitationEnabled() && !editing.getType().toString().contains("LEATHER")) {
                 var maxDurability = editing.getType().getMaxDurability();
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();

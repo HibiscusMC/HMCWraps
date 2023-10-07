@@ -260,20 +260,21 @@ public class WrapCommand {
     @Subcommand("create")
     @Description("Create a wrap from an item in hand!")
     @CommandPermission(CREATE_PERMISSION)
-    public void onCreate(Player player, String file, String uuid) {
+    public void onCreate(Player player, String file, String uuid, @Optional String collection) {
         var path = HMCWraps.COMMAND_PATH.resolve(file + (file.endsWith(".yml") ? "" : ".yml"));
         var item = player.getInventory().getItemInMainHand();
         if (item == null || item.getType().isAir()) {
             plugin.getMessageHandler().send(player, Messages.COMMAND_NEED_ITEM);
             return;
         }
-        Wrap newWrap = createWrapFromItem(item, uuid);
+        var checkedCollection = collection == null ? item.getType().toString() : collection;
+        var newWrap = createWrapFromItem(item, uuid);
 
         WrapFile wrapFile;
         if (Files.exists(path)) {
-            wrapFile = updateExistingWrapFile(player, path, item, newWrap);
+            wrapFile = updateExistingWrapFile(player, path, item, newWrap, checkedCollection);
         } else {
-            wrapFile = createNewWrapFile(item, newWrap);
+            wrapFile = createNewWrapFile(item, newWrap, checkedCollection);
         }
 
         saveWrapFile(path, wrapFile, player);
@@ -314,17 +315,22 @@ public class WrapCommand {
         return enchantments;
     }
 
-    private WrapFile updateExistingWrapFile(Player player, Path path, ItemStack item, Wrap newWrap) {
+    private WrapFile updateExistingWrapFile(Player player, Path path, ItemStack item, Wrap newWrap, String collection) {
         try {
             var existingFile = YamlConfigurationLoader.builder()
                     .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                     .path(path)
                     .build().load().get(WrapFile.class);
             var items = existingFile.getItems();
-            if (items.containsKey(item.getType().toString())) {
-                var wrappableItem = items.get(item.getType().toString());
+            if (items.containsKey(collection)) {
+                var wrappableItem = items.get(collection);
                 wrappableItem.putWrap(String.valueOf(getUnusedId(wrappableItem.getWraps())), newWrap);
-                items.put(item.getType().toString(), wrappableItem);
+                items.put(collection, wrappableItem);
+            } else {
+                var wraps = new HashMap<String, Wrap>();
+                wraps.put("1", newWrap);
+                var wrappableItem = new WrappableItem(wraps);
+                items.put(collection, wrappableItem);
             }
             return new WrapFile(items, true);
         } catch (ConfigurateException exception) {
@@ -333,12 +339,12 @@ public class WrapCommand {
         }
     }
 
-    private WrapFile createNewWrapFile(ItemStack item, Wrap newWrap) {
+    private WrapFile createNewWrapFile(ItemStack item, Wrap newWrap, String collection) {
         var wraps = new HashMap<String, Wrap>();
         wraps.put("1", newWrap);
         var wrappableItem = new WrappableItem(wraps);
         var items = new HashMap<String, WrappableItem>();
-        items.put(item.getType().toString(), wrappableItem);
+        items.put(collection, wrappableItem);
         return new WrapFile(items, true);
     }
 
