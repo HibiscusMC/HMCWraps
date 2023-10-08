@@ -19,6 +19,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -74,7 +75,11 @@ public class WrapCommand {
             plugin.getMessageHandler().send(player, Messages.NO_ITEM);
             return;
         }
-        if (plugin.getCollectionHelper().getItems(item.getType()).isEmpty()) {
+        var type = item.getType();
+        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        }
+        if (plugin.getCollectionHelper().getItems(type).isEmpty()) {
             plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             return;
         }
