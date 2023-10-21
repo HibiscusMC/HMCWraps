@@ -140,6 +140,9 @@ public class WrapCommand {
     @CommandPermission(WRAP_PERMISSION)
     @AutoComplete("@wraps @players @actions")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
+        if (wrap == null) {
+            return;
+        }
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -190,6 +193,9 @@ public class WrapCommand {
     @CommandPermission(PREVIEW_PERMISSION)
     @AutoComplete("@wraps @players @actions")
     public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
+        if (wrap == null) {
+            return;
+        }
         var material = plugin.getCollectionHelper().getMaterial(wrap);
         if (material == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NO_MATCHING_ITEM);
@@ -207,6 +213,9 @@ public class WrapCommand {
     @CommandPermission(GIVE_WRAPPER_PERMISSION)
     @AutoComplete("@physicalWraps @players *")
     public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
+        if (wrap == null) {
+            return;
+        }
         if (wrap.getPhysical() == null) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_PHYSICAL, Placeholder.parsed("uuid", wrap.getUuid()));
             return;
