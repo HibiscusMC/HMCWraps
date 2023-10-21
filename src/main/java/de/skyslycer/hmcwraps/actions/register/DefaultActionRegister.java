@@ -320,6 +320,7 @@ public class DefaultActionRegister {
             current.removeIf(it -> it.getUuid().equals(wrap.getUuid()));
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
+            plugin.getMessageHandler().send(player, Messages.FAVORITES_SET);
         }));
     }
 
@@ -341,7 +342,10 @@ public class DefaultActionRegister {
     }
 
     private void registerClearFavorites() {
-        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>())));
+        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
+            plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
+            plugin.getMessageHandler().send(information.getPlayer(), Messages.FAVORITES_CLEAR);
+        }));
     }
 
     private void registerPreview() {

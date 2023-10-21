@@ -16,6 +16,8 @@ public enum Messages {
     INVENTORY_FILTER_INACTIVE("inventory.filter.inactive"),
     PREVIEW_DISABLED("preview.disabled"),
     PREVIEW_BAR("preview.bar"),
+    FAVORITES_SET("favorites.set"),
+    FAVORITES_CLEAR("favorites.clear"),
     COMMAND_MISSING_ARGUMENT("command.missing-argument"),
     COMMAND_PLAYER_ONLY("command.player-only"),
     COMMAND_INVALID_WRAP("command.invalid-wrap"),
