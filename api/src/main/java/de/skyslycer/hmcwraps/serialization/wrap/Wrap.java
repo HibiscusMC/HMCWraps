@@ -138,6 +138,7 @@ public class Wrap extends SerializableItem {
             return item;
         } else if (getLockedItem() == null) {
             var item = super.toItem(plugin, player);
+            item.setType(type);
             var builder = ItemBuilder.from(item);
             if (getLockedName() != null) {
                 builder.name(player != null ? StringUtil.parseComponent(player, getLockedName()) : StringUtil.parseComponent(getLockedName()));

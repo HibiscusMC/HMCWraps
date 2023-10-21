@@ -42,10 +42,6 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        if (event.getClickedInventory() != player.getInventory()) {
-            return;
-        }
-
         // Avoid possible issues such as client server inventory desync when moving a desynced inventory
         if (plugin.getPreviewManager().isPreviewing(player) && plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);
@@ -57,11 +53,22 @@ public class InventoryClickListener implements Listener {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE -> {
                 var slot = event.getRawSlot();
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
-                    if (updatedItem == null || updatedItem.equals(player.getInventory().getItem(slot))) return;
-                    player.getInventory().setItem(slot, updatedItem);
+                    var updatedItem = PermissionUtil.check(plugin, player, event.getView().getItem(slot));
+                    if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
+                    event.getView().setItem(slot, updatedItem);
                 }, 1);
             }
+            case MOVE_TO_OTHER_INVENTORY -> Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (event.getClickedInventory() == player.getInventory()) {
+                    PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getTopInventory());
+                } else {
+                    PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getBottomInventory());
+                }
+            }, 1);
+        }
+
+        if (event.getClickedInventory() != player.getInventory()) {
+            return;
         }
 
         if (event.getCursor() == null || event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) {
