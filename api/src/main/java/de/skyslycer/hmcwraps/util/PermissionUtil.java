@@ -40,7 +40,7 @@ public class PermissionUtil {
      */
     @Nullable
     public static ItemStack hasPermission(HMCWraps plugin, ItemStack item, Player player) {
-        if (item.getType().isAir()) {
+        if (item == null || item.getType().isAir()) {
             return null;
         }
         var wrap = plugin.getWrapper().getWrap(item);
