@@ -614,10 +614,16 @@ public class WrapperImpl implements Wrapper {
     }
 
     private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
+        if (settings == null) {
+            return true;
+        }
         return (settings.getExclude() == null || !settings.getExclude().contains(value)) && (settings.getInclude() == null || settings.getInclude().contains(value));
     }
 
     private boolean isValidColor(ValueRangeSettings<String> settings, Color value) {
+        if (settings == null) {
+            return true;
+        }
         List<Color> exclude = null;
         List<Color> include = null;
         if (settings.getExclude() != null) {

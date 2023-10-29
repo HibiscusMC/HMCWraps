@@ -19,6 +19,8 @@ public class RangeSettings {
         this.mythic = mythic;
     }
 
+    public RangeSettings() {}
+
     public ValueRangeSettings<Integer> getModelId() {
         return modelId;
     }
