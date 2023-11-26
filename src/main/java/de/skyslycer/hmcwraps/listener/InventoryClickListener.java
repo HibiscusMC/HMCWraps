@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
@@ -63,6 +64,15 @@ public class InventoryClickListener implements Listener {
                 } else {
                     PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getBottomInventory());
                 }
+            }, 1);
+        }
+
+        if (event.getClick() == ClickType.NUMBER_KEY) {
+            var slot = event.getHotbarButton();
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
+                if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
+                player.getInventory().setItem(slot, updatedItem);
             }, 1);
         }
 
