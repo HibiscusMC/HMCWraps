@@ -14,6 +14,8 @@ permissions:
   permission-physical: false
   # ...virtual wraps
   permission-virtual: true
+  # The interval in minutes to check for wraps without permission, set to -1 to disable
+  inventory-check-interval: 10
 
 # Preview settings
 preview:

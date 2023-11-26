@@ -23,6 +23,7 @@ import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.transformation.ConfigFileTransformations;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -32,6 +33,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -65,6 +67,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private HookAccessor hookAccessor;
     private Config config;
     private MessageHandler messageHandler;
+    private BukkitTask checkTask;
 
     @Override
     public void onLoad() {
@@ -143,12 +146,16 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         }
         getPreviewManager().removeAll(true);
         getUpdateChecker().check();
+        startCheckTask();
         return true;
     }
 
     @Override
     public void unload() {
         getWrapsLoader().unload();
+        if (checkTask != null) {
+            checkTask.cancel();
+        }
     }
 
     private boolean loadMessages() {
@@ -213,6 +220,26 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             loadedHooks.add(name);
         }
         return true;
+    }
+
+    private void startCheckTask() {
+        if (config.getPermissions().getInventoryCheckInterval() == -1) {
+            return;
+        }
+        checkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(player -> {
+            for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
+                var item = player.getInventory().getItem(i);
+                if (item == null || item.getType().isAir()) {
+                    continue;
+                }
+                var updatedItem = PermissionUtil.check(this, player, item);
+                if (updatedItem.equals(item)) {
+                    continue;
+                }
+                int finalI = i; // this isn't fun
+                Bukkit.getScheduler().runTask(this, () -> player.getInventory().setItem(finalI, updatedItem));
+            }
+        }), 0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
     }
 
     @Override

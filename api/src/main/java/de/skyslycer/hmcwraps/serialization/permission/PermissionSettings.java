@@ -11,6 +11,7 @@ public class PermissionSettings {
     private boolean permissionVirtual;
     private boolean inventoryPermission;
     private boolean previewPermission;
+    private int inventoryCheckInterval;
 
     public boolean isCheckPermissionPhysical() {
         return checkPermissionPhysical;
@@ -34,6 +35,10 @@ public class PermissionSettings {
 
     public boolean isPreviewPermission() {
         return previewPermission;
+    }
+
+    public int getInventoryCheckInterval() {
+        return inventoryCheckInterval;
     }
 
 }
