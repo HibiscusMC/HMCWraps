@@ -632,7 +632,8 @@ public class WrapperImpl implements Wrapper {
         if (settings.getInclude() != null) {
             include = settings.getInclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
         }
-        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value));
+        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value)) &&
+                !(settings.getExclude().contains("none") && value != null);
     }
 
 }
