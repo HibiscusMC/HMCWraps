@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -33,11 +32,10 @@ public class DurabilityChangeListener implements Listener {
     private void updateDurability(ItemStack item, int changed) {
         var originalData = plugin.getWrapper().getOriginalData(item);
         var durability = plugin.getWrapper().getFakeDurability(item);
+        var maxDurability = plugin.getWrapper().getFakeMaxDurability(item);
         if (plugin.getWrapper().getWrap(item) == null || originalData == null || originalData.material().isBlank() || durability == -1) {
             return;
         }
-        var material = Material.valueOf(originalData.material());
-        var maxDurability = material.getMaxDurability();
         var newDurability = Math.min(durability + changed, maxDurability);
         var modelDurability = ((double) newDurability / maxDurability) * item.getType().getMaxDurability();
         if (modelDurability == 0 && newDurability > 0) {

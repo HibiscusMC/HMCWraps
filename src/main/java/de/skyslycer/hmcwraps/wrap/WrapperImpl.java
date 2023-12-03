@@ -50,6 +50,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalMythicKey;
     private final NamespacedKey originalMaterialKey;
     private final NamespacedKey fakeDurabilityKey;
+    private final NamespacedKey fakeMaxDurabilityKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -68,6 +69,7 @@ public class WrapperImpl implements Wrapper {
         originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
         originalMaterialKey = new NamespacedKey(plugin, "original-material");
         fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
+        fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
     }
 
     @Override
@@ -118,8 +120,9 @@ public class WrapperImpl implements Wrapper {
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (wrap != null) {
             if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
-                undoArmorImitation(editing, originalData);
+                switchFromLeather(editing, originalData.material());
             }
+            resetFakeDurability(item, editing);
             if (wrap.getWrapName() != null) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
             }
@@ -135,19 +138,39 @@ public class WrapperImpl implements Wrapper {
                 }
             }
             editing.setItemMeta(meta);
+            var changedDurability = false;
             if (wrap.isArmorImitationEnabled() && !editing.getType().toString().contains("LEATHER")) {
                 var maxDurability = editing.getType().getMaxDurability();
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();
                 if (switchToLeather(editing)) {
-                    var newDurability = editing.getType().getMaxDurability();
+                    int newDurability = editing.getType().getMaxDurability();
                     var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
                     var newMeta = ((Damageable) editing.getItemMeta());
                     newMeta.setDamage(newDurability - (int) modelDurability);
                     newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
+                    newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, newDurability);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
+                    changedDurability = true;
                 }
+            }
+            if (wrap.getWrapDurability() != null && wrap.getWrapDurability() > 0) {
+                var maxDurability = editing.getType().getMaxDurability();
+                var currentDurability = maxDurability - ((Damageable) meta).getDamage();
+                var modelDurability = ((double) currentDurability / maxDurability) * wrap.getWrapDurability();
+                var newMeta = ((Damageable) editing.getItemMeta());
+                newMeta.setDamage(wrap.getWrapDurability() - (int) modelDurability);
+                newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
+                newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, wrap.getWrapDurability());
+                editing.setItemMeta(newMeta);
+                changedDurability = true;
+            }
+            if (!changedDurability) {
+                var newMeta = editing.getItemMeta();
+                newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+                newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
+                editing.setItemMeta(newMeta);
             }
             if (wrap.getColor() != null && editing.getItemMeta() instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
@@ -170,8 +193,9 @@ public class WrapperImpl implements Wrapper {
                 editing.setItemMeta(meta);
             }
             if (originalData.material() != null && !originalData.material().isBlank()) {
-                undoArmorImitation(editing, originalData);
+                switchFromLeather(editing, originalData.material());
             }
+            resetFakeDurability(item, editing);
             editing = WrapNBTUtil.unwrap(editing);
         }
         editing = setPhysical(editing.clone(), physical);
@@ -209,14 +233,19 @@ public class WrapperImpl implements Wrapper {
                 originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
     }
 
-    private void undoArmorImitation(ItemStack editing, WrapValues originalData) {
-        switchFromLeather(editing, originalData.material());
-        var newMeta = (Damageable) editing.getItemMeta();
-        if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
-            var currentDurability = newMeta.getPersistentDataContainer().get(fakeDurabilityKey, PersistentDataType.INTEGER);
-            newMeta.setDamage(editing.getType().getMaxDurability() - currentDurability);
-            newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
-            editing.setItemMeta(newMeta);
+    private void resetFakeDurability(ItemStack item, ItemStack editing) {
+        if (getFakeDurability(item) != -1) {
+            var newMeta = (Damageable) editing.getItemMeta();
+            if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
+                var currentDurability = getFakeDurability(item);
+                var oldMaxDurability = getFakeMaxDurability(item);
+                var newMaxDurability = editing.getType().getMaxDurability();
+                var newDurability = ((double) currentDurability / oldMaxDurability) * newMaxDurability;
+                newMeta.setDamage(editing.getType().getMaxDurability() - (int) newDurability);
+                newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+                newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
+                editing.setItemMeta(newMeta);
+            }
         }
     }
 
@@ -261,7 +290,31 @@ public class WrapperImpl implements Wrapper {
         return data;
     }
 
+    @Override
     public void setFakeDurability(ItemStack item, int durability) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, durability);
+        item.setItemMeta(meta);
+    }
+
+    @Override
+    public int getFakeMaxDurability(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return -1;
+        }
+        var data = meta.getPersistentDataContainer().get(fakeMaxDurabilityKey, PersistentDataType.INTEGER);
+        if (data == null) {
+            return -1;
+        }
+        return data;
+    }
+
+    @Override
+    public void setFakeMaxDurability(ItemStack item, int durability) {
         var meta = item.getItemMeta();
         if (meta == null) {
             return;

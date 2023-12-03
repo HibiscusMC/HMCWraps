@@ -15,6 +15,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -36,9 +37,11 @@ public class SerializableItem {
     private @Nullable Integer amount;
     private @Nullable String color;
     private @Nullable String nbt;
+    private @Nullable Integer durability;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color, @Nullable String nbt) {
+                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
+                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -49,6 +52,7 @@ public class SerializableItem {
         this.amount = amount;
         this.color = color;
         this.nbt = nbt;
+        this.durability = durability;
     }
 
     public SerializableItem() {
@@ -92,6 +96,12 @@ public class SerializableItem {
             builder.glow();
         }
         var item = builder.build();
+        if (getDurability() != null) {
+            var itemMeta = ((Damageable) item.getItemMeta());
+            var damage = item.getType().getMaxDurability() - getDurability();
+            itemMeta.setDamage(damage);
+            item.setItemMeta(itemMeta);
+        }
         if (getNbt() != null) {
             try {
                 new NBTContainer(getNbt());
@@ -144,6 +154,11 @@ public class SerializableItem {
     @Nullable
     public Boolean isGlow() {
         return glow;
+    }
+
+    @Nullable
+    public Integer getDurability() {
+        return durability;
     }
 
     @Nullable

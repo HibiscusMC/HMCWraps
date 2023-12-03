@@ -71,7 +71,7 @@ public interface Wrapper {
 
     /**
      * Get the fake durability of the item.
-     * If the item isn't imitating armor, it will return -1.
+     * If the item isn't changing durability, it will return -1.
      *
      * @param item The item
      * @return The fake durability
@@ -85,6 +85,23 @@ public interface Wrapper {
      * @param durability The durability to set
      */
     void setFakeDurability(ItemStack item, int durability);
+
+    /**
+     * Get the fake max durability of the item.
+     * If the item isn't changing durability, it will return -1.
+     *
+     * @param item The item
+     * @return The fake durability
+     */
+    int getFakeMaxDurability(ItemStack item);
+
+    /**
+     * Set the fake max durability of the item.
+     *
+     * @param item The item
+     * @param durability The durability to set
+     */
+    void setFakeMaxDurability(ItemStack item, int durability);
 
     /**
      * Check if the item is an unwrapper.

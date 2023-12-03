@@ -35,11 +35,12 @@ public class Wrap extends SerializableItem {
     private @Nullable String wrapNbt;
     private @Nullable List<String> wrapFlags;
     private @Nullable Boolean armorImitation;
+    private @Nullable Integer wrapDurability;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
                 @Nullable String permission, @Nullable SerializableItem lockedItem) {
-        super(id, name, glow, lore, null, modelId, null, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null, null, null);
         this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
@@ -50,7 +51,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable String color, Integer amount, @Nullable List<String> flags,
                 @Nullable Map<String, Integer> enchantments) {
-        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null);
+        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null);
         this.uuid = uuid;
     }
 
@@ -129,6 +130,11 @@ public class Wrap extends SerializableItem {
 
     public Boolean isArmorImitationEnabled() {
         return armorImitation != null && armorImitation;
+    }
+
+    @Nullable
+    public Integer getWrapDurability() {
+        return wrapDurability;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
