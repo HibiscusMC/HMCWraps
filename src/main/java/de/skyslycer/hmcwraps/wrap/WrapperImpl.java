@@ -570,47 +570,8 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public boolean isValid(ItemStack item, Wrap wrap) {
-        var modelData = -1;
-        if (getWrap(item) != null) {
-            modelData = getOriginalModelId(item);
-        } else if (item.getItemMeta().hasCustomModelData()) {
-            modelData = item.getItemMeta().getCustomModelData();
-        }
-        Color color = null;
-        if (getWrap(item) != null) {
-            color = getOriginalColor(item);
-        } else if (item.getItemMeta() instanceof LeatherArmorMeta meta) {
-            color = meta.getColor();
-        }
-        String itemsAdderId = null;
-        if (getWrap(item) != null) {
-            itemsAdderId = getOriginalItemsAdderId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
-            var id = CustomStack.byItemStack(item);
-            if (id != null) {
-                itemsAdderId = id.getNamespacedID();
-            }
-        }
-        String oraxenId = null;
-        if (getWrap(item) != null) {
-            oraxenId = getOriginalOraxenId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
-            var id = OraxenItems.getIdByItem(item);
-            if (id != null) {
-                oraxenId = id;
-            }
-        }
-        String mythicId = null;
-        if (getWrap(item) != null) {
-            mythicId = getOriginalMythicId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-            if (id != null) {
-                mythicId = id;
-            }
-        }
-        return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), modelData) && isValidColor(wrap.getRange().getColor(), color) &&
-                isValidType(wrap.getRange().getItemsAdder(), itemsAdderId) && isValidType(wrap.getRange().getOraxen(), oraxenId) && isValidType(wrap.getRange().getMythic(), mythicId));
+        return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), getRealModelId(item)) && isValidColor(wrap.getRange().getColor(), getRealColor(item)) &&
+                isValidType(wrap.getRange().getItemsAdder(), getRealItemsAdderId(item)) && isValidType(wrap.getRange().getOraxen(), getRealOraxenId(item)) && isValidType(wrap.getRange().getMythic(), getRealMythicId(item)));
     }
 
     private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
@@ -634,6 +595,85 @@ public class WrapperImpl implements Wrapper {
         }
         return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value)) &&
                 !(settings.getExclude().contains("none") && value != null);
+    }
+
+    private int getRealModelId(ItemStack item) {
+        var modelData = -1;
+        if (getWrap(item) != null) {
+            modelData = getOriginalModelId(item);
+        } else if (item.getItemMeta().hasCustomModelData()) {
+            modelData = item.getItemMeta().getCustomModelData();
+        }
+        return modelData;
+    }
+
+    private Color getRealColor(ItemStack item) {
+        Color color = null;
+        if (getWrap(item) != null) {
+            color = getOriginalColor(item);
+        } else if (item.getItemMeta() instanceof LeatherArmorMeta meta) {
+            color = meta.getColor();
+        }
+        return color;
+    }
+
+    private String getRealItemsAdderId(ItemStack item) {
+        String itemsAdderId = null;
+        if (getWrap(item) != null) {
+            itemsAdderId = getOriginalItemsAdderId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
+            var id = CustomStack.byItemStack(item);
+            if (id != null) {
+                itemsAdderId = id.getNamespacedID();
+            }
+        }
+        return itemsAdderId;
+    }
+
+    private String getRealOraxenId(ItemStack item) {
+        String oraxenId = null;
+        if (getWrap(item) != null) {
+            oraxenId = getOriginalOraxenId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
+            var id = OraxenItems.getIdByItem(item);
+            if (id != null) {
+                oraxenId = id;
+            }
+        }
+        return oraxenId;
+    }
+
+    private String getRealMythicId(ItemStack item) {
+        String mythicId = null;
+        if (getWrap(item) != null) {
+            mythicId = getOriginalMythicId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+            if (id != null) {
+                mythicId = id;
+            }
+        }
+        return mythicId;
+    }
+
+    @Override
+    public boolean isGloballyDisabled(ItemStack item) {
+        if (plugin.getConfiguration().getGlobalDisable().getModelId().contains(getRealModelId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getColor().stream().map(StringUtil::colorFromString).toList().contains(getRealColor(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getItemsAdderId().contains(getRealItemsAdderId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getOraxenId().contains(getRealOraxenId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getMythicId().contains(getRealMythicId(item))) {
+            return true;
+        }
+        return false;
     }
 
 }

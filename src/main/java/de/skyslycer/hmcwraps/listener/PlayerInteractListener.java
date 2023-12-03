@@ -40,6 +40,10 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
+        if (plugin.getWrapper().isGloballyDisabled(newItem)) {
+            return;
+        }
+
         var excludes = plugin.getConfiguration().getInventory().getShortcut().getExclude();
         var type = newItem.getType();
         if (plugin.getWrapper().getWrap(newItem) != null && !plugin.getWrapper().getOriginalData(newItem).material().isEmpty()) {

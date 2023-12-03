@@ -79,7 +79,7 @@ public class WrapCommand {
         if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
         }
-        if (plugin.getCollectionHelper().getItems(type).isEmpty()) {
+        if (plugin.getCollectionHelper().getItems(type).isEmpty() || plugin.getWrapper().isGloballyDisabled(item)) {
             plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             return;
         }

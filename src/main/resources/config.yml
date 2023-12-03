@@ -42,6 +42,16 @@ preview:
     # How far it should bob up and down
     intensity: 0.25
 
+# Items with these properties can't be wrapped
+global-disable:
+  # Any model id in this list can't be wrapped. If you want to disable items with no model id, use -1.
+  model-id: [ ]
+  # You can use hex or rgb, check the documentation. If you want to disable items with no color, use 'none'.
+  color: [ ]
+  oraxen: [ ]
+  itemsadder: [ ]
+  mythic: []
+
 # The items with wraps
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
 items:

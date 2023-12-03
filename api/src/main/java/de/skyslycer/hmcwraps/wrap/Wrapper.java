@@ -162,4 +162,12 @@ public interface Wrapper {
      */
     boolean isValid(ItemStack item, Wrap wrap);
 
+    /**
+     * Check if the item is globally disabled to not be able to be wrapped.
+     *
+     * @param item The item to check
+     * @return If the item is globally disabled
+     */
+    boolean isGloballyDisabled(ItemStack item);
+
 }

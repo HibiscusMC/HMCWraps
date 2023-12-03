@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.filter.FilterSettings;
+import de.skyslycer.hmcwraps.serialization.globaldisable.GlobalDisable;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.serialization.permission.PermissionSettings;
@@ -27,6 +28,7 @@ public class Config {
     private Inventory inventory;
     private SerializableItem unwrapper;
     private PreservationSettings preservation;
+    private GlobalDisable globalDisable;
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
     private Integer config = 1;
@@ -92,6 +94,10 @@ public class Config {
 
     public FilterSettings getFilter() {
         return filter;
+    }
+
+    public GlobalDisable getGlobalDisable() {
+        return globalDisable;
     }
 
 }

@@ -103,6 +103,10 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
+        if (plugin.getWrapper().isGloballyDisabled(target)) {
+            return;
+        }
+
         var wrapId = plugin.getWrapper().getPhysicalWrapper(physical);
         if (wrapId == null) {
             return;
@@ -112,6 +116,7 @@ public class InventoryClickListener implements Listener {
         if (wrap == null) {
             return;
         }
+
         var finalCursor = cursor;
         var type = target.getType();
         if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getOriginalData(target).material().isEmpty()) {
