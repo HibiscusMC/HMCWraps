@@ -96,8 +96,7 @@ public class SerializableItem {
             builder.glow();
         }
         var item = builder.build();
-        if (getDurability() != null) {
-            var itemMeta = ((Damageable) item.getItemMeta());
+        if (getDurability() != null && item.getItemMeta() instanceof Damageable itemMeta) {
             var damage = item.getType().getMaxDurability() - getDurability();
             itemMeta.setDamage(damage);
             item.setItemMeta(itemMeta);
