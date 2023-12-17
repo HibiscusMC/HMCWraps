@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import gs.mclo.java.MclogsAPI;
@@ -67,7 +66,9 @@ public class DebugCreator {
                 wrapper.getOwningPlayer(item),
                 wrapper.isPhysicalUnwrapper(item),
                 wrapper.getPhysicalWrapper(item),
-                wrapper.getOriginalData(item)
+                wrapper.getOriginalData(item),
+                wrapper.getFakeDurability(item),
+                wrapper.getFakeMaxDurability(item)
         );
     }
 
