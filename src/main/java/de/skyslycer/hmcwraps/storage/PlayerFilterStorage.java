@@ -18,10 +18,10 @@ public class PlayerFilterStorage implements Storage<Player, Boolean> {
 
     @Override
     public Boolean get(Player source) {
-        var pdc = source.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
         if (!plugin.getConfiguration().getFilter().isEnabled()) {
             return false;
         }
+        var pdc = source.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
         if (pdc == null) {
             return plugin.getConfiguration().getFilter().getDefault();
         }

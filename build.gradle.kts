@@ -2,13 +2,13 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 
 plugins {
     java
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "de.skyslycer"
-version = "1.3.3"
+version = "1.4.0"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -160,6 +160,10 @@ bukkit {
         }
         register("hmcwraps.debug") {
             description = "Gives access to debug commands."
+            children = listOf("hmcwraps.admin")
+        }
+        register("hmcwraps.commands.create") {
+            description = "Gives access to the create command."
             children = listOf("hmcwraps.admin")
         }
     }

@@ -70,6 +70,40 @@ public interface Wrapper {
     ItemStack removeWrap(ItemStack itemStack, Player player, boolean giveBack);
 
     /**
+     * Get the fake durability of the item.
+     * If the item isn't changing durability, it will return -1.
+     *
+     * @param item The item
+     * @return The fake durability
+     */
+    int getFakeDurability(ItemStack item);
+
+    /**
+     * Set the fake durability of the item.
+     *
+     * @param item The item
+     * @param durability The durability to set
+     */
+    void setFakeDurability(ItemStack item, int durability);
+
+    /**
+     * Get the fake max durability of the item.
+     * If the item isn't changing durability, it will return -1.
+     *
+     * @param item The item
+     * @return The fake durability
+     */
+    int getFakeMaxDurability(ItemStack item);
+
+    /**
+     * Set the fake max durability of the item.
+     *
+     * @param item The item
+     * @param durability The durability to set
+     */
+    void setFakeMaxDurability(ItemStack item, int durability);
+
+    /**
      * Check if the item is an unwrapper.
      *
      * @param item The item
@@ -144,5 +178,13 @@ public interface Wrapper {
      * @return If the model id is valid
      */
     boolean isValid(ItemStack item, Wrap wrap);
+
+    /**
+     * Check if the item is globally disabled to not be able to be wrapped.
+     *
+     * @param item The item to check
+     * @return If the item is globally disabled
+     */
+    boolean isGloballyDisabled(ItemStack item);
 
 }

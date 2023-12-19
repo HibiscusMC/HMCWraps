@@ -2,6 +2,10 @@ package de.skyslycer.hmcwraps.serialization.item;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NbtApiException;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -11,6 +15,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -31,9 +36,12 @@ public class SerializableItem {
     private @Nullable Map<String, Integer> enchantments;
     private @Nullable Integer amount;
     private @Nullable String color;
+    private @Nullable String nbt;
+    private @Nullable Integer durability;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount, @Nullable String color) {
+                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
+                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -43,6 +51,8 @@ public class SerializableItem {
         this.enchantments = enchantments;
         this.amount = amount;
         this.color = color;
+        this.nbt = nbt;
+        this.durability = durability;
     }
 
     public SerializableItem() {
@@ -85,7 +95,24 @@ public class SerializableItem {
         if (Boolean.TRUE.equals(isGlow())) {
             builder.glow();
         }
-        return builder.build();
+        var item = builder.build();
+        if (getDurability() != null && item.getItemMeta() instanceof Damageable itemMeta) {
+            var damage = item.getType().getMaxDurability() - getDurability();
+            itemMeta.setDamage(damage);
+            item.setItemMeta(itemMeta);
+        }
+        if (getNbt() != null) {
+            try {
+                new NBTContainer(getNbt());
+            } catch (NbtApiException e) {
+                Bukkit.getLogger().warning("A provided NBT data is invalid in an item!");
+            }
+            var itemNbt = new NBTItem(item);
+            var newNbt = NBT.parseNBT(getNbt());
+            itemNbt.mergeCompound(newNbt);
+            item = itemNbt.getItem();
+        }
+        return item;
     }
 
     public String getId() {
@@ -129,11 +156,21 @@ public class SerializableItem {
     }
 
     @Nullable
+    public Integer getDurability() {
+        return durability;
+    }
+
+    @Nullable
     public Color getColor() {
         if (color == null) {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getColorFromHook(getId());
         }
         return StringUtil.colorFromString(color);
+    }
+
+    @Nullable
+    public String getNbt() {
+        return nbt;
     }
 
 }

@@ -10,10 +10,14 @@ public enum Messages {
     REMOVE_WRAP("remove-wrap"),
     NO_ITEM("no-item"),
     NO_WRAPS("no-wraps"),
+    NO_REWRAP("no-rewrap"),
+    ARMOR_IMITATION_FORBIDDEN_INVENTORY("armor-imitation.forbidden-inventory"),
     INVENTORY_FILTER_ACTIVE("inventory.filter.active"),
     INVENTORY_FILTER_INACTIVE("inventory.filter.inactive"),
     PREVIEW_DISABLED("preview.disabled"),
     PREVIEW_BAR("preview.bar"),
+    FAVORITES_SET("favorites.set"),
+    FAVORITES_CLEAR("favorites.clear"),
     COMMAND_MISSING_ARGUMENT("command.missing-argument"),
     COMMAND_PLAYER_ONLY("command.player-only"),
     COMMAND_INVALID_WRAP("command.invalid-wrap"),
@@ -40,7 +44,9 @@ public enum Messages {
     COMMAND_CONVERT_SUCCESS("command.convert.success"),
     COMMAND_CONVERT_CONFIRM("command.convert.confirm"),
     COMMAND_CONVERT_NO_CONFIRM("command.convert.no-confirm"),
-    COMMAND_CONVERT_FAILED("command.convert.failed");
+    COMMAND_CONVERT_FAILED("command.convert.failed"),
+    COMMAND_CREATE_FAILED("command.create.failed"),
+    COMMAND_CREATE_SUCCESS("command.create.success");
 
     private final String key;
 

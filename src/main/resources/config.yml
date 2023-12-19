@@ -1,5 +1,5 @@
 # Settings on how permissions should be handled
-permission-settings:
+permissions:
   # If the wrap inventory open permission should be checked on wraps inventory open
   inventory-permission: false
   # If the preview should be disabled if the player doesn't have the permission for the wrap
@@ -14,9 +14,15 @@ permission-settings:
   permission-physical: false
   # ...virtual wraps
   permission-virtual: true
+  # The interval in minutes to check for wraps without permission, set to -1 to disable
+  inventory-check-interval: 10
 
 # Preview settings
 preview:
+  # The type of the preview, either 'FLOATING' or 'HAND', floating being the item turning in the air and
+  # item being the players item in hand turning into the wrap temporarily.
+  # When using 'HAND', rotation and bobbing will be ignored. (The preview item is client-side only)
+  type: 'FLOATING'
   # Duration of the preview in seconds
   duration: 5
   # Rotation per tick (50ms)
@@ -35,6 +41,16 @@ preview:
     speed: 7
     # How far it should bob up and down
     intensity: 0.25
+
+# Items with these properties can't be wrapped
+global-disable:
+  # Any model id in this list can't be wrapped. If you want to disable items with no model id, use -1.
+  model-id: [ ]
+  # You can use hex or rgb, check the documentation. If you want to disable items with no color, use 'none'.
+  color: [ ]
+  oraxen: [ ]
+  itemsadder: [ ]
+  mythic: []
 
 # The items with wraps
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
@@ -67,7 +83,7 @@ items:
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
-        # Item actions, all possible action triggers are listed below. For a full list of actions, see the wiki.
+        # Item actions, most action triggers are listed below. For a full list of actions, see the wiki.
         # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
         # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
         actions:
@@ -204,6 +220,16 @@ updater:
   # Where the version checker should check for updates (POLYMART, SPIGOT_MC)
   platform: 'POLYMART'
 
+# Settings related to wrapping
+wrapping:
+  # If wraps should be able to be rewrapped (wrapped again while wrapped)
+  rewrap:
+    # If rewrapping should be enabled for...
+    # ...virtual wrapping
+    virtual-enabled: true
+    # ...physical wrapping
+    physical-enabled: true
+
 # The inventory (/wraps)
 inventory:
   # Shortcut settings
@@ -212,6 +238,9 @@ inventory:
     enabled: true
     # What items can't be used to open the inventory
     exclude: [ ]
+  # If the player should be able to switch the wrapping item in the inventory.
+  # When enabled, the inventory won't close after wrapping or unwrapping.
+  item-change-enabled: true
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
@@ -280,3 +309,7 @@ inventory:
         any:
           UNWRAP:
             - ''
+
+# DON'T TOUCH THIS
+config: 1
+# DON'T TOUCH THIS

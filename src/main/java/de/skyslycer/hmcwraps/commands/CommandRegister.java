@@ -27,11 +27,11 @@ public class CommandRegister {
         BukkitCommandHandler commandHandler = BukkitCommandHandler.create(plugin);
 
         commandHandler.registerValueResolver(Wrap.class, context -> {
-            var wrap = plugin.getWrapsLoader().getWraps().get(context.pop());
+            var uuid = context.pop();
+            var wrap = plugin.getWrapsLoader().getWraps().get(uuid);
             if (wrap == null) {
                 plugin.getMessageHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
-                        Placeholder.parsed("uuid", context.pop()));
-                throw new IllegalArgumentException();
+                        Placeholder.parsed("uuid", uuid));
             }
             return wrap;
         });

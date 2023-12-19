@@ -2,7 +2,11 @@ package de.skyslycer.hmcwraps.preview;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
+import de.skyslycer.hmcwraps.preview.floating.FloatingPreview;
+import de.skyslycer.hmcwraps.preview.hand.HandPreview;
+import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.util.MaterialUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,7 +48,9 @@ public class PreviewManager {
      * @param wrap    The wrap to preview
      */
     public void create(Player player, Consumer<Player> onClose, Wrap wrap) {
-        var item = ItemBuilder.from(plugin.getCollectionHelper().getMaterial(wrap)).model(wrap.getModelId());
+        var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
+        var type = wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(wrapType) : wrapType;
+        var item = ItemBuilder.from(type).model(wrap.getModelId());
         if (wrap.getColor() != null) {
             item.color(wrap.getColor());
         }
@@ -58,7 +64,13 @@ public class PreviewManager {
 
 
     private void createPrivate(Player player, ItemStack item, Consumer<Player> onClose) {
-        var preview = new Preview(player, item, onClose, plugin);
+        this.remove(player.getUniqueId(), false);
+        Preview preview;
+        if (plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
+            preview = new HandPreview(player, item, onClose, plugin);
+        } else {
+            preview = new FloatingPreview(player, item, onClose, plugin);
+        }
         previews.put(player.getUniqueId(), preview);
         preview.preview();
     }
@@ -70,6 +82,16 @@ public class PreviewManager {
      */
     public void removeAll(boolean open) {
         previews.keySet().forEach(uuid -> this.remove(uuid, open));
+    }
+
+    /**
+     * Check if a player is previewing.
+     *
+     * @param player The player
+     * @return If the player is previewing
+     */
+    public boolean isPreviewing(Player player) {
+        return previews.containsKey(player.getUniqueId());
     }
 
 }

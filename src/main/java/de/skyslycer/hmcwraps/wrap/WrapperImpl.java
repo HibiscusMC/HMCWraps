@@ -9,13 +9,15 @@ import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.WrapNBTUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.NamespacedKey;
+import dev.lone.itemsadder.api.CustomStack;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.th0rgal.oraxen.api.OraxenItems;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -43,6 +45,12 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalNameKey;
     private final NamespacedKey originalLoreKey;
     private final NamespacedKey originalFlagsKey;
+    private final NamespacedKey originalItemsAdderKey;
+    private final NamespacedKey originalOraxenKey;
+    private final NamespacedKey originalMythicKey;
+    private final NamespacedKey originalMaterialKey;
+    private final NamespacedKey fakeDurabilityKey;
+    private final NamespacedKey fakeMaxDurabilityKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -56,6 +64,12 @@ public class WrapperImpl implements Wrapper {
         originalNameKey = new NamespacedKey(plugin, "original-name");
         originalLoreKey = new NamespacedKey(plugin, "original-lore");
         originalFlagsKey = new NamespacedKey(plugin, "original-flags");
+        originalItemsAdderKey = new NamespacedKey(plugin, "original-itemsadder-id");
+        originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
+        originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
+        originalMaterialKey = new NamespacedKey(plugin, "original-material");
+        fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
+        fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
     }
 
     @Override
@@ -97,13 +111,23 @@ public class WrapperImpl implements Wrapper {
         var originalModelId = -1;
         var originalLore = meta.getLore();
         var originalFlags = meta.getItemFlags().stream().toList();
+        var originalMaterial = "";
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
         }
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
+        meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (wrap != null) {
+            if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
+                switchFromLeather(editing, originalData.material());
+            }
+            resetFakeDurability(item, editing);
+            meta.setDisplayName(originalData.name());
+            meta.setLore(originalData.lore());
+            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
             if (wrap.getWrapName() != null) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
             }
@@ -111,26 +135,59 @@ public class WrapperImpl implements Wrapper {
                 var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
                 meta.setLore(lore);
             }
-            if (wrap.getFlags() != null) {
-                for (String flag : wrap.getFlags()) {
+            if (wrap.getWrapFlags() != null) {
+                for (String flag : wrap.getWrapFlags()) {
                     try {
                         meta.addItemFlags(ItemFlag.valueOf(flag));
                     } catch (IllegalArgumentException ignored) { }
                 }
             }
-            if (wrap.getColor() != null && meta instanceof LeatherArmorMeta leatherMeta) {
+            editing.setItemMeta(meta);
+            var changedDurability = false;
+            if (wrap.isArmorImitationEnabled() && !editing.getType().toString().contains("LEATHER")) {
+                var maxDurability = editing.getType().getMaxDurability();
+                var currentDurability = maxDurability - ((Damageable) meta).getDamage();
+                var temp = editing.getType().toString();
+                if (switchToLeather(editing)) {
+                    int newDurability = editing.getType().getMaxDurability();
+                    var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
+                    var newMeta = ((Damageable) editing.getItemMeta());
+                    newMeta.setDamage(newDurability - (int) modelDurability);
+                    newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
+                    newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
+                    editing.setItemMeta(newMeta);
+                    originalMaterial = temp;
+                    changedDurability = true;
+                }
+            }
+            if (wrap.getWrapDurability() != null && wrap.getWrapDurability() > 0) {
+                var maxDurability = editing.getType().getMaxDurability();
+                var currentDurability = maxDurability - ((Damageable) meta).getDamage();
+                var modelDurability = ((double) currentDurability / maxDurability) * wrap.getWrapDurability();
+                var newMeta = ((Damageable) editing.getItemMeta());
+                newMeta.setDamage(maxDurability - currentDurability);
+                newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, (int) modelDurability);
+                newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, wrap.getWrapDurability());
+                editing.setItemMeta(newMeta);
+                changedDurability = true;
+            }
+            if (!changedDurability) {
+                var newMeta = editing.getItemMeta();
+                newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+                newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
+                editing.setItemMeta(newMeta);
+            }
+            if (wrap.getColor() != null && editing.getItemMeta() instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
                 leatherMeta.setColor(wrap.getColor());
                 editing.setItemMeta(leatherMeta);
-            } else {
-                editing.setItemMeta(meta);
             }
-            if (wrap.getNbt() != null) {
-                editing = WrapNBTUtil.wrap(editing, wrap.getNbt());
+            if (wrap.getWrapNbt() != null) {
+                editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
         } else {
+            meta.setCustomModelData(0);
             meta.setDisplayName(originalData.name());
-            meta.setCustomModelData(originalData.modelId());
             meta.setLore(originalData.lore());
             meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
             meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
@@ -140,13 +197,135 @@ public class WrapperImpl implements Wrapper {
             } else {
                 editing.setItemMeta(meta);
             }
+            if (originalData.material() != null && !originalData.material().isBlank()) {
+                switchFromLeather(editing, originalData.material());
+            }
+            resetFakeDurability(item, editing);
             editing = WrapNBTUtil.unwrap(editing);
         }
         editing = setPhysical(editing.clone(), physical);
         if (wrap == null || currentWrap != null) {
             return editing;
         }
-        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore, originalFlags));
+        String itemsAdderId = null;
+        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
+            var id = CustomStack.byItemStack(item);
+            if (id != null) {
+                itemsAdderId = id.getNamespacedID();
+            }
+        } else {
+            itemsAdderId = getOriginalItemsAdderId(item);
+        }
+        String oraxenId = null;
+        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
+            var id = OraxenItems.getIdByItem(item);
+            if (id != null) {
+                oraxenId = id;
+            }
+        } else {
+            oraxenId = getOriginalOraxenId(item);
+        }
+        String mythicId = null;
+        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+            if (id != null) {
+                itemsAdderId = id;
+            }
+        } else {
+            mythicId = getOriginalMythicId(item);
+        }
+        return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
+                originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
+    }
+
+    private void resetFakeDurability(ItemStack item, ItemStack editing) {
+        if (getFakeDurability(item) != -1) {
+            var newMeta = (Damageable) editing.getItemMeta();
+            if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
+                var currentDurability = getFakeDurability(item);
+                var oldMaxDurability = getFakeMaxDurability(item);
+                var newMaxDurability = editing.getType().getMaxDurability();
+                var newDurability = ((double) currentDurability / oldMaxDurability) * newMaxDurability;
+                newMeta.setDamage(editing.getType().getMaxDurability() - (int) newDurability);
+                newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+                newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
+                editing.setItemMeta(newMeta);
+            }
+        }
+    }
+
+    private boolean switchToLeather(ItemStack editing) {
+        if (editing.getType().toString().contains("_HELMET")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_HELMET);
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
+        } else if (editing.getType().toString().contains("_CHESTPLATE")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_CHESTPLATE);
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
+        } else if (editing.getType().toString().contains("_LEGGINGS")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_LEGGINGS);
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
+        } else if (editing.getType().toString().contains("_BOOTS")) {
+            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+            editing.setType(Material.LEATHER_BOOTS);
+            ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private void switchFromLeather(ItemStack editing, String material) {
+        editing.setType(Material.valueOf(material));
+        ArmorModifiers.removeAttributes(editing);
+    }
+
+    @Override
+    public int getFakeDurability(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return -1;
+        }
+        var data = meta.getPersistentDataContainer().get(fakeDurabilityKey, PersistentDataType.INTEGER);
+        if (data == null) {
+            return -1;
+        }
+        return data;
+    }
+
+    @Override
+    public void setFakeDurability(ItemStack item, int durability) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, durability);
+        item.setItemMeta(meta);
+    }
+
+    @Override
+    public int getFakeMaxDurability(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return -1;
+        }
+        var data = meta.getPersistentDataContainer().get(fakeMaxDurabilityKey, PersistentDataType.INTEGER);
+        if (data == null) {
+            return -1;
+        }
+        return data;
+    }
+
+    @Override
+    public void setFakeMaxDurability(ItemStack item, int durability) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        meta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, durability);
+        item.setItemMeta(meta);
     }
 
     @Override
@@ -205,7 +384,9 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public WrapValues getOriginalData(ItemStack item) {
-        return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item), getOriginalLore(item), getOriginalFlags(item));
+        return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
+                getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
+                getOriginalMythicId(item), getOriginalMaterial(item));
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -240,6 +421,7 @@ public class WrapperImpl implements Wrapper {
             if (data != null) {
                 name = ChatColor.translateAlternateColorCodes('&', data);
             }
+            return name;
         } else if (nameSettings.isDefaultEnabled()) {
             var map = nameSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -250,8 +432,9 @@ public class WrapperImpl implements Wrapper {
                     name = StringUtil.LEGACY_SERIALIZER_AMPERSAND.serialize(StringUtil.parseComponent(map.get(key)));
                 }
             }
+            return name;
         }
-        return name;
+        return item.getItemMeta().getDisplayName();
     }
 
     private List<String> getOriginalLore(ItemStack item) {
@@ -263,6 +446,7 @@ public class WrapperImpl implements Wrapper {
             if (data != null) {
                 Arrays.stream(data.split(SEPARATOR)).map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
             }
+            return lore;
         } else if (loreSettings.isDefaultEnabled()) {
             var map = loreSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -273,8 +457,9 @@ public class WrapperImpl implements Wrapper {
                     map.get(key).stream().map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
                 }
             }
+            return lore;
         }
-        return lore;
+        return item.getItemMeta().getLore();
     }
 
     private Color getOriginalColor(ItemStack item) {
@@ -314,6 +499,7 @@ public class WrapperImpl implements Wrapper {
                     } catch (IllegalArgumentException ignored) { }
                 }
             }
+            return list;
         } else if (settings.isDefaultEnabled()) {
             var map = settings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -332,10 +518,31 @@ public class WrapperImpl implements Wrapper {
                     }
                 }
             }
+            return list;
         }
-        return list;
+        return item.getItemMeta().getItemFlags().stream().toList();
     }
 
+    private String getOriginalItemsAdderId(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalItemsAdderKey, PersistentDataType.STRING);
+    }
+
+    private String getOriginalOraxenId(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalOraxenKey, PersistentDataType.STRING);
+    }
+
+    private String getOriginalMythicId(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalMythicKey, PersistentDataType.STRING);
+    }
+
+    private String getOriginalMaterial(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var value = container.get(originalMaterialKey, PersistentDataType.STRING);
+        return value == null ? "" : value;
+    }
 
     @Override
     public ItemStack setOriginalData(ItemStack item, WrapValues wrapValues) {
@@ -355,6 +562,18 @@ public class WrapperImpl implements Wrapper {
         if (wrapValues.flags() != null) {
             meta.getPersistentDataContainer().set(originalFlagsKey, PersistentDataType.STRING,
                     wrapValues.flags().stream().map(ItemFlag::toString).collect(Collectors.joining(SEPARATOR)));
+        }
+        if (wrapValues.itemsAdder() != null) {
+            meta.getPersistentDataContainer().set(originalItemsAdderKey, PersistentDataType.STRING, wrapValues.itemsAdder());
+        }
+        if (wrapValues.oraxen() != null) {
+            meta.getPersistentDataContainer().set(originalOraxenKey, PersistentDataType.STRING, wrapValues.oraxen());
+        }
+        if (wrapValues.mythic() != null) {
+            meta.getPersistentDataContainer().set(originalMythicKey, PersistentDataType.STRING, wrapValues.mythic());
+        }
+        if (wrapValues.material() != null) {
+            meta.getPersistentDataContainer().set(originalMaterialKey, PersistentDataType.STRING, wrapValues.material());
         }
         editing.setItemMeta(meta);
         return editing;
@@ -409,26 +628,21 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public boolean isValid(ItemStack item, Wrap wrap) {
-        var modelData = -1;
-        if (getWrap(item) != null) {
-            modelData = getOriginalModelId(item);
-        } else if (item.getItemMeta().hasCustomModelData()) {
-            modelData = item.getItemMeta().getCustomModelData();
-        }
-        Color color = null;
-        if (getWrap(item) != null) {
-            color = getOriginalColor(item);
-        } else if (item.getItemMeta() instanceof LeatherArmorMeta meta) {
-            color = meta.getColor();
-        }
-        return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), modelData) && isValidColor(wrap.getRange().getColor(), color));
+        return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), getRealModelId(item)) && isValidColor(wrap.getRange().getColor(), getRealColor(item)) &&
+                isValidType(wrap.getRange().getItemsAdder(), getRealItemsAdderId(item)) && isValidType(wrap.getRange().getOraxen(), getRealOraxenId(item)) && isValidType(wrap.getRange().getMythic(), getRealMythicId(item)));
     }
 
     private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
+        if (settings == null) {
+            return true;
+        }
         return (settings.getExclude() == null || !settings.getExclude().contains(value)) && (settings.getInclude() == null || settings.getInclude().contains(value));
     }
 
     private boolean isValidColor(ValueRangeSettings<String> settings, Color value) {
+        if (settings == null) {
+            return true;
+        }
         List<Color> exclude = null;
         List<Color> include = null;
         if (settings.getExclude() != null) {
@@ -437,7 +651,87 @@ public class WrapperImpl implements Wrapper {
         if (settings.getInclude() != null) {
             include = settings.getInclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
         }
-        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value));
+        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value)) &&
+                !(settings.getExclude().contains("none") && value != null);
+    }
+
+    private int getRealModelId(ItemStack item) {
+        var modelData = -1;
+        if (getWrap(item) != null) {
+            modelData = getOriginalModelId(item);
+        } else if (item.getItemMeta().hasCustomModelData()) {
+            modelData = item.getItemMeta().getCustomModelData();
+        }
+        return modelData;
+    }
+
+    private Color getRealColor(ItemStack item) {
+        Color color = null;
+        if (getWrap(item) != null) {
+            color = getOriginalColor(item);
+        } else if (item.getItemMeta() instanceof LeatherArmorMeta meta) {
+            color = meta.getColor();
+        }
+        return color;
+    }
+
+    private String getRealItemsAdderId(ItemStack item) {
+        String itemsAdderId = null;
+        if (getWrap(item) != null) {
+            itemsAdderId = getOriginalItemsAdderId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
+            var id = CustomStack.byItemStack(item);
+            if (id != null) {
+                itemsAdderId = id.getNamespacedID();
+            }
+        }
+        return itemsAdderId;
+    }
+
+    private String getRealOraxenId(ItemStack item) {
+        String oraxenId = null;
+        if (getWrap(item) != null) {
+            oraxenId = getOriginalOraxenId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
+            var id = OraxenItems.getIdByItem(item);
+            if (id != null) {
+                oraxenId = id;
+            }
+        }
+        return oraxenId;
+    }
+
+    private String getRealMythicId(ItemStack item) {
+        String mythicId = null;
+        if (getWrap(item) != null) {
+            mythicId = getOriginalMythicId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+            if (id != null) {
+                mythicId = id;
+            }
+        }
+        return mythicId;
+    }
+
+    @Override
+    public boolean isGloballyDisabled(ItemStack item) {
+        if (plugin.getConfiguration().getGlobalDisable().getModelId().contains(getRealModelId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getColor().stream().map(StringUtil::colorFromString).toList().contains(getRealColor(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getItemsAdderId().contains(getRealItemsAdderId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getOraxenId().contains(getRealOraxenId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getMythicId().contains(getRealMythicId(item))) {
+            return true;
+        }
+        return false;
     }
 
 }

@@ -7,6 +7,7 @@ import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
+import de.skyslycer.hmcwraps.transformation.WrapFileTransformations;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
@@ -75,14 +76,16 @@ public class WrapsLoaderImpl implements WrapsLoader {
                 ((path, attributes) -> attributes.isRegularFile() && (path.toString().endsWith(".yml") || path.toString().endsWith(".yaml"))))) {
             paths.forEach(path -> {
                 try {
-                    var wrapFile = YamlConfigurationLoader.builder()
+                    var loader = YamlConfigurationLoader.builder()
                             .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                             .path(path)
-                            .build().load().get(WrapFile.class);
+                            .build();
+                    new WrapFileTransformations().updateToLatest(path);
+                    var wrapFile = loader.load().get(WrapFile.class);
                     if (wrapFile != null && wrapFile.isEnabled()) {
                         wrapFiles.add(wrapFile);
                     }
-                } catch (ConfigurateException exception) {
+                } catch (IOException exception) {
                     plugin.logSevere(
                             "Could not load the wrap file " + path.getFileName().toString() + " (please report this to the developers)!", exception);
                 }

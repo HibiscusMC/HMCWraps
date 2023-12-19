@@ -32,7 +32,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
@@ -93,13 +92,18 @@ public class DefaultActionRegister {
     private void registerUnwrap() {
         plugin.getActionHandler().subscribe(Action.UNWRAP, (actionInformation) -> {
             var player = actionInformation.getPlayer();
-            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItemInMainHand());
-            player.getInventory().setItemInMainHand(plugin.getWrapper().removeWrap(player.getInventory().getItemInMainHand(), player, true));
-            player.getOpenInventory().close();
+            var slot = getSlot(actionInformation);
+            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItem(slot));
+            player.getInventory().setItem(slot, plugin.getWrapper().removeWrap(player.getInventory().getItem(slot), player, true));
             plugin.getMessageHandler().send(player, Messages.REMOVE_WRAP);
             if (wrap != null) {
                 plugin.getActionHandler().pushUnwrap(wrap, player);
                 plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
+            }
+            if (plugin.getConfiguration().getInventory().isItemChangeEnabled()) {
+                openIfPossible(plugin, actionInformation, player);
+            } else {
+                player.closeInventory();
             }
         });
     }
@@ -278,7 +282,7 @@ public class DefaultActionRegister {
     private void registerConsoleCommand() {
         plugin.getActionHandler().subscribe(Action.CONSOLE_COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "console command", "kill <player>")) return;
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information).substring(1));
         });
     }
 
@@ -304,9 +308,11 @@ public class DefaultActionRegister {
                 if (!ListUtil.containsAny(collections.getMaterials(collections.getCollection(currentWrap)), collections.getMaterials(collections.getCollection(wrap)))) {
                     return;
                 }
-                var range = wrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(), new ValueRangeSettings<>()) : wrap.getRange();
-                var currentRange = currentWrap.getRange() == null ? new RangeSettings(new ValueRangeSettings<>(null, null), new ValueRangeSettings<>(null, null)) : currentWrap.getRange();
-                if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())) {
+                var range = wrap.getRange() == null ? RangeSettings.empty() : wrap.getRange();
+                var currentRange = currentWrap.getRange() == null ? RangeSettings.empty() : currentWrap.getRange();
+                if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())
+                        || !isSameRange(range.getOraxen(), currentRange.getOraxen()) || !isSameRange(range.getItemsAdder(), currentRange.getItemsAdder())
+                        || !isSameRange(range.getMythic(), currentRange.getMythic())) {
                     return;
                 }
                 current.remove(currentWrap);
@@ -314,6 +320,7 @@ public class DefaultActionRegister {
             current.removeIf(it -> it.getUuid().equals(wrap.getUuid()));
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
+            plugin.getMessageHandler().send(player, Messages.FAVORITES_SET);
         }));
     }
 
@@ -335,7 +342,10 @@ public class DefaultActionRegister {
     }
 
     private void registerClearFavorites() {
-        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>())));
+        plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
+            plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
+            plugin.getMessageHandler().send(information.getPlayer(), Messages.FAVORITES_CLEAR);
+        }));
     }
 
     private void registerPreview() {
@@ -357,9 +367,19 @@ public class DefaultActionRegister {
     }
 
     private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
-        if (!plugin.getCollectionHelper().getItems(player.getInventory().getItemInMainHand().getType()).isEmpty()
+        var slot = getSlot(information);
+        var item = player.getInventory().getItem(slot);
+        if (item == null) {
+            player.closeInventory();
+            return;
+        }
+        var type = item.getType();
+        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        }
+        if (!plugin.getCollectionHelper().getItems(type).isEmpty()
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
-            GuiBuilder.open(plugin, player, player.getInventory().getItemInMainHand());
+            GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
         }
     }
 
@@ -367,17 +387,26 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.WRAP, (information -> {
             var player = information.getPlayer();
             var wrap = getWrap(information);
+            var slot = getSlot(information);
             if (wrap == null) return;
             if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissions().isPermissionVirtual()) {
                 plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                 return;
             }
-            var item = player.getInventory().getItemInMainHand();
-            player.getInventory().setItem(EquipmentSlot.HAND, plugin.getWrapper().setWrap(wrap, item, false, player, true));
+            var item = player.getInventory().getItem(slot);
+            if (!plugin.getConfiguration().getWrapping().getRewrap().isVirtualEnabled() && plugin.getWrapper().getWrap(item) != null) {
+                plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
+                return;
+            }
+            player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
             plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
             plugin.getActionHandler().pushWrap(wrap, player);
             plugin.getActionHandler().pushVirtualWrap(wrap, player);
-            player.getOpenInventory().close();
+            if (plugin.getConfiguration().getInventory().isItemChangeEnabled()) {
+                openIfPossible(plugin, information, player);
+            } else {
+                player.closeInventory();
+            }
         }));
     }
 
@@ -417,6 +446,18 @@ public class DefaultActionRegister {
             wrap = wrapInformation.getWrap();
         }
         return wrap;
+    }
+
+    private int getSlot(ActionInformation information) {
+        int slot;
+        if (information instanceof GuiActionInformation guiInformation) {
+            slot = guiInformation.getSlot();
+        } else if (information instanceof WrapGuiActionInformation wrapInformation) {
+            slot = wrapInformation.getSlot();
+        } else {
+            slot = information.getPlayer().getInventory().getHeldItemSlot();
+        }
+        return slot;
     }
 
     private String parseMessage(ActionInformation information) {

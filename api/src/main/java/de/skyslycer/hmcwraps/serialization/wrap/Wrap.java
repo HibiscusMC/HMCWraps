@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -15,11 +16,12 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigSerializable
 public class Wrap extends SerializableItem {
 
-    private Boolean preview = true;
+    private @Nullable Boolean preview;
     private String uuid;
     private @Nullable PhysicalWrap physical;
     private @Nullable String permission;
@@ -30,17 +32,27 @@ public class Wrap extends SerializableItem {
     private @Nullable String wrapName;
     private @Nullable List<String> wrapLore;
     private @Nullable RangeSettings range;
-    private @Nullable String nbt;
+    private @Nullable String wrapNbt;
+    private @Nullable List<String> wrapFlags;
+    private @Nullable Boolean armorImitation;
+    private @Nullable Integer wrapDurability;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
                 @Nullable String permission, @Nullable SerializableItem lockedItem) {
-        super(id, name, glow, lore, null, modelId, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null, null, null);
         this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
         this.permission = permission;
         this.lockedItem = lockedItem;
+    }
+
+    public Wrap(String id, String name, @Nullable List<String> lore,
+                @Nullable Integer modelId, String uuid, @Nullable String color, Integer amount, @Nullable List<String> flags,
+                @Nullable Map<String, Integer> enchantments) {
+        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null);
+        this.uuid = uuid;
     }
 
     public Wrap() {
@@ -61,7 +73,7 @@ public class Wrap extends SerializableItem {
     }
 
     public Boolean isPreview() {
-        return preview;
+        return preview == null || preview;
     }
 
     @Nullable
@@ -107,15 +119,32 @@ public class Wrap extends SerializableItem {
     }
 
     @Nullable
-    public String getNbt() {
-        return nbt;
+    public String getWrapNbt() {
+        return wrapNbt;
     }
 
-    public ItemStack toPermissionItem(HMCWraps plugin, Player player) {
+    @Nullable
+    public List<String> getWrapFlags() {
+        return wrapFlags;
+    }
+
+    public Boolean isArmorImitationEnabled() {
+        return armorImitation != null && armorImitation;
+    }
+
+    @Nullable
+    public Integer getWrapDurability() {
+        return wrapDurability;
+    }
+
+    public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
-            return super.toItem(plugin, player);
+            var item = super.toItem(plugin, player);
+            item.setType(type);
+            return item;
         } else if (getLockedItem() == null) {
             var item = super.toItem(plugin, player);
+            item.setType(type);
             var builder = ItemBuilder.from(item);
             if (getLockedName() != null) {
                 builder.name(player != null ? StringUtil.parseComponent(player, getLockedName()) : StringUtil.parseComponent(getLockedName()));
@@ -130,7 +159,7 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags) {
+    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder, String oraxen, String mythic, String material) {
     }
 
 }

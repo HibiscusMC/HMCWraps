@@ -11,13 +11,7 @@ public class ValueRangeSettings<T> {
     private @Nullable List<T> include;
     private @Nullable List<T> exclude;
 
-    public ValueRangeSettings(@Nullable List<T> include, @Nullable List<T> exclude) {
-        this.include = include;
-        this.exclude = exclude;
-    }
-
-    public ValueRangeSettings() {
-    }
+    public ValueRangeSettings() { }
 
     @Nullable
     public List<T> getInclude() {

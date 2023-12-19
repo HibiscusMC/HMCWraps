@@ -24,6 +24,9 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         var player = event.getPlayer();
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK && plugin.getPreviewManager().isPreviewing(player)) {
+            plugin.getPreviewManager().remove(player.getUniqueId(), false);
+        }
         if (player.getInventory().getItemInMainHand().getType().isAir()) {
             return;
         }
@@ -37,18 +40,26 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
+        if (plugin.getWrapper().isGloballyDisabled(newItem)) {
+            return;
+        }
+
         var excludes = plugin.getConfiguration().getInventory().getShortcut().getExclude();
+        var type = newItem.getType();
+        if (plugin.getWrapper().getWrap(newItem) != null && !plugin.getWrapper().getOriginalData(newItem).material().isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getOriginalData(newItem).material());
+        }
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || plugin.getCollectionHelper().getItems(newItem.getType()).isEmpty() || !player.isSneaking()
+                || plugin.getCollectionHelper().getItems(type).isEmpty() || !player.isSneaking()
                 || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
-                || ListUtil.containsAny(List.of(newItem.getType().toString(),
+                || ListUtil.containsAny(List.of(type.toString(),
                 player.getInventory().getItemInOffHand().getType().toString()), excludes)
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
                 && !player.hasPermission(WrapCommand.WRAPS_PERMISSION))) {
             return;
         }
         event.setCancelled(true);
-        GuiBuilder.open(plugin, player, newItem);
+        GuiBuilder.open(plugin, player, newItem, player.getInventory().getHeldItemSlot());
     }
 
 }

@@ -21,7 +21,9 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
+import de.skyslycer.hmcwraps.transformation.ConfigFileTransformations;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -31,6 +33,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -64,6 +67,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private HookAccessor hookAccessor;
     private Config config;
     private MessageHandler messageHandler;
+    private BukkitTask checkTask;
 
     @Override
     public void onLoad() {
@@ -99,6 +103,11 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         Bukkit.getPluginManager().registerEvents(new PlayerShiftListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDropListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerHitEntityListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new DurabilityChangeListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ItemBurnListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerOffHandSwitchListener(this), this);
 
         PacketEvents.getAPI().init();
 
@@ -137,12 +146,16 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         }
         getPreviewManager().removeAll(true);
         getUpdateChecker().check();
+        startCheckTask();
         return true;
     }
 
     @Override
     public void unload() {
         getWrapsLoader().unload();
+        if (checkTask != null) {
+            checkTask.cancel();
+        }
     }
 
     private boolean loadMessages() {
@@ -166,6 +179,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                 Files.createDirectory(WRAP_FILES_PATH);
                 Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
             }
+            if (Files.notExists(WRAP_FILES_PATH)) {
+                Files.createDirectory(WRAP_FILES_PATH);
+                Files.copy(getResource("emerald_wraps.yml"), WRAP_FILES_PATH.resolve("emerald_wraps.yml"));
+            }
             if (Files.notExists(COLLECTION_FILES_PATH)) {
                 Files.createDirectory(COLLECTION_FILES_PATH);
                 Files.copy(getResource("some_collections.yml"), COLLECTION_FILES_PATH.resolve("some_collections.yml"));
@@ -176,8 +193,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             if (Files.notExists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }
+            new ConfigFileTransformations().updateToLatest(CONFIG_PATH);
             CommentedConfiguration.loadConfiguration(CONFIG_PATH.toFile()).syncWithConfig(CONFIG_PATH.toFile(), getResource("config.yml"),
-                    "items", "inventory.items", "collections", "unwrapper", "inventory.actions");
+                   "items", "inventory.items", "collections", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
         } catch (IOException exception) {
@@ -202,6 +220,32 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             loadedHooks.add(name);
         }
         return true;
+    }
+
+    private void startCheckTask() {
+        if (config.getPermissions().getInventoryCheckInterval() == -1) {
+            return;
+        }
+        checkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(player -> {
+            for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
+                var item = player.getInventory().getItem(i);
+                if (item == null || item.getType().isAir()) {
+                    continue;
+                }
+                var wrap = getWrapper().getWrap(item);
+                if (wrap == null) {
+                    continue;
+                }
+                if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
+                    int finalI = i; // ;(
+                    Bukkit.getScheduler().runTask(this, () -> {
+                        var newItem = getWrapper().removeWrap(item, player, getConfiguration().getPermissions().isPermissionPhysical()
+                                && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
+                        player.getInventory().setItem(finalI, newItem);
+                    });
+                }
+            }
+        }), 0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
     }
 
     @Override

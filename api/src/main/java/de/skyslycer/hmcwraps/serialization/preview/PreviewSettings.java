@@ -5,10 +5,15 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class PreviewSettings {
 
+    private PreviewType type;
     private int duration;
     private int rotation;
     private SneakCancel sneakCancel;
     private Bobbing bobbing;
+
+    public PreviewType getType() {
+        return type;
+    }
 
     public int getDuration() {
         return duration;

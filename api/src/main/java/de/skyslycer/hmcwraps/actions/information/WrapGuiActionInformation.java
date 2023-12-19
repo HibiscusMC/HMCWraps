@@ -10,12 +10,14 @@ public class WrapGuiActionInformation implements ActionInformation {
     private Wrap wrap;
     private Player player;
     private String arguments;
+    private int slot;
 
-    public WrapGuiActionInformation(PaginatedGui gui, Wrap wrap, Player player, String arguments) {
+    public WrapGuiActionInformation(PaginatedGui gui, Wrap wrap, Player player, int slot, String arguments) {
         this.gui = gui;
         this.wrap = wrap;
         this.player = player;
         this.arguments = arguments;
+        this.slot = slot;
     }
 
     public PaginatedGui getGui() {
@@ -32,6 +34,14 @@ public class WrapGuiActionInformation implements ActionInformation {
 
     public void setWrap(Wrap wrap) {
         this.wrap = wrap;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
     @Override

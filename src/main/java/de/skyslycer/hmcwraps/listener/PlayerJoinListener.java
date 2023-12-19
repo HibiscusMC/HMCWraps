@@ -17,7 +17,7 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, event.getPlayer()), 1);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, event.getPlayer(), event.getPlayer().getInventory()), 1);
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> plugin.getUpdateChecker().checkPlayer(event.getPlayer()), 5);
     }
 

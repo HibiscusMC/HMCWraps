@@ -12,6 +12,8 @@ public class WrapFile extends Toggleable {
 
     private Map<String, WrappableItem> items = new HashMap<>();
 
+    private int config = 1;
+
     public WrapFile(Map<String, WrappableItem> items, boolean enabled) {
         super(enabled);
         this.items = items;

@@ -11,6 +11,7 @@ import de.skyslycer.hmcwraps.util.StringUtil;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.nio.file.Files;
@@ -61,6 +62,7 @@ public class FileConverter {
                 YamlConfigurationLoader.builder()
                         .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                         .path(filePath).indent(2)
+                        .nodeStyle(NodeStyle.BLOCK)
                         .build().save(BasicConfigurationNode.factory().createNode().set(entry.getValue()));
             } catch (Exception exception) {
                 plugin.getLogger().warning("Could not save generated wrap file! Please report this.\n"
@@ -78,6 +80,7 @@ public class FileConverter {
                 YamlConfigurationLoader.builder()
                         .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
                         .path(filePath).indent(2)
+                        .nodeStyle(NodeStyle.BLOCK)
                         .build().save(BasicConfigurationNode.factory().createNode().set(new CollectionFile(collections, true)));
             } catch (Exception exception) {
                 plugin.getLogger().warning("Could not save generated collection file! Please report this.\n"
@@ -89,7 +92,7 @@ public class FileConverter {
         return success;
     }
 
-    public FolderConstruct loadFolder(Path path, Map<String, List<String>> collections) throws Exception {
+    FolderConstruct loadFolder(Path path, Map<String, List<String>> collections) throws Exception {
         var file = path.toFile();
         if (!file.exists() || !file.isDirectory()) {
             return null;
@@ -110,9 +113,9 @@ public class FileConverter {
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
                     var matchingGeneratedCollections = newCollections.entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();
-                    if (matchingCollections.size() >= 1) {
+                    if (!matchingCollections.isEmpty()) {
                         material = matchingCollections.stream().findFirst().get().getKey();
-                    } else if (matchingGeneratedCollections.size() >= 1) {
+                    } else if (!matchingGeneratedCollections.isEmpty()) {
                         material = matchingGeneratedCollections.stream().findFirst().get().getKey();
                     } else {
                         var i = 1;
@@ -139,7 +142,7 @@ public class FileConverter {
         }
     }
 
-    public ConvertConstruct convert(Path path) throws ConfigurateException {
+    ConvertConstruct convert(Path path) throws ConfigurateException {
         var file = path.toFile();
         if (!file.exists() || file.isDirectory()) {
             return null;
@@ -158,7 +161,7 @@ public class FileConverter {
             physical = new PhysicalWrap(
                     itemSkinsPhysical.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsPhysical.getDisplayName()), itemSkinsPhysical.getGlowing(),
                     itemSkinsPhysical.getLore() != null ? itemSkinsPhysical.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
-                    null, itemSkinsPhysical.getCustomModelData(), null, null, null, true);
+                    null, itemSkinsPhysical.getCustomModelData(), null, null, null, true, null);
         }
         SerializableItem lockedItem = null;
         if (itemSkinsFile.getUnavailableItem() != null) {
@@ -166,9 +169,9 @@ public class FileConverter {
             lockedItem = unavailableItem.toItem();
         }
         var wrap = new Wrap(
-                itemSkinsItem.getMaterial(), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
+                String.valueOf(itemSkinsFile.getCustomModelData()), StringUtil.legacyToMiniMessage(itemSkinsItem.getDisplayName()), itemSkinsItem.getGlowing(),
                 itemSkinsItem.getLore() != null ? itemSkinsItem.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
-                itemSkinsFile.getCustomModelData(), file.getName().replace(".yml", ""), physical, itemSkinsFile.getPermission(), lockedItem);
+                null, file.getName().replace(".yml", ""), physical, itemSkinsFile.getPermission(), lockedItem);
         return new ConvertConstruct(wrap, itemSkinsFile.getMaterial().stream().map(String::toUpperCase).toList());
     }
 

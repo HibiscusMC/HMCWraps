@@ -189,4 +189,32 @@ public class StringUtil {
         });
     }
 
+    /**
+     * Converts a string from UPPER_CASE_WITH_UNDERSCORES to Title Case.
+     *
+     * @param input the string to convert
+     * @return the converted string
+     */
+    public static String convertToTitleCase(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        var words = input.split("_");
+        var output = new StringBuilder();
+        for (String word : words) {
+            if (!output.isEmpty()) {
+                output.append(" ");
+            }
+            output.append(toTitleCase(word));
+        }
+        return output.toString();
+    }
+
+    private static String toTitleCase(String word) {
+        if (word == null || word.isEmpty()) {
+            return word;
+        }
+        return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
+    }
+
 }
