@@ -12,7 +12,7 @@ dependencyResolutionManagement {
             library("annotations", "org.jetbrains:annotations:24.0.1")
         }
         create("libs") {
-            library("packets", "com.github.retrooper.packetevents:spigot:2.1.0-SNAPSHOT")
+            library("packets", "com.github.retrooper.packetevents:spigot:2.2.0")
             library("particles", "com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
             library("configupdater", "com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")

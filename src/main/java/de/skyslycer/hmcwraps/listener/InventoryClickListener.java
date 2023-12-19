@@ -37,7 +37,8 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
-        if (isForbiddenInventory(event) && (isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem()))) {
+        if (isForbiddenInventory(event) && (isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem())
+                || isFakeDurability(event.getCursor()) || isFakeDurability(event.getCurrentItem()))) {
             event.setCancelled(true);
             plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
             return;
@@ -143,6 +144,10 @@ public class InventoryClickListener implements Listener {
 
     private boolean isImitatedArmor(ItemStack item) {
         return item != null && !item.getType().isAir() && !plugin.getWrapper().getOriginalData(item).material().isBlank();
+    }
+
+    private boolean isFakeDurability(ItemStack item) {
+        return item != null && !item.getType().isAir() && plugin.getWrapper().getFakeDurability(item) != -1;
     }
 
     private boolean isForbiddenInventory(InventoryClickEvent event) {
