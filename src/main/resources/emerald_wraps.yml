@@ -62,3 +62,7 @@ items:
           - '<gray>Apply this wrap to make your hoe look emerald!'
         flags:
           - 'HIDE_ATTRIBUTES'
+
+# DON'T TOUCH THIS
+config: 1
+# DON'T TOUCH THIS
