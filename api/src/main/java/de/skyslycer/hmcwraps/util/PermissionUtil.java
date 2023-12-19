@@ -19,7 +19,7 @@ public class PermissionUtil {
      * @param player The player
      * @return If the player has permission to use the wrap on the item
      */
-    static boolean hasPermission(HMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
+    public static boolean hasPermission(HMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
         var wrapper = plugin.getWrapper();
         if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
                 && !wrapper.isOwningPlayer(item, player)) {
@@ -48,7 +48,8 @@ public class PermissionUtil {
             return null;
         }
         if (!hasPermission(plugin, wrap, item, player)) {
-            return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissions().isPermissionPhysical());
+            return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissions().isPermissionPhysical()
+                    && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
         }
         return null;
     }

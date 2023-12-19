@@ -117,6 +117,7 @@ public class WrapperImpl implements Wrapper {
             originalModelId = meta.getCustomModelData();
         }
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
+        meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (wrap != null) {
             if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
@@ -153,7 +154,7 @@ public class WrapperImpl implements Wrapper {
                     var newMeta = ((Damageable) editing.getItemMeta());
                     newMeta.setDamage(newDurability - (int) modelDurability);
                     newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
-                    newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, newDurability);
+                    newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
                     changedDurability = true;

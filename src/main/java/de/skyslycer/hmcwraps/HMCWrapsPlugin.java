@@ -232,14 +232,20 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                 if (item == null || item.getType().isAir()) {
                     continue;
                 }
-                var updatedItem = PermissionUtil.check(this, player, item);
-                if (updatedItem.equals(item)) {
+                var wrap = getWrapper().getWrap(item);
+                if (wrap == null) {
                     continue;
                 }
-                int finalI = i; // this isn't fun
-                Bukkit.getScheduler().runTask(this, () -> player.getInventory().setItem(finalI, updatedItem));
+                if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
+                    int finalI = i; // ;(
+                    Bukkit.getScheduler().runTask(this, () -> {
+                        var newItem = getWrapper().removeWrap(item, player, getConfiguration().getPermissions().isPermissionPhysical()
+                                && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
+                        player.getInventory().setItem(finalI, newItem);
+                    });
+                }
             }
-        }), 0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+        }), 0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
     }
 
     @Override
