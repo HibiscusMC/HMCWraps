@@ -164,8 +164,8 @@ public class WrapperImpl implements Wrapper {
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var modelDurability = ((double) currentDurability / maxDurability) * wrap.getWrapDurability();
                 var newMeta = ((Damageable) editing.getItemMeta());
-                newMeta.setDamage(wrap.getWrapDurability() - (int) modelDurability);
-                newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
+                newMeta.setDamage(maxDurability - currentDurability);
+                newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, (int) modelDurability);
                 newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, wrap.getWrapDurability());
                 editing.setItemMeta(newMeta);
                 changedDurability = true;

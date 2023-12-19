@@ -30,10 +30,9 @@ public class DurabilityChangeListener implements Listener {
     }
 
     private void updateDurability(ItemStack item, int changed) {
-        var originalData = plugin.getWrapper().getOriginalData(item);
         var durability = plugin.getWrapper().getFakeDurability(item);
         var maxDurability = plugin.getWrapper().getFakeMaxDurability(item);
-        if (plugin.getWrapper().getWrap(item) == null || originalData == null || originalData.material().isBlank() || durability == -1) {
+        if (plugin.getWrapper().getWrap(item) == null || plugin.getWrapper().getFakeDurability(item) == -1 || durability == -1) {
             return;
         }
         var newDurability = Math.min(durability + changed, maxDurability);
