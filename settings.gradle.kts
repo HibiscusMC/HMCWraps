@@ -9,7 +9,7 @@ dependencyResolutionManagement {
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.2.5")
             library("mythicmobs", "io.lumine:Mythic-Dist:5.2.1")
-            library("annotations", "org.jetbrains:annotations:24.0.1")
+            library("annotations", "org.jetbrains:annotations:24.1.0")
         }
         create("libs") {
             library("packets", "com.github.retrooper.packetevents:spigot:2.2.0")
