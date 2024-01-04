@@ -186,7 +186,7 @@ public class WrapperImpl implements Wrapper {
                 editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
             }
         } else {
-            meta.setCustomModelData(0);
+            meta.setCustomModelData(originalData.modelId());
             meta.setDisplayName(originalData.name());
             meta.setLore(originalData.lore());
             meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
