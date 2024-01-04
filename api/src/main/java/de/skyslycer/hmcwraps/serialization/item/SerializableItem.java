@@ -7,15 +7,14 @@ import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NbtApiException;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -23,6 +22,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @ConfigSerializable
 public class SerializableItem {
@@ -38,10 +38,12 @@ public class SerializableItem {
     private @Nullable String color;
     private @Nullable String nbt;
     private @Nullable Integer durability;
+    private @Nullable String skullOwner;
+    private @Nullable String skullTexture;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
-                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability) {
+                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner, @Nullable String skullTexture) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -53,6 +55,8 @@ public class SerializableItem {
         this.color = color;
         this.nbt = nbt;
         this.durability = durability;
+        this.skullOwner = skullOwner;
+        this.skullTexture = skullTexture;
     }
 
     public SerializableItem() {
@@ -96,6 +100,22 @@ public class SerializableItem {
             builder.glow();
         }
         var item = builder.build();
+        if (origin.getType() == Material.PLAYER_HEAD) {
+            if (getSkullOwner() != null) {
+                var skullMeta = (SkullMeta) item.getItemMeta();
+                var skullOwner = getSkullOwner();
+                if ((skullOwner.equals("%player_uuid%") || skullOwner.equals("%player_name%")) && player != null) {
+                    skullOwner = player.getName();
+                }
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(skullOwner));
+                item.setItemMeta(skullMeta);
+            }
+            if (getSkullTexture() != null) {
+                var skullBuilder = ItemBuilder.skull(item);
+                skullBuilder.texture(getSkullTexture(), UUID.randomUUID());
+                item = skullBuilder.build();
+            }
+        }
         if (getDurability() != null && item.getItemMeta() instanceof Damageable itemMeta) {
             var damage = item.getType().getMaxDurability() - getDurability();
             itemMeta.setDamage(damage);
@@ -171,6 +191,16 @@ public class SerializableItem {
     @Nullable
     public String getNbt() {
         return nbt;
+    }
+
+    @Nullable
+    public String getSkullOwner() {
+        return skullOwner;
+    }
+
+    @Nullable
+    public String getSkullTexture() {
+        return skullTexture;
     }
 
 }

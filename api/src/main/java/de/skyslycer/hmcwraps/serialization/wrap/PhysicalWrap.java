@@ -13,11 +13,9 @@ public class PhysicalWrap extends SerializableItem {
     private boolean keepAfterUnwrap;
 
     public PhysicalWrap(String id, String name, @Nullable Boolean glow,
-                        @Nullable List<String> lore, @Nullable List<String> flags,
-                        @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments,
-                        @Nullable Integer amount, @Nullable String color, boolean keepAfterUnwrap, @Nullable String nbt) {
-        super(id, name, glow, lore, flags, modelId, enchantments, amount, color, nbt, null);
-        this.keepAfterUnwrap = keepAfterUnwrap;
+                        @Nullable List<String> lore, @Nullable Integer modelId) {
+        super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null);
+        this.keepAfterUnwrap = true;
     }
 
     public PhysicalWrap() {

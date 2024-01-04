@@ -40,7 +40,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
                 @Nullable String permission, @Nullable SerializableItem lockedItem) {
-        super(id, name, glow, lore, null, modelId, null, null, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null);
         this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
@@ -51,7 +51,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable String color, Integer amount, @Nullable List<String> flags,
                 @Nullable Map<String, Integer> enchantments) {
-        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null);
+        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null, null, null);
         this.uuid = uuid;
     }
 

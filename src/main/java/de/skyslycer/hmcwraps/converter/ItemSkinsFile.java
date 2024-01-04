@@ -76,7 +76,7 @@ public class ItemSkinsFile {
         }
 
         public SerializableItem toItem() {
-            return new SerializableItem(material, displayName, glowing, lore, null, customModelData, null, 1, null, null, null);
+            return new SerializableItem(material, displayName, glowing, lore, null, customModelData, null, 1, null, null, null, null, null);
         }
 
     }
