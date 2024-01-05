@@ -55,7 +55,8 @@ public class PlayerInteractListener implements Listener {
                 || ListUtil.containsAny(List.of(type.toString(),
                 player.getInventory().getItemInOffHand().getType().toString()), excludes)
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
-                && !player.hasPermission(WrapCommand.WRAPS_PERMISSION))) {
+                && !player.hasPermission(WrapCommand.WRAPS_PERMISSION))
+                || player.hasPermission("hmcwraps.shortcut.disable")) {
             return;
         }
         event.setCancelled(true);

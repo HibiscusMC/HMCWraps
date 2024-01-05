@@ -166,5 +166,8 @@ bukkit {
             description = "Gives access to the create command."
             children = listOf("hmcwraps.admin")
         }
+        register("hmcwraps.shortcut.disable") {
+            description = "If this permission is applied to a player, the shortcut function is disabled only for that player."
+        }
     }
 }
