@@ -122,6 +122,10 @@ public class GuiBuilder {
         plugin.getCollectionHelper().getItems(type).forEach(it -> it.getWraps()
                 .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
+                    if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) {
+                        gui.addItem(new GuiItem(wrap.getEquippedItem().toItem(plugin, player)));
+                        return;
+                    }
                     var wrapItem = wrap.toPermissionItem(plugin, wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(item.getType()) : finalType, player);
                     var guiItem = new GuiItem(wrapItem);
                     guiItem.setAction(click -> {

@@ -28,6 +28,7 @@ public class Wrap extends SerializableItem {
     private @Nullable String lockedName;
     private @Nullable List<String> lockedLore;
     private @Nullable SerializableItem lockedItem;
+    private @Nullable SerializableItem equippedItem;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
     private @Nullable String wrapName;
     private @Nullable List<String> wrapLore;
@@ -135,6 +136,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public Integer getWrapDurability() {
         return wrapDurability;
+    }
+
+    @Nullable
+    public SerializableItem getEquippedItem() {
+        return equippedItem;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
