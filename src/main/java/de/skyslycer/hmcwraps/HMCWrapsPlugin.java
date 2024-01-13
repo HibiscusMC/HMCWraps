@@ -39,10 +39,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
@@ -68,6 +65,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private Config config;
     private MessageHandler messageHandler;
     private BukkitTask checkTask;
+    private final Map<UUID, String> wrapGui = new HashMap<>();
 
     @Override
     public void onLoad() {
@@ -329,6 +327,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     public ContinuousUpdateChecker getUpdateChecker() {
         return updateChecker;
+    }
+
+    public Map<UUID, String> getWrapGui() {
+        return wrapGui;
     }
 
 }

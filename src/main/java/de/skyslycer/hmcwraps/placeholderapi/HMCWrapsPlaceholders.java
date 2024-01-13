@@ -47,25 +47,38 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
             } else {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_INACTIVE)));
             }
-        } else if (identifier.split("_").length == 2) {
-            var split = identifier.split("_");
-            var wrap = plugin.getWrapsLoader().getWraps().get(split[0]);
-            if (wrap == null) {
-                return null;
-            }
-            switch (split[1]) {
+        } else if (identifier.split("_").length >= 2) {
+            var action = identifier.substring(0, identifier.indexOf("_"));
+            var wrapUuid = identifier.substring(identifier.indexOf("_") + 1);
+            var wrap = plugin.getWrapsLoader().getWraps().get(wrapUuid);
+            switch (action) {
+                case "equipped" -> {
+                    if (player == null) {
+                        return null;
+                    }
+                    var equipped = plugin.getWrapGui().get(player.getUniqueId());
+                    if (equipped == null) {
+                        return null;
+                    }
+                    return equipped.equals(wrapUuid) ?
+                            StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_EQUIPPED)))
+                            : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NOT_EQUIPPED)));
+                }
                 case "modelid" -> {
+                    if (wrap == null) {
+                        return null;
+                    }
                     return String.valueOf(wrap.getModelId());
                 }
                 case "color" -> {
-                    if (wrap.getColor() == null) {
+                    if (wrap == null || wrap.getColor() == null) {
                         return null;
                     }
                     return ColorUtil.colorToHex(wrap.getColor());
                 }
                 case "type" -> {
                     for (Map.Entry<String, WrappableItem> wrappableItem : plugin.getWrapsLoader().getWrappableItems().entrySet()) {
-                        if (!wrappableItem.getValue().getWraps().values().stream().map(Wrap::getUuid).toList().isEmpty()) {
+                        if (wrappableItem.getValue().getWraps().values().stream().map(Wrap::getUuid).toList().contains(wrapUuid)) {
                             return wrappableItem.getKey();
                         }
                     }

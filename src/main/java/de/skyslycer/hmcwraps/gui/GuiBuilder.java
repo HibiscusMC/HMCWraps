@@ -62,6 +62,7 @@ public class GuiBuilder {
                 GuiBuilder.open(plugin, player, click.getCurrentItem(), click.getSlot());
             }
         });
+        gui.setCloseGuiAction(close -> plugin.getWrapGui().remove(player.getUniqueId()));
         gui.open(player);
     }
 
@@ -110,6 +111,12 @@ public class GuiBuilder {
         var type = item.getType();
         if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        }
+        var currentWrap = plugin.getWrapper().getWrap(item);
+        if (currentWrap != null) {
+            plugin.getWrapGui().put(player.getUniqueId(), currentWrap.getUuid());
+        } else {
+            plugin.getWrapGui().remove(player.getUniqueId());
         }
         var finalType = type; // Why :(
         plugin.getCollectionHelper().getItems(type).forEach(it -> it.getWraps()

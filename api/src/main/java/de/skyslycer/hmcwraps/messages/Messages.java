@@ -46,7 +46,9 @@ public enum Messages {
     COMMAND_CONVERT_NO_CONFIRM("command.convert.no-confirm"),
     COMMAND_CONVERT_FAILED("command.convert.failed"),
     COMMAND_CREATE_FAILED("command.create.failed"),
-    COMMAND_CREATE_SUCCESS("command.create.success");
+    COMMAND_CREATE_SUCCESS("command.create.success"),
+    PLACEHOLDER_EQUIPPED("placeholder.equipped"),
+    PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped");
 
     private final String key;
 
