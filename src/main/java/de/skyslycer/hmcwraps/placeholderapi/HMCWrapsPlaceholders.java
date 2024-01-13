@@ -57,10 +57,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                         return null;
                     }
                     var equipped = plugin.getWrapGui().get(player.getUniqueId());
-                    if (equipped == null) {
-                        return null;
-                    }
-                    return equipped.equals(wrapUuid) ?
+                    return wrapUuid.equals(equipped) ?
                             StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_EQUIPPED)))
                             : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NOT_EQUIPPED)));
                 }

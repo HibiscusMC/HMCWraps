@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.4.0"
+version = "1.4.1"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -97,7 +97,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.1")
+        minecraftVersion("1.20.4")
     }
 }
 

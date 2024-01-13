@@ -124,10 +124,12 @@ public class WrapperImpl implements Wrapper {
                 switchFromLeather(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
-            meta.setDisplayName(originalData.name());
-            meta.setLore(originalData.lore());
-            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            if (currentWrap != null) {
+                meta.setDisplayName(originalData.name());
+                meta.setLore(originalData.lore());
+                meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+                meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            }
             if (wrap.getWrapName() != null) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
             }
