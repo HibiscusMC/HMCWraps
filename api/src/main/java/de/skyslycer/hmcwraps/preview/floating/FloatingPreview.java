@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -60,8 +61,8 @@ public class FloatingPreview implements Preview {
     }
 
     public void cancel(boolean open) {
-        task.cancel();
-        cancelTask.cancel();
+        Optional.of(task).ifPresent(BukkitTask::cancel);
+        Optional.of(cancelTask).ifPresent(BukkitTask::cancel);
         if (open && onClose != null) {
             onClose.accept(player);
         }
