@@ -16,11 +16,10 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class WrapsLoaderImpl implements WrapsLoader {
@@ -60,7 +59,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
         wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
             if (wrappableItems.containsKey(type)) {
                 var current = wrappableItems.get(type);
-                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(String.valueOf(current.getWraps().size() + 1), wrap));
+                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(String.valueOf(findNextId(current)), wrap));
                 wrappableItems.put(type, current);
             } else {
                 wrappableItems.put(type, wrappableItem);
@@ -69,6 +68,21 @@ public class WrapsLoaderImpl implements WrapsLoader {
         wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
 
         wraps.remove("-");
+    }
+
+    // This is janky, yes. But it works.
+    private int findNextId(WrappableItem wrappableItem) {
+        var id = wrappableItem.getWraps().size() + 1;
+        var level = 0;
+        while (wrappableItem.getWraps().containsKey(String.valueOf(id))) {
+            level++;
+            if (level < 10) {
+                id = ThreadLocalRandom.current().nextInt();
+            } else {
+                id++;
+            }
+        }
+        return id;
     }
 
     private void loadWrapFiles() {

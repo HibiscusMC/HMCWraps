@@ -95,6 +95,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+        getLogger().info("Loaded all configuration files and wraps. (" + wrapsLoader.getWraps().size() + " wraps)");
 
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this);
