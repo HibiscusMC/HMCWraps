@@ -8,7 +8,7 @@ dependencyResolutionManagement {
             library("placeholderapi", "me.clip:placeholderapi:2.11.2")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.2.5")
-            library("mythicmobs", "io.lumine:Mythic-Dist:5.2.1")
+            library("mythicmobs", "io.lumine:Mythic-Dist:5.5.1")
             library("annotations", "org.jetbrains:annotations:24.1.0")
         }
         create("libs") {
