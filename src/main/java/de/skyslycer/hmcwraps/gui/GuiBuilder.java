@@ -42,7 +42,6 @@ public class GuiBuilder {
         }
 
         if (item != null) {
-            System.out.println(item);
             populate(plugin, item, player, gui, slot);
         }
         populateStatic(plugin, player, inventory, gui, slot);

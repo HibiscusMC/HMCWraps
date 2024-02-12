@@ -189,10 +189,18 @@ public class WrapperImpl implements Wrapper {
             }
         } else {
             meta.setCustomModelData(originalData.modelId());
-            meta.setDisplayName(originalData.name());
-            meta.setLore(originalData.lore());
-            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-            meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            if (currentWrap != null) {
+                if (currentWrap.getWrapName() != null) {
+                    meta.setDisplayName(originalData.name());
+                }
+                if (currentWrap.getWrapLore() != null) {
+                    meta.setLore(originalData.lore());
+                }
+                if (currentWrap.getWrapFlags() != null) {
+                    meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+                    meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+                }
+            }
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
