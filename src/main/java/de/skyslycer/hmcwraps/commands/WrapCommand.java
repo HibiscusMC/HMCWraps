@@ -71,8 +71,13 @@ public class WrapCommand {
             return;
         }
         var item = player.getInventory().getItemInMainHand();
+        var slot = player.getInventory().getHeldItemSlot();
         if (item.getType().isAir()) {
-            plugin.getMessageHandler().send(player, Messages.NO_ITEM);
+            if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
+                GuiBuilder.open(plugin, player, null, slot);
+            } else {
+                plugin.getMessageHandler().send(player, Messages.NO_ITEM);
+            }
             return;
         }
         var type = item.getType();
@@ -80,10 +85,13 @@ public class WrapCommand {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
         }
         if (plugin.getCollectionHelper().getItems(type).isEmpty() || plugin.getWrapper().isGloballyDisabled(item)) {
-            plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+            if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
+                GuiBuilder.open(plugin, player, null, slot);
+            } else {
+                plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+            }
             return;
         }
-        var slot = player.getInventory().getHeldItemSlot();
         GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
     }
 
