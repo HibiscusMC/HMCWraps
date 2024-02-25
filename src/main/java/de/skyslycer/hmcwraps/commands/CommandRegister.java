@@ -14,6 +14,7 @@ import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitActor;
 import revxrsal.commands.bukkit.exception.SenderNotPlayerException;
 import revxrsal.commands.exception.MissingArgumentException;
+import revxrsal.commands.exception.NoPermissionException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,6 +77,8 @@ public class CommandRegister {
         });
         commandHandler.registerExceptionHandler(SenderNotPlayerException.class,
                 (actor, context) -> plugin.getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_PLAYER_ONLY));
+        commandHandler.registerExceptionHandler(NoPermissionException.class,
+                (actor, context) -> plugin.getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.NO_PERMISSION));
         commandHandler.registerExceptionHandler(MissingArgumentException.class,
                 (actor, context) -> plugin.getMessageHandler().send(actor.as(BukkitActor.class).getSender(), Messages.COMMAND_MISSING_ARGUMENT,
                         Placeholder.parsed("argument", context.getParameter().getName())));
