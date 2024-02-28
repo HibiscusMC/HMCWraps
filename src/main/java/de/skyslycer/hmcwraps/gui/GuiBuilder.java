@@ -28,15 +28,17 @@ public class GuiBuilder {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         var inventory = plugin.getConfiguration().getInventory();
+        var title = inventory.getTitle();
+        if (item == null && inventory.getNoItemTitle() != null && !inventory.getNoItemTitle().isEmpty()) title = inventory.getNoItemTitle();
         PaginatedGui gui;
         if (plugin.getConfiguration().getInventory().getType() == Inventory.Type.PAGINATED) {
             gui = Gui.paginated()
-                    .title(StringUtil.parseComponent(player, inventory.getTitle()))
+                    .title(StringUtil.parseComponent(player, title))
                     .rows(inventory.getRows())
                     .create();
         } else {
             gui = Gui.scrolling().scrollType(ScrollType.VERTICAL)
-                    .title(StringUtil.parseComponent(player, inventory.getTitle()))
+                    .title(StringUtil.parseComponent(player, title))
                     .rows(inventory.getRows())
                     .create();
         }
@@ -44,7 +46,7 @@ public class GuiBuilder {
         if (item != null) {
             populate(plugin, item, player, gui, slot);
         }
-        populateStatic(plugin, player, inventory, gui, slot);
+        populateStatic(plugin, player, inventory, gui, slot, item == null);
         setItemToSlot(gui, plugin, player.getInventory().getItem(slot));
         gui.setDefaultClickAction(click -> {
             click.setCancelled(true);
@@ -72,10 +74,21 @@ public class GuiBuilder {
         gui.open(player);
     }
 
-    private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui, int slot) {
+    private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui, int slot, boolean noItem) {
         inventory.getItems().forEach((inventorySlot, serializableItem) -> {
+            if (inventorySlot.endsWith("w") && noItem) return;
+            if (inventorySlot.endsWith("n") && !noItem) return;
+            var newInventorySlot = inventorySlot;
+            if (Character.isAlphabetic(inventorySlot.charAt(inventorySlot.length() - 1))) {
+                newInventorySlot = inventorySlot.substring(0, inventorySlot.length() - 1);
+            }
             var fills = new ArrayList<Integer>();
-            fills.add(inventorySlot);
+            try {
+                fills.add(Integer.parseInt(newInventorySlot));
+            } catch (NumberFormatException exception) {
+                plugin.getLogger().severe("Couldn't parse '" + newInventorySlot + "' in the inventory config as a valid numerical slot! Please change the value to a number.");
+                return;
+            }
             if (serializableItem.getFills() != null) {
                 fills.addAll(serializableItem.getFills());
             }

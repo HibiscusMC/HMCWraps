@@ -14,10 +14,11 @@ public class Inventory {
     private boolean itemChangeEnabled;
     private boolean openWithoutItemEnabled;
     private String title;
+    private @Nullable String noItemTitle;
     private Type type;
     private int rows;
     private int targetItemSlot;
-    private Map<Integer, InventoryItem> items;
+    private Map<String, InventoryItem> items;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
 
     public String getTitle() {
@@ -32,7 +33,7 @@ public class Inventory {
         return targetItemSlot;
     }
 
-    public Map<Integer, InventoryItem> getItems() {
+    public Map<String, InventoryItem> getItems() {
         return items;
     }
 
@@ -55,6 +56,11 @@ public class Inventory {
 
     public boolean isOpenWithoutItemEnabled() {
         return openWithoutItemEnabled;
+    }
+
+    @Nullable
+    public String getNoItemTitle() {
+        return noItemTitle;
     }
 
     public enum Type {
