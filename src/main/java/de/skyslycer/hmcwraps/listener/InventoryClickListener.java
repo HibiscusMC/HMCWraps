@@ -143,11 +143,13 @@ public class InventoryClickListener implements Listener {
     }
 
     private boolean isImitatedArmor(ItemStack item) {
-        return item != null && !item.getType().isAir() && !plugin.getWrapper().getOriginalData(item).material().isBlank();
+        return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
+                !plugin.getWrapper().getOriginalData(item).material().isBlank();
     }
 
     private boolean isFakeDurability(ItemStack item) {
-        return item != null && !item.getType().isAir() && plugin.getWrapper().getFakeDurability(item) != -1;
+        return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
+                plugin.getWrapper().getFakeDurability(item) != -1;
     }
 
     private boolean isForbiddenInventory(InventoryClickEvent event) {

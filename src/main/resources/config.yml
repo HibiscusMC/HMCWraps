@@ -241,6 +241,9 @@ inventory:
   # If the player should be able to switch the wrapping item in the inventory.
   # When enabled, the inventory won't close after wrapping or unwrapping.
   item-change-enabled: true
+  # If the player should be able to open the wraps inventory with the command while not holding any item.
+  # The inventory won't be filled. If the option above is enabled, the player can then click the item to wrap.
+  open-without-item-enabled: false
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED

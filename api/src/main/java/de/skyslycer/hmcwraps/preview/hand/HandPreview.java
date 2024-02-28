@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class HandPreview implements Preview {
@@ -52,8 +53,8 @@ public class HandPreview implements Preview {
     }
 
     public void cancel(boolean open) {
-        task.cancel();
-        cancelTask.cancel();
+        Optional.of(task).ifPresent(BukkitTask::cancel);
+        Optional.of(cancelTask).ifPresent(BukkitTask::cancel);
         if (open && onClose != null) {
             onClose.accept(player);
         }

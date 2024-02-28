@@ -41,9 +41,11 @@ public class GuiBuilder {
                     .create();
         }
 
-        populate(plugin, item, player, gui, slot);
+        if (item != null) {
+            populate(plugin, item, player, gui, slot);
+        }
         populateStatic(plugin, player, inventory, gui, slot);
-        setItemToSlot(gui, plugin, item);
+        setItemToSlot(gui, plugin, player.getInventory().getItem(slot));
         gui.setDefaultClickAction(click -> {
             click.setCancelled(true);
             if (click.getClickedInventory() == player.getInventory()) {
@@ -56,7 +58,11 @@ public class GuiBuilder {
                     type = Material.valueOf(plugin.getWrapper().getOriginalData(clicked).material());
                 }
                 if (plugin.getCollectionHelper().getItems(type).isEmpty()) {
-                    plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+                    if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
+                        GuiBuilder.open(plugin, player, null, click.getSlot());
+                    } else {
+                        plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+                    }
                     return;
                 }
                 GuiBuilder.open(plugin, player, click.getCurrentItem(), click.getSlot());
@@ -138,6 +144,7 @@ public class GuiBuilder {
     }
 
     private static void setItemToSlot(PaginatedGui gui, HMCWrapsPlugin plugin, ItemStack target) {
+        if (target == null) return;
         var slot = plugin.getConfiguration().getInventory().getTargetItemSlot();
         if (slot != -1) {
             gui.setItem(slot, new GuiItem(target.clone()));

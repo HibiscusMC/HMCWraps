@@ -12,6 +12,7 @@ public class Inventory {
 
     private ShortcutSettings shortcut;
     private boolean itemChangeEnabled;
+    private boolean openWithoutItemEnabled;
     private String title;
     private Type type;
     private int rows;
@@ -50,6 +51,10 @@ public class Inventory {
 
     public boolean isItemChangeEnabled() {
         return itemChangeEnabled;
+    }
+
+    public boolean isOpenWithoutItemEnabled() {
+        return openWithoutItemEnabled;
     }
 
     public enum Type {

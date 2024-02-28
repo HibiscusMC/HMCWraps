@@ -47,7 +47,9 @@ public class WrapCommand {
     public static final String RELOAD_PERMISSION = "hmcwraps.commands.reload";
     public static final String CONVERT_PERMISSION = "hmcwraps.commands.convert";
     public static final String WRAP_PERMISSION = "hmcwraps.commands.wrap";
+    public static final String WRAP_SELF_PERMISSION = "hmcwraps.commands.wrap.self";
     public static final String UNWRAP_PERMISSION = "hmcwraps.commands.unwrap";
+    public static final String UNWRAP_SELF_PERMISSION = "hmcwraps.commands.unwrap.self";
     public static final String GIVE_WRAPPER_PERMISSION = "hmcwraps.commands.give.wrapper";
     public static final String GIVE_UNWRAPPER_PERMISSION = "hmcwraps.commands.give.unwrapper";
     public static final String PREVIEW_PERMISSION = "hmcwraps.commands.preview";
@@ -71,8 +73,13 @@ public class WrapCommand {
             return;
         }
         var item = player.getInventory().getItemInMainHand();
+        var slot = player.getInventory().getHeldItemSlot();
         if (item.getType().isAir()) {
-            plugin.getMessageHandler().send(player, Messages.NO_ITEM);
+            if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
+                GuiBuilder.open(plugin, player, null, slot);
+            } else {
+                plugin.getMessageHandler().send(player, Messages.NO_ITEM);
+            }
             return;
         }
         var type = item.getType();
@@ -80,10 +87,13 @@ public class WrapCommand {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
         }
         if (plugin.getCollectionHelper().getItems(type).isEmpty() || plugin.getWrapper().isGloballyDisabled(item)) {
-            plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+            if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
+                GuiBuilder.open(plugin, player, null, slot);
+            } else {
+                plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
+            }
             return;
         }
-        var slot = player.getInventory().getHeldItemSlot();
         GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
     }
 
@@ -136,10 +146,12 @@ public class WrapCommand {
     }
 
     @Subcommand("wrap")
-    @Description("Wrap the item a player is holding in their main hand.")
-    @CommandPermission(WRAP_PERMISSION)
     @AutoComplete("@wraps @players @actions")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
+        if (!(player.hasPermission(WRAP_PERMISSION) || (player == sender && player.hasPermission(WRAP_SELF_PERMISSION)))) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         if (wrap == null) {
             return;
         }
@@ -166,9 +178,12 @@ public class WrapCommand {
 
     @Subcommand("unwrap")
     @Description("Unwrap the item a player is holding in their main hand.")
-    @CommandPermission(UNWRAP_PERMISSION)
     @AutoComplete("@players @actions")
     public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional String actions) {
+        if (!(player.hasPermission(UNWRAP_PERMISSION) || (player == sender && player.hasPermission(UNWRAP_SELF_PERMISSION)))) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);

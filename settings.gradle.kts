@@ -4,15 +4,15 @@ include("api")
 dependencyResolutionManagement {
     versionCatalogs {
         create("depends") {
-            library("spigot", "org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
+            library("spigot", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
             library("placeholderapi", "me.clip:placeholderapi:2.11.2")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.2.5")
-            library("mythicmobs", "io.lumine:Mythic-Dist:5.2.1")
+            library("mythicmobs", "io.lumine:Mythic-Dist:5.6.0")
             library("annotations", "org.jetbrains:annotations:24.1.0")
         }
         create("libs") {
-            library("packets", "com.github.retrooper.packetevents:spigot:2.2.0")
+            library("packets", "com.github.retrooper.packetevents:spigot:2.2.1")
             library("particles", "com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
             library("configupdater", "com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")

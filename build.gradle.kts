@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.4.1"
+version = "1.4.2"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -134,9 +134,15 @@ bukkit {
             description = "Gives access to wrap an item using commands (virtual)."
             children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.virtual")
         }
+        register("hmcwraps.commands.wrap.self") {
+            description = "Gives access to wrap an item using commands (virtual). The player can only wrap his own tools, not the tools from others."
+        }
         register("hmcwraps.commands.unwrap") {
             description = "Gives access to unwrap an item using commands (virtual)."
             children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.virtual")
+        }
+        register("hmcwraps.commands.unwrap.self") {
+            description = "Gives access to unwrap an item using commands (virtual). The player can only unwrap his own tools, not the tools from others."
         }
         register("hmcwraps.commands.give.wrapper") {
             description = "Gives access to giving physical wrappers to players."
