@@ -47,7 +47,9 @@ public class GuiBuilder {
             populate(plugin, item, player, gui, slot);
         }
         populateStatic(plugin, player, inventory, gui, slot, item == null);
-        setItemToSlot(gui, plugin, player.getInventory().getItem(slot));
+        if (slot != -1) {
+            setItemToSlot(gui, plugin, player.getInventory().getItem(slot));
+        }
         gui.setDefaultClickAction(click -> {
             click.setCancelled(true);
             if (click.getClickedInventory() == player.getInventory()) {
@@ -60,9 +62,7 @@ public class GuiBuilder {
                     type = Material.valueOf(plugin.getWrapper().getOriginalData(clicked).material());
                 }
                 if (plugin.getCollectionHelper().getItems(type).isEmpty()) {
-                    if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
-                        GuiBuilder.open(plugin, player, null, click.getSlot());
-                    } else {
+                    if (!plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
                         plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
                     }
                     return;
