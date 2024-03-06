@@ -14,16 +14,18 @@ public class DebugItemData implements Debuggable {
     private Wrap.WrapValues wrapValues;
     private int fakeDurability;
     private int fakeMaxDurability;
+    private String nbt;
 
-    public DebugItemData(boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper, String physicalWrapper, Wrap.WrapValues wrapValues, int fakeDurability, int fakeMaxDurability) {
+    public DebugItemData(boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper, String physicalWrapper, Wrap.WrapValues wrapValues, int fakeDurability, int fakeMaxDurability, String nbt) {
         this.physical = physical;
         this.wrap = wrap;
         this.owningPlayer = owningPlayer;
         this.physicalUnwrapper = physicalUnwrapper;
         this.physicalWrapper = physicalWrapper;
-        this.wrapValues = (Wrap.WrapValues) wrapValues;
+        this.wrapValues = wrapValues;
         this.fakeDurability = fakeDurability;
         this.fakeMaxDurability = fakeMaxDurability;
+        this.nbt = nbt;
     }
 
 }

@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps.commands;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
 import de.skyslycer.hmcwraps.debug.DebugCreator;
+import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.debug.Debuggable;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -67,8 +68,21 @@ public class DebugCommand {
     @Description("Debugs a player.")
     @AutoComplete("@players @upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugPlayer(CommandSender sender, Player player, @Optional String upload) {
+    public void onDebugPlayer(CommandSender sender, @Default("self") Player player, @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), upload != null && upload.equalsIgnoreCase("-upload"));
+    }
+
+    @Subcommand("debug item")
+    @Description("Debugs the item the player is currently holding.")
+    @AutoComplete("@players @upload")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onDebugItem(CommandSender sender, @Default("self") Player player, @Optional String upload) {
+        var item = player.getInventory().getItemInMainHand();
+        if (item.getType().isAir()) {
+            plugin.getMessageHandler().send(player, Messages.NO_ITEM);
+            return;
+        }
+        uploadAndSend(sender, DebugCreator.createDebugItemData(plugin, item), upload != null && upload.equalsIgnoreCase("-upload"));
     }
 
     @Subcommand("debug log")
