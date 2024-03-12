@@ -76,7 +76,7 @@ public class WrapCommand {
         var slot = player.getInventory().getHeldItemSlot();
         if (item.getType().isAir()) {
             if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
-                GuiBuilder.open(plugin, player, null, slot);
+                GuiBuilder.open(plugin, player, null, -1);
             } else {
                 plugin.getMessageHandler().send(player, Messages.NO_ITEM);
             }
@@ -88,7 +88,7 @@ public class WrapCommand {
         }
         if (plugin.getCollectionHelper().getItems(type).isEmpty() || plugin.getWrapper().isGloballyDisabled(item)) {
             if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
-                GuiBuilder.open(plugin, player, null, slot);
+                GuiBuilder.open(plugin, player, null, -1);
             } else {
                 plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             }

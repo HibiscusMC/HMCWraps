@@ -6,9 +6,11 @@ import com.google.gson.JsonObject;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import gs.mclo.java.MclogsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -50,14 +52,14 @@ public class DebugCreator {
 
     public static DebugPlayer createDebugPlayer(HMCWrapsPlugin plugin, Player player) {
         return new DebugPlayer(plugin.getFavoriteWrapStorage().get(player).stream().map(Wrap::getUuid).toList(),
-                plugin.getFilterStorage().get(player), createDebugItemData(plugin, player));
+                plugin.getFilterStorage().get(player), createDebugItemData(plugin, player.getInventory().getItemInMainHand()));
     }
 
-    public static DebugItemData createDebugItemData(HMCWrapsPlugin plugin, Player player) {
-        var item = player.getInventory().getItemInMainHand();
+    public static DebugItemData createDebugItemData(HMCWrapsPlugin plugin, ItemStack item) {
         if (item.getType().isAir()) {
             return null;
         }
+        var nbt = new NBTItem(item).toString();
         var wrapper = plugin.getWrapper();
         var wrap = wrapper.getWrap(item);
         return new DebugItemData(
@@ -68,7 +70,8 @@ public class DebugCreator {
                 wrapper.getPhysicalWrapper(item),
                 wrapper.getOriginalData(item),
                 wrapper.getFakeDurability(item),
-                wrapper.getFakeMaxDurability(item)
+                wrapper.getFakeMaxDurability(item),
+                nbt
         );
     }
 
