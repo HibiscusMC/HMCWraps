@@ -19,7 +19,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class WrapsLoaderImpl implements WrapsLoader {
@@ -65,7 +64,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
                 wrappableItems.put(type, wrappableItem);
             }
         }));
-        wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
+        wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().stream().filter(Objects::nonNull).forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
 
         wraps.remove("-");
     }
