@@ -56,6 +56,7 @@ public class WrapCommand {
     public static final String LIST_PERMISSION = "hmcwraps.commands.list";
     public static final String CREATE_PERMISSION = "hmcwraps.commands.create";
     public static final String WRAPS_PERMISSION = "hmcwraps.wraps";
+    public static final String WRAPS_OPEN_PERMISSION = "hmcwraps.commands.open";
 
     private final Set<String> confirmingPlayers = new HashSet<>();
 
@@ -72,6 +73,10 @@ public class WrapCommand {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
             return;
         }
+        openWrapsInventory(player);
+    }
+
+    private void openWrapsInventory(Player player) {
         var item = player.getInventory().getItemInMainHand();
         var slot = player.getInventory().getHeldItemSlot();
         if (item.getType().isAir()) {
@@ -95,6 +100,14 @@ public class WrapCommand {
             return;
         }
         GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
+    }
+
+    @Subcommand("open")
+    @CommandPermission(WRAPS_OPEN_PERMISSION)
+    @Description("Open the wraps inventory for another player.")
+    public void onOpen(CommandSender sender, Player player) {
+        openWrapsInventory(player);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_OPEN, Placeholder.parsed("player", player.getName()));
     }
 
     @Subcommand("reload")

@@ -175,5 +175,9 @@ bukkit {
         register("hmcwraps.shortcut.disable") {
             description = "If this permission is applied to a player, the shortcut function is disabled only for that player."
         }
+        register("hmcwraps.commands.open") {
+            description = "Gives access to open the wrap inventory for another player."
+            children = listOf("hmcwraps.management", "hmcwraps.admin")
+        }
     }
 }
