@@ -164,6 +164,10 @@ public class WrapCommand {
     @AnyPermission({WRAP_PERMISSION, WRAP_SELF_PERMISSION})
     @AutoComplete("@wraps @players @actions")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
+        if (player != sender && !sender.hasPermission(WRAP_PERMISSION)) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
         if (wrap == null) {
             return;
         }
