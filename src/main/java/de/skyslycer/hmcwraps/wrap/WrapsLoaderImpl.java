@@ -16,10 +16,12 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class WrapsLoaderImpl implements WrapsLoader {
@@ -65,8 +67,16 @@ public class WrapsLoaderImpl implements WrapsLoader {
                 wrappableItems.put(type, wrappableItem);
             }
         }));
-        wrappableItems.values().forEach(wrappableItem -> wrappableItem.getWraps().values().forEach(wrap -> wraps.put(wrap.getUuid(), wrap)));
-
+        for (var wrappableItem : wrappableItems.entrySet()) {
+            for (var wrap : wrappableItem.getValue().getWraps().values()) {
+                if (wrap.getUuid() == null) {
+                    plugin.getLogger().warning("A wrap with the material/collection '" + wrappableItem.getKey() + "' doesn't have a " +
+                            "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
+                    continue;
+                }
+                wraps.put(wrap.getUuid(), wrap);
+            }
+        }
         wraps.remove("-");
     }
 

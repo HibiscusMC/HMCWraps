@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.commands.annotations.AnyPermission;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
@@ -56,6 +57,7 @@ public class WrapCommand {
     public static final String LIST_PERMISSION = "hmcwraps.commands.list";
     public static final String CREATE_PERMISSION = "hmcwraps.commands.create";
     public static final String WRAPS_PERMISSION = "hmcwraps.wraps";
+    public static final String WRAPS_OPEN_PERMISSION = "hmcwraps.commands.open";
 
     private final Set<String> confirmingPlayers = new HashSet<>();
 
@@ -72,6 +74,10 @@ public class WrapCommand {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
             return;
         }
+        openWrapsInventory(player);
+    }
+
+    private void openWrapsInventory(Player player) {
         var item = player.getInventory().getItemInMainHand();
         var slot = player.getInventory().getHeldItemSlot();
         if (item.getType().isAir()) {
@@ -95,6 +101,14 @@ public class WrapCommand {
             return;
         }
         GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
+    }
+
+    @Subcommand("open")
+    @CommandPermission(WRAPS_OPEN_PERMISSION)
+    @Description("Open the wraps inventory for another player.")
+    public void onOpen(CommandSender sender, Player player) {
+        openWrapsInventory(player);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_OPEN, Placeholder.parsed("player", player.getName()));
     }
 
     @Subcommand("reload")
@@ -146,9 +160,11 @@ public class WrapCommand {
     }
 
     @Subcommand("wrap")
+    @Description("Wrap the item the player is holding in their main hand.")
+    @AnyPermission({WRAP_PERMISSION, WRAP_SELF_PERMISSION})
     @AutoComplete("@wraps @players @actions")
     public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
-        if (!(player.hasPermission(WRAP_PERMISSION) || (player == sender && player.hasPermission(WRAP_SELF_PERMISSION)))) {
+        if (player != sender && !sender.hasPermission(WRAP_PERMISSION)) {
             plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
             return;
         }
@@ -178,12 +194,9 @@ public class WrapCommand {
 
     @Subcommand("unwrap")
     @Description("Unwrap the item a player is holding in their main hand.")
+    @AnyPermission({UNWRAP_PERMISSION, UNWRAP_SELF_PERMISSION})
     @AutoComplete("@players @actions")
     public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional String actions) {
-        if (!(player.hasPermission(UNWRAP_PERMISSION) || (player == sender && player.hasPermission(UNWRAP_SELF_PERMISSION)))) {
-            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
-            return;
-        }
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);

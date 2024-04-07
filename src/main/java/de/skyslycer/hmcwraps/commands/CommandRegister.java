@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.commands.annotations.AnyPermissionReader;
 import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -36,6 +37,7 @@ public class CommandRegister {
             }
             return wrap;
         });
+        commandHandler.registerPermissionReader(new AnyPermissionReader());
         commandHandler.getAutoCompleter().registerSuggestionFactory(0,
                 SuggestionProviderFactory.forType(Player.class, SuggestionProvider.map(Bukkit::getOnlinePlayers, Player::getName)));
         commandHandler.getAutoCompleter().registerParameterSuggestions(Integer.class, SuggestionProvider.of(IntStream.range(1, 65).boxed().map(

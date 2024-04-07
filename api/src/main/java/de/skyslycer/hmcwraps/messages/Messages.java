@@ -47,6 +47,7 @@ public enum Messages {
     COMMAND_CONVERT_FAILED("command.convert.failed"),
     COMMAND_CREATE_FAILED("command.create.failed"),
     COMMAND_CREATE_SUCCESS("command.create.success"),
+    COMMAND_OPEN("command.open"),
     PLACEHOLDER_EQUIPPED("placeholder.equipped"),
     PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped");
 
