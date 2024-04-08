@@ -18,7 +18,7 @@ dependencyResolutionManagement {
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")
             library("gui", "dev.triumphteam:triumph-gui:3.1.7")
             library("configurate", "org.spongepowered:configurate-yaml:4.1.2")
-            library("mclogs", "com.github.aternosorg:mclogs-java:v2.2.0")
+            library("mclogs", "com.github.aternosorg:mclogs-java:3.0.1")
             library("nbtapi", "de.tr7zw:item-nbt-api:2.12.0")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
