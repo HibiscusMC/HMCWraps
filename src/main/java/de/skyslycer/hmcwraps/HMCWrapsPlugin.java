@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps;
 
 import com.bgsoftware.common.config.CommentedConfiguration;
 import com.github.retrooper.packetevents.PacketEvents;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
@@ -33,7 +35,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -64,7 +65,8 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private HookAccessor hookAccessor;
     private Config config;
     private MessageHandler messageHandler;
-    private BukkitTask checkTask;
+    private WrappedTask checkTask;
+    private FoliaLib foliaLib;
     private final Map<UUID, String> wrapGui = new HashMap<>();
 
     @Override
@@ -79,6 +81,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     public void onEnable() {
+        foliaLib = new FoliaLib(this);
         checkDependency("PlaceholderAPI", false);
         if (checkDependency("ItemsAdder", false)) {
             hooks.add(new ItemsAdderItemHook());
@@ -225,7 +228,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (config.getPermissions().getInventoryCheckInterval() == -1) {
             return;
         }
-        checkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> Bukkit.getOnlinePlayers().forEach(player -> {
+        checkTask = foliaLib.getImpl().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(player -> {
             for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
                 var item = player.getInventory().getItem(i);
                 if (item == null || item.getType().isAir()) {
@@ -237,7 +240,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                 }
                 if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
                     int finalI = i; // ;(
-                    Bukkit.getScheduler().runTask(this, () -> {
+                    getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
                         var newItem = getWrapper().removeWrap(item, player, getConfiguration().getPermissions().isPermissionPhysical()
                                 && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
                         player.getInventory().setItem(finalI, newItem);
@@ -332,6 +335,11 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     public Map<UUID, String> getWrapGui() {
         return wrapGui;
+    }
+
+    @Override
+    public FoliaLib getFoliaLib() {
+        return foliaLib;
     }
 
 }

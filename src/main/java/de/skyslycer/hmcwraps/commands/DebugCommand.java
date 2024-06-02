@@ -11,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.*;
@@ -131,10 +130,10 @@ public class DebugCommand {
         plugin.getLogger().info("Debug information (" + debuggable.getClass().getSimpleName() + "): \n" + DebugCreator.debugToJson(debuggable));
         StringUtil.sendComponent(sender, Component.text("Debug information (" + debuggable.getClass().getSimpleName() + ") printed to console.").color(NamedTextColor.GREEN));
         if (upload) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            plugin.getFoliaLib().getImpl().runAsync((ignored) -> {
                 var link = DebugCreator.upload(DebugCreator.debugToJson(debuggable), "json");
                 handleLink(sender, link.orElse(null), debuggable.getClass().getSimpleName());
-            }, 0L);
+            });
         }
     }
 
