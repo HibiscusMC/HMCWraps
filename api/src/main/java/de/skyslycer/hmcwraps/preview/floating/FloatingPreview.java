@@ -8,6 +8,7 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.preview.Preview;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
@@ -16,13 +17,10 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -34,8 +32,8 @@ public class FloatingPreview implements Preview {
     private final ItemStack item;
     private final Consumer<Player> onClose;
     private final HMCWraps plugin;
-    private BukkitTask task;
-    private BukkitTask cancelTask;
+    private WrappedTask task;
+    private WrappedTask cancelTask;
 
     public FloatingPreview(Player player, ItemStack item, Consumer<Player> onClose, HMCWraps plugin) {
         this.player = player;
@@ -52,21 +50,19 @@ public class FloatingPreview implements Preview {
         sendTeleportPacket();
         sendEquipPacket();
 
-        task = Bukkit.getScheduler()
-                .runTaskTimerAsynchronously(plugin, new RotateRunnable(player, entityId, plugin), 3, 1);
+        task = plugin.getFoliaLib().getImpl().runTimerAsync(new RotateRunnable(player, entityId, plugin), 3, 1);
 
-        cancelTask = Bukkit.getScheduler()
-                .runTaskLater(plugin, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
+        cancelTask = plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
                         plugin.getConfiguration().getPreview().getDuration() * 20L);
     }
 
     public void cancel(boolean open) {
-        Optional.of(task).ifPresent(BukkitTask::cancel);
-        Optional.of(cancelTask).ifPresent(BukkitTask::cancel);
+        Optional.of(task).ifPresent(WrappedTask::cancel);
+        Optional.of(cancelTask).ifPresent(WrappedTask::cancel);
         if (open && onClose != null) {
             onClose.accept(player);
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));

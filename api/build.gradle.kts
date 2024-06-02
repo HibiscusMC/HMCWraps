@@ -18,6 +18,7 @@ repositories {
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.codemc.io/repository/maven-public/")
+    maven("https://nexuslite.gcnt.net/repos/other/")
 }
 
 dependencies {
@@ -30,6 +31,7 @@ dependencies {
     compileOnly(libs.bundles.adventure)
     compileOnly(libs.configurate)
     compileOnly(libs.nbtapi)
+    compileOnly(libs.folialib)
 }
 
 tasks {

@@ -12,7 +12,7 @@ dependencyResolutionManagement {
             library("annotations", "org.jetbrains:annotations:24.1.0")
         }
         create("libs") {
-            library("packets", "com.github.retrooper.packetevents:spigot:2.2.1")
+            library("packets", "com.github.retrooper.packetevents:spigot:2.3.0")
             library("particles", "com.owen1212055:particlehelper:1.1.0-SNAPSHOT")
             library("configupdater", "com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")
@@ -20,6 +20,7 @@ dependencyResolutionManagement {
             library("configurate", "org.spongepowered:configurate-yaml:4.1.2")
             library("mclogs", "com.github.aternosorg:mclogs-java:v2.2.0")
             library("nbtapi", "de.tr7zw:item-nbt-api:2.12.0")
+            library("folialib", "com.tcoded:FoliaLib:0.3.1")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")

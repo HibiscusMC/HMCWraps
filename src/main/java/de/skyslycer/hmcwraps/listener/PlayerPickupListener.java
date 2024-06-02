@@ -2,7 +2,6 @@ package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,7 +21,7 @@ public class PlayerPickupListener implements Listener {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
+        plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
     }
 
 }

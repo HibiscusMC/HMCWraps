@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps;
 
+import com.tcoded.folialib.FoliaLib;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.itemhook.HookAccessor;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
@@ -11,12 +12,13 @@ import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.wrap.CollectionHelper;
 import de.skyslycer.hmcwraps.wrap.Wrapper;
 import de.skyslycer.hmcwraps.wrap.WrapsLoader;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.UUID;
 
 public interface HMCWraps extends Plugin {
 
@@ -131,5 +133,12 @@ public interface HMCWraps extends Plugin {
      * @return The hook accessor
      */
     HookAccessor getHookAccessor();
+
+    /**
+     * Get the FoliaLib instance.
+     *
+     * @return The FoliaLib instance
+     */
+    FoliaLib getFoliaLib();
 
 }

@@ -5,7 +5,6 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,13 +52,13 @@ public class InventoryClickListener implements Listener {
         switch (event.getAction()) {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> {
                 var slot = event.getRawSlot();
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
                     var updatedItem = PermissionUtil.check(plugin, player, event.getView().getItem(slot));
                     if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
                     event.getView().setItem(slot, updatedItem);
                 }, 1);
             }
-            case MOVE_TO_OTHER_INVENTORY -> Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
                 if (event.getClickedInventory() == player.getInventory()) {
                     PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getTopInventory());
                 } else {
@@ -70,7 +69,7 @@ public class InventoryClickListener implements Listener {
 
         if (event.getClick() == ClickType.NUMBER_KEY) {
             var slot = event.getHotbarButton();
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
                 var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
                 if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
                 player.getInventory().setItem(slot, updatedItem);

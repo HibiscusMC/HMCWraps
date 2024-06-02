@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
-import java.util.Map;
 
 @ConfigSerializable
 public class PhysicalWrap extends SerializableItem {
