@@ -191,7 +191,7 @@ public class WrapperImpl implements Wrapper {
                 editing.setItemMeta(leatherMeta);
             }
             if (wrap.getWrapNbt() != null) {
-                editing = WrapNBTUtil.wrap(editing, wrap.getWrapNbt());
+                editing = WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
             }
         } else {
             meta.setCustomModelData(originalData.modelId());

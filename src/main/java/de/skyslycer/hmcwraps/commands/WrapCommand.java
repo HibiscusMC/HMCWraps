@@ -121,14 +121,14 @@ public class WrapCommand {
                 player.closeInventory();
             }
         }
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+        plugin.getFoliaLib().getImpl().runAsync((ignored) -> {
             plugin.unload();
             plugin.load();
             plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD,
                     Placeholder.parsed("time", String.format("%.2f", (System.nanoTime() - current) / 1_000_000.0)),
                     Placeholder.parsed("wraps", String.valueOf(plugin.getWrapsLoader().getWraps().size())),
                     Placeholder.parsed("collections", String.valueOf(plugin.getWrapsLoader().getCollections().size())));
-        }, 0L);
+        });
     }
 
     @Subcommand("convert")
