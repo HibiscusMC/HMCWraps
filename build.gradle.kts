@@ -4,11 +4,11 @@ plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.2.2"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 group = "de.skyslycer"
-version = "1.4.4"
+version = "1.4.5"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -24,6 +24,7 @@ repositories {
     maven("https://repo.bytecode.space/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
+    maven("https://nexuslite.gcnt.net/repos/other/")
 }
 
 dependencies {
@@ -36,6 +37,7 @@ dependencies {
     implementation(libs.particles)
     implementation(libs.gui)
     implementation(libs.nbtapi)
+    implementation(libs.folialib)
     implementation(libs.configurate) {
         exclude("org.yaml")
     }
@@ -70,11 +72,12 @@ tasks {
         relocate("org.intellij", "$shadePattern.annotations")
         relocate("org.jetbrains", "$shadePattern.annotations")
         relocate("io.leangen", "$shadePattern.leangen")
+        relocate("com.tcoded.folialib", "$shadePattern.folialib")
 
         exclude("com/google/**")
-        exclude("assets/mappings/block/**")
-        exclude("assets/mappings/particle/**")
-        exclude("assets/mappings/potion/**")
+        //exclude("assets/mappings/block/**")
+        //exclude("assets/mappings/particle/**")
+        //exclude("assets/mappings/potion/**")
         exclude("lamp_pt.properties")
         exclude("lamp_it.properties")
         exclude("lamp_fr.properties")

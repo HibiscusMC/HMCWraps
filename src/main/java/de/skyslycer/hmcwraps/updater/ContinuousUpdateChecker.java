@@ -1,10 +1,10 @@
 package de.skyslycer.hmcwraps.updater;
 
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 public class ContinuousUpdateChecker {
 
@@ -16,7 +16,7 @@ public class ContinuousUpdateChecker {
     private PluginUpdater updater;
     private long lastResultTime = 0;
     private CheckResult lastResult;
-    private BukkitTask task;
+    private WrappedTask task;
 
     public ContinuousUpdateChecker(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -27,7 +27,7 @@ public class ContinuousUpdateChecker {
         if (task != null) {
             task.cancel();
         }
-        task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        task = plugin.getFoliaLib().getImpl().runTimerAsync(() -> {
             var result = updater.check(plugin);
             lastResultTime = System.currentTimeMillis();
             lastResult = result;
