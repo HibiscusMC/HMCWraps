@@ -5,7 +5,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("depends") {
             library("spigot", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
-            library("placeholderapi", "me.clip:placeholderapi:2.11.2")
+            library("placeholderapi", "me.clip:placeholderapi:2.11.6")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
             library("mythicmobs", "io.lumine:Mythic-Dist:5.6.1")
