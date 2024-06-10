@@ -16,7 +16,7 @@ dependencyResolutionManagement {
             library("particles", "com.owen1212055:particlehelper:1.5.0-SNAPSHOT")
             library("configupdater", "com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")
-            library("gui", "dev.triumphteam:triumph-gui:3.1.7")
+            library("gui", "dev.triumphteam:triumph-gui:3.1.10")
             library("configurate", "org.spongepowered:configurate-yaml:4.1.2")
             library("mclogs", "com.github.aternosorg:mclogs-java:3.0.1")
             library("nbtapi", "de.tr7zw:item-nbt-api:2.12.4")
