@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.serialization.wrap;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.serialization.inventory.InventoryItem;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.util.StringUtil;
@@ -27,8 +28,8 @@ public class Wrap extends SerializableItem {
     private @Nullable String permission;
     private @Nullable String lockedName;
     private @Nullable List<String> lockedLore;
-    private @Nullable SerializableItem lockedItem;
-    private @Nullable SerializableItem equippedItem;
+    private @Nullable InventoryItem lockedItem;
+    private @Nullable InventoryItem equippedItem;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
     private @Nullable String wrapName;
     private @Nullable List<String> wrapLore;
@@ -37,10 +38,11 @@ public class Wrap extends SerializableItem {
     private @Nullable List<String> wrapFlags;
     private @Nullable Boolean armorImitation;
     private @Nullable Integer wrapDurability;
+    private @Nullable Integer sort;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
-                @Nullable String permission, @Nullable SerializableItem lockedItem) {
+                @Nullable String permission, @Nullable InventoryItem lockedItem) {
         super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null);
         this.preview = true;
         this.uuid = uuid;
@@ -100,7 +102,7 @@ public class Wrap extends SerializableItem {
     }
 
     @Nullable
-    public SerializableItem getLockedItem() {
+    public InventoryItem getLockedItem() {
         return lockedItem;
     }
 
@@ -139,8 +141,13 @@ public class Wrap extends SerializableItem {
     }
 
     @Nullable
-    public SerializableItem getEquippedItem() {
+    public InventoryItem getEquippedItem() {
         return equippedItem;
+    }
+
+    @Nullable
+    public Integer getSort() {
+        return sort;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {

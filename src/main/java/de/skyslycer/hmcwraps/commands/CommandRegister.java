@@ -95,7 +95,7 @@ public class CommandRegister {
                             .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : null;
                 });
         commandHandler.register(new WrapCommand(plugin), new DebugCommand(plugin));
-        //commandHandler.registerBrigadier();
+        commandHandler.registerBrigadier();
     }
 
 }

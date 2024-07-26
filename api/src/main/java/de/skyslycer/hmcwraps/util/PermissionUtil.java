@@ -48,8 +48,7 @@ public class PermissionUtil {
             return null;
         }
         if (!hasPermission(plugin, wrap, item, player)) {
-            return plugin.getWrapper().removeWrap(item, player, plugin.getConfiguration().getPermissions().isPermissionPhysical()
-                    && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
+            return plugin.getWrapper().removeWrap(item, player);
         }
         return null;
     }
@@ -63,7 +62,7 @@ public class PermissionUtil {
      */
     public static void loopThroughInventory(HMCWraps plugin, Player player, Inventory inventory) {
         for (int i = 0; i < inventory.getContents().length - 1; i++) {
-            var item = player.getInventory().getItem(i);
+            var item = inventory.getItem(i);
             if (item == null || item.getType().isAir()) {
                 continue;
             }
@@ -88,7 +87,7 @@ public class PermissionUtil {
             var matchingWrap = wraps.getWraps().values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                     .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst();
             if (matchingWrap.isPresent()) {
-                return plugin.getWrapper().setWrap(matchingWrap.get(), item, false, player, true);
+                return plugin.getWrapper().setWrap(matchingWrap.get(), item, false, player);
             }
         }
         return item;

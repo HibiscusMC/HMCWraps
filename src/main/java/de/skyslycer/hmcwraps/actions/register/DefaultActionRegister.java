@@ -94,7 +94,7 @@ public class DefaultActionRegister {
             var player = actionInformation.getPlayer();
             var slot = getSlot(actionInformation);
             var wrap = plugin.getWrapper().getWrap(player.getInventory().getItem(slot));
-            player.getInventory().setItem(slot, plugin.getWrapper().removeWrap(player.getInventory().getItem(slot), player, true));
+            player.getInventory().setItem(slot, plugin.getWrapper().removeWrap(player.getInventory().getItem(slot), player));
             plugin.getMessageHandler().send(player, Messages.REMOVE_WRAP);
             if (wrap != null) {
                 plugin.getActionHandler().pushUnwrap(wrap, player);
@@ -155,45 +155,45 @@ public class DefaultActionRegister {
     private Particle addParticleValues(Particle particle, String[] split) {
         var counter = 1;
         if (particle instanceof MultiParticle multiParticle) {
-            multiParticle.setCount(getBigInteger(split[counter]).intValue());
+            multiParticle.count(getBigInteger(split[counter]).intValue());
             counter++;
-            multiParticle.setXOffset(getBigInteger(split[counter]).floatValue());
+            multiParticle.xOffset(getBigInteger(split[counter]).floatValue());
             counter++;
-            multiParticle.setYOffset(getBigInteger(split[counter]).floatValue());
+            multiParticle.yOffset(getBigInteger(split[counter]).floatValue());
             counter++;
-            multiParticle.setZOffset(getBigInteger(split[counter]).floatValue());
+            multiParticle.zOffset(getBigInteger(split[counter]).floatValue());
             counter++;
             if (multiParticle instanceof MultiNoteParticle multiNoteParticle) {
-                multiNoteParticle.setColorMultplier(getBigInteger(split[counter]).intValue());
+                multiNoteParticle.colorMultiplier(getBigInteger(split[counter]).intValue());
                 counter++;
             }
         }
         if (particle instanceof ColorableParticle colorableParticle && StringUtil.colorFromString(split[counter]) != null) {
-            colorableParticle.setColor(StringUtil.colorFromString(split[counter]));
+            colorableParticle.color(StringUtil.colorFromString(split[counter]));
             counter++;
         }
         if (particle instanceof TransitionDustParticle transitionDustParticle && StringUtil.colorFromString(split[counter]) != null) {
-            transitionDustParticle.setFadeColor(StringUtil.colorFromString(split[counter]));
+            transitionDustParticle.fadeColor(StringUtil.colorFromString(split[counter]));
             counter++;
         }
         if (particle instanceof ItemStackParticle materialParticle && Material.getMaterial(split[counter]) != null) {
-            materialParticle.setItemStack(new ItemStack(Material.getMaterial(split[counter])));
+            materialParticle.itemStack(new ItemStack(Material.getMaterial(split[counter])));
             counter++;
         }
         if (particle instanceof SpeedModifiableParticle speedModifiableParticle) {
-            speedModifiableParticle.setSpeed(getBigInteger(split[counter]).floatValue());
+            speedModifiableParticle.speed(getBigInteger(split[counter]).floatValue());
             counter++;
         }
         if (particle instanceof DelayableParticle delayableParticle) {
-            delayableParticle.setDelay(getBigInteger(split[counter]).intValue());
+            delayableParticle.delay(getBigInteger(split[counter]).intValue());
             counter++;
         }
         if (particle instanceof SizeableParticle sizeableParticle) {
-            sizeableParticle.setSize(getBigInteger(split[counter]).floatValue());
+            sizeableParticle.size(getBigInteger(split[counter]).floatValue());
             counter++;
         }
         if (particle instanceof RollableParticle rollableParticle) {
-            rollableParticle.setRoll(getBigInteger(split[counter]).floatValue());
+            rollableParticle.roll(getBigInteger(split[counter]).floatValue());
         }
         return particle;
     }
@@ -398,7 +398,7 @@ public class DefaultActionRegister {
                 plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
                 return;
             }
-            player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player, true));
+            player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player));
             plugin.getMessageHandler().send(player, Messages.APPLY_WRAP);
             plugin.getActionHandler().pushWrap(wrap, player);
             plugin.getActionHandler().pushVirtualWrap(wrap, player);

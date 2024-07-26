@@ -86,7 +86,9 @@ tasks {
         exclude("lamp-bukkit_fr.properties")
 
         archiveClassifier.set("")
-        minimize()
+        minimize {
+            exclude(dependency("com.tcoded:FoliaLib:.*"))
+        }
     }
 
     build {
@@ -109,8 +111,9 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs")
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "ProtocolSupport", "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot")
     apiVersion = "1.17"
+    foliaSupported = true
     permissions {
         register("hmcwraps.admin") {
             description = "Gives access to all commands."

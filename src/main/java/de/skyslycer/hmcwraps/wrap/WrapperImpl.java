@@ -51,6 +51,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalMaterialKey;
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
+    private final NamespacedKey customAttributes;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -70,6 +71,7 @@ public class WrapperImpl implements Wrapper {
         originalMaterialKey = new NamespacedKey(plugin, "original-material");
         fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
+        customAttributes = new NamespacedKey(plugin, "custom-attributes");
     }
 
     @Override
@@ -86,23 +88,22 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
-    public ItemStack setWrap(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
-        var event = new ItemWrapEvent(wrap, item, physical, player, giveBack);
+    public ItemStack setWrap(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player) {
+        var event = new ItemWrapEvent(wrap, item, physical, player);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return item;
         }
-        return setWrapPrivate(event.getWrap(), event.getItem(), event.isPhysical(), event.getPlayer(), event.isGiveBack());
+        return setWrapPrivate(event.getWrap(), event.getItem(), event.isPhysical(), event.getPlayer());
     }
 
-    private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
+    private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player) {
         if (item == null || item.getType().isAir()) {
             return item;
         }
         var editing = item.clone();
         var currentWrap = getWrap(editing);
-        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()
-                && giveBack) {
+        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()) {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
         var originalData = getOriginalData(item);
@@ -156,6 +157,7 @@ public class WrapperImpl implements Wrapper {
                 var maxDurability = editing.getType().getMaxDurability();
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();
+                var attributeModifiers = editing.getItemMeta().getAttributeModifiers();
                 if (switchToLeather(editing)) {
                     int newDurability = editing.getType().getMaxDurability();
                     var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
@@ -163,6 +165,7 @@ public class WrapperImpl implements Wrapper {
                     newMeta.setDamage(newDurability - (int) modelDurability);
                     newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                     newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
+                    newMeta.getPersistentDataContainer().set(customAttributes, PersistentDataType.BOOLEAN, attributeModifiers != null);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
                     changedDurability = true;
@@ -271,31 +274,39 @@ public class WrapperImpl implements Wrapper {
     }
 
     private boolean switchToLeather(ItemStack editing) {
+        var hasCustomAttributes = editing.getItemMeta().getAttributeModifiers() != null;
         if (editing.getType().toString().contains("_HELMET")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_HELMET);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
+            if (!hasCustomAttributes)
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
         } else if (editing.getType().toString().contains("_CHESTPLATE")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_CHESTPLATE);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
+            if (!hasCustomAttributes)
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
         } else if (editing.getType().toString().contains("_LEGGINGS")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_LEGGINGS);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
+            if (!hasCustomAttributes)
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
         } else if (editing.getType().toString().contains("_BOOTS")) {
             var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
             editing.setType(Material.LEATHER_BOOTS);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
+            if (!hasCustomAttributes)
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
         } else {
             return false;
         }
         return true;
     }
 
-    private void switchFromLeather(ItemStack editing, String material) {
+    @Override
+    public void switchFromLeather(ItemStack editing, String material) {
         editing.setType(Material.valueOf(material));
-        ArmorModifiers.removeAttributes(editing);
+        if (!isCustomAttributes(editing)) {
+            ArmorModifiers.removeAttributes(editing);
+        }
     }
 
     @Override
@@ -345,21 +356,21 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
-    public ItemStack removeWrap(ItemStack target, Player player, boolean giveBack) {
-        var event = new ItemUnwrapEvent(target, player, getWrap(target), giveBack);
+    public ItemStack removeWrap(ItemStack target, Player player) {
+        var event = new ItemUnwrapEvent(target, player, getWrap(target));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return target;
         }
-        return removeWrapPrivate(event.getItem(), event.getPlayer(), event.isGiveBack());
+        return removeWrapPrivate(event.getItem(), event.getPlayer());
     }
 
-    private ItemStack removeWrapPrivate(ItemStack item, Player player, boolean giveBack) {
+    private ItemStack removeWrapPrivate(ItemStack item, Player player) {
         var currentWrap = getWrap(item);
         if (currentWrap == null) {
             return item;
         }
-        return setWrapPrivate(null, item, false, player, giveBack);
+        return setWrapPrivate(null, item, false, player);
     }
 
     @Override
@@ -640,6 +651,16 @@ public class WrapperImpl implements Wrapper {
         meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, physical ? (byte) 1 : (byte) 0);
         editing.setItemMeta(meta);
         return editing;
+    }
+
+    @Override
+    public boolean isCustomAttributes(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var data = container.get(customAttributes, PersistentDataType.BOOLEAN);
+        if (data == null) {
+            return false;
+        }
+        return data;
     }
 
     @Override

@@ -63,6 +63,7 @@ public class DebugCreator {
         var wrapper = plugin.getWrapper();
         var wrap = wrapper.getWrap(item);
         return new DebugItemData(
+                item.getType().toString(),
                 wrapper.isPhysical(item),
                 wrap == null ? "-" : wrap.getUuid(),
                 wrapper.getOwningPlayer(item),

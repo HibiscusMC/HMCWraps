@@ -117,9 +117,11 @@ public class WrapCommand {
     public void onReload(CommandSender sender) {
         var current = System.nanoTime();
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (player.getOpenInventory().getTopInventory().getHolder() instanceof BaseGui) {
-                player.closeInventory();
-            }
+            plugin.getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
+                if (player.getOpenInventory().getTopInventory().getHolder() instanceof BaseGui) {
+                    player.closeInventory();
+                }
+            });
         }
         plugin.getFoliaLib().getImpl().runAsync((ignored) -> {
             plugin.unload();
@@ -178,7 +180,7 @@ public class WrapCommand {
         }
         for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(item.getType())) {
             if (wrappableItem.getWraps().containsValue(wrap)) {
-                item = plugin.getWrapper().setWrap(wrap, item, false, player, true);
+                item = plugin.getWrapper().setWrap(wrap, item, false, player);
                 item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
                 player.getInventory().setItemInMainHand(item);
                 if (actions == null || !actions.equals("-actions")) {
@@ -207,7 +209,7 @@ public class WrapCommand {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_ITEM_NOT_WRAPPED);
             return;
         }
-        item = plugin.getWrapper().removeWrap(item, player, true);
+        item = plugin.getWrapper().removeWrap(item, player);
         player.getInventory().setItemInMainHand(item);
         if (actions == null || !actions.equals("-actions")) {
             plugin.getActionHandler().pushUnwrap(wrap, player);

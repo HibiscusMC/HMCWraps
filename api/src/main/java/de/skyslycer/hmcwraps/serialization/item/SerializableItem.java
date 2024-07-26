@@ -92,7 +92,7 @@ public class SerializableItem {
         }
         if (getEnchantments() != null) {
             getEnchantments().forEach((name, level) -> {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name));
+                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
                 if (enchantment != null) {
                     builder.enchant(enchantment, level);
                 }

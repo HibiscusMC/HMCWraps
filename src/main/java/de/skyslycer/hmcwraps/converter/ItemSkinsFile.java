@@ -1,6 +1,6 @@
 package de.skyslycer.hmcwraps.converter;
 
-import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.inventory.InventoryItem;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -75,8 +75,8 @@ public class ItemSkinsFile {
             return lore;
         }
 
-        public SerializableItem toItem() {
-            return new SerializableItem(material, displayName, glowing, lore, null, customModelData, null, 1, null, null, null, null, null);
+        public InventoryItem toItem() {
+            return new InventoryItem(material, displayName, glowing, lore, null, customModelData, null, 1, null, null, null, null, null);
         }
 
     }

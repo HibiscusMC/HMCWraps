@@ -138,22 +138,42 @@ public class GuiBuilder {
             plugin.getWrapGui().remove(player.getUniqueId());
         }
         var finalType = type; // Why :(
+
+        List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
         plugin.getCollectionHelper().getItems(type).forEach(it -> it.getWraps()
                 .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
-                    if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) {
-                        gui.addItem(new GuiItem(wrap.getEquippedItem().toItem(plugin, player)));
-                        return;
-                    }
-                    var wrapItem = wrap.toPermissionItem(plugin, wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(item.getType()) : finalType, player);
-                    var guiItem = new GuiItem(wrapItem);
-                    guiItem.setAction(click -> {
-                        if (plugin.getConfiguration().getInventory().getActions() != null) {
-                            actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), plugin.getConfiguration().getInventory().getActions(), click);
-                        }
-                    });
-                    gui.addItem(guiItem);
+                    wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player)));
                 }));
+
+        ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
+        wrapItemCombinations.sort(comparator);
+
+        for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
+            var wrap = wrapItemCombination.getWrap();
+            if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) {
+                var equippedItem = new GuiItem(wrap.getEquippedItem().toItem(plugin, player));
+                equippedItem.setAction(click -> {
+                    if (wrap.getEquippedItem().getActions() != null) {
+                        actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getEquippedItem().getActions(), click);
+                    }
+                });
+                gui.addItem(equippedItem);
+                return;
+            }
+            var wrapItem = wrap.toPermissionItem(plugin, wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(item.getType()) : finalType, player);
+            var guiItem = new GuiItem(wrapItem);
+            guiItem.setAction(click -> {
+                if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {
+                    if (plugin.getConfiguration().getInventory().getActions() != null) {
+                        actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), plugin.getConfiguration().getInventory().getActions(), click);
+                    }
+                } else if (wrap.getLockedItem() != null && wrap.getLockedItem().getActions() != null) {
+                    actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getLockedItem().getActions(), click);
+                }
+            });
+            gui.addItem(guiItem);
+        }
     }
 
     private static void setItemToSlot(PaginatedGui gui, HMCWrapsPlugin plugin, ItemStack target) {

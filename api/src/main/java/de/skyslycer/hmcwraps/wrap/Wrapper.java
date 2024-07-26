@@ -53,10 +53,9 @@ public interface Wrapper {
      * @param target   The item to apply the wrap to
      * @param physical If the wrap was added physically
      * @param player   The player
-     * @param giveBack If the player should get his physical wrapper back
      * @return The newly wrapped item
      */
-    ItemStack setWrap(Wrap wrap, ItemStack target, boolean physical, Player player, boolean giveBack);
+    ItemStack setWrap(Wrap wrap, ItemStack target, boolean physical, Player player);
 
     /**
      * Remove a wrap. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
@@ -64,10 +63,11 @@ public interface Wrapper {
      *
      * @param itemStack The item to remove the wrap from
      * @param player    The player
-     * @param giveBack  If the player should get his physical wrapper back
      * @return The newly unwrapped item
      */
-    ItemStack removeWrap(ItemStack itemStack, Player player, boolean giveBack);
+    ItemStack removeWrap(ItemStack itemStack, Player player);
+
+    void switchFromLeather(ItemStack editing, String material);
 
     /**
      * Get the fake durability of the item.
@@ -169,6 +169,14 @@ public interface Wrapper {
      * @return If the wrap was applied physically
      */
     boolean isPhysical(ItemStack item);
+
+    /**
+     * Check if the original item had custom attributes instead of the default ones.
+     *
+     * @param item The item
+     * @return If the item had custom attributes applied
+     */
+    boolean isCustomAttributes(ItemStack item);
 
     /**
      * Check if the items model id is valid for the wrap.

@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.converter;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
-import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.inventory.InventoryItem;
 import de.skyslycer.hmcwraps.serialization.wrap.PhysicalWrap;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
@@ -163,7 +163,7 @@ public class FileConverter {
                     itemSkinsPhysical.getLore() != null ? itemSkinsPhysical.getLore().stream().map(StringUtil::legacyToMiniMessage).toList() : null,
                     itemSkinsPhysical.getCustomModelData());
         }
-        SerializableItem lockedItem = null;
+        InventoryItem lockedItem = null;
         if (itemSkinsFile.getUnavailableItem() != null) {
             var unavailableItem = itemSkinsFile.getUnavailableItem();
             lockedItem = unavailableItem.toItem();

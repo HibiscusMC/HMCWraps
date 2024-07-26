@@ -228,26 +228,33 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (config.getPermissions().getInventoryCheckInterval() == -1) {
             return;
         }
-        checkTask = foliaLib.getImpl().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(player -> {
-            for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
-                var item = player.getInventory().getItem(i);
-                if (item == null || item.getType().isAir()) {
-                    continue;
-                }
-                var wrap = getWrapper().getWrap(item);
-                if (wrap == null) {
-                    continue;
-                }
-                if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
-                    int finalI = i; // ;(
-                    getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
-                        var newItem = getWrapper().removeWrap(item, player, getConfiguration().getPermissions().isPermissionPhysical()
-                                && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
-                        player.getInventory().setItem(finalI, newItem);
-                    });
-                }
+        if (foliaLib.isFolia()) {
+            checkTask = foliaLib.getImpl().runTimer(() -> Bukkit.getOnlinePlayers().forEach((player) -> foliaLib.getImpl().runAtEntity(player, (ignored) -> checkInventory(player))),
+                    0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+        } else {
+            checkTask = foliaLib.getImpl().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(this::checkInventory),
+                    0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+        }
+    }
+
+    private void checkInventory(Player player) {
+        for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
+            var item = player.getInventory().getItem(i);
+            if (item == null || item.getType().isAir()) {
+                continue;
             }
-        }), 0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+            var wrap = getWrapper().getWrap(item);
+            if (wrap == null) {
+                continue;
+            }
+            if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
+                int finalI = i; // ;(
+                getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
+                    var newItem = getWrapper().removeWrap(item, player);
+                    player.getInventory().setItem(finalI, newItem);
+                });
+            }
+        }
     }
 
     @Override

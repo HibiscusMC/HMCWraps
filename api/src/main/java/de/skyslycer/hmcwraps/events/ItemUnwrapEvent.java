@@ -18,13 +18,11 @@ public class ItemUnwrapEvent extends Event implements Cancellable {
     private Player player;
     private ItemStack item;
     private final Wrap wrap;
-    private boolean giveBack;
 
-    public ItemUnwrapEvent(ItemStack item, Player player, Wrap wrap, boolean giveBack) {
+    public ItemUnwrapEvent(ItemStack item, Player player, Wrap wrap) {
         this.item = item;
         this.player = player;
         this.wrap = wrap;
-        this.giveBack = giveBack;
     }
 
     @Override
@@ -60,20 +58,12 @@ public class ItemUnwrapEvent extends Event implements Cancellable {
         return wrap;
     }
 
-    public boolean isGiveBack() {
-        return giveBack;
-    }
-
     public void setPlayer(Player player) {
         this.player = player;
     }
 
     public void setItem(ItemStack item) {
         this.item = item;
-    }
-
-    public void setGiveBack(boolean giveBack) {
-        this.giveBack = giveBack;
     }
 
 }

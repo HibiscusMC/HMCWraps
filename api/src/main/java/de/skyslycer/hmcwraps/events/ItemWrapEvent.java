@@ -18,14 +18,12 @@ public class ItemWrapEvent extends Event implements Cancellable {
     private Player player;
     private ItemStack item;
     private boolean physical;
-    private boolean giveBack;
 
-    public ItemWrapEvent(Wrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
+    public ItemWrapEvent(Wrap wrap, ItemStack item, boolean physical, Player player) {
         this.wrap = wrap;
         this.item = item;
         this.physical = physical;
         this.player = player;
-        this.giveBack = giveBack;
     }
 
     @Override
@@ -64,10 +62,6 @@ public class ItemWrapEvent extends Event implements Cancellable {
         return physical;
     }
 
-    public boolean isGiveBack() {
-        return giveBack;
-    }
-
     public void setWrap(Wrap wrap) {
         this.wrap = wrap;
     }
@@ -82,10 +76,6 @@ public class ItemWrapEvent extends Event implements Cancellable {
 
     public void setPhysical(boolean physical) {
         this.physical = physical;
-    }
-
-    public void setGiveBack(boolean giveBack) {
-        this.giveBack = giveBack;
     }
 
 }
