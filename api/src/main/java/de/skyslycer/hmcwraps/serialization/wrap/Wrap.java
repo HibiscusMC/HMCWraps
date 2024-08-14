@@ -31,6 +31,7 @@ public class Wrap extends SerializableItem {
     private @Nullable InventoryItem lockedItem;
     private @Nullable InventoryItem equippedItem;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
+    private @Nullable HashMap<String, HashMap<String, List<String>>> inventoryActions;
     private @Nullable String wrapName;
     private @Nullable List<String> wrapLore;
     private @Nullable RangeSettings range;
@@ -39,6 +40,7 @@ public class Wrap extends SerializableItem {
     private @Nullable Boolean armorImitation;
     private @Nullable Integer wrapDurability;
     private @Nullable Integer sort;
+    private @Nullable Boolean upsideDownPreview;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -92,6 +94,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public HashMap<String, HashMap<String, List<String>>> getActions() {
         return actions;
+    }
+
+    @Nullable
+    public HashMap<String, HashMap<String, List<String>>> getInventoryActions() {
+        return inventoryActions;
     }
 
     public boolean hasPermission(CommandSender sender) {
@@ -148,6 +155,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public Integer getSort() {
         return sort;
+    }
+
+    @Nullable
+    public Boolean isUpsideDownPreview() {
+        return upsideDownPreview;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {

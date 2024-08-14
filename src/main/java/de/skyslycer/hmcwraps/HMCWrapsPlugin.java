@@ -25,6 +25,7 @@ import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.transformation.ConfigFileTransformations;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
+import de.skyslycer.hmcwraps.updater.version.PluginVersion;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
@@ -90,7 +91,15 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             hooks.add(new OraxenItemHook());
         }
         if (checkDependency("Crucible", false)) {
-            hooks.add(new MythicItemHook());
+            var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
+            if (mythicMobs != null && PluginVersion.fromString(mythicMobs.getDescription().getVersion()).isOlderThan(new PluginVersion(5, 6, 2))) {
+                logSevere("""
+                        The plugin 'MythicMobs' is an installed dependency but the version of the dependency is too old!
+                        If you don't intend to use the plugin with HMCWraps, you can safely ignore this warning.
+                        Please restart the server after you have updated the plugin!""");
+            } else {
+                hooks.add(new MythicItemHook());
+            }
         }
         hookAccessor = new HookAccessor(hooks);
 

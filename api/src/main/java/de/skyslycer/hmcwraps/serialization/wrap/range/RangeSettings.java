@@ -7,14 +7,14 @@ public class RangeSettings {
 
     private ValueRangeSettings<Integer> modelId;
     private ValueRangeSettings<String> color;
-    private ValueRangeSettings<String> itemsAdder;
+    private ValueRangeSettings<String> itemsadder;
     private ValueRangeSettings<String> oraxen;
     private ValueRangeSettings<String> mythic;
 
     public RangeSettings(ValueRangeSettings<Integer> modelId, ValueRangeSettings<String> color, ValueRangeSettings<String> itemsAdder, ValueRangeSettings<String> oraxen, ValueRangeSettings<String> mythic) {
         this.modelId = modelId;
         this.color = color;
-        this.itemsAdder = itemsAdder;
+        this.itemsadder = itemsAdder;
         this.oraxen = oraxen;
         this.mythic = mythic;
     }
@@ -30,7 +30,7 @@ public class RangeSettings {
     }
 
     public ValueRangeSettings<String> getItemsAdder() {
-        return itemsAdder;
+        return itemsadder;
     }
 
     public ValueRangeSettings<String> getOraxen() {

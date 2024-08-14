@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.preview;
 
+import com.google.common.base.Optional;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.events.ItemPreviewEvent;
 import de.skyslycer.hmcwraps.preview.floating.FloatingPreview;
@@ -7,7 +8,6 @@ import de.skyslycer.hmcwraps.preview.hand.HandPreview;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.MaterialUtil;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,26 +50,23 @@ public class PreviewManager {
     public void create(Player player, Consumer<Player> onClose, Wrap wrap) {
         var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
         var type = wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(wrapType) : wrapType;
-        var item = ItemBuilder.from(type).model(wrap.getModelId());
-        if (wrap.getColor() != null) {
-            item.color(wrap.getColor());
-        }
-        var event = new ItemPreviewEvent(player, item.build(), onClose, wrap);
+        var item = plugin.getWrapper().setWrap(wrap, new ItemStack(type), false, player);
+        var event = new ItemPreviewEvent(player, item, onClose, wrap);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
-        createPrivate(event.getPlayer(), event.getItem(), event.getOnClose());
+        createPrivate(event.getPlayer(), event.getItem(), wrap, event.getOnClose());
     }
 
 
-    private void createPrivate(Player player, ItemStack item, Consumer<Player> onClose) {
+    private void createPrivate(Player player, ItemStack item, Wrap wrap, Consumer<Player> onClose) {
         this.remove(player.getUniqueId(), false);
         Preview preview;
         if (plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             preview = new HandPreview(player, item, onClose, plugin);
         } else {
-            preview = new FloatingPreview(player, item, onClose, plugin);
+            preview = new FloatingPreview(player, item, Optional.fromNullable(wrap.isUpsideDownPreview()).or(false), onClose, plugin);
         }
         previews.put(player.getUniqueId(), preview);
         preview.preview();

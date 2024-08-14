@@ -159,7 +159,7 @@ public class GuiBuilder {
                     }
                 });
                 gui.addItem(equippedItem);
-                return;
+                continue;
             }
             var wrapItem = wrap.toPermissionItem(plugin, wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(item.getType()) : finalType, player);
             var guiItem = new GuiItem(wrapItem);
@@ -167,6 +167,9 @@ public class GuiBuilder {
                 if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {
                     if (plugin.getConfiguration().getInventory().getActions() != null) {
                         actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), plugin.getConfiguration().getInventory().getActions(), click);
+                    }
+                    if (wrap.getInventoryActions() != null) {
+                        actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getInventoryActions(), click);
                     }
                 } else if (wrap.getLockedItem() != null && wrap.getLockedItem().getActions() != null) {
                     actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getLockedItem().getActions(), click);

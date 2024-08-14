@@ -9,6 +9,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.WrapNBTUtil;
+import de.tr7zw.changeme.nbtapi.NBT;
 import dev.lone.itemsadder.api.CustomStack;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.th0rgal.oraxen.api.OraxenItems;
@@ -113,6 +114,9 @@ public class WrapperImpl implements Wrapper {
         var originalLore = meta.getLore();
         var originalFlags = meta.getItemFlags().stream().toList();
         var originalMaterial = "";
+        var originalItemsAdderId = getOriginalItemsAdderId(item);
+        var originalOraxenId = getOriginalOraxenId(item);
+        var originalMythicId = getOriginalMythicId(item);
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
@@ -120,23 +124,23 @@ public class WrapperImpl implements Wrapper {
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
+        if (currentWrap != null) {
+            if (currentWrap.getWrapName() != null) {
+                meta.setDisplayName(originalData.name());
+            }
+            if (currentWrap.getWrapLore() != null) {
+                meta.setLore(originalData.lore());
+            }
+            if (currentWrap.getWrapFlags() != null) {
+                meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+                meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            }
+        }
         if (wrap != null) {
             if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
                 switchFromLeather(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
-            if (currentWrap != null) {
-                if (currentWrap.getWrapName() != null) {
-                    meta.setDisplayName(originalData.name());
-                }
-                if (currentWrap.getWrapLore() != null) {
-                    meta.setLore(originalData.lore());
-                }
-                if (currentWrap.getWrapFlags() != null) {
-                    meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-                    meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
-                }
-            }
             if (wrap.getWrapName() != null) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
             }
@@ -194,22 +198,12 @@ public class WrapperImpl implements Wrapper {
                 editing.setItemMeta(leatherMeta);
             }
             if (wrap.getWrapNbt() != null) {
-                editing = WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
+                WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
+            }
+            if (wrap.getId().startsWith("itemsadder:")) {
+                setItemsAdderNBT(editing, wrap.getId().substring(11));
             }
         } else {
-            meta.setCustomModelData(originalData.modelId());
-            if (currentWrap != null) {
-                if (currentWrap.getWrapName() != null) {
-                    meta.setDisplayName(originalData.name());
-                }
-                if (currentWrap.getWrapLore() != null) {
-                    meta.setLore(originalData.lore());
-                }
-                if (currentWrap.getWrapFlags() != null) {
-                    meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-                    meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
-                }
-            }
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
@@ -220,41 +214,36 @@ public class WrapperImpl implements Wrapper {
                 switchFromLeather(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
-            editing = WrapNBTUtil.unwrap(editing);
+            WrapNBTUtil.unwrap(editing);
+            if (originalData.itemsAdder() != null || (currentWrap != null && currentWrap.getId().startsWith("itemsadder:"))) {
+                setItemsAdderNBT(editing, originalData.itemsAdder());
+            }
         }
         editing = setPhysical(editing.clone(), physical);
         if (wrap == null || currentWrap != null) {
             return editing;
         }
-        String itemsAdderId = null;
-        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
-            var id = CustomStack.byItemStack(item);
-            if (id != null) {
-                itemsAdderId = id.getNamespacedID();
-            }
-        } else {
-            itemsAdderId = getOriginalItemsAdderId(item);
-        }
-        String oraxenId = null;
-        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
-            var id = OraxenItems.getIdByItem(item);
-            if (id != null) {
-                oraxenId = id;
-            }
-        } else {
-            oraxenId = getOriginalOraxenId(item);
-        }
-        String mythicId = null;
-        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-            if (id != null) {
-                itemsAdderId = id;
-            }
-        } else {
-            mythicId = getOriginalMythicId(item);
-        }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
-                originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
+                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial));
+    }
+
+    private void setItemsAdderNBT(ItemStack item, String id) {
+        NBT.modify(item, nbt -> {
+            var split = id != null ? id.split(":") : new String[0];
+            var iaCompound = nbt.getCompound("itemsadder");
+            if (iaCompound != null) {
+                iaCompound.removeKey("namespace");
+                iaCompound.removeKey("id");
+                if (iaCompound.getKeys().isEmpty()) {
+                    nbt.removeKey("itemsadder");
+                }
+            }
+            if (split.length == 2) {
+                iaCompound = nbt.getOrCreateCompound("itemsadder");
+                iaCompound.setString("namespace", split[0]);
+                iaCompound.setString("id", split[1]);
+            }
+        });
     }
 
     private void resetFakeDurability(ItemStack item, ItemStack editing) {

@@ -80,7 +80,11 @@ public class MessageHandlerImpl implements MessageHandler {
 
     @Override
     public void send(CommandSender sender, Messages key, Single... placeholders) {
-        var message = StringUtil.parseComponent(sender, get(key), placeholders);
+        var messageFromConfig = get(key);
+        if (messageFromConfig.isBlank()) {
+            return;
+        }
+        var message = StringUtil.parseComponent(sender, messageFromConfig, placeholders);
         if (sender instanceof Player player) {
             plugin.getMessagePool().execute(player.getUniqueId(), message, () -> StringUtil.sendComponent(sender, message));
             return;

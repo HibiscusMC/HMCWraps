@@ -6,11 +6,13 @@ import com.google.gson.JsonObject;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.skyslycer.hmcwraps.util.ColorUtil;
+import de.tr7zw.changeme.nbtapi.NBT;
 import gs.mclo.java.MclogsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -32,11 +34,22 @@ public class DebugCreator {
 
     public static DebugInformation createDebugInformation(HMCWrapsPlugin plugin) {
         var latest = plugin.getUpdateChecker().getLatest();
-        String protocolLib = "Not found";
-        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
-            protocolLib = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+        var protocolLib = getVersionOfPlugin("ProtocolLib");
+        var serverSoftware = Bukkit.getName();
+        var serverVersion = Bukkit.getBukkitVersion();
+        var iaVersion = getVersionOfPlugin("ItemsAdder");
+        var oraxenVersion = getVersionOfPlugin("Oraxen");
+        var mythicMobsVersion = getVersionOfPlugin("MythicMobs");
+        var crucibleVersion = getVersionOfPlugin("Crucible");
+        return new DebugInformation(plugin.getDescription().getVersion(), latest == null ? "Current" : latest.version(), protocolLib, serverVersion, serverSoftware, iaVersion, oraxenVersion, mythicMobsVersion, crucibleVersion);
+    }
+
+    private static String getVersionOfPlugin(String plugin) {
+        String version = "Not Installed";
+        if (Bukkit.getPluginManager().getPlugin(plugin) != null) {
+            version = Bukkit.getPluginManager().getPlugin(plugin).getDescription().getVersion();
         }
-        return new DebugInformation(plugin.getDescription().getVersion(), latest == null ? "Current" : latest.version(), protocolLib, Bukkit.getBukkitVersion());
+        return version;
     }
 
     public static DebugWraps createDebugWraps(HMCWrapsPlugin plugin) {
@@ -59,9 +72,13 @@ public class DebugCreator {
         if (item.getType().isAir()) {
             return null;
         }
-        var nbt = new NBTItem(item).toString();
+        var nbt = NBT.itemStackToNBT(item);
         var wrapper = plugin.getWrapper();
         var wrap = wrapper.getWrap(item);
+        var color = "N/A";
+        if (item.getItemMeta() instanceof LeatherArmorMeta) {
+            color = ColorUtil.colorToHex(((LeatherArmorMeta) item.getItemMeta()).getColor());
+        }
         return new DebugItemData(
                 item.getType().toString(),
                 wrapper.isPhysical(item),
@@ -72,7 +89,9 @@ public class DebugCreator {
                 wrapper.getOriginalData(item),
                 wrapper.getFakeDurability(item),
                 wrapper.getFakeMaxDurability(item),
-                nbt
+                item.getItemMeta().getCustomModelData(),
+                color,
+                nbt.toString()
         );
     }
 
