@@ -2,21 +2,21 @@ package de.skyslycer.hmcwraps.serialization.item;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NbtApiException;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -42,10 +42,12 @@ public class SerializableItem {
     private @Nullable Integer durability;
     private @Nullable String skullOwner;
     private @Nullable String skullTexture;
+    private @Nullable String trim;
+    private @Nullable String trimMaterial;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
-                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner, @Nullable String skullTexture) {
+                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner, @Nullable String skullTexture, @Nullable String trim, @Nullable String trimMaterial) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -59,16 +61,22 @@ public class SerializableItem {
         this.durability = durability;
         this.skullOwner = skullOwner;
         this.skullTexture = skullTexture;
+        this.trim = trim;
+        this.trimMaterial = trimMaterial;
     }
 
     public SerializableItem() {
     }
 
-    @NotNull
     public ItemStack toItem(HMCWraps plugin, Player player) {
+        return toItem(plugin, player, null);
+    }
+
+    @NotNull
+    public ItemStack toItem(HMCWraps plugin, Player player, Material newType) {
         ItemStack origin = plugin.getHookAccessor().getItemFromHook(getId());
         if (origin == null) {
-            origin = new ItemStack(Material.STRUCTURE_VOID);
+            origin = new ItemStack(newType == null ? Material.STRUCTURE_VOID : newType);
         }
         if (origin.getType().isAir()) {
             return origin;
@@ -122,6 +130,15 @@ public class SerializableItem {
             var damage = item.getType().getMaxDurability() - getDurability();
             itemMeta.setDamage(damage);
             item.setItemMeta(itemMeta);
+        }
+        if (VersionUtil.trimsSupported() && getTrim() != null && getTrimMaterial() != null && item.getItemMeta() instanceof ArmorMeta armorMeta) {
+            try {
+                armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(getTrim()))));
+                armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                item.setItemMeta(armorMeta);
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Failed to set trim " + getTrim() + " and material " + getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+            }
         }
         if (getNbt() != null) {
             try {
@@ -203,6 +220,22 @@ public class SerializableItem {
     @Nullable
     public String getSkullTexture() {
         return skullTexture;
+    }
+
+    @Nullable
+    public String getTrim() {
+        if (trim == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getTrimPatternFromHook(getId());
+        }
+        return trim;
+    }
+
+    @Nullable
+    public String getTrimMaterial() {
+        if (trimMaterial == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getTrimMaterialFromHook(getId());
+        }
+        return trimMaterial;
     }
 
 }

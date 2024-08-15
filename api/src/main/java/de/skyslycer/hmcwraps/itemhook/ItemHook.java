@@ -42,4 +42,22 @@ public interface ItemHook {
     @Nullable
     Color getColor(String id);
 
+    /**
+     * Get the trim pattern corresponding to the input.
+     *
+     * @param id The input
+     * @return The trim pattern
+     */
+    @Nullable
+    String getTrimPattern(String id);
+
+    /**
+     * Get the trim material corresponding to the input.
+     *
+     * @param id The input
+     * @return The trim material
+     */
+    @Nullable
+    String getTrimMaterial(String id);
+
 }

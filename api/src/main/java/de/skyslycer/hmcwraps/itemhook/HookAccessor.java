@@ -57,4 +57,16 @@ public class HookAccessor {
         return possible.map(itemHook -> itemHook.getColor(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
+    @Nullable
+    public String getTrimPatternFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getTrimPattern(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
+    @Nullable
+    public String getTrimMaterialFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getTrimMaterial(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
 }

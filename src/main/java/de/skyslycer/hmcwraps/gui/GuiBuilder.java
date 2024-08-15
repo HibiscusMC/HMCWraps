@@ -137,7 +137,6 @@ public class GuiBuilder {
         } else {
             plugin.getWrapGui().remove(player.getUniqueId());
         }
-        var finalType = type; // Why :(
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
         plugin.getCollectionHelper().getItems(type).forEach(it -> it.getWraps()
@@ -161,7 +160,7 @@ public class GuiBuilder {
                 gui.addItem(equippedItem);
                 continue;
             }
-            var wrapItem = wrap.toPermissionItem(plugin, wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(item.getType()) : finalType, player);
+            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type), player);
             var guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
                 if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {

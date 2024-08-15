@@ -7,7 +7,6 @@ import de.skyslycer.hmcwraps.preview.floating.FloatingPreview;
 import de.skyslycer.hmcwraps.preview.hand.HandPreview;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.skyslycer.hmcwraps.util.MaterialUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -49,8 +48,7 @@ public class PreviewManager {
      */
     public void create(Player player, Consumer<Player> onClose, Wrap wrap) {
         var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
-        var type = wrap.isArmorImitationEnabled() ? MaterialUtil.getLeatherAlternative(wrapType) : wrapType;
-        var item = plugin.getWrapper().setWrap(wrap, new ItemStack(type), false, player);
+        var item = plugin.getWrapper().setWrap(wrap, new ItemStack(wrapType), false, player);
         var event = new ItemPreviewEvent(player, item, onClose, wrap);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {

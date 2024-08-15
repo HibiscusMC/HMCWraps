@@ -115,6 +115,7 @@ public class DebugCreator {
             if (key.contains("Request Entity Too Large")) {
                 return Optional.of("Too large");
             }
+            System.out.println(key);
             key = new Gson().fromJson(key, JsonObject.class).get("key").getAsString();
             return Optional.of(String.format(DEBUG_URL, key));
         } catch (Exception exception) {

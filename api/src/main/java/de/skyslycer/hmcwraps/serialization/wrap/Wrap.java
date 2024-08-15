@@ -37,7 +37,7 @@ public class Wrap extends SerializableItem {
     private @Nullable RangeSettings range;
     private @Nullable String wrapNbt;
     private @Nullable List<String> wrapFlags;
-    private @Nullable Boolean armorImitation;
+    private @Nullable String armorImitation;
     private @Nullable Integer wrapDurability;
     private @Nullable Integer sort;
     private @Nullable Boolean upsideDownPreview;
@@ -45,7 +45,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
                 @Nullable String permission, @Nullable InventoryItem lockedItem) {
-        super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null, null, null);
         this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
@@ -56,7 +56,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable String color, Integer amount, @Nullable List<String> flags,
                 @Nullable Map<String, Integer> enchantments) {
-        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null, null, null);
+        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null, null, null, null, null);
         this.uuid = uuid;
     }
 
@@ -138,8 +138,16 @@ public class Wrap extends SerializableItem {
         return wrapFlags;
     }
 
-    public Boolean isArmorImitationEnabled() {
-        return armorImitation != null && armorImitation;
+    @Nullable
+    public String getArmorImitationType() {
+        if (armorImitation == null) {
+            return null;
+        }
+        if (armorImitation.equalsIgnoreCase("true")) {
+            return "LEATHER";
+        } else {
+            return armorImitation.toUpperCase();
+        }
     }
 
     @Nullable
@@ -164,12 +172,9 @@ public class Wrap extends SerializableItem {
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
-            var item = super.toItem(plugin, player);
-            item.setType(type);
-            return item;
+            return super.toItem(plugin, player, type);
         } else if (getLockedItem() == null) {
-            var item = super.toItem(plugin, player);
-            item.setType(type);
+            var item = super.toItem(plugin, player, type);
             var builder = ItemBuilder.from(item);
             if (getLockedName() != null) {
                 builder.name(player != null ? StringUtil.parseComponent(player, getLockedName()) : StringUtil.parseComponent(getLockedName()));
@@ -184,7 +189,8 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder, String oraxen, String mythic, String material) {
+    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder,
+                             String oraxen, String mythic, String material, String trim, String trimMaterial, boolean hideTrim) {
     }
 
 }

@@ -67,8 +67,6 @@ public interface Wrapper {
      */
     ItemStack removeWrap(ItemStack itemStack, Player player);
 
-    void switchFromLeather(ItemStack editing, String material);
-
     /**
      * Get the fake durability of the item.
      * If the item isn't changing durability, it will return -1.

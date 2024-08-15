@@ -33,4 +33,16 @@ public class DefaultItemHook implements ItemHook {
         return null;
     }
 
+    @Override
+    @Nullable
+    public String getTrimPattern(String id) {
+        return null;
+    }
+
+    @Override
+    @Nullable
+    public String getTrimMaterial(String id) {
+        return null;
+    }
+
 }

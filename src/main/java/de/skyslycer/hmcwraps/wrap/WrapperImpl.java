@@ -6,9 +6,7 @@ import de.skyslycer.hmcwraps.events.ItemWrapEvent;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
-import de.skyslycer.hmcwraps.util.PlayerUtil;
-import de.skyslycer.hmcwraps.util.StringUtil;
-import de.skyslycer.hmcwraps.util.WrapNBTUtil;
+import de.skyslycer.hmcwraps.util.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import dev.lone.itemsadder.api.CustomStack;
 import io.lumine.mythic.bukkit.MythicBukkit;
@@ -18,8 +16,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -50,6 +50,9 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalOraxenKey;
     private final NamespacedKey originalMythicKey;
     private final NamespacedKey originalMaterialKey;
+    private final NamespacedKey originalTrimKey;
+    private final NamespacedKey originalTrimMaterialKey;
+    private final NamespacedKey originalHideTrimKey;
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
     private final NamespacedKey customAttributes;
@@ -70,6 +73,9 @@ public class WrapperImpl implements Wrapper {
         originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
         originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
         originalMaterialKey = new NamespacedKey(plugin, "original-material");
+        originalTrimKey = new NamespacedKey(plugin, "original-trim");
+        originalTrimMaterialKey = new NamespacedKey(plugin, "original-trim-material");
+        originalHideTrimKey = new NamespacedKey(plugin, "original-hide-trim");
         fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
         customAttributes = new NamespacedKey(plugin, "custom-attributes");
@@ -113,10 +119,18 @@ public class WrapperImpl implements Wrapper {
         var originalModelId = -1;
         var originalLore = meta.getLore();
         var originalFlags = meta.getItemFlags().stream().toList();
-        var originalMaterial = "";
+        String originalMaterial = null;
         var originalItemsAdderId = getOriginalItemsAdderId(item);
         var originalOraxenId = getOriginalOraxenId(item);
         var originalMythicId = getOriginalMythicId(item);
+        var originalHideTrim = false;
+        String originalTrimMaterial = null;
+        String originalTrim = null;
+        if (VersionUtil.trimsSupported() && meta instanceof ArmorMeta armorMeta && armorMeta.getTrim() != null) {
+            originalTrim = armorMeta.getTrim().getPattern().getKey().toString();
+            originalTrimMaterial = armorMeta.getTrim().getMaterial().getKey().toString();
+            originalHideTrim = armorMeta.getItemFlags().contains(ItemFlag.HIDE_ARMOR_TRIM);
+        }
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
@@ -131,14 +145,14 @@ public class WrapperImpl implements Wrapper {
             if (currentWrap.getWrapLore() != null) {
                 meta.setLore(originalData.lore());
             }
-            if (currentWrap.getWrapFlags() != null) {
-                meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+            if (originalData.flags() != null) {
                 meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
             }
         }
         if (wrap != null) {
             if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
-                switchFromLeather(editing, originalData.material());
+                switchFromAlternative(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
             if (wrap.getWrapName() != null) {
@@ -157,12 +171,12 @@ public class WrapperImpl implements Wrapper {
             }
             editing.setItemMeta(meta);
             var changedDurability = false;
-            if (wrap.isArmorImitationEnabled() && !editing.getType().toString().contains("LEATHER")) {
+            if (MaterialUtil.getAlternative(wrap.getArmorImitationType(), editing.getType()) != editing.getType()) {
                 var maxDurability = editing.getType().getMaxDurability();
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();
                 var attributeModifiers = editing.getItemMeta().getAttributeModifiers();
-                if (switchToLeather(editing)) {
+                if (switchToAlternative(editing, wrap.getArmorImitationType())) {
                     int newDurability = editing.getType().getMaxDurability();
                     var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
                     var newMeta = ((Damageable) editing.getItemMeta());
@@ -197,6 +211,15 @@ public class WrapperImpl implements Wrapper {
                 leatherMeta.setColor(wrap.getColor());
                 editing.setItemMeta(leatherMeta);
             }
+            if (VersionUtil.trimsSupported() && wrap.getTrim() != null && wrap.getTrimMaterial() != null && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
+                try {
+                    armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
+                    armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                    editing.setItemMeta(armorMeta);
+                } catch (IllegalArgumentException exception) {
+                    plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+                }
+            }
             if (wrap.getWrapNbt() != null) {
                 WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
             }
@@ -210,8 +233,26 @@ public class WrapperImpl implements Wrapper {
             } else {
                 editing.setItemMeta(meta);
             }
+            if (VersionUtil.trimsSupported() && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
+                try {
+                    //if (originalData.hideTrim()) {
+                    //    armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                    //} else {
+                    //    armorMeta.removeItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                    //}
+                    if (originalData.trim() == null || originalData.trimMaterial() == null) {
+                        armorMeta.setTrim(null);
+                    } else {
+                        armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(originalData.trimMaterial())),
+                                Registry.TRIM_PATTERN.get(NamespacedKey.fromString(originalData.trim()))));
+                    }
+                    editing.setItemMeta(armorMeta);
+                } catch (IllegalArgumentException exception) {
+                    plugin.getLogger().warning("Failed to set trim for player " + player.getName() + " with trim " + originalData.trim() + " and material " + originalData.trimMaterial() + "! It seems to not be a valid trim. This is being set while unwrapping to preserve the original trim, which has since been removed.");
+                }
+            }
             if (originalData.material() != null && !originalData.material().isBlank()) {
-                switchFromLeather(editing, originalData.material());
+                switchFromAlternative(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
             WrapNBTUtil.unwrap(editing);
@@ -224,7 +265,7 @@ public class WrapperImpl implements Wrapper {
             return editing;
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
-                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial));
+                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial, originalTrim, originalTrimMaterial, originalHideTrim));
     }
 
     private void setItemsAdderNBT(ItemStack item, String id) {
@@ -262,36 +303,28 @@ public class WrapperImpl implements Wrapper {
         }
     }
 
-    private boolean switchToLeather(ItemStack editing) {
+    private boolean switchToAlternative(ItemStack editing, String alternative) {
+        var newMaterial = MaterialUtil.getAlternative(alternative, editing.getType());
         var hasCustomAttributes = editing.getItemMeta().getAttributeModifiers() != null;
-        if (editing.getType().toString().contains("_HELMET")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_HELMET);
-            if (!hasCustomAttributes)
+        var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+        editing.setType(newMaterial);
+        if (!hasCustomAttributes) {
+            if (editing.getType().toString().contains("_HELMET")) {
                 ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
-        } else if (editing.getType().toString().contains("_CHESTPLATE")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_CHESTPLATE);
-            if (!hasCustomAttributes)
+            } else if (editing.getType().toString().contains("_CHESTPLATE")) {
                 ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
-        } else if (editing.getType().toString().contains("_LEGGINGS")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_LEGGINGS);
-            if (!hasCustomAttributes)
+            } else if (editing.getType().toString().contains("_LEGGINGS")) {
                 ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
-        } else if (editing.getType().toString().contains("_BOOTS")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_BOOTS);
-            if (!hasCustomAttributes)
+            } else if (editing.getType().toString().contains("_BOOTS")) {
                 ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
-        } else {
-            return false;
+            } else {
+                return false;
+            }
         }
         return true;
     }
 
-    @Override
-    public void switchFromLeather(ItemStack editing, String material) {
+    private void switchFromAlternative(ItemStack editing, String material) {
         editing.setType(Material.valueOf(material));
         if (!isCustomAttributes(editing)) {
             ArmorModifiers.removeAttributes(editing);
@@ -402,7 +435,23 @@ public class WrapperImpl implements Wrapper {
     public WrapValues getOriginalData(ItemStack item) {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
-                getOriginalMythicId(item), getOriginalMaterial(item));
+                getOriginalMythicId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item),
+                isOriginalHideTrim(item));
+    }
+
+    private boolean isOriginalHideTrim(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return Boolean.TRUE.equals(container.get(originalHideTrimKey, PersistentDataType.BOOLEAN));
+    }
+
+    private String getOriginalTrim(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalTrimKey, PersistentDataType.STRING);
+    }
+
+    private String getOriginalTrimMaterial(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalTrimMaterialKey, PersistentDataType.STRING);
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -590,6 +639,15 @@ public class WrapperImpl implements Wrapper {
         }
         if (wrapValues.material() != null) {
             meta.getPersistentDataContainer().set(originalMaterialKey, PersistentDataType.STRING, wrapValues.material());
+        }
+        if (wrapValues.trim() != null) {
+            meta.getPersistentDataContainer().set(originalTrimKey, PersistentDataType.STRING, wrapValues.trim());
+        }
+        if (wrapValues.trimMaterial() != null) {
+            meta.getPersistentDataContainer().set(originalTrimMaterialKey, PersistentDataType.STRING, wrapValues.trimMaterial());
+        }
+        if (Boolean.TRUE.equals(wrapValues.hideTrim())) {
+            meta.getPersistentDataContainer().set(originalHideTrimKey, PersistentDataType.BOOLEAN, true);
         }
         editing.setItemMeta(meta);
         return editing;
