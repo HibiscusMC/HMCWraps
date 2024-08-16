@@ -41,6 +41,7 @@ public class Wrap extends SerializableItem {
     private @Nullable Integer wrapDurability;
     private @Nullable Integer sort;
     private @Nullable Boolean upsideDownPreview;
+    private @Nullable Boolean applyNameOnlyEmpty;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -170,6 +171,11 @@ public class Wrap extends SerializableItem {
         return upsideDownPreview;
     }
 
+    @Nullable
+    public Boolean isApplyNameOnlyEmpty() {
+        return applyNameOnlyEmpty;
+    }
+
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player, type);
@@ -190,7 +196,7 @@ public class Wrap extends SerializableItem {
     }
 
     public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder,
-                             String oraxen, String mythic, String material, String trim, String trimMaterial, boolean hideTrim) {
+                             String oraxen, String mythic, String material, String trim, String trimMaterial) {
     }
 
 }

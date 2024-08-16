@@ -115,8 +115,14 @@ public class DebugCreator {
             if (key.contains("Request Entity Too Large")) {
                 return Optional.of("Too large");
             }
-            System.out.println(key);
-            key = new Gson().fromJson(key, JsonObject.class).get("key").getAsString();
+            try {
+                key = new Gson().fromJson(key, JsonObject.class).get("key").getAsString();
+            } catch (Exception exception) {
+                Bukkit.getLogger().severe("Failed to upload HMCWraps debug information! Please check the error below and report this!");
+                Bukkit.getLogger().severe("Response: " + key);
+                exception.printStackTrace();
+                return Optional.empty();
+            }
             return Optional.of(String.format(DEBUG_URL, key));
         } catch (Exception exception) {
             Bukkit.getLogger().severe("Failed to upload HMCWraps debug information! Please check the error below and report this!");

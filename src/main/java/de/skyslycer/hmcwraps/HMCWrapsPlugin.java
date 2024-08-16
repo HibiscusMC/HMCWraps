@@ -90,15 +90,21 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (checkDependency("Oraxen", false)) {
             hooks.add(new OraxenItemHook());
         }
-        if (checkDependency("Crucible", false)) {
+        if (checkDependency("MythicCrucible", false)) {
             var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
-            if (mythicMobs != null && PluginVersion.fromString(mythicMobs.getDescription().getVersion()).isOlderThan(new PluginVersion(5, 6, 2))) {
-                logSevere("""
+            if (mythicMobs != null) {
+                var version = mythicMobs.getDescription().getVersion();
+                if (version.split("-").length >= 2) {
+                    version = version.split("-")[0];
+                }
+                if (PluginVersion.fromString(version).isOlderThan(new PluginVersion(5, 6, 2))) {
+                    logSevere("""
                         The plugin 'MythicMobs' is an installed dependency but the version of the dependency is too old!
                         If you don't intend to use the plugin with HMCWraps, you can safely ignore this warning.
                         Please restart the server after you have updated the plugin!""");
-            } else {
-                hooks.add(new MythicItemHook());
+                } else {
+                    hooks.add(new MythicItemHook());
+                }
             }
         }
         hookAccessor = new HookAccessor(hooks);

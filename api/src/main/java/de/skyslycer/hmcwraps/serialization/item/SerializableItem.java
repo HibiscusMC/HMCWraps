@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -95,8 +94,11 @@ public class SerializableItem {
                     : getLore().stream().map(string -> StringUtil.parseComponent(player, string)).toList());
         }
         if (getFlags() != null) {
-            List<ItemFlag> parsed = Arrays.asList(ItemFlag.values());
-            builder.flags(parsed.toArray(ItemFlag[]::new));
+            for (String flag : getFlags()) {
+                try {
+                    builder.flags(ItemFlag.valueOf(flag));
+                } catch (IllegalArgumentException ignored) { }
+            }
         }
         if (getEnchantments() != null) {
             getEnchantments().forEach((name, level) -> {

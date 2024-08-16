@@ -39,7 +39,7 @@ public class FloatingPreview implements Preview {
     public FloatingPreview(Player player, ItemStack item, boolean upsideDown, Consumer<Player> onClose, HMCWraps plugin) {
         this.player = player;
         this.item = item;
-        this.upsideDown = upsideDown;
+        this.upsideDown = item.getType().toString().contains("_HELMET") ? !upsideDown : upsideDown;
         this.onClose = onClose;
         this.plugin = plugin;
     }

@@ -123,13 +123,11 @@ public class WrapperImpl implements Wrapper {
         var originalItemsAdderId = getOriginalItemsAdderId(item);
         var originalOraxenId = getOriginalOraxenId(item);
         var originalMythicId = getOriginalMythicId(item);
-        var originalHideTrim = false;
         String originalTrimMaterial = null;
         String originalTrim = null;
         if (VersionUtil.trimsSupported() && meta instanceof ArmorMeta armorMeta && armorMeta.getTrim() != null) {
             originalTrim = armorMeta.getTrim().getPattern().getKey().toString();
             originalTrimMaterial = armorMeta.getTrim().getMaterial().getKey().toString();
-            originalHideTrim = armorMeta.getItemFlags().contains(ItemFlag.HIDE_ARMOR_TRIM);
         }
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
@@ -139,7 +137,8 @@ public class WrapperImpl implements Wrapper {
         meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
         if (currentWrap != null) {
-            if (currentWrap.getWrapName() != null) {
+            if (currentWrap.getWrapName() != null && (!Boolean.TRUE.equals(currentWrap.isApplyNameOnlyEmpty()) ||
+                    StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, currentWrap.getWrapName())).equals(meta.getDisplayName()))) {
                 meta.setDisplayName(originalData.name());
             }
             if (currentWrap.getWrapLore() != null) {
@@ -155,7 +154,8 @@ public class WrapperImpl implements Wrapper {
                 switchFromAlternative(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
-            if (wrap.getWrapName() != null) {
+            var originalActualName = currentWrap == null ? originalName : originalData.name();
+            if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
             }
             if (wrap.getWrapLore() != null) {
@@ -235,11 +235,6 @@ public class WrapperImpl implements Wrapper {
             }
             if (VersionUtil.trimsSupported() && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
                 try {
-                    //if (originalData.hideTrim()) {
-                    //    armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-                    //} else {
-                    //    armorMeta.removeItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-                    //}
                     if (originalData.trim() == null || originalData.trimMaterial() == null) {
                         armorMeta.setTrim(null);
                     } else {
@@ -265,7 +260,7 @@ public class WrapperImpl implements Wrapper {
             return editing;
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
-                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial, originalTrim, originalTrimMaterial, originalHideTrim));
+                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial, originalTrim, originalTrimMaterial));
     }
 
     private void setItemsAdderNBT(ItemStack item, String id) {
@@ -435,13 +430,7 @@ public class WrapperImpl implements Wrapper {
     public WrapValues getOriginalData(ItemStack item) {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
-                getOriginalMythicId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item),
-                isOriginalHideTrim(item));
-    }
-
-    private boolean isOriginalHideTrim(ItemStack item) {
-        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return Boolean.TRUE.equals(container.get(originalHideTrimKey, PersistentDataType.BOOLEAN));
+                getOriginalMythicId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item));
     }
 
     private String getOriginalTrim(ItemStack item) {
@@ -645,9 +634,6 @@ public class WrapperImpl implements Wrapper {
         }
         if (wrapValues.trimMaterial() != null) {
             meta.getPersistentDataContainer().set(originalTrimMaterialKey, PersistentDataType.STRING, wrapValues.trimMaterial());
-        }
-        if (Boolean.TRUE.equals(wrapValues.hideTrim())) {
-            meta.getPersistentDataContainer().set(originalHideTrimKey, PersistentDataType.BOOLEAN, true);
         }
         editing.setItemMeta(meta);
         return editing;
