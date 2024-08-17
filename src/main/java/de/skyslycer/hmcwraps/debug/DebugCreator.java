@@ -6,13 +6,11 @@ import com.google.gson.JsonObject;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.tr7zw.changeme.nbtapi.NBT;
 import gs.mclo.java.MclogsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -75,10 +73,6 @@ public class DebugCreator {
         var nbt = NBT.itemStackToNBT(item);
         var wrapper = plugin.getWrapper();
         var wrap = wrapper.getWrap(item);
-        var color = "N/A";
-        if (item.getItemMeta() instanceof LeatherArmorMeta) {
-            color = ColorUtil.colorToHex(((LeatherArmorMeta) item.getItemMeta()).getColor());
-        }
         return new DebugItemData(
                 item.getType().toString(),
                 wrapper.isPhysical(item),
@@ -89,8 +83,6 @@ public class DebugCreator {
                 wrapper.getOriginalData(item),
                 wrapper.getFakeDurability(item),
                 wrapper.getFakeMaxDurability(item),
-                item.getItemMeta().getCustomModelData(),
-                color,
                 nbt.toString()
         );
     }

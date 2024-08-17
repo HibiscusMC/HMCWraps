@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.4.6-beta14"
+version = "1.4.6-beta16"
 
 val shadePattern = "$group.hmcwraps.shade"
 

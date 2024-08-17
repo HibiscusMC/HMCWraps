@@ -24,10 +24,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WrapperImpl implements Wrapper {
@@ -156,7 +153,7 @@ public class WrapperImpl implements Wrapper {
             resetFakeDurability(item, editing);
             var originalActualName = currentWrap == null ? originalName : originalData.name();
             if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
-                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
+                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())).replace("%originalname%", originalActualName == null ? "" : originalActualName));
             }
             if (wrap.getWrapLore() != null) {
                 var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
@@ -713,16 +710,24 @@ public class WrapperImpl implements Wrapper {
         if (settings == null) {
             return true;
         }
+        if (value.equals(StringUtil.colorFromString("#A06540"))) {
+            value = null;
+        }
         List<Color> exclude = null;
         List<Color> include = null;
         if (settings.getExclude() != null) {
-            exclude = settings.getExclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
+            exclude = settings.getExclude().stream().map(StringUtil::colorFromString).filter(Objects::nonNull).collect(Collectors.toList());
         }
         if (settings.getInclude() != null) {
-            include = settings.getInclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
+            include = settings.getInclude().stream().map(StringUtil::colorFromString).filter(Objects::nonNull).collect(Collectors.toList());
         }
-        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value)) &&
-                !(settings.getExclude().contains("none") && value != null);
+        if ((exclude != null && exclude.contains(value)) || (settings.getExclude() != null && settings.getExclude().contains("none") && value == null)) {
+            return false;
+        }
+        if ((include != null && !include.contains(value)) && (settings.getInclude() != null && (!settings.getInclude().contains("none") || value != null))) {
+            return false;
+        }
+        return true;
     }
 
     private int getRealModelId(ItemStack item) {

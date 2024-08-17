@@ -15,12 +15,10 @@ public class DebugItemData implements Debuggable {
     private Wrap.WrapValues wrapValues;
     private int fakeDurability;
     private int fakeMaxDurability;
-    private int modelId;
-    private String color;
     private String nbt;
 
     public DebugItemData(String material, boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper,
-                         String physicalWrapper, Wrap.WrapValues wrapValues, int fakeDurability, int fakeMaxDurability, int modelId, String color, String nbt) {
+                         String physicalWrapper, Wrap.WrapValues wrapValues, int fakeDurability, int fakeMaxDurability, String nbt) {
         this.material = material;
         this.physical = physical;
         this.wrap = wrap;
@@ -30,8 +28,6 @@ public class DebugItemData implements Debuggable {
         this.wrapValues = wrapValues;
         this.fakeDurability = fakeDurability;
         this.fakeMaxDurability = fakeMaxDurability;
-        this.modelId = modelId;
-        this.color = color;
         this.nbt = nbt;
     }
 
