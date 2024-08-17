@@ -113,7 +113,7 @@ public class InventoryClickListener implements Listener {
         }
 
         var wrap = plugin.getWrapsLoader().getWraps().get(wrapId);
-        if (wrap == null) {
+        if (wrap == null || !plugin.getWrapper().isValid(target, wrap)) {
             return;
         }
 
