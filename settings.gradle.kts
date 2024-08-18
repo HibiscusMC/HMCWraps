@@ -24,7 +24,7 @@ dependencyResolutionManagement {
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
-            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.2")
+            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.3.4")
             version("adventure", "4.12.0")
             bundle("adventure", listOf("adventure-api", "minimessage", "adventure-bukkit"))
 
