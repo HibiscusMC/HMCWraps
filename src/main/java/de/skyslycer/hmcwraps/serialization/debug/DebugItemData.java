@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class DebugItemData implements Debuggable {
 
+    private String material;
     private boolean physical;
     private String wrap;
     private UUID owningPlayer;
@@ -16,7 +17,9 @@ public class DebugItemData implements Debuggable {
     private int fakeMaxDurability;
     private String nbt;
 
-    public DebugItemData(boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper, String physicalWrapper, Wrap.WrapValues wrapValues, int fakeDurability, int fakeMaxDurability, String nbt) {
+    public DebugItemData(String material, boolean physical, String wrap, UUID owningPlayer, boolean physicalUnwrapper,
+                         String physicalWrapper, Wrap.WrapValues wrapValues, int fakeDurability, int fakeMaxDurability, String nbt) {
+        this.material = material;
         this.physical = physical;
         this.wrap = wrap;
         this.owningPlayer = owningPlayer;

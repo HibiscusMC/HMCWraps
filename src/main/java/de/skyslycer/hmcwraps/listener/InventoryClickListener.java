@@ -94,7 +94,7 @@ public class InventoryClickListener implements Listener {
         }
 
         if (plugin.getWrapper().isPhysicalUnwrapper(physical) && plugin.getWrapper().getWrap(target) != null) {
-            event.setCurrentItem(plugin.getWrapper().removeWrap(target, player, true));
+            event.setCurrentItem(plugin.getWrapper().removeWrap(target, player));
             var wrap = plugin.getWrapper().getWrap(target);
             plugin.getActionHandler().pushUnwrap(wrap, player);
             plugin.getActionHandler().pushPhysicalUnwrap(wrap, player);
@@ -113,7 +113,7 @@ public class InventoryClickListener implements Listener {
         }
 
         var wrap = plugin.getWrapsLoader().getWraps().get(wrapId);
-        if (wrap == null) {
+        if (wrap == null || !plugin.getWrapper().isValid(target, wrap)) {
             return;
         }
 
@@ -130,7 +130,7 @@ public class InventoryClickListener implements Listener {
                         plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
                         return;
                     }
-                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player, true));
+                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player));
                     plugin.getActionHandler().pushWrap(wrap, player);
                     plugin.getActionHandler().pushPhysicalWrap(wrap, player);
                     event.getWhoClicked().setItemOnCursor(finalCursor);

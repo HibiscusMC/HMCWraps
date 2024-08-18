@@ -10,6 +10,7 @@ import java.util.Map;
 @ConfigSerializable
 public class Inventory {
 
+    private List<String> sortOrder;
     private ShortcutSettings shortcut;
     private boolean itemChangeEnabled;
     private boolean openWithoutItemEnabled;
@@ -61,6 +62,10 @@ public class Inventory {
     @Nullable
     public String getNoItemTitle() {
         return noItemTitle;
+    }
+
+    public List<String> getSortOrder() {
+        return sortOrder;
     }
 
     public enum Type {

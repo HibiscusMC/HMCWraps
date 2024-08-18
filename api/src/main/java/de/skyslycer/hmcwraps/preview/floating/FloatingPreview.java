@@ -32,12 +32,14 @@ public class FloatingPreview implements Preview {
     private final ItemStack item;
     private final Consumer<Player> onClose;
     private final HMCWraps plugin;
+    private final boolean upsideDown;
     private WrappedTask task;
     private WrappedTask cancelTask;
 
-    public FloatingPreview(Player player, ItemStack item, Consumer<Player> onClose, HMCWraps plugin) {
+    public FloatingPreview(Player player, ItemStack item, boolean upsideDown, Consumer<Player> onClose, HMCWraps plugin) {
         this.player = player;
         this.item = item;
+        this.upsideDown = item.getType().toString().contains("_HELMET") ? !upsideDown : upsideDown;
         this.onClose = onClose;
         this.plugin = plugin;
     }
@@ -81,11 +83,6 @@ public class FloatingPreview implements Preview {
                     0f,
                     0,
                     Optional.empty()));
-            PacketEvents.getAPI().getPlayerManager()
-                    .sendPacket(player, new WrapperPlayServerEntityMetadata(entityId,
-                            List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                                    new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
-                                    new EntityData(5, EntityDataTypes.BOOLEAN, true))));
         } else {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSpawnLivingEntity(
                     entityId,
@@ -97,7 +94,7 @@ public class FloatingPreview implements Preview {
                     0f,
                     VectorUtil.zeroVector(),
                     List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                            new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                            new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(upsideDown ? 0 : 180, 0, 0)),
                             new EntityData(5, EntityDataTypes.BOOLEAN, true))));
         }
     }
@@ -106,14 +103,14 @@ public class FloatingPreview implements Preview {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerEntityMetadata(
                 entityId,
                 List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(180, 0, 0)),
+                        new EntityData(16, EntityDataTypes.ROTATION, new Vector3f(upsideDown ? 0 : 180, 0, 0)),
                         new EntityData(5, EntityDataTypes.BOOLEAN, true)))
         );
     }
 
     private void sendTeleportPacket() {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player,
-                new WrapperPlayServerEntityTeleport(entityId, VectorUtil.fromLocation(PlayerUtil.getLookBlock(player)),
+                new WrapperPlayServerEntityTeleport(entityId, VectorUtil.fromLocation(PlayerUtil.getLookBlock(player)).subtract(0, upsideDown ? 1 : 0.5, 0),
                         0f, 0f, false));
     }
 

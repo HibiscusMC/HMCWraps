@@ -65,7 +65,11 @@ public abstract class PluginUpdater {
             try (var body = request.body()) {
                 var json = GSON.fromJson(new String(body.readAllBytes(), StandardCharsets.UTF_8), JsonObject.class);
                 var version = parse(json);
-                if (version != null && PluginVersion.fromString(plugin.getDescription().getVersion()).isOlderThan(PluginVersion.fromString(version))) {
+                var pluginVersion = plugin.getDescription().getVersion();
+                if (pluginVersion.split("-").length > 1) {
+                    pluginVersion = pluginVersion.split("-")[0];
+                }
+                if (version != null && PluginVersion.fromString(pluginVersion).isOlderThan(PluginVersion.fromString(version))) {
                     return new CheckResult(version, String.format(platform().url(), pluginId()), platform());
                 }
             }

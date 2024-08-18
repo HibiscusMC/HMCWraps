@@ -1,8 +1,10 @@
 package de.skyslycer.hmcwraps.itemhook;
 
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +40,26 @@ public class ItemsAdderItemHook implements ItemHook {
         var stack = get(id);
         if (stack != null && stack.getItemMeta() instanceof LeatherArmorMeta meta) {
             return meta.getColor();
+        }
+        return null;
+    }
+
+    @Override
+    @Nullable
+    public String getTrimPattern(String id) {
+        var stack = get(id);
+        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null) {
+            return meta.getTrim().getPattern().getKey().toString();
+        }
+        return null;
+    }
+
+    @Override
+    @Nullable
+    public String getTrimMaterial(String id) {
+        var stack = get(id);
+        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null) {
+            return meta.getTrim().getMaterial().getKey().toString();
         }
         return null;
     }

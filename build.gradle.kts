@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.skyslycer"
-version = "1.4.5"
+version = "1.5.0"
 
 val shadePattern = "$group.hmcwraps.shade"
 
@@ -52,7 +52,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {
@@ -86,7 +86,9 @@ tasks {
         exclude("lamp-bukkit_fr.properties")
 
         archiveClassifier.set("")
-        minimize()
+        minimize {
+            exclude(dependency("com.tcoded:FoliaLib:.*"))
+        }
     }
 
     build {
@@ -97,10 +99,11 @@ tasks {
         options.compilerArgs.add("-parameters")
         options.encoding = "UTF-8"
         options.isFork = true
+        options.release = 17
     }
 
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.21")
     }
 }
 
@@ -109,8 +112,9 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs")
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport", "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot")
     apiVersion = "1.17"
+    foliaSupported = true
     permissions {
         register("hmcwraps.admin") {
             description = "Gives access to all commands."

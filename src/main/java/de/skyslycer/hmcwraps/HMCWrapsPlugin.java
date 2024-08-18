@@ -25,6 +25,7 @@ import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
 import de.skyslycer.hmcwraps.transformation.ConfigFileTransformations;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
+import de.skyslycer.hmcwraps.updater.version.PluginVersion;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
@@ -89,8 +90,22 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (checkDependency("Oraxen", false)) {
             hooks.add(new OraxenItemHook());
         }
-        if (checkDependency("Crucible", false)) {
-            hooks.add(new MythicItemHook());
+        if (checkDependency("MythicCrucible", false)) {
+            var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
+            if (mythicMobs != null) {
+                var version = mythicMobs.getDescription().getVersion();
+                if (version.split("-").length >= 2) {
+                    version = version.split("-")[0];
+                }
+                if (PluginVersion.fromString(version).isOlderThan(new PluginVersion(5, 6, 2))) {
+                    logSevere("""
+                        The plugin 'MythicMobs' is an installed dependency but the version of the dependency is too old!
+                        If you don't intend to use the plugin with HMCWraps, you can safely ignore this warning.
+                        Please restart the server after you have updated the plugin!""");
+                } else {
+                    hooks.add(new MythicItemHook());
+                }
+            }
         }
         hookAccessor = new HookAccessor(hooks);
 
@@ -228,26 +243,33 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (config.getPermissions().getInventoryCheckInterval() == -1) {
             return;
         }
-        checkTask = foliaLib.getImpl().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(player -> {
-            for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
-                var item = player.getInventory().getItem(i);
-                if (item == null || item.getType().isAir()) {
-                    continue;
-                }
-                var wrap = getWrapper().getWrap(item);
-                if (wrap == null) {
-                    continue;
-                }
-                if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
-                    int finalI = i; // ;(
-                    getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
-                        var newItem = getWrapper().removeWrap(item, player, getConfiguration().getPermissions().isPermissionPhysical()
-                                && (wrap.getPhysical() != null && wrap.getPhysical().isKeepAfterUnwrap()));
-                        player.getInventory().setItem(finalI, newItem);
-                    });
-                }
+        if (foliaLib.isFolia()) {
+            checkTask = foliaLib.getImpl().runTimer(() -> Bukkit.getOnlinePlayers().forEach((player) -> foliaLib.getImpl().runAtEntity(player, (ignored) -> checkInventory(player))),
+                    0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+        } else {
+            checkTask = foliaLib.getImpl().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(this::checkInventory),
+                    0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+        }
+    }
+
+    private void checkInventory(Player player) {
+        for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
+            var item = player.getInventory().getItem(i);
+            if (item == null || item.getType().isAir()) {
+                continue;
             }
-        }), 0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
+            var wrap = getWrapper().getWrap(item);
+            if (wrap == null) {
+                continue;
+            }
+            if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
+                int finalI = i; // ;(
+                getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
+                    var newItem = getWrapper().removeWrap(item, player);
+                    player.getInventory().setItem(finalI, newItem);
+                });
+            }
+        }
     }
 
     @Override

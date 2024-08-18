@@ -6,9 +6,8 @@ import de.skyslycer.hmcwraps.events.ItemWrapEvent;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap.WrapValues;
 import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
-import de.skyslycer.hmcwraps.util.PlayerUtil;
-import de.skyslycer.hmcwraps.util.StringUtil;
-import de.skyslycer.hmcwraps.util.WrapNBTUtil;
+import de.skyslycer.hmcwraps.util.*;
+import de.tr7zw.changeme.nbtapi.NBT;
 import dev.lone.itemsadder.api.CustomStack;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.th0rgal.oraxen.api.OraxenItems;
@@ -17,16 +16,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WrapperImpl implements Wrapper {
@@ -49,8 +47,12 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalOraxenKey;
     private final NamespacedKey originalMythicKey;
     private final NamespacedKey originalMaterialKey;
+    private final NamespacedKey originalTrimKey;
+    private final NamespacedKey originalTrimMaterialKey;
+    private final NamespacedKey originalHideTrimKey;
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
+    private final NamespacedKey customAttributes;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -68,8 +70,12 @@ public class WrapperImpl implements Wrapper {
         originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
         originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
         originalMaterialKey = new NamespacedKey(plugin, "original-material");
+        originalTrimKey = new NamespacedKey(plugin, "original-trim");
+        originalTrimMaterialKey = new NamespacedKey(plugin, "original-trim-material");
+        originalHideTrimKey = new NamespacedKey(plugin, "original-hide-trim");
         fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
+        customAttributes = new NamespacedKey(plugin, "custom-attributes");
     }
 
     @Override
@@ -86,23 +92,22 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
-    public ItemStack setWrap(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
-        var event = new ItemWrapEvent(wrap, item, physical, player, giveBack);
+    public ItemStack setWrap(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player) {
+        var event = new ItemWrapEvent(wrap, item, physical, player);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return item;
         }
-        return setWrapPrivate(event.getWrap(), event.getItem(), event.isPhysical(), event.getPlayer(), event.isGiveBack());
+        return setWrapPrivate(event.getWrap(), event.getItem(), event.isPhysical(), event.getPlayer());
     }
 
-    private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player, boolean giveBack) {
+    private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player) {
         if (item == null || item.getType().isAir()) {
             return item;
         }
         var editing = item.clone();
         var currentWrap = getWrap(editing);
-        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()
-                && giveBack) {
+        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()) {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
         var originalData = getOriginalData(item);
@@ -111,7 +116,16 @@ public class WrapperImpl implements Wrapper {
         var originalModelId = -1;
         var originalLore = meta.getLore();
         var originalFlags = meta.getItemFlags().stream().toList();
-        var originalMaterial = "";
+        String originalMaterial = null;
+        var originalItemsAdderId = getOriginalItemsAdderId(item);
+        var originalOraxenId = getOriginalOraxenId(item);
+        var originalMythicId = getOriginalMythicId(item);
+        String originalTrimMaterial = null;
+        String originalTrim = null;
+        if (VersionUtil.trimsSupported() && meta instanceof ArmorMeta armorMeta && armorMeta.getTrim() != null) {
+            originalTrim = armorMeta.getTrim().getPattern().getKey().toString();
+            originalTrimMaterial = armorMeta.getTrim().getMaterial().getKey().toString();
+        }
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
@@ -119,25 +133,27 @@ public class WrapperImpl implements Wrapper {
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
+        if (currentWrap != null) {
+            if (currentWrap.getWrapName() != null && (!Boolean.TRUE.equals(currentWrap.isApplyNameOnlyEmpty()) ||
+                    StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, currentWrap.getWrapName())).equals(meta.getDisplayName()))) {
+                meta.setDisplayName(originalData.name());
+            }
+            if (currentWrap.getWrapLore() != null) {
+                meta.setLore(originalData.lore());
+            }
+            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
+            if (originalData.flags() != null) {
+                meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
+            }
+        }
         if (wrap != null) {
             if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
-                switchFromLeather(editing, originalData.material());
+                switchFromAlternative(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
-            if (currentWrap != null) {
-                if (currentWrap.getWrapName() != null) {
-                    meta.setDisplayName(originalData.name());
-                }
-                if (currentWrap.getWrapLore() != null) {
-                    meta.setLore(originalData.lore());
-                }
-                if (currentWrap.getWrapFlags() != null) {
-                    meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-                    meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
-                }
-            }
-            if (wrap.getWrapName() != null) {
-                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())));
+            var originalActualName = currentWrap == null ? originalName : originalData.name();
+            if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
+                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())).replace("%originalname%", originalActualName == null ? "" : originalActualName));
             }
             if (wrap.getWrapLore() != null) {
                 var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
@@ -152,17 +168,19 @@ public class WrapperImpl implements Wrapper {
             }
             editing.setItemMeta(meta);
             var changedDurability = false;
-            if (wrap.isArmorImitationEnabled() && !editing.getType().toString().contains("LEATHER")) {
+            if (MaterialUtil.getAlternative(wrap.getArmorImitationType(), editing.getType()) != editing.getType()) {
                 var maxDurability = editing.getType().getMaxDurability();
                 var currentDurability = maxDurability - ((Damageable) meta).getDamage();
                 var temp = editing.getType().toString();
-                if (switchToLeather(editing)) {
+                var attributeModifiers = editing.getItemMeta().getAttributeModifiers();
+                if (switchToAlternative(editing, wrap.getArmorImitationType())) {
                     int newDurability = editing.getType().getMaxDurability();
                     var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
                     var newMeta = ((Damageable) editing.getItemMeta());
                     newMeta.setDamage(newDurability - (int) modelDurability);
                     newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                     newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
+                    newMeta.getPersistentDataContainer().set(customAttributes, PersistentDataType.BOOLEAN, attributeModifiers != null);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
                     changedDurability = true;
@@ -190,68 +208,75 @@ public class WrapperImpl implements Wrapper {
                 leatherMeta.setColor(wrap.getColor());
                 editing.setItemMeta(leatherMeta);
             }
+            if (VersionUtil.trimsSupported() && wrap.getTrim() != null && wrap.getTrimMaterial() != null && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
+                try {
+                    armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
+                    armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                    editing.setItemMeta(armorMeta);
+                } catch (IllegalArgumentException exception) {
+                    plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+                }
+            }
             if (wrap.getWrapNbt() != null) {
-                editing = WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
+                WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
+            }
+            if (wrap.getId().startsWith("itemsadder:")) {
+                setItemsAdderNBT(editing, wrap.getId().substring(11));
             }
         } else {
-            meta.setCustomModelData(originalData.modelId());
-            if (currentWrap != null) {
-                if (currentWrap.getWrapName() != null) {
-                    meta.setDisplayName(originalData.name());
-                }
-                if (currentWrap.getWrapLore() != null) {
-                    meta.setLore(originalData.lore());
-                }
-                if (currentWrap.getWrapFlags() != null) {
-                    meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
-                    meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
-                }
-            }
             if (meta instanceof LeatherArmorMeta leatherMeta) {
                 leatherMeta.setColor(originalData.color());
                 editing.setItemMeta(leatherMeta);
             } else {
                 editing.setItemMeta(meta);
             }
+            if (VersionUtil.trimsSupported() && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
+                try {
+                    if (originalData.trim() == null || originalData.trimMaterial() == null) {
+                        armorMeta.setTrim(null);
+                    } else {
+                        armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(originalData.trimMaterial())),
+                                Registry.TRIM_PATTERN.get(NamespacedKey.fromString(originalData.trim()))));
+                    }
+                    editing.setItemMeta(armorMeta);
+                } catch (IllegalArgumentException exception) {
+                    plugin.getLogger().warning("Failed to set trim for player " + player.getName() + " with trim " + originalData.trim() + " and material " + originalData.trimMaterial() + "! It seems to not be a valid trim. This is being set while unwrapping to preserve the original trim, which has since been removed.");
+                }
+            }
             if (originalData.material() != null && !originalData.material().isBlank()) {
-                switchFromLeather(editing, originalData.material());
+                switchFromAlternative(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
-            editing = WrapNBTUtil.unwrap(editing);
+            WrapNBTUtil.unwrap(editing);
+            if (originalData.itemsAdder() != null || (currentWrap != null && currentWrap.getId().startsWith("itemsadder:"))) {
+                setItemsAdderNBT(editing, originalData.itemsAdder());
+            }
         }
         editing = setPhysical(editing.clone(), physical);
         if (wrap == null || currentWrap != null) {
             return editing;
         }
-        String itemsAdderId = null;
-        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
-            var id = CustomStack.byItemStack(item);
-            if (id != null) {
-                itemsAdderId = id.getNamespacedID();
-            }
-        } else {
-            itemsAdderId = getOriginalItemsAdderId(item);
-        }
-        String oraxenId = null;
-        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
-            var id = OraxenItems.getIdByItem(item);
-            if (id != null) {
-                oraxenId = id;
-            }
-        } else {
-            oraxenId = getOriginalOraxenId(item);
-        }
-        String mythicId = null;
-        if (getWrap(item) == null && Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-            if (id != null) {
-                itemsAdderId = id;
-            }
-        } else {
-            mythicId = getOriginalMythicId(item);
-        }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
-                originalFlags, itemsAdderId, oraxenId, mythicId, originalMaterial));
+                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial, originalTrim, originalTrimMaterial));
+    }
+
+    private void setItemsAdderNBT(ItemStack item, String id) {
+        NBT.modify(item, nbt -> {
+            var split = id != null ? id.split(":") : new String[0];
+            var iaCompound = nbt.getCompound("itemsadder");
+            if (iaCompound != null) {
+                iaCompound.removeKey("namespace");
+                iaCompound.removeKey("id");
+                if (iaCompound.getKeys().isEmpty()) {
+                    nbt.removeKey("itemsadder");
+                }
+            }
+            if (split.length == 2) {
+                iaCompound = nbt.getOrCreateCompound("itemsadder");
+                iaCompound.setString("namespace", split[0]);
+                iaCompound.setString("id", split[1]);
+            }
+        });
     }
 
     private void resetFakeDurability(ItemStack item, ItemStack editing) {
@@ -270,32 +295,32 @@ public class WrapperImpl implements Wrapper {
         }
     }
 
-    private boolean switchToLeather(ItemStack editing) {
-        if (editing.getType().toString().contains("_HELMET")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_HELMET);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
-        } else if (editing.getType().toString().contains("_CHESTPLATE")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_CHESTPLATE);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
-        } else if (editing.getType().toString().contains("_LEGGINGS")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_LEGGINGS);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
-        } else if (editing.getType().toString().contains("_BOOTS")) {
-            var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
-            editing.setType(Material.LEATHER_BOOTS);
-            ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
-        } else {
-            return false;
+    private boolean switchToAlternative(ItemStack editing, String alternative) {
+        var newMaterial = MaterialUtil.getAlternative(alternative, editing.getType());
+        var hasCustomAttributes = editing.getItemMeta().getAttributeModifiers() != null;
+        var armorModifiers = ArmorModifiers.getFromMaterial(editing.getType().toString());
+        editing.setType(newMaterial);
+        if (!hasCustomAttributes) {
+            if (editing.getType().toString().contains("_HELMET")) {
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.HEAD, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().helmet());
+            } else if (editing.getType().toString().contains("_CHESTPLATE")) {
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.CHEST, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().chestplate());
+            } else if (editing.getType().toString().contains("_LEGGINGS")) {
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.LEGS, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().leggings());
+            } else if (editing.getType().toString().contains("_BOOTS")) {
+                ArmorModifiers.applyAttributes(editing, EquipmentSlot.FEET, armorModifiers.getToughness(), armorModifiers.getKnockback(), armorModifiers.getDefense().boots());
+            } else {
+                return false;
+            }
         }
         return true;
     }
 
-    private void switchFromLeather(ItemStack editing, String material) {
+    private void switchFromAlternative(ItemStack editing, String material) {
         editing.setType(Material.valueOf(material));
-        ArmorModifiers.removeAttributes(editing);
+        if (!isCustomAttributes(editing)) {
+            ArmorModifiers.removeAttributes(editing);
+        }
     }
 
     @Override
@@ -345,21 +370,21 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
-    public ItemStack removeWrap(ItemStack target, Player player, boolean giveBack) {
-        var event = new ItemUnwrapEvent(target, player, getWrap(target), giveBack);
+    public ItemStack removeWrap(ItemStack target, Player player) {
+        var event = new ItemUnwrapEvent(target, player, getWrap(target));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return target;
         }
-        return removeWrapPrivate(event.getItem(), event.getPlayer(), event.isGiveBack());
+        return removeWrapPrivate(event.getItem(), event.getPlayer());
     }
 
-    private ItemStack removeWrapPrivate(ItemStack item, Player player, boolean giveBack) {
+    private ItemStack removeWrapPrivate(ItemStack item, Player player) {
         var currentWrap = getWrap(item);
         if (currentWrap == null) {
             return item;
         }
-        return setWrapPrivate(null, item, false, player, giveBack);
+        return setWrapPrivate(null, item, false, player);
     }
 
     @Override
@@ -402,7 +427,17 @@ public class WrapperImpl implements Wrapper {
     public WrapValues getOriginalData(ItemStack item) {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
-                getOriginalMythicId(item), getOriginalMaterial(item));
+                getOriginalMythicId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item));
+    }
+
+    private String getOriginalTrim(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalTrimKey, PersistentDataType.STRING);
+    }
+
+    private String getOriginalTrimMaterial(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalTrimMaterialKey, PersistentDataType.STRING);
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -591,6 +626,12 @@ public class WrapperImpl implements Wrapper {
         if (wrapValues.material() != null) {
             meta.getPersistentDataContainer().set(originalMaterialKey, PersistentDataType.STRING, wrapValues.material());
         }
+        if (wrapValues.trim() != null) {
+            meta.getPersistentDataContainer().set(originalTrimKey, PersistentDataType.STRING, wrapValues.trim());
+        }
+        if (wrapValues.trimMaterial() != null) {
+            meta.getPersistentDataContainer().set(originalTrimMaterialKey, PersistentDataType.STRING, wrapValues.trimMaterial());
+        }
         editing.setItemMeta(meta);
         return editing;
     }
@@ -643,6 +684,16 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
+    public boolean isCustomAttributes(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var data = container.get(customAttributes, PersistentDataType.BOOLEAN);
+        if (data == null) {
+            return false;
+        }
+        return data;
+    }
+
+    @Override
     public boolean isValid(ItemStack item, Wrap wrap) {
         return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), getRealModelId(item)) && isValidColor(wrap.getRange().getColor(), getRealColor(item)) &&
                 isValidType(wrap.getRange().getItemsAdder(), getRealItemsAdderId(item)) && isValidType(wrap.getRange().getOraxen(), getRealOraxenId(item)) && isValidType(wrap.getRange().getMythic(), getRealMythicId(item)));
@@ -659,16 +710,24 @@ public class WrapperImpl implements Wrapper {
         if (settings == null) {
             return true;
         }
+        if (value.equals(StringUtil.colorFromString("#A06540"))) {
+            value = null;
+        }
         List<Color> exclude = null;
         List<Color> include = null;
         if (settings.getExclude() != null) {
-            exclude = settings.getExclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
+            exclude = settings.getExclude().stream().map(StringUtil::colorFromString).filter(Objects::nonNull).collect(Collectors.toList());
         }
         if (settings.getInclude() != null) {
-            include = settings.getInclude().stream().map(StringUtil::colorFromString).collect(Collectors.toList());
+            include = settings.getInclude().stream().map(StringUtil::colorFromString).filter(Objects::nonNull).collect(Collectors.toList());
         }
-        return (exclude == null || !exclude.contains(value)) && (include == null || include.contains(value)) &&
-                !(settings.getExclude().contains("none") && value != null);
+        if ((exclude != null && exclude.contains(value)) || (settings.getExclude() != null && settings.getExclude().contains("none") && value == null)) {
+            return false;
+        }
+        if ((include != null && !include.contains(value)) && (settings.getInclude() != null && (!settings.getInclude().contains("none") || value != null))) {
+            return false;
+        }
+        return true;
     }
 
     private int getRealModelId(ItemStack item) {
