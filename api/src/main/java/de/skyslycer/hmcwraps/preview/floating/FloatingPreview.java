@@ -67,7 +67,7 @@ public class FloatingPreview implements Preview {
         plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(" "));
             }
         }, 1L);
     }

@@ -59,7 +59,7 @@ public class HandPreview implements Preview {
         plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             sendFakeItem(oldItem);
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(" "));
             }
         }, 1L);
     }
