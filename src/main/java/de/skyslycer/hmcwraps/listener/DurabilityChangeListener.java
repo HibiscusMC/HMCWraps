@@ -21,12 +21,14 @@ public class DurabilityChangeListener implements Listener {
     public void onItemDamage(PlayerItemDamageEvent event) {
         var item = event.getItem();
         updateDurability(item, -event.getDamage());
+        event.setDamage(0);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemMend(PlayerItemMendEvent event) {
         var item = event.getItem();
         updateDurability(item, event.getRepairAmount());
+        event.setRepairAmount(0);
     }
 
     private void updateDurability(ItemStack item, int changed) {
@@ -42,7 +44,7 @@ public class DurabilityChangeListener implements Listener {
         }
         plugin.getWrapper().setFakeDurability(item, newDurability);
         var meta = (Damageable) item.getItemMeta();
-        meta.setDamage(item.getType().getMaxDurability() - (int) modelDurability);
+        meta.setDamage((int) (item.getType().getMaxDurability() - Math.round(modelDurability)));
         item.setItemMeta(meta);
         if (newDurability <= 0) {
             item.setAmount(0);
