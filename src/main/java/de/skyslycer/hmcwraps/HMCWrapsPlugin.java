@@ -131,7 +131,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         CommandRegister.registerCommands(this);
 
         new DefaultActionRegister(this).register();
-        new PluginMetrics(this).init();
+        if (!this.getDescription().getVersion().contains("-b")) { // Don't send metrics for beta versions
+            new PluginMetrics(this).init();
+        }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new HMCWrapsPlaceholders(this).register();
