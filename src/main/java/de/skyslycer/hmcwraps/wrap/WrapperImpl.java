@@ -52,7 +52,8 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalHideTrimKey;
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
-    private final NamespacedKey customAttributes;
+    private final NamespacedKey customAttributesKey;
+    private final NamespacedKey trimsUsedKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -75,7 +76,8 @@ public class WrapperImpl implements Wrapper {
         originalHideTrimKey = new NamespacedKey(plugin, "original-hide-trim");
         fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
-        customAttributes = new NamespacedKey(plugin, "custom-attributes");
+        customAttributesKey = new NamespacedKey(plugin, "custom-attributes");
+        trimsUsedKey = new NamespacedKey(plugin, "trims-used");
     }
 
     @Override
@@ -130,6 +132,7 @@ public class WrapperImpl implements Wrapper {
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
         }
+        meta.getPersistentDataContainer().remove(trimsUsedKey);
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
@@ -180,7 +183,7 @@ public class WrapperImpl implements Wrapper {
                     newMeta.setDamage(newDurability - (int) modelDurability);
                     newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                     newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
-                    newMeta.getPersistentDataContainer().set(customAttributes, PersistentDataType.BOOLEAN, attributeModifiers != null);
+                    newMeta.getPersistentDataContainer().set(customAttributesKey, PersistentDataType.BOOLEAN, attributeModifiers != null);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
                     changedDurability = true;
@@ -212,6 +215,7 @@ public class WrapperImpl implements Wrapper {
                 try {
                     armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
                     armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                    armorMeta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
                     editing.setItemMeta(armorMeta);
                 } catch (IllegalArgumentException exception) {
                     plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
@@ -421,6 +425,24 @@ public class WrapperImpl implements Wrapper {
             return null;
         }
         return meta.getPersistentDataContainer().get(physicalWrapperKey, PersistentDataType.STRING);
+    }
+
+    @Override
+    public ItemStack setTrimsUsed(ItemStack item, boolean used) {
+        var editing = item.clone();
+        var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, used);
+        editing.setItemMeta(meta);
+        return editing;
+    }
+
+    @Override
+    public boolean isTrimsUsed(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+        return meta.getPersistentDataContainer().has(trimsUsedKey, PersistentDataType.BOOLEAN);
     }
 
     @Override
@@ -686,7 +708,7 @@ public class WrapperImpl implements Wrapper {
     @Override
     public boolean isCustomAttributes(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        var data = container.get(customAttributes, PersistentDataType.BOOLEAN);
+        var data = container.get(customAttributesKey, PersistentDataType.BOOLEAN);
         if (data == null) {
             return false;
         }

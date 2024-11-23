@@ -43,6 +43,12 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
+        if (player.getOpenInventory().getType() == InventoryType.SMITHING && (plugin.getWrapper().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().isTrimsUsed(event.getCursor()))) {
+            event.setCancelled(true);
+            plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
+            return;
+        }
+
         // Avoid possible issues such as client server inventory desync when moving a desynced inventory
         if (plugin.getPreviewManager().isPreviewing(player) && plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);

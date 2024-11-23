@@ -170,8 +170,11 @@ public class GuiBuilder {
                     if (wrap.getInventoryActions() != null) {
                         actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getInventoryActions(), click);
                     }
-                } else if (wrap.getLockedItem() != null && wrap.getLockedItem().getActions() != null) {
-                    actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getLockedItem().getActions(), click);
+                } else {
+                    actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), plugin.getConfiguration().getInventory().getLockedActions(), click);
+                    if (wrap.getLockedItem() != null && wrap.getLockedItem().getActions() != null) {
+                        actions(plugin, new WrapGuiActionInformation(gui, wrap, player, slot, ""), wrap.getLockedItem().getActions(), click);
+                    }
                 }
             });
             gui.addItem(guiItem);

@@ -235,7 +235,7 @@ inventory:
   # The sort order by which the wraps in the inventory will be sorted
   sort-order:
     - 'PERMISSION' # The items the player has access to will be shown first
-    - 'SORT_ID' # You can define a sort id on a wrap, lower numbers will be shown first. Example: 'sort: 3'
+    - 'SORT_ID' # You can define a sort id on a wrap, lower numbers will be shown first. Example: sort: 3
     - 'MODEL_ID' # Sorted by model id, lower numbers will be shown first
   # Shortcut settings
   shortcut:
@@ -260,6 +260,11 @@ inventory:
     left:
       WRAP:
         - ''
+    right:
+      PREVIEW:
+        - ''
+  # Executed when clicking a wrap the player doesn't have permission for
+  locked-actions:
     right:
       PREVIEW:
         - ''
