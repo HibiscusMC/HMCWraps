@@ -67,7 +67,7 @@ public class WrapCommand {
         this.plugin = plugin;
     }
 
-    @Default
+    @DefaultFor("wraps")
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
         if (plugin.getConfiguration().getPermissions().isInventoryPermission() && !player.hasPermission(WRAPS_PERMISSION)) {
