@@ -52,9 +52,9 @@ public class FloatingPreview implements Preview {
         sendTeleportPacket();
         sendEquipPacket();
 
-        task = plugin.getFoliaLib().getImpl().runTimerAsync(new RotateRunnable(player, entityId, plugin), 3, 1);
+        task = plugin.getFoliaLib().getScheduler().runTimerAsync(new RotateRunnable(player, entityId, plugin), 3, 1);
 
-        cancelTask = plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
+        cancelTask = plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
                         plugin.getConfiguration().getPreview().getDuration() * 20L);
     }
 
@@ -64,7 +64,7 @@ public class FloatingPreview implements Preview {
         if (open && onClose != null) {
             onClose.accept(player);
         }
-        plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entityId));
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));

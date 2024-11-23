@@ -21,7 +21,7 @@ public class PlayerPickupListener implements Listener {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
     }
 
 }

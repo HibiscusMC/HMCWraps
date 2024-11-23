@@ -246,10 +246,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             return;
         }
         if (foliaLib.isFolia()) {
-            checkTask = foliaLib.getImpl().runTimer(() -> Bukkit.getOnlinePlayers().forEach((player) -> foliaLib.getImpl().runAtEntity(player, (ignored) -> checkInventory(player))),
+            checkTask = foliaLib.getScheduler().runTimer(() -> Bukkit.getOnlinePlayers().forEach((player) -> foliaLib.getScheduler().runAtEntity(player, (ignored) -> checkInventory(player))),
                     0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
         } else {
-            checkTask = foliaLib.getImpl().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(this::checkInventory),
+            checkTask = foliaLib.getScheduler().runTimerAsync(() -> Bukkit.getOnlinePlayers().forEach(this::checkInventory),
                     0L, config.getPermissions().getInventoryCheckInterval() < 1 ? 10L * 20 * 60 : config.getPermissions().getInventoryCheckInterval() * 20L * 60L);
         }
     }
@@ -266,7 +266,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             }
             if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
                 int finalI = i; // ;(
-                getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
+                getFoliaLib().getScheduler().runAtEntity(player, (ignored) -> {
                     var newItem = getWrapper().removeWrap(item, player);
                     player.getInventory().setItem(finalI, newItem);
                 });
