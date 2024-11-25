@@ -90,6 +90,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (checkDependency("Oraxen", false)) {
             hooks.add(new OraxenItemHook());
         }
+        if (checkDependency("Nexo", false)) {
+            hooks.add(new NexoItemHook());
+        }
         if (checkDependency("MythicCrucible", false)) {
             var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
             if (mythicMobs != null) {

@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
@@ -26,6 +26,7 @@ repositories {
     maven("https://mvn.lumine.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.triumphteam.dev/snapshots")
+    maven("https://repo.nexomc.com/snapshots/")
 }
 
 dependencies {
@@ -47,6 +48,7 @@ dependencies {
     }
     compileOnly(depends.spigot)
     compileOnly(depends.placeholderapi)
+    compileOnly(depends.nexo)
     compileOnly(depends.oraxen)
     compileOnly(depends.itemsadder)
     compileOnly(depends.mythicmobs)
@@ -100,7 +102,7 @@ tasks {
         options.compilerArgs.add("-parameters")
         options.encoding = "UTF-8"
         options.isFork = true
-        options.release = 17
+        options.release = 21
     }
 
     runServer {

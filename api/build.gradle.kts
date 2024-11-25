@@ -20,6 +20,7 @@ repositories {
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.triumphteam.dev/snapshots")
+    maven("https://repo.nexomc.com/snapshots/")
 }
 
 dependencies {
