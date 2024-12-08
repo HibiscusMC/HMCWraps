@@ -4,7 +4,7 @@ include("api")
 dependencyResolutionManagement {
     versionCatalogs {
         create("depends") {
-            library("spigot", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
+            library("spigot", "org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
             library("placeholderapi", "me.clip:placeholderapi:2.11.6")
             library("nexo", "com.nexomc:nexo:0.1.0-dev.14")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")

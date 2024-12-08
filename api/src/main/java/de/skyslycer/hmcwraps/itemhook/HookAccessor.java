@@ -1,6 +1,8 @@
 package de.skyslycer.hmcwraps.itemhook;
 
 import org.bukkit.Color;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,6 +10,7 @@ import java.util.Set;
 
 public class HookAccessor {
 
+    private final DefaultItemHook defaultHook = new DefaultItemHook();
     private final Set<ItemHook> hooks;
 
     public HookAccessor(Set<ItemHook> hooks) {
@@ -24,7 +27,7 @@ public class HookAccessor {
     public ItemStack getItemFromHook(String id) {
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         if (possible.isEmpty()) {
-            return ItemHook.defaultHook.get(id);
+            return this.defaultHook.get(id);
         } else {
             return possible.get().get(id.replace(possible.get().getPrefix(), ""));
         }
@@ -67,6 +70,18 @@ public class HookAccessor {
     public String getTrimMaterialFromHook(String id) {
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getTrimMaterial(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
+    @Nullable
+    public EquipmentSlot getEquippableSlotFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getEquippableSlot(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
+    @Nullable
+    public NamespacedKey getEquippableModelFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getEquippableModel(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
 }

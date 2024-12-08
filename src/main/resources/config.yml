@@ -48,6 +48,7 @@ global-disable:
   model-id: [ ]
   # You can use hex or rgb, check the documentation. If you want to disable items with no color, use 'none'.
   color: [ ]
+  nexo: [ ]
   oraxen: [ ]
   itemsadder: [ ]
   mythic: []

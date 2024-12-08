@@ -17,8 +17,8 @@ public class InventoryItem extends SerializableItem {
     public InventoryItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
                             @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner, @Nullable String skullTexture,
-                            @Nullable String trim, @Nullable String trimMaterial) {
-        super(id, name, glow, lore, flags, modelId, enchantments, amount, color, nbt, durability, skullOwner, skullTexture, trim, trimMaterial);
+                            @Nullable String trim, @Nullable String trimMaterial, @Nullable String equippableSlot, @Nullable String equippableModel) {
+        super(id, name, glow, lore, flags, modelId, enchantments, amount, color, nbt, durability, skullOwner, skullTexture, trim, trimMaterial, equippableSlot, equippableModel);
     }
 
     public InventoryItem() {

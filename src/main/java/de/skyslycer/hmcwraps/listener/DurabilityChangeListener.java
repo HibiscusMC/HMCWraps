@@ -19,23 +19,23 @@ public class DurabilityChangeListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemDamage(PlayerItemDamageEvent event) {
-        var item = event.getItem();
-        updateDurability(item, -event.getDamage());
-        event.setDamage(0);
+        if (updateDurability(event.getItem(), -event.getDamage())) {
+            event.setDamage(0);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemMend(PlayerItemMendEvent event) {
-        var item = event.getItem();
-        updateDurability(item, event.getRepairAmount());
-        event.setRepairAmount(0);
+        if (updateDurability(event.getItem(), event.getRepairAmount())) {
+            event.setRepairAmount(0);
+        }
     }
 
-    private void updateDurability(ItemStack item, int changed) {
+    private boolean updateDurability(ItemStack item, int changed) {
         var durability = plugin.getWrapper().getFakeDurability(item);
         var maxDurability = plugin.getWrapper().getFakeMaxDurability(item);
         if (plugin.getWrapper().getWrap(item) == null || plugin.getWrapper().getFakeDurability(item) == -1 || durability == -1) {
-            return;
+            return false;
         }
         var newDurability = Math.min(durability + changed, maxDurability);
         var modelDurability = ((double) newDurability / maxDurability) * item.getType().getMaxDurability();
@@ -49,6 +49,7 @@ public class DurabilityChangeListener implements Listener {
         if (newDurability <= 0) {
             item.setAmount(0);
         }
+        return true;
     }
 
 }

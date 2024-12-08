@@ -13,7 +13,7 @@ public class PhysicalWrap extends SerializableItem {
 
     public PhysicalWrap(String id, String name, @Nullable Boolean glow,
                         @Nullable List<String> lore, @Nullable Integer modelId) {
-        super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null);
         this.keepAfterUnwrap = true;
     }
 

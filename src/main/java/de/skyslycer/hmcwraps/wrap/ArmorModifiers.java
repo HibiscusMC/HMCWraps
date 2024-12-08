@@ -6,8 +6,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.UUID;
-
 public enum ArmorModifiers {
 
     LEATHER(0, 0, new ArmorValues(1, 2, 3, 1), new ArmorValues(15, 40, 30, 15)),
@@ -45,30 +43,30 @@ public enum ArmorModifiers {
 
     public static void applyAttributes(ItemStack item, EquipmentSlot slot, int toughness, int knockback, int defense) {
         var meta = item.getItemMeta();
-        if (meta.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS) == null) {
-           addModifier(meta, slot, Attribute.GENERIC_ARMOR_TOUGHNESS, toughness);
+        if (meta.getAttributeModifiers(Attribute.ARMOR_TOUGHNESS) == null) {
+           addModifier(meta, slot, Attribute.ARMOR_TOUGHNESS, toughness);
         } else {
-            meta.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS).stream().findFirst().ifPresent(modifier -> {
-                meta.removeAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, modifier);
-                addModifier(meta, slot, Attribute.GENERIC_ARMOR_TOUGHNESS, toughness);
+            meta.getAttributeModifiers(Attribute.ARMOR_TOUGHNESS).stream().findFirst().ifPresent(modifier -> {
+                meta.removeAttributeModifier(Attribute.ARMOR_TOUGHNESS, modifier);
+                addModifier(meta, slot, Attribute.ARMOR_TOUGHNESS, toughness);
             });
         }
         if (knockback != 0) {
-            if (meta.getAttributeModifiers(Attribute.GENERIC_KNOCKBACK_RESISTANCE) == null) {
-                addModifier(meta, slot, Attribute.GENERIC_KNOCKBACK_RESISTANCE, knockback / 10d);
+            if (meta.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE) == null) {
+                addModifier(meta, slot, Attribute.KNOCKBACK_RESISTANCE, knockback / 10d);
             } else {
-                meta.getAttributeModifiers(Attribute.GENERIC_KNOCKBACK_RESISTANCE).stream().findFirst().ifPresent(modifier -> {
-                    meta.removeAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier);
-                    addModifier(meta, slot, Attribute.GENERIC_KNOCKBACK_RESISTANCE, knockback / 10d); // divided by 10 because Minecraft decided so
+                meta.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE).stream().findFirst().ifPresent(modifier -> {
+                    meta.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier);
+                    addModifier(meta, slot, Attribute.KNOCKBACK_RESISTANCE, knockback / 10d); // divided by 10 because Minecraft decided so
                 });
             }
         }
-        if (meta.getAttributeModifiers(Attribute.GENERIC_ARMOR) == null) {
-            addModifier(meta, slot, Attribute.GENERIC_ARMOR, defense);
+        if (meta.getAttributeModifiers(Attribute.ARMOR) == null) {
+            addModifier(meta, slot, Attribute.ARMOR, defense);
         } else {
-            meta.getAttributeModifiers(Attribute.GENERIC_ARMOR).stream().findFirst().ifPresent(modifier -> {
-                meta.removeAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
-                addModifier(meta, slot, Attribute.GENERIC_ARMOR, defense);
+            meta.getAttributeModifiers(Attribute.ARMOR).stream().findFirst().ifPresent(modifier -> {
+                meta.removeAttributeModifier(Attribute.ARMOR, modifier);
+                addModifier(meta, slot, Attribute.ARMOR, defense);
             });
         }
         item.setItemMeta(meta);
@@ -76,15 +74,15 @@ public enum ArmorModifiers {
 
     public static ItemStack removeAttributes(ItemStack item) {
         var meta = item.getItemMeta();
-        meta.removeAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS);
-        meta.removeAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
-        meta.removeAttributeModifier(Attribute.GENERIC_ARMOR);
+        meta.removeAttributeModifier(Attribute.ARMOR_TOUGHNESS);
+        meta.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE);
+        meta.removeAttributeModifier(Attribute.ARMOR);
         item.setItemMeta(meta);
         return item;
     }
 
     private static void addModifier(ItemMeta meta, EquipmentSlot slot, Attribute attribute, double amount) {
-        meta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), attribute.getKey().getKey(), amount, AttributeModifier.Operation.ADD_NUMBER, slot));
+        meta.addAttributeModifier(attribute, new AttributeModifier(attribute.getKey(), amount, AttributeModifier.Operation.ADD_NUMBER, slot.getGroup()));
     }
 
     public int getToughness() {
