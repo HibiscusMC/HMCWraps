@@ -1,10 +1,17 @@
 package de.skyslycer.hmcwraps.wrap;
 
+import de.skyslycer.hmcwraps.util.VersionUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public enum ArmorModifiers {
 
@@ -43,46 +50,24 @@ public enum ArmorModifiers {
 
     public static void applyAttributes(ItemStack item, EquipmentSlot slot, int toughness, int knockback, int defense) {
         var meta = item.getItemMeta();
-        if (meta.getAttributeModifiers(Attribute.ARMOR_TOUGHNESS) == null) {
-           addModifier(meta, slot, Attribute.ARMOR_TOUGHNESS, toughness);
-        } else {
-            meta.getAttributeModifiers(Attribute.ARMOR_TOUGHNESS).stream().findFirst().ifPresent(modifier -> {
-                meta.removeAttributeModifier(Attribute.ARMOR_TOUGHNESS, modifier);
-                addModifier(meta, slot, Attribute.ARMOR_TOUGHNESS, toughness);
-            });
-        }
+        VersionAttribute.removeAttributeModifier(meta, VersionAttribute.ARMOR_TOUGHNESS);
+        VersionAttribute.addAttributeModifier(meta, slot, VersionAttribute.ARMOR_TOUGHNESS, toughness);
+        VersionAttribute.removeAttributeModifier(meta, VersionAttribute.ARMOR);
+        VersionAttribute.addAttributeModifier(meta, slot, VersionAttribute.ARMOR, defense);
         if (knockback != 0) {
-            if (meta.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE) == null) {
-                addModifier(meta, slot, Attribute.KNOCKBACK_RESISTANCE, knockback / 10d);
-            } else {
-                meta.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE).stream().findFirst().ifPresent(modifier -> {
-                    meta.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier);
-                    addModifier(meta, slot, Attribute.KNOCKBACK_RESISTANCE, knockback / 10d); // divided by 10 because Minecraft decided so
-                });
-            }
-        }
-        if (meta.getAttributeModifiers(Attribute.ARMOR) == null) {
-            addModifier(meta, slot, Attribute.ARMOR, defense);
-        } else {
-            meta.getAttributeModifiers(Attribute.ARMOR).stream().findFirst().ifPresent(modifier -> {
-                meta.removeAttributeModifier(Attribute.ARMOR, modifier);
-                addModifier(meta, slot, Attribute.ARMOR, defense);
-            });
+            VersionAttribute.removeAttributeModifier(meta, VersionAttribute.KNOCKBACK_RESISTANCE);
+            VersionAttribute.addAttributeModifier(meta, slot, VersionAttribute.KNOCKBACK_RESISTANCE, knockback / 10d); // divided by 10 because Minecraft decided so
         }
         item.setItemMeta(meta);
     }
 
     public static ItemStack removeAttributes(ItemStack item) {
         var meta = item.getItemMeta();
-        meta.removeAttributeModifier(Attribute.ARMOR_TOUGHNESS);
-        meta.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE);
-        meta.removeAttributeModifier(Attribute.ARMOR);
+        VersionAttribute.removeAttributeModifier(meta, VersionAttribute.ARMOR_TOUGHNESS);
+        VersionAttribute.removeAttributeModifier(meta, VersionAttribute.KNOCKBACK_RESISTANCE);
+        VersionAttribute.removeAttributeModifier(meta, VersionAttribute.ARMOR);
         item.setItemMeta(meta);
         return item;
-    }
-
-    private static void addModifier(ItemMeta meta, EquipmentSlot slot, Attribute attribute, double amount) {
-        meta.addAttributeModifier(attribute, new AttributeModifier(attribute.getKey(), amount, AttributeModifier.Operation.ADD_NUMBER, slot.getGroup()));
     }
 
     public int getToughness() {
@@ -99,6 +84,110 @@ public enum ArmorModifiers {
 
     public ArmorValues getDurability() {
         return durability;
+    }
+
+    private enum VersionAttribute {
+        ARMOR_TOUGHNESS("ARMOR_TOUGHNESS", "GENERIC_ARMOR_TOUGHNESS"),
+        KNOCKBACK_RESISTANCE("KNOCKBACK_RESISTANCE", "GENERIC_KNOCKBACK_RESISTANCE"),
+        ARMOR("ARMOR", "GENERIC_ARMOR");
+
+        private final String modernAttribute;
+        private final String legacyAttribute;
+
+        VersionAttribute(String modernAttribute, String legacyAttribute) {
+            this.modernAttribute = modernAttribute;
+            this.legacyAttribute = legacyAttribute;
+        }
+
+        public Object getAttribute() {
+            if (VersionUtil.equippableSupported()) {
+                try {
+                    return Attribute.valueOf(modernAttribute);
+                } catch (IllegalArgumentException exception) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to get modern attribute: " + modernAttribute, exception);
+                }
+            } else {
+                try {
+                    Class<?> attributeClass = Class.forName("org.bukkit.attribute.Attribute");
+                    Method valueOfMethod = attributeClass.getMethod("valueOf", String.class);
+                    return valueOfMethod.invoke(null, legacyAttribute);
+                } catch (Exception exception) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to get legacy attribute: " + legacyAttribute, exception);
+                }
+            }
+            return null;
+        }
+
+        public static void removeAttributeModifier(ItemMeta meta, VersionAttribute attribute) {
+            var attributeObject = attribute.getAttribute();
+            if (VersionUtil.equippableSupported()) {
+                try {
+                    meta.removeAttributeModifier((Attribute) attributeObject);
+                } catch (IllegalArgumentException exception) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to remove modern attribute: " + attribute.name(), exception);
+                }
+            } else {
+                try {
+                    Class<?> attributeClass = Class.forName("org.bukkit.attribute.Attribute");
+                    if (!attributeClass.isInstance(attributeObject)) {
+                        throw new IllegalArgumentException("Provided object is not a valid Attribute instance");
+                    }
+                    Object castedAttribute = attributeClass.cast(attributeObject);
+                    Method removeModifierMethod = ItemMeta.class.getMethod("removeAttributeModifier", attributeClass);
+                    removeModifierMethod.invoke(meta, castedAttribute);
+                } catch (Exception exception) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to remove legacy attribute: " + attribute.name(), exception);
+                }
+            }
+        }
+
+        public static void addAttributeModifier(ItemMeta meta, EquipmentSlot slot, VersionAttribute attribute, double amount) {
+            var attributeObject = attribute.getAttribute();
+            if (VersionUtil.equippableSupported()) {
+                var modernAttribute = (Attribute) attributeObject;
+                try {
+                    meta.addAttributeModifier(modernAttribute, new AttributeModifier(modernAttribute.getKey(), amount, AttributeModifier.Operation.ADD_NUMBER, slot.getGroup()));
+                } catch (IllegalArgumentException exception) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to add modern attribute: " + attribute.name(), exception);
+                }
+            } else {
+                try {
+                    Class<?> attributeClass = Class.forName("org.bukkit.attribute.Attribute");
+                    if (!attributeClass.isInstance(attributeObject)) {
+                        throw new IllegalArgumentException("Provided object is not a valid Attribute instance");
+                    }
+                    Object castedAttribute = attributeClass.cast(attributeObject);
+                    var modifier = createAttributeModifier(castedAttribute, amount, slot);
+                    var addModifierMethod = ItemMeta.class.getMethod("addAttributeModifier", attributeClass, AttributeModifier.class);
+                    addModifierMethod.invoke(meta, castedAttribute, modifier);
+                } catch (Exception exception) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Failed to add legacy attribute: " + attribute.name(), exception);
+                }
+            }
+        }
+
+        public static Object createAttributeModifier(Object attributeObject, double amount, EquipmentSlot slot) {
+            try {
+                Class<?> attributeModifierClass = Class.forName("org.bukkit.attribute.AttributeModifier");
+                Constructor<?> constructor = attributeModifierClass.getConstructor(
+                        UUID.class,
+                        String.class,
+                        double.class,
+                        AttributeModifier.Operation.class,
+                        EquipmentSlot.class
+                );
+                return constructor.newInstance(
+                        UUID.randomUUID(),
+                        attributeObject.toString(),
+                        amount,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        slot
+                );
+            } catch (Exception exception) {
+                Bukkit.getLogger().log(Level.SEVERE, "Failed to create legacy attribute modifier!", exception);
+            }
+            return null;
+        }
     }
 
 }
