@@ -43,6 +43,12 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
+        if (player.getOpenInventory().getType() == InventoryType.SMITHING && (plugin.getWrapper().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().isTrimsUsed(event.getCursor()))) {
+            event.setCancelled(true);
+            plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
+            return;
+        }
+
         // Avoid possible issues such as client server inventory desync when moving a desynced inventory
         if (plugin.getPreviewManager().isPreviewing(player) && plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);
@@ -52,13 +58,13 @@ public class InventoryClickListener implements Listener {
         switch (event.getAction()) {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> {
                 var slot = event.getRawSlot();
-                plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
+                plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                     var updatedItem = PermissionUtil.check(plugin, player, event.getView().getItem(slot));
                     if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
                     event.getView().setItem(slot, updatedItem);
                 }, 1);
             }
-            case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
+            case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 if (event.getClickedInventory() == player.getInventory()) {
                     PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getTopInventory());
                 } else {
@@ -69,7 +75,7 @@ public class InventoryClickListener implements Listener {
 
         if (event.getClick() == ClickType.NUMBER_KEY) {
             var slot = event.getHotbarButton();
-            plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
+            plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
                 if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
                 player.getInventory().setItem(slot, updatedItem);

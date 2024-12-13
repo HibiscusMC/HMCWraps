@@ -3,18 +3,19 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 group = "de.skyslycer"
-version = "1.5.0"
+version = "1.5.1"
 
 val shadePattern = "$group.hmcwraps.shade"
 
 repositories {
     mavenCentral()
     maven("https://repo.skyslycer.de/jitpack")
+    maven("https://repo.skyslycer.de/mirrors")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/groups/public")
@@ -24,7 +25,8 @@ repositories {
     maven("https://repo.bytecode.space/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
-    maven("https://nexuslite.gcnt.net/repos/other/")
+    maven("https://repo.triumphteam.dev/snapshots")
+    maven("https://repo.nexomc.com/snapshots/")
 }
 
 dependencies {
@@ -46,6 +48,7 @@ dependencies {
     }
     compileOnly(depends.spigot)
     compileOnly(depends.placeholderapi)
+    compileOnly(depends.nexo)
     compileOnly(depends.oraxen)
     compileOnly(depends.itemsadder)
     compileOnly(depends.mythicmobs)
@@ -99,11 +102,11 @@ tasks {
         options.compilerArgs.add("-parameters")
         options.encoding = "UTF-8"
         options.isFork = true
-        options.release = 17
+        options.release = 21
     }
 
     runServer {
-        minecraftVersion("1.21")
+        minecraftVersion("1.21.1")
     }
 }
 

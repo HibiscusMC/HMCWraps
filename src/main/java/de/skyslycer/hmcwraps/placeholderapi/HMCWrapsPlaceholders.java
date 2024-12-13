@@ -52,7 +52,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
             var wrapUuid = identifier.substring(identifier.indexOf("_") + 1);
             var wrap = plugin.getWrapsLoader().getWraps().get(wrapUuid);
             switch (action) {
-                case "equipped" -> {
+                case "equipped" -> { // Check if the specified wrap is the one equipped on the item the player is wrapping in the virtual inventory
                     if (player == null) {
                         return null;
                     }

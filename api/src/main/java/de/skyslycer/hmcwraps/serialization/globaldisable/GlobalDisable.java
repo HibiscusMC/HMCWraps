@@ -12,6 +12,7 @@ public class GlobalDisable {
     private List<String> oraxen;
     private List<String> itemsadder;
     private List<String> mythic;
+    private List<String> nexo;
 
     public List<Integer> getModelId() {
         return modelId;
@@ -31,6 +32,10 @@ public class GlobalDisable {
 
     public List<String> getMythicId() {
         return mythic;
+    }
+
+    public List<String> getNexoId() {
+        return nexo;
     }
 
 }

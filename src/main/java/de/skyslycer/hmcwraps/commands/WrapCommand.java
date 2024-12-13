@@ -67,7 +67,7 @@ public class WrapCommand {
         this.plugin = plugin;
     }
 
-    @Default
+    @DefaultFor("wraps")
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
         if (plugin.getConfiguration().getPermissions().isInventoryPermission() && !player.hasPermission(WRAPS_PERMISSION)) {
@@ -117,13 +117,13 @@ public class WrapCommand {
     public void onReload(CommandSender sender) {
         var current = System.nanoTime();
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            plugin.getFoliaLib().getImpl().runAtEntity(player, (ignored) -> {
+            plugin.getFoliaLib().getScheduler().runAtEntity(player, (ignored) -> {
                 if (player.getOpenInventory().getTopInventory().getHolder() instanceof BaseGui) {
                     player.closeInventory();
                 }
             });
         }
-        plugin.getFoliaLib().getImpl().runAsync((ignored) -> {
+        plugin.getFoliaLib().getScheduler().runAsync((ignored) -> {
             plugin.unload();
             plugin.load();
             plugin.getMessageHandler().send(sender, Messages.COMMAND_RELOAD,

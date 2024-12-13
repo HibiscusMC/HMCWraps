@@ -136,6 +136,23 @@ public interface Wrapper {
     ItemStack setPhysicalWrapper(ItemStack item, Wrap wrap);
 
     /**
+     * Set the item to be using trims. This will prevent the item from being used in a smithing table.
+     *
+     * @param item The item
+     * @param used If the item is using trims
+     * @return The changed item
+     */
+    ItemStack setTrimsUsed(ItemStack item, boolean used);
+
+    /**
+     * Check if the item is using trims.
+     *
+     * @param item The item
+     * @return If the item is using trims
+     */
+    boolean isTrimsUsed(ItemStack item);
+
+    /**
      * Get the saved data of the item.
      *
      * @param item The item

@@ -76,7 +76,8 @@ public class ItemSkinsFile {
         }
 
         public InventoryItem toItem() {
-            return new InventoryItem(material, displayName, glowing, lore, null, customModelData, null, 1, null, null, null, null, null, null, null);
+            return new InventoryItem(material, displayName, glowing, lore, null, customModelData, null,
+                    1, null, null, null, null, null, null, null, null, null);
         }
 
     }

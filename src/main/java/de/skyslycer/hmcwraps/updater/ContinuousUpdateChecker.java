@@ -27,7 +27,7 @@ public class ContinuousUpdateChecker {
         if (task != null) {
             task.cancel();
         }
-        task = plugin.getFoliaLib().getImpl().runTimerAsync(() -> {
+        task = plugin.getFoliaLib().getScheduler().runTimerAsync(() -> {
             var result = updater.check(plugin);
             lastResultTime = System.currentTimeMillis();
             lastResult = result;

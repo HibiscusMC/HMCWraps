@@ -8,8 +8,10 @@ import de.skyslycer.hmcwraps.util.StringUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +48,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
                 @Nullable String permission, @Nullable InventoryItem lockedItem) {
-        super(id, name, glow, lore, null, modelId, null, null, null, null, null, null, null, null, null);
+        super(id, name, glow, lore, null, modelId, null, null, null);
         this.preview = true;
         this.uuid = uuid;
         this.physical = physical;
@@ -57,7 +59,7 @@ public class Wrap extends SerializableItem {
     public Wrap(String id, String name, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable String color, Integer amount, @Nullable List<String> flags,
                 @Nullable Map<String, Integer> enchantments) {
-        super(id, name, null, lore, flags, modelId, enchantments, amount, color, null, null, null, null, null, null);
+        super(id, name, null, lore, flags, modelId, enchantments, amount, color);
         this.uuid = uuid;
     }
 
@@ -196,7 +198,8 @@ public class Wrap extends SerializableItem {
     }
 
     public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder,
-                             String oraxen, String mythic, String material, String trim, String trimMaterial) {
+                             String oraxen, String mythic, String nexo, String material, String trim, String trimMaterial,
+                             NamespacedKey equippableModel, EquipmentSlot equippableSlot) {
     }
 
 }

@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
     id("org.jetbrains.dokka") version ("1.9.20")
 }
 
@@ -11,6 +11,7 @@ version = rootProject.version
 repositories {
     mavenCentral()
     maven("https://repo.skyslycer.de/jitpack")
+    maven("https://repo.skyslycer.de/mirrors")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/groups/public")
@@ -18,7 +19,8 @@ repositories {
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.codemc.io/repository/maven-public/")
-    maven("https://nexuslite.gcnt.net/repos/other/")
+    maven("https://repo.triumphteam.dev/snapshots")
+    maven("https://repo.nexomc.com/snapshots/")
 }
 
 dependencies {

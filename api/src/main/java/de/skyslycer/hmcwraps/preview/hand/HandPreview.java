@@ -41,12 +41,12 @@ public class HandPreview implements Preview {
         slot = 36 + player.getInventory().getHeldItemSlot();
         sendFakeItem(item);
 
-        task = plugin.getFoliaLib().getImpl().runTimerAsync(() -> {
+        task = plugin.getFoliaLib().getScheduler().runTimerAsync(() -> {
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar() && plugin.getConfiguration().getPreview().getSneakCancel().isEnabled()) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, StringUtil.parse(player, plugin.getMessageHandler().get(Messages.PREVIEW_BAR)));
             }
         }, 3, 1);
-        cancelTask = plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
+        cancelTask = plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> plugin.getPreviewManager().remove(player.getUniqueId(), true),
                         plugin.getConfiguration().getPreview().getDuration() * 20L);
     }
 
@@ -56,10 +56,10 @@ public class HandPreview implements Preview {
         if (open && onClose != null) {
             onClose.accept(player);
         }
-        plugin.getFoliaLib().getImpl().runAtEntityLater(player, () -> {
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
             sendFakeItem(oldItem);
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar()) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(" "));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(" "));
             }
         }, 1L);
     }

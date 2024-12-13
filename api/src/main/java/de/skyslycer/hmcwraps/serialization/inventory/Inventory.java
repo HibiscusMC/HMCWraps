@@ -21,6 +21,7 @@ public class Inventory {
     private int targetItemSlot;
     private Map<String, InventoryItem> items;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
+    private @Nullable HashMap<String, HashMap<String, List<String>>> lockedActions;
 
     public String getTitle() {
         return title;
@@ -49,6 +50,11 @@ public class Inventory {
     @Nullable
     public HashMap<String, HashMap<String, List<String>>> getActions() {
         return actions;
+    }
+
+    @Nullable
+    public HashMap<String, HashMap<String, List<String>>> getLockedActions() {
+        return lockedActions;
     }
 
     public boolean isItemChangeEnabled() {

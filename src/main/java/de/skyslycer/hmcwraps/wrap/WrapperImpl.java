@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.wrap;
 
+import com.nexomc.nexo.api.NexoItems;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.events.ItemUnwrapEvent;
 import de.skyslycer.hmcwraps.events.ItemWrapEvent;
@@ -46,13 +47,16 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalItemsAdderKey;
     private final NamespacedKey originalOraxenKey;
     private final NamespacedKey originalMythicKey;
+    private final NamespacedKey originalNexoKey;
     private final NamespacedKey originalMaterialKey;
     private final NamespacedKey originalTrimKey;
     private final NamespacedKey originalTrimMaterialKey;
-    private final NamespacedKey originalHideTrimKey;
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
-    private final NamespacedKey customAttributes;
+    private final NamespacedKey customAttributesKey;
+    private final NamespacedKey trimsUsedKey;
+    private final NamespacedKey originalEquippableSlotKey;
+    private final NamespacedKey originalEquippableModelKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -69,13 +73,16 @@ public class WrapperImpl implements Wrapper {
         originalItemsAdderKey = new NamespacedKey(plugin, "original-itemsadder-id");
         originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
         originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
+        originalNexoKey = new NamespacedKey(plugin, "original-nexo-id");
         originalMaterialKey = new NamespacedKey(plugin, "original-material");
         originalTrimKey = new NamespacedKey(plugin, "original-trim");
         originalTrimMaterialKey = new NamespacedKey(plugin, "original-trim-material");
-        originalHideTrimKey = new NamespacedKey(plugin, "original-hide-trim");
         fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
-        customAttributes = new NamespacedKey(plugin, "custom-attributes");
+        customAttributesKey = new NamespacedKey(plugin, "custom-attributes");
+        trimsUsedKey = new NamespacedKey(plugin, "trims-used");
+        originalEquippableSlotKey = new NamespacedKey(plugin, "original-equippable-slot");
+        originalEquippableModelKey = new NamespacedKey(plugin, "original-equippable-model");
     }
 
     @Override
@@ -120,16 +127,24 @@ public class WrapperImpl implements Wrapper {
         var originalItemsAdderId = getOriginalItemsAdderId(item);
         var originalOraxenId = getOriginalOraxenId(item);
         var originalMythicId = getOriginalMythicId(item);
+        var originalNexoId = getOriginalNexoId(item);
         String originalTrimMaterial = null;
         String originalTrim = null;
         if (VersionUtil.trimsSupported() && meta instanceof ArmorMeta armorMeta && armorMeta.getTrim() != null) {
             originalTrim = armorMeta.getTrim().getPattern().getKey().toString();
             originalTrimMaterial = armorMeta.getTrim().getMaterial().getKey().toString();
         }
+        NamespacedKey originalEquippableModel = null;
+        EquipmentSlot originalEquippableSlot = null;
+        if (VersionUtil.equippableSupported() && meta.hasEquippable()) {
+            originalEquippableModel = meta.getEquippable().getModel();
+            originalEquippableSlot = meta.getEquippable().getSlot();
+        }
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
             originalModelId = meta.getCustomModelData();
         }
+        meta.getPersistentDataContainer().remove(trimsUsedKey);
         meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
         meta.getPersistentDataContainer().remove(playerKey);
         meta.setCustomModelData(wrap == null ? originalData.modelId() : wrap.getModelId());
@@ -180,7 +195,7 @@ public class WrapperImpl implements Wrapper {
                     newMeta.setDamage(newDurability - (int) modelDurability);
                     newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
                     newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
-                    newMeta.getPersistentDataContainer().set(customAttributes, PersistentDataType.BOOLEAN, attributeModifiers != null);
+                    newMeta.getPersistentDataContainer().set(customAttributesKey, PersistentDataType.BOOLEAN, attributeModifiers != null);
                     editing.setItemMeta(newMeta);
                     originalMaterial = temp;
                     changedDurability = true;
@@ -212,10 +227,19 @@ public class WrapperImpl implements Wrapper {
                 try {
                     armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
                     armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                    armorMeta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
                     editing.setItemMeta(armorMeta);
                 } catch (IllegalArgumentException exception) {
                     plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
                 }
+            }
+            if (VersionUtil.equippableSupported() && wrap.getEquippableSlot() != null && wrap.getEquippableModel() != null) {
+                var newMeta = editing.getItemMeta();
+                var equippable = newMeta.getEquippable();
+                equippable.setSlot(wrap.getEquippableSlot());
+                equippable.setModel(wrap.getEquippableModel());
+                newMeta.setEquippable(equippable);
+                editing.setItemMeta(newMeta);
             }
             if (wrap.getWrapNbt() != null) {
                 WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
@@ -243,6 +267,18 @@ public class WrapperImpl implements Wrapper {
                     plugin.getLogger().warning("Failed to set trim for player " + player.getName() + " with trim " + originalData.trim() + " and material " + originalData.trimMaterial() + "! It seems to not be a valid trim. This is being set while unwrapping to preserve the original trim, which has since been removed.");
                 }
             }
+            if (VersionUtil.equippableSupported()) {
+                var newMeta = editing.getItemMeta();
+                if (originalData.equippableSlot() != null && originalData.equippableModel() != null) {
+                    var equippable = newMeta.getEquippable();
+                    equippable.setSlot(originalData.equippableSlot());
+                    equippable.setModel(originalData.equippableModel());
+                    newMeta.setEquippable(equippable);
+                } else {
+                    newMeta.setEquippable(null);
+                }
+                editing.setItemMeta(newMeta);
+            }
             if (originalData.material() != null && !originalData.material().isBlank()) {
                 switchFromAlternative(editing, originalData.material());
             }
@@ -257,7 +293,8 @@ public class WrapperImpl implements Wrapper {
             return editing;
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
-                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalMaterial, originalTrim, originalTrimMaterial));
+                originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalNexoId, originalMaterial,
+                originalTrim, originalTrimMaterial, originalEquippableModel, originalEquippableSlot));
     }
 
     private void setItemsAdderNBT(ItemStack item, String id) {
@@ -424,10 +461,29 @@ public class WrapperImpl implements Wrapper {
     }
 
     @Override
+    public ItemStack setTrimsUsed(ItemStack item, boolean used) {
+        var editing = item.clone();
+        var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, used);
+        editing.setItemMeta(meta);
+        return editing;
+    }
+
+    @Override
+    public boolean isTrimsUsed(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+        return meta.getPersistentDataContainer().has(trimsUsedKey, PersistentDataType.BOOLEAN);
+    }
+
+    @Override
     public WrapValues getOriginalData(ItemStack item) {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
-                getOriginalMythicId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item));
+                getOriginalMythicId(item), getOriginalNexoId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item),
+                getOriginalEquippableModel(item), getOriginalEquippableSlot(item));
     }
 
     private String getOriginalTrim(ItemStack item) {
@@ -438,6 +494,24 @@ public class WrapperImpl implements Wrapper {
     private String getOriginalTrimMaterial(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
         return container.get(originalTrimMaterialKey, PersistentDataType.STRING);
+    }
+
+    private EquipmentSlot getOriginalEquippableSlot(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var data = container.get(originalEquippableSlotKey, PersistentDataType.STRING);
+        if (data == null) {
+            return null;
+        }
+        return EquipmentSlot.valueOf(data);
+    }
+
+    private NamespacedKey getOriginalEquippableModel(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var data = container.get(originalEquippableModelKey, PersistentDataType.STRING);
+        if (data == null) {
+            return null;
+        }
+        return NamespacedKey.fromString(data);
     }
 
     private int getOriginalModelId(ItemStack item) {
@@ -589,6 +663,11 @@ public class WrapperImpl implements Wrapper {
         return container.get(originalMythicKey, PersistentDataType.STRING);
     }
 
+    private String getOriginalNexoId(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalNexoKey, PersistentDataType.STRING);
+    }
+
     private String getOriginalMaterial(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
         var value = container.get(originalMaterialKey, PersistentDataType.STRING);
@@ -623,6 +702,9 @@ public class WrapperImpl implements Wrapper {
         if (wrapValues.mythic() != null) {
             meta.getPersistentDataContainer().set(originalMythicKey, PersistentDataType.STRING, wrapValues.mythic());
         }
+        if (wrapValues.nexo() != null) {
+            meta.getPersistentDataContainer().set(originalNexoKey, PersistentDataType.STRING, wrapValues.nexo());
+        }
         if (wrapValues.material() != null) {
             meta.getPersistentDataContainer().set(originalMaterialKey, PersistentDataType.STRING, wrapValues.material());
         }
@@ -631,6 +713,12 @@ public class WrapperImpl implements Wrapper {
         }
         if (wrapValues.trimMaterial() != null) {
             meta.getPersistentDataContainer().set(originalTrimMaterialKey, PersistentDataType.STRING, wrapValues.trimMaterial());
+        }
+        if (wrapValues.equippableSlot() != null) {
+            meta.getPersistentDataContainer().set(originalEquippableSlotKey, PersistentDataType.STRING, wrapValues.equippableSlot().name());
+        }
+        if (wrapValues.equippableModel() != null) {
+            meta.getPersistentDataContainer().set(originalEquippableModelKey, PersistentDataType.STRING, wrapValues.equippableModel().toString());
         }
         editing.setItemMeta(meta);
         return editing;
@@ -686,7 +774,7 @@ public class WrapperImpl implements Wrapper {
     @Override
     public boolean isCustomAttributes(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        var data = container.get(customAttributes, PersistentDataType.BOOLEAN);
+        var data = container.get(customAttributesKey, PersistentDataType.BOOLEAN);
         if (data == null) {
             return false;
         }
@@ -696,7 +784,10 @@ public class WrapperImpl implements Wrapper {
     @Override
     public boolean isValid(ItemStack item, Wrap wrap) {
         return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), getRealModelId(item)) && isValidColor(wrap.getRange().getColor(), getRealColor(item)) &&
-                isValidType(wrap.getRange().getItemsAdder(), getRealItemsAdderId(item)) && isValidType(wrap.getRange().getOraxen(), getRealOraxenId(item)) && isValidType(wrap.getRange().getMythic(), getRealMythicId(item)));
+                isValidType(wrap.getRange().getItemsAdder(), getRealItemsAdderId(item))
+                && isValidType(wrap.getRange().getOraxen(), getRealOraxenId(item))
+                && isValidType(wrap.getRange().getMythic(), getRealMythicId(item))
+                && isValidType(wrap.getRange().getNexo(), getRealNexoId(item)));
     }
 
     private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
@@ -789,6 +880,19 @@ public class WrapperImpl implements Wrapper {
         return mythicId;
     }
 
+    private String getRealNexoId(ItemStack item) {
+        String nexoId = null;
+        if (getWrap(item) != null) {
+            nexoId = getOriginalNexoId(item);
+        } else if (Bukkit.getPluginManager().getPlugin("Nexo") != null) {
+            var id = NexoItems.idFromItem(item);
+            if (id != null) {
+                nexoId = id;
+            }
+        }
+        return nexoId;
+    }
+
     @Override
     public boolean isGloballyDisabled(ItemStack item) {
         if (plugin.getConfiguration().getGlobalDisable().getModelId().contains(getRealModelId(item))) {
@@ -804,6 +908,9 @@ public class WrapperImpl implements Wrapper {
             return true;
         }
         if (plugin.getConfiguration().getGlobalDisable().getMythicId().contains(getRealMythicId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getNexoId().contains(getRealNexoId(item))) {
             return true;
         }
         return false;

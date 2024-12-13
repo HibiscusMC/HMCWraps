@@ -11,6 +11,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
@@ -43,10 +44,14 @@ public class SerializableItem {
     private @Nullable String skullTexture;
     private @Nullable String trim;
     private @Nullable String trimMaterial;
+    private @Nullable String equippableSlot;
+    private @Nullable String equippableModel;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
-                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner, @Nullable String skullTexture, @Nullable String trim, @Nullable String trimMaterial) {
+                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner,
+                            @Nullable String skullTexture, @Nullable String trim, @Nullable String trimMaterial,
+                            @Nullable String equippableSlot, @Nullable String equippableModel) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -62,6 +67,22 @@ public class SerializableItem {
         this.skullTexture = skullTexture;
         this.trim = trim;
         this.trimMaterial = trimMaterial;
+        this.equippableSlot = equippableSlot;
+        this.equippableModel = equippableModel;
+    }
+
+    public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
+                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
+                            @Nullable String color) {
+        this.id = id;
+        this.name = name;
+        this.glow = glow;
+        this.lore = lore;
+        this.flags = flags;
+        this.modelId = modelId;
+        this.enchantments = enchantments;
+        this.amount = amount;
+        this.color = color;
     }
 
     public SerializableItem() {
@@ -238,6 +259,27 @@ public class SerializableItem {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getTrimMaterialFromHook(getId());
         }
         return trimMaterial;
+    }
+
+    @Nullable
+    public EquipmentSlot getEquippableSlot() {
+        if (equippableSlot == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getEquippableSlotFromHook(getId());
+        }
+        try {
+            return EquipmentSlot.valueOf(equippableSlot);
+        } catch (IllegalArgumentException e) {
+            Bukkit.getLogger().warning("Failed to parse equippable slot " + equippableSlot + "! It seems to not be a valid slot. Please check your configuration!");
+        }
+        return null;
+    }
+
+    @Nullable
+    public NamespacedKey getEquippableModel() {
+        if (equippableModel == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getEquippableModelFromHook(getId());
+        }
+        return NamespacedKey.fromString(equippableModel);
     }
 
 }

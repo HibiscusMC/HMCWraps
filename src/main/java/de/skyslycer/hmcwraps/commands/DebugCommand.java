@@ -130,7 +130,7 @@ public class DebugCommand {
         plugin.getLogger().info("Debug information (" + debuggable.getClass().getSimpleName() + "): \n" + DebugCreator.debugToJson(debuggable));
         StringUtil.sendComponent(sender, Component.text("Debug information (" + debuggable.getClass().getSimpleName() + ") printed to console.").color(NamedTextColor.GREEN));
         if (upload) {
-            plugin.getFoliaLib().getImpl().runAsync((ignored) -> {
+            plugin.getFoliaLib().getScheduler().runAsync((ignored) -> {
                 var link = DebugCreator.upload(DebugCreator.debugToJson(debuggable), "json");
                 handleLink(sender, link.orElse(null), debuggable.getClass().getSimpleName());
             });
