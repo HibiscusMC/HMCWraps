@@ -9,7 +9,7 @@ dependencyResolutionManagement {
             library("nexo", "com.nexomc:nexo:0.1.0-dev.14")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
-            library("mythicmobs", "io.lumine:Mythic-Dist:5.7.1")
+            library("mythicmobs", "io.lumine:Mythic-Dist:5.7.2")
             library("annotations", "org.jetbrains:annotations:26.0.1")
         }
         create("libs") {
