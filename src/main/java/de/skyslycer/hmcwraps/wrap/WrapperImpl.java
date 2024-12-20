@@ -118,6 +118,9 @@ public class WrapperImpl implements Wrapper {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
         var originalData = getOriginalData(item);
+        if (wrap != null && currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
+            switchFromAlternative(editing, originalData.material());
+        }
         var meta = editing.getItemMeta();
         var originalName = meta.getDisplayName();
         var originalModelId = -1;
@@ -162,9 +165,6 @@ public class WrapperImpl implements Wrapper {
             }
         }
         if (wrap != null) {
-            if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
-                switchFromAlternative(editing, originalData.material());
-            }
             resetFakeDurability(item, editing);
             var originalActualName = currentWrap == null ? originalName : originalData.name();
             if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
