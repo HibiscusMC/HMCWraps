@@ -233,11 +233,14 @@ public class WrapperImpl implements Wrapper {
                     plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
                 }
             }
-            if (VersionUtil.equippableSupported() && wrap.getEquippableSlot() != null && wrap.getEquippableModel() != null) {
+            if (VersionUtil.equippableSupported() && ((wrap.getEquippableSlot() != null && wrap.getEquippableModel() != null)
+                    || (wrap.getEquippableSlot() != null && wrap.getEquippableSlot() == EquipmentSlot.HEAD))) {
                 var newMeta = editing.getItemMeta();
                 var equippable = newMeta.getEquippable();
                 equippable.setSlot(wrap.getEquippableSlot());
-                equippable.setModel(wrap.getEquippableModel());
+                if (wrap.getEquippableModel() != null) {
+                    equippable.setModel(wrap.getEquippableModel());
+                }
                 newMeta.setEquippable(equippable);
                 editing.setItemMeta(newMeta);
             }
@@ -269,10 +272,13 @@ public class WrapperImpl implements Wrapper {
             }
             if (VersionUtil.equippableSupported()) {
                 var newMeta = editing.getItemMeta();
-                if (originalData.equippableSlot() != null && originalData.equippableModel() != null) {
+                if ((originalData.equippableSlot() != null && originalData.equippableModel() != null)
+                        || (originalData.equippableSlot() != null && originalData.equippableSlot() == EquipmentSlot.HEAD)) {
                     var equippable = newMeta.getEquippable();
                     equippable.setSlot(originalData.equippableSlot());
-                    equippable.setModel(originalData.equippableModel());
+                    if (originalData.equippableModel() != null) {
+                        equippable.setModel(originalData.equippableModel());
+                    }
                     newMeta.setEquippable(equippable);
                 } else {
                     newMeta.setEquippable(null);
