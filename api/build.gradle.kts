@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:2.0.0")
     compileOnly(depends.spigot)
     compileOnly(depends.annotations)
     compileOnly(depends.placeholderapi)
