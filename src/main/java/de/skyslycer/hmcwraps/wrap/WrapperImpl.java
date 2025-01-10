@@ -255,6 +255,9 @@ public class WrapperImpl implements Wrapper {
                 newMeta.setEnchantmentGlintOverride(wrap.isGlintOverride());
                 editing.setItemMeta(newMeta);
             }
+            var newMeta = editing.getItemMeta();
+            newMeta.setCustomModelData(wrap.getModelId());
+            editing.setItemMeta(newMeta);
             if (wrap.getWrapNbt() != null) {
                 WrapNBTUtil.wrap(editing, StringUtil.replacePlaceholders(player, wrap.getWrapNbt()));
             }
@@ -304,6 +307,9 @@ public class WrapperImpl implements Wrapper {
             if (originalData.material() != null && !originalData.material().isBlank()) {
                 switchFromAlternative(editing, originalData.material());
             }
+            var newMeta = editing.getItemMeta();
+            newMeta.setCustomModelData(originalData.modelId());
+            editing.setItemMeta(newMeta);
             resetFakeDurability(item, editing);
             WrapNBTUtil.unwrap(editing);
             if (originalData.itemsAdder() != null || (currentWrap != null && currentWrap.getId().startsWith("itemsadder:"))) {
