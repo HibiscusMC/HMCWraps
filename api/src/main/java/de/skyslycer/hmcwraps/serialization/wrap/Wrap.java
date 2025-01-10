@@ -44,6 +44,7 @@ public class Wrap extends SerializableItem {
     private @Nullable Integer sort;
     private @Nullable Boolean upsideDownPreview;
     private @Nullable Boolean applyNameOnlyEmpty;
+    private @Nullable Boolean glintOverride;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -178,6 +179,11 @@ public class Wrap extends SerializableItem {
         return applyNameOnlyEmpty;
     }
 
+    @Nullable
+    public Boolean isGlintOverride() {
+        return glintOverride;
+    }
+
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player, type);
@@ -199,7 +205,7 @@ public class Wrap extends SerializableItem {
 
     public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder,
                              String oraxen, String mythic, String nexo, String material, String trim, String trimMaterial,
-                             NamespacedKey equippableModel, EquipmentSlot equippableSlot) {
+                             NamespacedKey equippableModel, EquipmentSlot equippableSlot, Boolean glintOverride) {
     }
 
 }
