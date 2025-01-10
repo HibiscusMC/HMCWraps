@@ -47,4 +47,16 @@ public class VersionUtil {
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 3;
     }
 
+    /**
+     * Check if data components are supported.
+     *
+     * @return If the components are supported
+     */
+    public static boolean hasDataComponents() {
+        if (getMinorMinecraftVersion() > 20) {
+            return true;
+        }
+        return getMinorMinecraftVersion() == 20 && getPatchMinecraftVersion() >= 5;
+    }
+
 }
