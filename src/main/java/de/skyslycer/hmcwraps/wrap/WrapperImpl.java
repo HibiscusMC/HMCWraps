@@ -189,9 +189,6 @@ public class WrapperImpl implements Wrapper {
                     } catch (IllegalArgumentException ignored) { }
                 }
             }
-            if (wrap.getArmorImitationType() != null && wrap.getArmorImitationType().equalsIgnoreCase("LEATHER")) {
-                meta.addItemFlags(ItemFlag.HIDE_DYE);
-            }
             editing.setItemMeta(meta);
             var changedDurability = false;
             if (MaterialUtil.getAlternative(wrap.getArmorImitationType(), editing.getType()) != editing.getType()) {
@@ -232,6 +229,9 @@ public class WrapperImpl implements Wrapper {
             if (wrap.getColor() != null && editing.getItemMeta() instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
                 leatherMeta.setColor(wrap.getColor());
+                if (wrap.getArmorImitationType() != null && wrap.getArmorImitationType().equalsIgnoreCase("LEATHER")) {
+                    leatherMeta.addItemFlags(ItemFlag.HIDE_DYE);
+                }
                 editing.setItemMeta(leatherMeta);
             }
             if (VersionUtil.trimsSupported() && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
