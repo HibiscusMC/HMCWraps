@@ -46,7 +46,7 @@ public class CommandRegister {
                 (args, sender, command) -> plugin.getWrapsLoader().getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null).map(Wrap::getUuid).toList());
         commandHandler.getAutoCompleter()
                 .registerSuggestion("wraps", ((args, sender, command) -> plugin.getWrapsLoader().getWraps().values().stream().map(Wrap::getUuid).toList()));
-        commandHandler.getAutoCompleter().registerSuggestion("upload", "-upload");
+        commandHandler.getAutoCompleter().registerSuggestion("upload", "-noupload");
         commandHandler.getAutoCompleter().registerSuggestion("actions", "-actions");
         commandHandler.getAutoCompleter().registerSuggestion("file", (args, sender, command) -> {
             var current = args.get(3);

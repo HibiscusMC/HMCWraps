@@ -31,12 +31,16 @@ public class DebugCommand {
         this.plugin = plugin;
     }
 
+    private boolean isUpload(String upload) {
+        return upload == null || !upload.equalsIgnoreCase("-noupload");
+    }
+
     @Subcommand("debug info")
     @Description("Debugs plugin and server information.")
     @AutoComplete("@upload")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugInformation(CommandSender sender, @Optional String upload) {
-        uploadAndSend(sender, DebugCreator.createDebugInformation(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
+        uploadAndSend(sender, DebugCreator.createDebugInformation(plugin), isUpload(upload));
     }
 
     @Subcommand("debug config")
@@ -44,7 +48,7 @@ public class DebugCommand {
     @AutoComplete("@upload")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugConfig(CommandSender sender, @Optional String upload) {
-        uploadAndSend(sender, DebugCreator.createDebugConfig(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
+        uploadAndSend(sender, DebugCreator.createDebugConfig(plugin), isUpload(upload));
     }
 
     @Subcommand("debug wraps")
@@ -52,7 +56,7 @@ public class DebugCommand {
     @AutoComplete("@upload")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugWraps(CommandSender sender, @Optional String upload) {
-        uploadAndSend(sender, DebugCreator.createDebugWraps(plugin), upload != null && upload.equalsIgnoreCase("-upload"));
+        uploadAndSend(sender, DebugCreator.createDebugWraps(plugin), isUpload(upload));
     }
 
     @Subcommand("debug wrap")
@@ -60,7 +64,7 @@ public class DebugCommand {
     @AutoComplete("@wraps @upload")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugWrap(CommandSender sender, Wrap wrap, @Optional String upload) {
-        uploadAndSend(sender, DebugCreator.createDebugWrap(plugin, wrap), upload != null && upload.equalsIgnoreCase("-upload"));
+        uploadAndSend(sender, DebugCreator.createDebugWrap(plugin, wrap), isUpload(upload));
     }
 
     @Subcommand("debug player")
@@ -68,7 +72,7 @@ public class DebugCommand {
     @AutoComplete("@players @upload")
     @CommandPermission(DEBUG_PERMISSION)
     public void onDebugPlayer(CommandSender sender, @Default("self") Player player, @Optional String upload) {
-        uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), upload != null && upload.equalsIgnoreCase("-upload"));
+        uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), isUpload(upload));
     }
 
     @Subcommand("debug item")
@@ -81,7 +85,7 @@ public class DebugCommand {
             plugin.getMessageHandler().send(player, Messages.NO_ITEM);
             return;
         }
-        uploadAndSend(sender, DebugCreator.createDebugItemData(plugin, item), upload != null && upload.equalsIgnoreCase("-upload"));
+        uploadAndSend(sender, DebugCreator.createDebugItemData(plugin, item), isUpload(upload));
     }
 
     @Subcommand("debug log")

@@ -189,6 +189,9 @@ public class WrapperImpl implements Wrapper {
                     } catch (IllegalArgumentException ignored) { }
                 }
             }
+            if (wrap.getArmorImitationType() != null && wrap.getArmorImitationType().equalsIgnoreCase("LEATHER")) {
+                meta.addItemFlags(ItemFlag.HIDE_DYE);
+            }
             editing.setItemMeta(meta);
             var changedDurability = false;
             if (MaterialUtil.getAlternative(wrap.getArmorImitationType(), editing.getType()) != editing.getType()) {
