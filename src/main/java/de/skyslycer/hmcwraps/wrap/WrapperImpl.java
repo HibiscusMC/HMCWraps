@@ -229,14 +229,20 @@ public class WrapperImpl implements Wrapper {
                 leatherMeta.setColor(wrap.getColor());
                 editing.setItemMeta(leatherMeta);
             }
-            if (VersionUtil.trimsSupported() && wrap.getTrim() != null && wrap.getTrimMaterial() != null && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
-                try {
-                    armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
-                    armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-                    armorMeta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
+            if (VersionUtil.trimsSupported() && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
+                if (wrap.isRemoveTrim() == Boolean.TRUE) {
+                    armorMeta.setTrim(null);
                     editing.setItemMeta(armorMeta);
-                } catch (IllegalArgumentException exception) {
-                    plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+                }
+                if (wrap.getTrim() != null && wrap.getTrimMaterial() != null) {
+                    try {
+                        armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
+                        armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                        armorMeta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
+                        editing.setItemMeta(armorMeta);
+                    } catch (IllegalArgumentException exception) {
+                        plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+                    }
                 }
             }
             if (VersionUtil.equippableSupported() && ((wrap.getEquippableSlot() != null && wrap.getEquippableModel() != null)

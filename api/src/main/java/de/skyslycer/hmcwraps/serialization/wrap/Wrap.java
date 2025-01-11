@@ -45,6 +45,7 @@ public class Wrap extends SerializableItem {
     private @Nullable Boolean upsideDownPreview;
     private @Nullable Boolean applyNameOnlyEmpty;
     private @Nullable Boolean glintOverride;
+    private @Nullable Boolean removeTrim;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -182,6 +183,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public Boolean isGlintOverride() {
         return glintOverride;
+    }
+
+    @Nullable
+    public Boolean isRemoveTrim() {
+        return removeTrim;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
