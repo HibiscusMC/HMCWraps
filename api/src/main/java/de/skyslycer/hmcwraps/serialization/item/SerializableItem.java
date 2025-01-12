@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.serialization.item;
 
+import com.google.common.collect.ImmutableMultimap;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
@@ -162,6 +163,11 @@ public class SerializableItem {
             } catch (IllegalArgumentException e) {
                 plugin.getLogger().warning("Failed to set trim " + getTrim() + " and material " + getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
             }
+        }
+        if (VersionUtil.hasDataComponents() && item.getItemMeta().getItemFlags().contains(ItemFlag.HIDE_ATTRIBUTES)) {
+            var meta = item.getItemMeta();
+            meta.setAttributeModifiers(ImmutableMultimap.of());
+            item.setItemMeta(meta);
         }
         if (getNbt() != null) {
             try {

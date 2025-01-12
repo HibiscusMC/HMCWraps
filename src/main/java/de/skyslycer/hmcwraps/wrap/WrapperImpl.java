@@ -57,6 +57,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey trimsUsedKey;
     private final NamespacedKey originalEquippableSlotKey;
     private final NamespacedKey originalEquippableModelKey;
+    private final NamespacedKey originalGlintKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -83,6 +84,7 @@ public class WrapperImpl implements Wrapper {
         trimsUsedKey = new NamespacedKey(plugin, "trims-used");
         originalEquippableSlotKey = new NamespacedKey(plugin, "original-equippable-slot");
         originalEquippableModelKey = new NamespacedKey(plugin, "original-equippable-model");
+        originalGlintKey = new NamespacedKey(plugin, "original-glint");
     }
 
     @Override
@@ -128,6 +130,7 @@ public class WrapperImpl implements Wrapper {
         var originalOraxenId = getOriginalOraxenId(item);
         var originalMythicId = getOriginalMythicId(item);
         var originalNexoId = getOriginalNexoId(item);
+        Boolean originalGlintOverride = VersionUtil.hasDataComponents() && meta.hasEnchantmentGlintOverride() ? meta.getEnchantmentGlintOverride() : null;
         String originalTrimMaterial = null;
         String originalTrim = null;
         if (VersionUtil.trimsSupported() && meta instanceof ArmorMeta armorMeta && armorMeta.getTrim() != null) {
@@ -160,12 +163,17 @@ public class WrapperImpl implements Wrapper {
             if (originalData.flags() != null) {
                 meta.addItemFlags(originalData.flags().toArray(ItemFlag[]::new));
             }
+            if (VersionUtil.hasDataComponents()) {
+                meta.setEnchantmentGlintOverride(originalData.glintOverride());
+            }
         }
         if (wrap != null) {
+            editing.setItemMeta(meta);
             if (currentWrap != null && originalData.material() != null && !originalData.material().isBlank()) {
                 switchFromAlternative(editing, originalData.material());
             }
             resetFakeDurability(item, editing);
+            meta = editing.getItemMeta();
             var originalActualName = currentWrap == null ? originalName : originalData.name();
             if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())).replace("%originalname%", originalActualName == null ? "" : originalActualName));
@@ -221,24 +229,41 @@ public class WrapperImpl implements Wrapper {
             if (wrap.getColor() != null && editing.getItemMeta() instanceof LeatherArmorMeta leatherMeta) {
                 originalColor = leatherMeta.getColor();
                 leatherMeta.setColor(wrap.getColor());
+                if (wrap.getArmorImitationType() != null && wrap.getArmorImitationType().equalsIgnoreCase("LEATHER")) {
+                    leatherMeta.addItemFlags(ItemFlag.HIDE_DYE);
+                }
                 editing.setItemMeta(leatherMeta);
             }
-            if (VersionUtil.trimsSupported() && wrap.getTrim() != null && wrap.getTrimMaterial() != null && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
-                try {
-                    armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
-                    armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-                    armorMeta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
+            if (VersionUtil.trimsSupported() && editing.getItemMeta() instanceof ArmorMeta armorMeta) {
+                if (wrap.isRemoveTrim() == Boolean.TRUE) {
+                    armorMeta.setTrim(null);
                     editing.setItemMeta(armorMeta);
-                } catch (IllegalArgumentException exception) {
-                    plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+                }
+                if (wrap.getTrim() != null && wrap.getTrimMaterial() != null) {
+                    try {
+                        armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())), Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
+                        armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+                        armorMeta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
+                        editing.setItemMeta(armorMeta);
+                    } catch (IllegalArgumentException exception) {
+                        plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim() + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
+                    }
                 }
             }
-            if (VersionUtil.equippableSupported() && wrap.getEquippableSlot() != null && wrap.getEquippableModel() != null) {
+            if (VersionUtil.equippableSupported() && ((wrap.getEquippableSlot() != null && wrap.getEquippableModel() != null)
+                    || (wrap.getEquippableSlot() != null && wrap.getEquippableSlot() == EquipmentSlot.HEAD))) {
                 var newMeta = editing.getItemMeta();
                 var equippable = newMeta.getEquippable();
                 equippable.setSlot(wrap.getEquippableSlot());
-                equippable.setModel(wrap.getEquippableModel());
+                if (wrap.getEquippableModel() != null) {
+                    equippable.setModel(wrap.getEquippableModel());
+                }
                 newMeta.setEquippable(equippable);
+                editing.setItemMeta(newMeta);
+            }
+            if (VersionUtil.hasDataComponents() && wrap.isGlintOverride() != null) {
+                var newMeta = editing.getItemMeta();
+                newMeta.setEnchantmentGlintOverride(wrap.isGlintOverride());
                 editing.setItemMeta(newMeta);
             }
             if (wrap.getWrapNbt() != null) {
@@ -269,14 +294,22 @@ public class WrapperImpl implements Wrapper {
             }
             if (VersionUtil.equippableSupported()) {
                 var newMeta = editing.getItemMeta();
-                if (originalData.equippableSlot() != null && originalData.equippableModel() != null) {
+                if ((originalData.equippableSlot() != null && originalData.equippableModel() != null)
+                        || (originalData.equippableSlot() != null && originalData.equippableSlot() == EquipmentSlot.HEAD)) {
                     var equippable = newMeta.getEquippable();
                     equippable.setSlot(originalData.equippableSlot());
-                    equippable.setModel(originalData.equippableModel());
+                    if (originalData.equippableModel() != null) {
+                        equippable.setModel(originalData.equippableModel());
+                    }
                     newMeta.setEquippable(equippable);
                 } else {
                     newMeta.setEquippable(null);
                 }
+                editing.setItemMeta(newMeta);
+            }
+            if (VersionUtil.hasDataComponents()) {
+                var newMeta = editing.getItemMeta();
+                newMeta.setEnchantmentGlintOverride(originalData.glintOverride());
                 editing.setItemMeta(newMeta);
             }
             if (originalData.material() != null && !originalData.material().isBlank()) {
@@ -294,7 +327,7 @@ public class WrapperImpl implements Wrapper {
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
                 originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalNexoId, originalMaterial,
-                originalTrim, originalTrimMaterial, originalEquippableModel, originalEquippableSlot));
+                originalTrim, originalTrimMaterial, originalEquippableModel, originalEquippableSlot, originalGlintOverride));
     }
 
     private void setItemsAdderNBT(ItemStack item, String id) {
@@ -483,7 +516,7 @@ public class WrapperImpl implements Wrapper {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
                 getOriginalMythicId(item), getOriginalNexoId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item),
-                getOriginalEquippableModel(item), getOriginalEquippableSlot(item));
+                getOriginalEquippableModel(item), getOriginalEquippableSlot(item), getOriginalGlint(item));
     }
 
     private String getOriginalTrim(ItemStack item) {
@@ -674,6 +707,11 @@ public class WrapperImpl implements Wrapper {
         return value == null ? "" : value;
     }
 
+    private Boolean getOriginalGlint(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        return container.get(originalGlintKey, PersistentDataType.BOOLEAN);
+    }
+
     @Override
     public ItemStack setOriginalData(ItemStack item, WrapValues wrapValues) {
         var editing = item.clone();
@@ -719,6 +757,9 @@ public class WrapperImpl implements Wrapper {
         }
         if (wrapValues.equippableModel() != null) {
             meta.getPersistentDataContainer().set(originalEquippableModelKey, PersistentDataType.STRING, wrapValues.equippableModel().toString());
+        }
+        if (wrapValues.glintOverride() != null) {
+            meta.getPersistentDataContainer().set(originalGlintKey, PersistentDataType.BOOLEAN, wrapValues.glintOverride());
         }
         editing.setItemMeta(meta);
         return editing;
