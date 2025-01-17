@@ -11,6 +11,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.triumphteam.gui.guis.BaseGui;
 import io.lumine.mythic.bukkit.MythicBukkit;
@@ -118,7 +119,8 @@ public class WrapCommand {
         var current = System.nanoTime();
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             plugin.getFoliaLib().getScheduler().runAtEntity(player, (ignored) -> {
-                if (player.getOpenInventory().getTopInventory().getHolder() instanceof BaseGui) {
+                var topInventory = VersionUtil.getTopInventory(player);
+                if (topInventory != null && topInventory.getHolder() instanceof BaseGui) {
                     player.closeInventory();
                 }
             });

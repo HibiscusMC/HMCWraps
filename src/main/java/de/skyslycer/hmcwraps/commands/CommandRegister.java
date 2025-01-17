@@ -95,7 +95,14 @@ public class CommandRegister {
                             .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : null;
                 });
         commandHandler.register(new WrapCommand(plugin), new DebugCommand(plugin));
+        if (isTestModeEnabled()) {
+            commandHandler.register(new TestCommand(plugin));
+        }
         commandHandler.registerBrigadier();
+    }
+
+    private static boolean isTestModeEnabled() {
+        return Files.exists(Path.of("plugins", "HMCWraps", "testmode"));
     }
 
 }

@@ -5,6 +5,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +44,7 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        if (player.getOpenInventory().getType() == InventoryType.SMITHING && (plugin.getWrapper().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().isTrimsUsed(event.getCursor()))) {
+        if (VersionUtil.getOpenInventoryType(player) == InventoryType.SMITHING && (plugin.getWrapper().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().isTrimsUsed(event.getCursor()))) {
             event.setCancelled(true);
             plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
             return;
@@ -59,16 +60,16 @@ public class InventoryClickListener implements Listener {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> {
                 var slot = event.getRawSlot();
                 plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
-                    var updatedItem = PermissionUtil.check(plugin, player, event.getView().getItem(slot));
-                    if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
-                    event.getView().setItem(slot, updatedItem);
+                    var updatedItem = PermissionUtil.check(plugin, player, VersionUtil.getItemFromSlot(event, slot));
+                    if (updatedItem == null || updatedItem.equals(VersionUtil.getItemFromSlot(event, slot))) return;
+                    VersionUtil.setItemInSlot(event, slot, updatedItem);
                 }, 1);
             }
             case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 if (event.getClickedInventory() == player.getInventory()) {
-                    PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getTopInventory());
+                    PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getTopInventory(player));
                 } else {
-                    PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getBottomInventory());
+                    PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getBottomInventory(player));
                 }
             }, 1);
         }
@@ -77,7 +78,7 @@ public class InventoryClickListener implements Listener {
             var slot = event.getHotbarButton();
             plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
-                if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
+                if (updatedItem == null || updatedItem.equals(VersionUtil.getItemFromSlot(event, slot))) return;
                 player.getInventory().setItem(slot, updatedItem);
             }, 1);
         }
@@ -158,7 +159,8 @@ public class InventoryClickListener implements Listener {
     }
 
     private boolean isForbiddenInventory(InventoryClickEvent event) {
-        return FORBIDDEN_INVENTORIES.contains(event.getWhoClicked().getOpenInventory().getType()) || (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.CRAFTING);
+        return FORBIDDEN_INVENTORIES.contains(VersionUtil.getOpenInventoryType((Player) event.getWhoClicked()))
+                || (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.CRAFTING);
     }
 
 }
