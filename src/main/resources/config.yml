@@ -239,10 +239,13 @@ wrapping:
 # The inventory (/wraps)
 inventory:
   # The sort order by which the wraps in the inventory will be sorted
+  # PERMISSION: Sorts by permission, the player has access to first
+  # SORT_ID: Sorts by the sort id, lower numbers first. Example: sort: 3
+  # MODEL_ID: Sorts by model id, lower numbers first
   sort-order:
-    - 'PERMISSION' # The items the player has access to will be shown first
-    - 'SORT_ID' # You can define a sort id on a wrap, lower numbers will be shown first. Example: sort: 3
-    - 'MODEL_ID' # Sorted by model id, lower numbers will be shown first
+    - 'PERMISSION'
+    - 'SORT_ID'
+    - 'MODEL_ID'
   # Shortcut settings
   shortcut:
     # If the shortcut to open the wrap inventory when shift & right-clicking should be enabled
