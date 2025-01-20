@@ -129,12 +129,16 @@ public class InventoryClickListener implements Listener {
         if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getOriginalData(target).material().isEmpty()) {
             type = Material.valueOf(plugin.getWrapper().getOriginalData(target).material());
         }
+        var currentWrap = plugin.getWrapper().getWrap(target);
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
                 .isPermissionPhysical())) {
             for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(type)) {
                 if (wrappableItem.getWraps().containsValue(wrap)) {
-                    if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && plugin.getWrapper().getWrap(target) != null) {
+                    if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && currentWrap != null) {
                         plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
+                        return;
+                    }
+                    if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && !plugin.getConfiguration().getWrapping().getRewrap().isSamePhysicalEnabled()) {
                         return;
                     }
                     event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player));

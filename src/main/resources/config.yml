@@ -230,6 +230,11 @@ wrapping:
     virtual-enabled: true
     # ...physical wrapping
     physical-enabled: true
+    # If the player should be able to rewrap items that are already wrapped with the same wrap for...
+    # ...virtual wrapping
+    same-virtual-enabled: false
+    # ...physical wrapping
+    same-physical-enabled: false
 
 # The inventory (/wraps)
 inventory:
