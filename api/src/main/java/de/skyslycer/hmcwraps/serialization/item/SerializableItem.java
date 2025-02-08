@@ -273,7 +273,7 @@ public class SerializableItem {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getEquippableSlotFromHook(getId());
         }
         try {
-            return EquipmentSlot.valueOf(equippableSlot);
+            return EquipmentSlot.valueOf(equippableSlot.toUpperCase());
         } catch (IllegalArgumentException e) {
             Bukkit.getLogger().warning("Failed to parse equippable slot " + equippableSlot + "! It seems to not be a valid slot. Please check your configuration!");
         }
