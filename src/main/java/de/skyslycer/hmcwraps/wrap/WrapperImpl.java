@@ -520,6 +520,9 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public boolean isTrimsUsed(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return false;
+        }
         var meta = item.getItemMeta();
         if (meta == null) {
             return false;
