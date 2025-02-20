@@ -163,8 +163,9 @@ public class InventoryClickListener implements Listener {
     }
 
     private boolean isForbiddenInventory(InventoryClickEvent event) {
-        return FORBIDDEN_INVENTORIES.contains(VersionUtil.getOpenInventoryType((Player) event.getWhoClicked()))
-                || (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.CRAFTING);
+        var inventoryType = VersionUtil.getOpenInventoryType((Player) event.getWhoClicked());
+        return FORBIDDEN_INVENTORIES.contains(inventoryType)
+                || (event.getClickedInventory() != null && inventoryType == InventoryType.CRAFTING);
     }
 
 }
