@@ -116,4 +116,19 @@ public abstract class ItemHook {
         return null;
     }
 
+    /**
+     * Get the item model key corresponding to the input.
+     *
+     * @param id The input
+     * @return The item model key
+     */
+    @Nullable
+    public NamespacedKey getItemModel(String id) {
+        var stack = get(id);
+        if (VersionUtil.itemModelSupported() && stack != null && stack.getItemMeta().hasItemModel()) {
+            return stack.getItemMeta().getItemModel();
+        }
+        return null;
+    }
+
 }

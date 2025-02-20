@@ -58,6 +58,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey originalEquippableSlotKey;
     private final NamespacedKey originalEquippableModelKey;
     private final NamespacedKey originalGlintKey;
+    private final NamespacedKey originalItemModelKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -85,6 +86,7 @@ public class WrapperImpl implements Wrapper {
         originalEquippableSlotKey = new NamespacedKey(plugin, "original-equippable-slot");
         originalEquippableModelKey = new NamespacedKey(plugin, "original-equippable-model");
         originalGlintKey = new NamespacedKey(plugin, "original-glint");
+        originalItemModelKey = new NamespacedKey(plugin, "original-item-model");
     }
 
     @Override
@@ -133,6 +135,7 @@ public class WrapperImpl implements Wrapper {
         Boolean originalGlintOverride = VersionUtil.hasDataComponents() && meta.hasEnchantmentGlintOverride() ? meta.getEnchantmentGlintOverride() : null;
         String originalTrimMaterial = null;
         String originalTrim = null;
+        NamespacedKey originalItemModel = null;
         if (VersionUtil.trimsSupported() && meta instanceof ArmorMeta armorMeta && armorMeta.getTrim() != null) {
             originalTrim = armorMeta.getTrim().getPattern().getKey().toString();
             originalTrimMaterial = armorMeta.getTrim().getMaterial().getKey().toString();
@@ -142,6 +145,9 @@ public class WrapperImpl implements Wrapper {
         if (VersionUtil.equippableSupported() && meta.hasEquippable()) {
             originalEquippableModel = meta.getEquippable().getModel();
             originalEquippableSlot = meta.getEquippable().getSlot();
+        }
+        if (VersionUtil.itemModelSupported() && meta.hasItemModel()) {
+            originalItemModel = meta.getItemModel();
         }
         Color originalColor = null;
         if (meta.hasCustomModelData()) {
@@ -261,6 +267,11 @@ public class WrapperImpl implements Wrapper {
                 newMeta.setEquippable(equippable);
                 editing.setItemMeta(newMeta);
             }
+            if (VersionUtil.itemModelSupported() && wrap.getItemModel() != null) {
+                var newMeta = editing.getItemMeta();
+                newMeta.setItemModel(wrap.getItemModel());
+                editing.setItemMeta(newMeta);
+            }
             if (VersionUtil.hasDataComponents() && wrap.isGlintOverride() != null) {
                 var newMeta = editing.getItemMeta();
                 newMeta.setEnchantmentGlintOverride(wrap.isGlintOverride());
@@ -307,6 +318,11 @@ public class WrapperImpl implements Wrapper {
                 }
                 editing.setItemMeta(newMeta);
             }
+            if (VersionUtil.itemModelSupported()) {
+                var newMeta = editing.getItemMeta();
+                newMeta.setItemModel(originalData.itemModel());
+                editing.setItemMeta(newMeta);
+            }
             if (VersionUtil.hasDataComponents()) {
                 var newMeta = editing.getItemMeta();
                 newMeta.setEnchantmentGlintOverride(originalData.glintOverride());
@@ -327,7 +343,7 @@ public class WrapperImpl implements Wrapper {
         }
         return setOriginalData(editing, new WrapValues(originalModelId, originalColor, originalName, originalLore,
                 originalFlags, originalItemsAdderId, originalOraxenId, originalMythicId, originalNexoId, originalMaterial,
-                originalTrim, originalTrimMaterial, originalEquippableModel, originalEquippableSlot, originalGlintOverride));
+                originalTrim, originalTrimMaterial, originalEquippableModel, originalEquippableSlot, originalGlintOverride, originalItemModel));
     }
 
     private void setItemsAdderNBT(ItemStack item, String id) {
@@ -516,7 +532,7 @@ public class WrapperImpl implements Wrapper {
         return new WrapValues(getOriginalModelId(item), getOriginalColor(item), getOriginalName(item),
                 getOriginalLore(item), getOriginalFlags(item), getOriginalItemsAdderId(item), getOriginalOraxenId(item),
                 getOriginalMythicId(item), getOriginalNexoId(item), getOriginalMaterial(item), getOriginalTrim(item), getOriginalTrimMaterial(item),
-                getOriginalEquippableModel(item), getOriginalEquippableSlot(item), getOriginalGlint(item));
+                getOriginalEquippableModel(item), getOriginalEquippableSlot(item), getOriginalGlint(item), getOriginalItemModel(item));
     }
 
     private String getOriginalTrim(ItemStack item) {
@@ -527,6 +543,15 @@ public class WrapperImpl implements Wrapper {
     private String getOriginalTrimMaterial(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
         return container.get(originalTrimMaterialKey, PersistentDataType.STRING);
+    }
+
+    private NamespacedKey getOriginalItemModel(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var data = container.get(originalItemModelKey, PersistentDataType.STRING);
+        if (data == null) {
+            return null;
+        }
+        return NamespacedKey.fromString(data);
     }
 
     private EquipmentSlot getOriginalEquippableSlot(ItemStack item) {

@@ -65,6 +65,18 @@ public class VersionUtil {
     }
 
     /**
+     * Check if the item model component is supported. (1.21.4)
+     *
+     * @return If the item model component is supported
+     */
+    public static boolean itemModelSupported() {
+        if (getMinorMinecraftVersion() > 21) {
+            return true;
+        }
+        return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 4;
+    }
+
+    /**
      * Check if data components are supported.
      *
      * @return If the components are supported
