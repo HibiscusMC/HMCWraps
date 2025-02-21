@@ -20,22 +20,22 @@ public class ItemComparator implements Comparator<WrapItemCombination> {
         for (String sortType : inventorySettings.getSortOrder()) {
             switch (sortType.toUpperCase()) {
                 case "PERMISSION" -> {
-                    var permissionCompare = Boolean.compare(wrap2.getWrap().hasPermission(player), wrap1.getWrap().hasPermission(player));
+                    var permissionCompare = Boolean.compare(wrap2.wrap().hasPermission(player), wrap1.wrap().hasPermission(player));
                     if (permissionCompare != 0) {
                         return permissionCompare;
                     }
                 }
                 case "SORT_ID" -> {
-                    var sortId1 = wrap1.getWrap().getSort() != null ? wrap1.getWrap().getSort() : Integer.MAX_VALUE;
-                    var sortId2 = wrap2.getWrap().getSort() != null ? wrap2.getWrap().getSort() : Integer.MAX_VALUE;
+                    var sortId1 = wrap1.wrap().getSort() != null ? wrap1.wrap().getSort() : Integer.MAX_VALUE;
+                    var sortId2 = wrap2.wrap().getSort() != null ? wrap2.wrap().getSort() : Integer.MAX_VALUE;
                     var sortCompare = Integer.compare(sortId1, sortId2);
                     if (sortCompare != 0) {
                         return sortCompare;
                     }
                 }
                 case "MODEL_ID" -> {
-                    int modelData1 = wrap1.getItem().getItemMeta().hasCustomModelData() ? wrap1.getItem().getItemMeta().getCustomModelData() : Integer.MAX_VALUE;
-                    int modelData2 = wrap2.getItem().getItemMeta().hasCustomModelData() ? wrap2.getItem().getItemMeta().getCustomModelData() : Integer.MAX_VALUE;
+                    int modelData1 = wrap1.item().getItemMeta().hasCustomModelData() ? wrap1.item().getItemMeta().getCustomModelData() : Integer.MAX_VALUE;
+                    int modelData2 = wrap2.item().getItemMeta().hasCustomModelData() ? wrap2.item().getItemMeta().getCustomModelData() : Integer.MAX_VALUE;
                     var modelComapre = Integer.compare(modelData1, modelData2);
                     if (modelComapre != 0) {
                         return modelComapre;

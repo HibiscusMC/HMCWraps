@@ -139,17 +139,16 @@ public class GuiBuilder {
         }
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
-        plugin.getCollectionHelper().getItems(type).forEach(it -> it.getWraps()
-                .values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
+        plugin.getCollectionHelper().getItems(type).stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
                     wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player)));
-                }));
+                });
 
         ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);
 
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
-            var wrap = wrapItemCombination.getWrap();
+            var wrap = wrapItemCombination.wrap();
             if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) {
                 var equippedItem = new GuiItem(wrap.getEquippedItem().toItem(plugin, player));
                 equippedItem.setAction(click -> {

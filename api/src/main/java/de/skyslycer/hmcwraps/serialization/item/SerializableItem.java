@@ -166,6 +166,11 @@ public class SerializableItem {
                 plugin.getLogger().warning("Failed to set trim " + getTrim() + " and material " + getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
             }
         }
+        if (VersionUtil.itemModelSupported() && getItemModel() != null) {
+            var itemMeta = item.getItemMeta();
+            itemMeta.setItemModel(getItemModel());
+            item.setItemMeta(itemMeta);
+        }
         if (VersionUtil.hasDataComponents() && getFlags() != null && getFlags().contains("HIDE_ATTRIBUTES")) {
             var meta = item.getItemMeta();
             meta.setAttributeModifiers(ImmutableMultimap.of());

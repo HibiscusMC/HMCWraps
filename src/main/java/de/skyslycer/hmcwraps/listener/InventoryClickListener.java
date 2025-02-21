@@ -3,7 +3,6 @@ package de.skyslycer.hmcwraps.listener;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
-import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import org.bukkit.Material;
@@ -132,22 +131,20 @@ public class InventoryClickListener implements Listener {
         var currentWrap = plugin.getWrapper().getWrap(target);
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
                 .isPermissionPhysical())) {
-            for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(type)) {
-                if (wrappableItem.getWraps().containsValue(wrap)) {
-                    if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && currentWrap != null) {
-                        plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
-                        return;
-                    }
-                    if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && !plugin.getConfiguration().getWrapping().getRewrap().isSamePhysicalEnabled()) {
-                        return;
-                    }
-                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player));
-                    plugin.getActionHandler().pushWrap(wrap, player);
-                    plugin.getActionHandler().pushPhysicalWrap(wrap, player);
-                    event.getWhoClicked().setItemOnCursor(finalCursor);
-                    event.setCancelled(true);
+            var anyMatch = plugin.getCollectionHelper().getItems(type).stream().anyMatch(wrap::equals);
+            if (anyMatch) {
+                if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && currentWrap != null) {
+                    plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
                     return;
                 }
+                if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && !plugin.getConfiguration().getWrapping().getRewrap().isSamePhysicalEnabled()) {
+                    return;
+                }
+                event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player));
+                plugin.getActionHandler().pushWrap(wrap, player);
+                plugin.getActionHandler().pushPhysicalWrap(wrap, player);
+                event.getWhoClicked().setItemOnCursor(finalCursor);
+                event.setCancelled(true);
             }
         }
     }

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 public class WrapsLoaderImpl implements WrapsLoader {
@@ -29,6 +28,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
     private final HMCWrapsPlugin plugin;
 
     private final Map<String, Wrap> wraps = new ConcurrentHashMap<>();
+    private final Map<String, List<String>> typeWraps = new ConcurrentHashMap<>();
     private final Map<String, List<String>> collections = new ConcurrentHashMap<>();
     private final Map<String, WrappableItem> wrappableItems = new ConcurrentHashMap<>();
     private final Set<WrapFile> wrapFiles = new HashSet<>();
@@ -48,7 +48,6 @@ public class WrapsLoaderImpl implements WrapsLoader {
     @Override
     public void unload() {
         wraps.clear();
-        wrappableItems.clear();
         wrapFiles.clear();
         collectionFiles.clear();
     }
@@ -56,43 +55,31 @@ public class WrapsLoaderImpl implements WrapsLoader {
     private void combineFiles() {
         collections.putAll(plugin.getConfiguration().getCollections());
         collectionFiles.stream().filter(Toggleable::isEnabled).forEach(collectionFile -> collections.putAll(collectionFile.getCollections()));
-
-        wrappableItems.putAll(plugin.getConfiguration().getItems());
-        wrapFiles.forEach(it -> it.getItems().forEach((type, wrappableItem) -> {
-            if (wrappableItems.containsKey(type)) {
-                var current = wrappableItems.get(type);
-                wrappableItem.getWraps().values().forEach(wrap -> current.putWrap(String.valueOf(findNextId(current)), wrap));
-                wrappableItems.put(type, current);
-            } else {
-                wrappableItems.put(type, wrappableItem);
-            }
-        }));
-        for (var wrappableItem : wrappableItems.entrySet()) {
-            for (var wrap : wrappableItem.getValue().getWraps().values()) {
-                if (wrap.getUuid() == null) {
-                    plugin.getLogger().warning("A wrap with the material/collection '" + wrappableItem.getKey() + "' doesn't have a " +
-                            "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
-                    continue;
-                }
-                wraps.put(wrap.getUuid(), wrap);
-            }
-        }
+        addWraps(plugin.getConfiguration().getItems());
+        wrapFiles.forEach(it -> addWraps(it.getItems()));
         wraps.remove("-");
     }
 
-    // This is janky, yes. But it works.
-    private int findNextId(WrappableItem wrappableItem) {
-        var id = wrappableItem.getWraps().size() + 1;
-        var level = 0;
-        while (wrappableItem.getWraps().containsKey(String.valueOf(id))) {
-            level++;
-            if (level < 10) {
-                id = ThreadLocalRandom.current().nextInt();
-            } else {
-                id++;
-            }
-        }
-        return id;
+    private void addWraps(Map<String, WrappableItem> items) {
+        items.forEach((type, wrappableItem) -> {
+            wrappableItem.getWraps().values().forEach(wrap -> {
+                if (wrap.getUuid() == null) {
+                    plugin.getLogger().warning("A wrap with the material/collection '" + type + "' doesn't have a " +
+                            "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
+                    return;
+                }
+                if (wraps.containsKey(wrap.getUuid())) {
+                    plugin.getLogger().warning("A wrap with the UUID " + wrap.getUuid() + " already exists! Skipping the wrap for type " + type + ". Please check your configuration files for duplicates.");
+                    return;
+                }
+                wraps.put(wrap.getUuid(), wrap);
+                if (typeWraps.containsKey(type)) {
+                    typeWraps.get(type).add(wrap.getUuid());
+                } else {
+                    typeWraps.put(type, List.of(wrap.getUuid()));
+                }
+            });
+        });
     }
 
     private void loadWrapFiles() {
@@ -148,9 +135,13 @@ public class WrapsLoaderImpl implements WrapsLoader {
     }
 
     @Override
-    @NotNull
-    public Set<CollectionFile> getCollectionFiles() {
-        return collectionFiles;
+    public int getCollectionFileCount() {
+        return collectionFiles.size();
+    }
+
+    @Override
+    public int getWrapFileCount() {
+        return wrapFiles.size();
     }
 
     @Override
@@ -161,14 +152,8 @@ public class WrapsLoaderImpl implements WrapsLoader {
 
     @Override
     @NotNull
-    public Set<WrapFile> getWrapFiles() {
-        return wrapFiles;
-    }
-
-    @Override
-    @NotNull
-    public Map<String, WrappableItem> getWrappableItems() {
-        return wrappableItems;
+    public Map<String, List<String>> getTypeWraps() {
+        return typeWraps;
     }
 
 }

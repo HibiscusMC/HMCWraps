@@ -180,20 +180,19 @@ public class WrapCommand {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
             return;
         }
-        for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(item.getType())) {
-            if (wrappableItem.getWraps().containsValue(wrap)) {
-                item = plugin.getWrapper().setWrap(wrap, item, false, player);
-                item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
-                player.getInventory().setItemInMainHand(item);
-                if (actions == null || !actions.equals("-actions")) {
-                    plugin.getActionHandler().pushWrap(wrap, player);
-                    plugin.getActionHandler().pushVirtualWrap(wrap, player);
-                }
-                plugin.getMessageHandler().send(sender, Messages.COMMAND_WRAP_WRAPPED);
-                return;
-            }
+        var matchingWrapPresent = plugin.getCollectionHelper().getItems(item.getType()).stream().anyMatch(wrap::equals);
+        if (!matchingWrapPresent) {
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_ITEM_NOT_FOR_WRAP);
+            return;
         }
-        plugin.getMessageHandler().send(sender, Messages.COMMAND_ITEM_NOT_FOR_WRAP);
+        item = plugin.getWrapper().setWrap(wrap, item, false, player);
+        item = plugin.getWrapper().setOwningPlayer(item, player.getUniqueId());
+        player.getInventory().setItemInMainHand(item);
+        if (actions == null || !actions.equals("-actions")) {
+            plugin.getActionHandler().pushWrap(wrap, player);
+            plugin.getActionHandler().pushVirtualWrap(wrap, player);
+        }
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_WRAP_WRAPPED);
     }
 
     @Subcommand("unwrap")
@@ -284,9 +283,10 @@ public class WrapCommand {
         });
         set.add(Component.space());
         set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_WRAPS)));
-        plugin.getWrapsLoader().getWrappableItems().forEach((material, wraps) -> {
+        plugin.getWrapsLoader().getTypeWraps().forEach((material, wrapIds) -> {
             set.add(StringUtil.parseComponent(sender, handler.get(Messages.COMMAND_LIST_KEY_FORMAT), Placeholder.parsed("value", material)));
-            wraps.getWraps().forEach((ignored, wrap) -> {
+            wrapIds.forEach((wrapId) -> {
+                var wrap = plugin.getWrapsLoader().getWraps().get(wrapId);
                 var uuid = wrap.getUuid();
                 var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission() == null ? "None" : wrap.getPermission()),
                         Placeholder.parsed("modelid", String.valueOf(wrap.getModelId())),
