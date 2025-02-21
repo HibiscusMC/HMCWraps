@@ -333,7 +333,7 @@ public class WrapperImpl implements Wrapper {
             }
             resetFakeDurability(item, editing);
             WrapNBTUtil.unwrap(editing);
-            if (originalData.itemsAdder() != null || (currentWrap != null && currentWrap.getId().startsWith("itemsadder:"))) {
+            if (originalData.itemsAdder() != null || (currentWrap != null && currentWrap.getId() != null && currentWrap.getId().startsWith("itemsadder:"))) {
                 setItemsAdderNBT(editing, originalData.itemsAdder());
             }
         }

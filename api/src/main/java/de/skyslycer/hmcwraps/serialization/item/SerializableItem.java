@@ -30,8 +30,8 @@ import java.util.UUID;
 @ConfigSerializable
 public class SerializableItem {
 
-    private String id;
-    private String name;
+    private @Nullable String id;
+    private @Nullable String name;
     private @Nullable Boolean glow;
     private @Nullable List<String> lore;
     private @Nullable List<String> flags;
@@ -195,11 +195,17 @@ public class SerializableItem {
     }
 
     public String getName() {
+        if (name == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getNameFromHook(getId());
+        }
         return name;
     }
 
     @Nullable
     public List<String> getLore() {
+        if (lore == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getLoreFromHook(getId());
+        }
         return lore;
     }
 

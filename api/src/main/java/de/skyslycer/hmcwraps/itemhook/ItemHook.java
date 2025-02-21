@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.itemhook;
 
+import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
@@ -8,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class ItemHook {
 
@@ -127,6 +130,36 @@ public abstract class ItemHook {
         var stack = get(id);
         if (VersionUtil.itemModelSupported() && stack != null && stack.getItemMeta().hasItemModel()) {
             return stack.getItemMeta().getItemModel();
+        }
+        return null;
+    }
+
+    /**
+     * Get the item name corresponding to the input.
+     *
+     * @param id The input
+     * @return The item name
+     */
+    @Nullable
+    public String getName(String id) {
+        var stack = get(id);
+        if (stack != null && stack.getItemMeta().hasDisplayName()) {
+            return StringUtil.parsedLegacyToMiniMessage(stack.getItemMeta().getDisplayName());
+        }
+        return null;
+    }
+
+    /**
+     * Get the item lore corresponding to the input.
+     *
+     * @param id The input
+     * @return The item lore
+     */
+    @Nullable
+    public List<String> getLore(String id) {
+        var stack = get(id);
+        if (stack != null && stack.getItemMeta().hasLore()) {
+            return stack.getItemMeta().getLore().stream().map(StringUtil::parsedLegacyToMiniMessage).toList();
         }
         return null;
     }

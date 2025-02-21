@@ -6,6 +6,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Set;
 
 public class HookAccessor {
@@ -88,6 +89,18 @@ public class HookAccessor {
     public NamespacedKey getItemModelFromHook(String id) {
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getItemModel(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
+    @Nullable
+    public String getNameFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getName(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
+    @Nullable
+    public List<String> getLoreFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getLore(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
 }
