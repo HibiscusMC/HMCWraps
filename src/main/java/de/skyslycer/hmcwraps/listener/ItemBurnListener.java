@@ -21,8 +21,8 @@ public class ItemBurnListener implements Listener {
         if (!(event.getEntity() instanceof Item item)) {
             return;
         }
-        var originalData = plugin.getWrapper().getOriginalData(item.getItemStack());
-        if (plugin.getWrapper().getWrap(item.getItemStack()) != null && originalData != null && !originalData.material().isBlank() && originalData.material().contains("NETHERITE")) {
+        var originalMaterial = plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item.getItemStack());
+        if (plugin.getWrapper().getWrap(item.getItemStack()) != null && originalMaterial != null && !originalMaterial.isBlank() && originalMaterial.contains("NETHERITE")) {
             event.setCancelled(true);
         }
     }
@@ -35,8 +35,8 @@ public class ItemBurnListener implements Listener {
         if (event.getCause() != EntityDamageEvent.DamageCause.FIRE && event.getCause() != EntityDamageEvent.DamageCause.LAVA) {
             return;
         }
-        var originalData = plugin.getWrapper().getOriginalData(item.getItemStack());
-        if (plugin.getWrapper().getWrap(item.getItemStack()) != null && originalData != null && !originalData.material().isBlank() && originalData.material().contains("NETHERITE")) {
+        var originalMaterial = plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item.getItemStack());
+        if (plugin.getWrapper().getWrap(item.getItemStack()) != null && originalMaterial != null && !originalMaterial.isBlank() && originalMaterial.contains("NETHERITE")) {
             event.setCancelled(true);
         }
     }

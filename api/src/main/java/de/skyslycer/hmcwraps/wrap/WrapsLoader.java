@@ -1,13 +1,10 @@
 package de.skyslycer.hmcwraps.wrap;
 
-import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
-import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface WrapsLoader {
 
@@ -29,11 +26,18 @@ public interface WrapsLoader {
     Map<String, List<String>> getCollections();
 
     /**
-     * Get all currently loaded collection files.
+     * The amount of currently loaded collection files, this includes disabled ones.
      *
-     * @return All collection files
+     * @return The amount of currently loaded collection files
      */
-    Set<CollectionFile> getCollectionFiles();
+    int getCollectionFileCount();
+
+    /**
+     * The amount of currently loaded wrap files, this includes disabled ones.
+     *
+     * @return The amount of currently loaded wrap files
+     */
+    int getWrapFileCount();
 
     /**
      * All wraps currently configured.
@@ -43,19 +47,11 @@ public interface WrapsLoader {
     Map<String, Wrap> getWraps();
 
     /**
-     * All wrap files currently loaded.
-     * NOTE: This also contains disabled wrap files, you have to filter for enabled ones yourself.
+     * All wrap UUIDs for a certain material or collection.
      *
-     * @return All currently loaded wrap files
+     * @return All wrap UUIDs mapped to a material or collection
      */
-    Set<WrapFile> getWrapFiles();
-
-    /**
-     * All currently loaded wrappable items.
-     * This map contains all wraps that can be applied to a particular material/collection.
-     *
-     * @return All currently loaded wrappable items
-     */
-    Map<String, WrappableItem> getWrappableItems();
+    @NotNull
+    Map<String, List<String>> getTypeWraps();
 
 }

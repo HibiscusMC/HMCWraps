@@ -30,8 +30,8 @@ import java.util.UUID;
 @ConfigSerializable
 public class SerializableItem {
 
-    private String id;
-    private String name;
+    private @Nullable String id;
+    private @Nullable String name;
     private @Nullable Boolean glow;
     private @Nullable List<String> lore;
     private @Nullable List<String> flags;
@@ -47,12 +47,13 @@ public class SerializableItem {
     private @Nullable String trimMaterial;
     private @Nullable String equippableSlot;
     private @Nullable String equippableModel;
+    private @Nullable String itemModel;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
                             @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner,
                             @Nullable String skullTexture, @Nullable String trim, @Nullable String trimMaterial,
-                            @Nullable String equippableSlot, @Nullable String equippableModel) {
+                            @Nullable String equippableSlot, @Nullable String equippableModel, @Nullable String itemModel) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -70,6 +71,7 @@ public class SerializableItem {
         this.trimMaterial = trimMaterial;
         this.equippableSlot = equippableSlot;
         this.equippableModel = equippableModel;
+        this.itemModel = itemModel;
     }
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
@@ -164,7 +166,12 @@ public class SerializableItem {
                 plugin.getLogger().warning("Failed to set trim " + getTrim() + " and material " + getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
             }
         }
-        if (VersionUtil.hasDataComponents() && item.getItemMeta().getItemFlags().contains(ItemFlag.HIDE_ATTRIBUTES)) {
+        if (VersionUtil.itemModelSupported() && getItemModel() != null) {
+            var itemMeta = item.getItemMeta();
+            itemMeta.setItemModel(getItemModel());
+            item.setItemMeta(itemMeta);
+        }
+        if (VersionUtil.hasDataComponents() && getFlags() != null && getFlags().contains("HIDE_ATTRIBUTES")) {
             var meta = item.getItemMeta();
             meta.setAttributeModifiers(ImmutableMultimap.of());
             item.setItemMeta(meta);
@@ -188,11 +195,17 @@ public class SerializableItem {
     }
 
     public String getName() {
+        if (name == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getNameFromHook(getId());
+        }
         return name;
     }
 
     @Nullable
     public List<String> getLore() {
+        if (lore == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getLoreFromHook(getId());
+        }
         return lore;
     }
 
@@ -273,7 +286,7 @@ public class SerializableItem {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getEquippableSlotFromHook(getId());
         }
         try {
-            return EquipmentSlot.valueOf(equippableSlot);
+            return EquipmentSlot.valueOf(equippableSlot.toUpperCase());
         } catch (IllegalArgumentException e) {
             Bukkit.getLogger().warning("Failed to parse equippable slot " + equippableSlot + "! It seems to not be a valid slot. Please check your configuration!");
         }
@@ -286,6 +299,14 @@ public class SerializableItem {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getEquippableModelFromHook(getId());
         }
         return NamespacedKey.fromString(equippableModel);
+    }
+
+    @Nullable
+    public NamespacedKey getItemModel() {
+        if (itemModel == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getItemModelFromHook(getId());
+        }
+        return NamespacedKey.fromString(itemModel);
     }
 
 }

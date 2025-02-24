@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifiers;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -68,40 +69,6 @@ public interface Wrapper {
     ItemStack removeWrap(ItemStack itemStack, Player player);
 
     /**
-     * Get the fake durability of the item.
-     * If the item isn't changing durability, it will return -1.
-     *
-     * @param item The item
-     * @return The fake durability
-     */
-    int getFakeDurability(ItemStack item);
-
-    /**
-     * Set the fake durability of the item.
-     *
-     * @param item The item
-     * @param durability The durability to set
-     */
-    void setFakeDurability(ItemStack item, int durability);
-
-    /**
-     * Get the fake max durability of the item.
-     * If the item isn't changing durability, it will return -1.
-     *
-     * @param item The item
-     * @return The fake durability
-     */
-    int getFakeMaxDurability(ItemStack item);
-
-    /**
-     * Set the fake max durability of the item.
-     *
-     * @param item The item
-     * @param durability The durability to set
-     */
-    void setFakeMaxDurability(ItemStack item, int durability);
-
-    /**
      * Check if the item is an unwrapper.
      *
      * @param item The item
@@ -136,39 +103,6 @@ public interface Wrapper {
     ItemStack setPhysicalWrapper(ItemStack item, Wrap wrap);
 
     /**
-     * Set the item to be using trims. This will prevent the item from being used in a smithing table.
-     *
-     * @param item The item
-     * @param used If the item is using trims
-     * @return The changed item
-     */
-    ItemStack setTrimsUsed(ItemStack item, boolean used);
-
-    /**
-     * Check if the item is using trims.
-     *
-     * @param item The item
-     * @return If the item is using trims
-     */
-    boolean isTrimsUsed(ItemStack item);
-
-    /**
-     * Get the saved data of the item.
-     *
-     * @param item The item
-     * @return The data
-     */
-    Wrap.WrapValues getOriginalData(ItemStack item);
-
-    /**
-     * Set the saved data of the item.
-     *
-     * @param wrapValues All values to set
-     * @return The changed item
-     */
-    ItemStack setOriginalData(ItemStack item, Wrap.WrapValues wrapValues);
-
-    /**
      * Set if the wrap was applied physically.
      *
      * @param item     The item
@@ -186,14 +120,6 @@ public interface Wrapper {
     boolean isPhysical(ItemStack item);
 
     /**
-     * Check if the original item had custom attributes instead of the default ones.
-     *
-     * @param item The item
-     * @return If the item had custom attributes applied
-     */
-    boolean isCustomAttributes(ItemStack item);
-
-    /**
      * Check if the items model id is valid for the wrap.
      *
      * @param item The item
@@ -209,5 +135,12 @@ public interface Wrapper {
      * @return If the item is globally disabled
      */
     boolean isGloballyDisabled(ItemStack item);
+
+    /**
+     * Get all possible wrap modifiers.
+     *
+     * @return The modifiers
+     */
+    WrapModifiers getModifiers();
 
 }

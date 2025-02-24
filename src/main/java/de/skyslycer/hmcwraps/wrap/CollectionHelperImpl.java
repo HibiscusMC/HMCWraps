@@ -2,12 +2,12 @@ package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CollectionHelperImpl implements CollectionHelper {
 
@@ -18,17 +18,17 @@ public class CollectionHelperImpl implements CollectionHelper {
     }
 
     @Override
-    public List<WrappableItem> getItems(Material material) {
-        var list = new ArrayList<WrappableItem>();
-        if (plugin.getWrapsLoader().getWrappableItems().containsKey(material.toString())) {
-            list.add(plugin.getWrapsLoader().getWrappableItems().get(material.toString()));
+    public List<Wrap> getItems(Material material) {
+        var list = new ArrayList<String>();
+        if (plugin.getWrapsLoader().getTypeWraps().containsKey(material.toString())) {
+            list.addAll(plugin.getWrapsLoader().getTypeWraps().get(material.toString()));
         }
         plugin.getWrapsLoader().getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
-            if (plugin.getWrapsLoader().getWrappableItems().containsKey(it.getKey())) {
-                list.add(plugin.getWrapsLoader().getWrappableItems().get(it.getKey()));
+            if (plugin.getWrapsLoader().getTypeWraps().containsKey(it.getKey())) {
+                list.addAll(plugin.getWrapsLoader().getTypeWraps().get(it.getKey()));
             }
         });
-        return list;
+        return list.stream().map(plugin.getWrapsLoader().getWraps()::get).filter(Objects::nonNull).toList();
     }
 
     @Override
@@ -65,14 +65,8 @@ public class CollectionHelperImpl implements CollectionHelper {
 
     @Override
     public String getCollection(Wrap wrap) {
-        var currentCollection = "";
-        for (Map.Entry<String, WrappableItem> entry : plugin.getWrapsLoader().getWrappableItems().entrySet()) {
-            currentCollection = entry.getKey();
-            if (entry.getValue().getWraps().containsValue(wrap)) {
-                break;
-            }
-        }
-        return currentCollection;
+        return plugin.getWrapsLoader().getTypeWraps().entrySet().stream().filter(it -> it.getValue().contains(wrap.getUuid()))
+                .findFirst().map(Map.Entry::getKey).orElse(null);
     }
 
 }

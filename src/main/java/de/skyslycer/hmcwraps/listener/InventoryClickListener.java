@@ -3,8 +3,8 @@ package de.skyslycer.hmcwraps.listener;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewType;
-import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +43,8 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        if (player.getOpenInventory().getType() == InventoryType.SMITHING && (plugin.getWrapper().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().isTrimsUsed(event.getCursor()))) {
+        if (VersionUtil.getOpenInventoryType(player) == InventoryType.SMITHING &&
+                (plugin.getWrapper().getModifiers().trim().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().getModifiers().trim().isTrimsUsed(event.getCursor()))) {
             event.setCancelled(true);
             plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
             return;
@@ -59,16 +60,16 @@ public class InventoryClickListener implements Listener {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> {
                 var slot = event.getRawSlot();
                 plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
-                    var updatedItem = PermissionUtil.check(plugin, player, event.getView().getItem(slot));
-                    if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
-                    event.getView().setItem(slot, updatedItem);
+                    var updatedItem = PermissionUtil.check(plugin, player, VersionUtil.getItemFromSlot(event, slot));
+                    if (updatedItem == null || updatedItem.equals(VersionUtil.getItemFromSlot(event, slot))) return;
+                    VersionUtil.setItemInSlot(event, slot, updatedItem);
                 }, 1);
             }
             case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 if (event.getClickedInventory() == player.getInventory()) {
-                    PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getTopInventory());
+                    PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getTopInventory(player));
                 } else {
-                    PermissionUtil.loopThroughInventory(plugin, player, player.getOpenInventory().getBottomInventory());
+                    PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getBottomInventory(player));
                 }
             }, 1);
         }
@@ -77,7 +78,7 @@ public class InventoryClickListener implements Listener {
             var slot = event.getHotbarButton();
             plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
-                if (updatedItem == null || updatedItem.equals(event.getView().getItem(slot))) return;
+                if (updatedItem == null || updatedItem.equals(VersionUtil.getItemFromSlot(event, slot))) return;
                 player.getInventory().setItem(slot, updatedItem);
             }, 1);
         }
@@ -125,40 +126,44 @@ public class InventoryClickListener implements Listener {
 
         var finalCursor = cursor;
         var type = target.getType();
-        if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getOriginalData(target).material().isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getOriginalData(target).material());
+        if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(target).isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(target));
         }
+        var currentWrap = plugin.getWrapper().getWrap(target);
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
                 .isPermissionPhysical())) {
-            for (WrappableItem wrappableItem : plugin.getCollectionHelper().getItems(type)) {
-                if (wrappableItem.getWraps().containsValue(wrap)) {
-                    if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && plugin.getWrapper().getWrap(target) != null) {
-                        plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
-                        return;
-                    }
-                    event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player));
-                    plugin.getActionHandler().pushWrap(wrap, player);
-                    plugin.getActionHandler().pushPhysicalWrap(wrap, player);
-                    event.getWhoClicked().setItemOnCursor(finalCursor);
-                    event.setCancelled(true);
+            var anyMatch = plugin.getCollectionHelper().getItems(type).stream().anyMatch(wrap::equals);
+            if (anyMatch) {
+                if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && currentWrap != null) {
+                    plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
                     return;
                 }
+                if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && !plugin.getConfiguration().getWrapping().getRewrap().isSamePhysicalEnabled()) {
+                    return;
+                }
+                event.setCurrentItem(plugin.getWrapper().setWrap(wrap, target, true, player));
+                plugin.getActionHandler().pushWrap(wrap, player);
+                plugin.getActionHandler().pushPhysicalWrap(wrap, player);
+                event.getWhoClicked().setItemOnCursor(finalCursor);
+                event.setCancelled(true);
             }
         }
     }
 
     private boolean isImitatedArmor(ItemStack item) {
         return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
-                !plugin.getWrapper().getOriginalData(item).material().isBlank();
+                !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isBlank();
     }
 
     private boolean isFakeDurability(ItemStack item) {
         return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
-                plugin.getWrapper().getFakeDurability(item) != -1;
+                plugin.getWrapper().getModifiers().armorImitation().getFakeDurability(item) != -1;
     }
 
     private boolean isForbiddenInventory(InventoryClickEvent event) {
-        return FORBIDDEN_INVENTORIES.contains(event.getWhoClicked().getOpenInventory().getType()) || (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.CRAFTING);
+        var inventoryType = VersionUtil.getOpenInventoryType((Player) event.getWhoClicked());
+        return FORBIDDEN_INVENTORIES.contains(inventoryType)
+                || (event.getClickedInventory() != null && inventoryType == InventoryType.CRAFTING);
     }
 
 }

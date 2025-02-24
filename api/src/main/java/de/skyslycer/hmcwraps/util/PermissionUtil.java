@@ -2,7 +2,6 @@ package de.skyslycer.hmcwraps.util;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -82,14 +81,11 @@ public class PermissionUtil {
      * @param item   The item
      * @return The item with the favorite wrap applied or the same if no favorite wrap was applied
      */
-    public static ItemStack applyFavorite(HMCWraps plugin, Player player, ItemStack item) {
-        for (WrappableItem wraps : plugin.getCollectionHelper().getItems(item.getType())) {
-            var matchingWrap = wraps.getWraps().values().stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
-                    .filter(wrap -> wrap.hasPermission(player) && plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst();
-            if (matchingWrap.isPresent()) {
-                return plugin.getWrapper().setWrap(matchingWrap.get(), item, false, player);
-            }
-        }
+    public static ItemStack applyFavorite(HMCWraps plugin, Player player, ItemStack item)
+    {
+        plugin.getCollectionHelper().getItems(item.getType()).stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
+                .filter(wrap -> wrap.hasPermission(player)).filter(wrap -> plugin.getFavoriteWrapStorage().get(player).contains(wrap)).findFirst()
+                .ifPresent(wrap -> plugin.getWrapper().setWrap(wrap, item, false, player));
         return item;
     }
 

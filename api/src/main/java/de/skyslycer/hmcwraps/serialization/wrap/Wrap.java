@@ -211,7 +211,7 @@ public class Wrap extends SerializableItem {
 
     public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder,
                              String oraxen, String mythic, String nexo, String material, String trim, String trimMaterial,
-                             NamespacedKey equippableModel, EquipmentSlot equippableSlot, Boolean glintOverride) {
+                             NamespacedKey equippableModel, EquipmentSlot equippableSlot, Boolean glintOverride, NamespacedKey itemModel) {
     }
 
 }

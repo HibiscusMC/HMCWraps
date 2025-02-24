@@ -374,8 +374,8 @@ public class DefaultActionRegister {
             return;
         }
         var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
         }
         if (!plugin.getCollectionHelper().getItems(type).isEmpty()
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
@@ -394,8 +394,13 @@ public class DefaultActionRegister {
                 return;
             }
             var item = player.getInventory().getItem(slot);
+            var currentWrap = plugin.getWrapper().getWrap(item);
             if (!plugin.getConfiguration().getWrapping().getRewrap().isVirtualEnabled() && plugin.getWrapper().getWrap(item) != null) {
                 plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
+                return;
+            }
+            if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) &&
+                    !plugin.getConfiguration().getWrapping().getRewrap().isSameVirtualEnabled()) {
                 return;
             }
             player.getInventory().setItem(slot, plugin.getWrapper().setWrap(wrap, item, false, player));

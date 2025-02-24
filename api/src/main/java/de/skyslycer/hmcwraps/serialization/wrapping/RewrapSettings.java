@@ -7,6 +7,8 @@ public class RewrapSettings {
 
     private boolean virtualEnabled = true;
     private boolean physicalEnabled = true;
+    private boolean sameVirtualEnabled = true;
+    private boolean samePhysicalEnabled = true;
 
     public boolean isVirtualEnabled() {
         return virtualEnabled;
@@ -14,6 +16,14 @@ public class RewrapSettings {
 
     public boolean isPhysicalEnabled() {
         return physicalEnabled;
+    }
+
+    public boolean isSameVirtualEnabled() {
+        return sameVirtualEnabled;
+    }
+
+    public boolean isSamePhysicalEnabled() {
+        return samePhysicalEnabled;
     }
 
 }

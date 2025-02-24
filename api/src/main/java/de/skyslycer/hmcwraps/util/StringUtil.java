@@ -154,6 +154,16 @@ public class StringUtil {
     }
 
     /**
+     * Convert legacy color codes from API (§c) to MiniMessage (<red>).
+     *
+     * @param legacy The string containing legacy color codes
+     * @return The string with MiniMessage color codes
+     */
+    public static String parsedLegacyToMiniMessage(String legacy) {
+        return MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(legacy));
+    }
+
+    /**
      * Convert short time to seconds. (9h, 20s, 4m)
      *
      * @param shortTime      The short time string
