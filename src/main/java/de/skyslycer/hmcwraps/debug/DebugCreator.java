@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps.debug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.debug.*;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -80,9 +81,9 @@ public class DebugCreator {
                 wrapper.getOwningPlayer(item),
                 wrapper.isPhysicalUnwrapper(item),
                 wrapper.getPhysicalWrapper(item),
-                wrapper.getOriginalData(item),
-                wrapper.getFakeDurability(item),
-                wrapper.getFakeMaxDurability(item),
+                fillWrapValues(item, plugin),
+                wrapper.getModifiers().armorImitation().getFakeDurability(item),
+                wrapper.getModifiers().armorImitation().getFakeMaxDurability(item),
                 nbt.toString()
         );
     }
@@ -134,6 +135,28 @@ public class DebugCreator {
             exception.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    private static Wrap.WrapValues fillWrapValues(ItemStack item, HMCWraps plugin) {
+        var modifiers = plugin.getWrapper().getModifiers();
+        return new Wrap.WrapValues(
+                modifiers.modelData().getOriginalModelId(item),
+                modifiers.color().getOriginalColor(item),
+                modifiers.name().getOriginalName(item),
+                modifiers.lore().getOriginalLore(item),
+                modifiers.flags().getOriginalFlags(item),
+                modifiers.itemsAdder().getOriginalItemsAdderId(item),
+                modifiers.oraxen().getOriginalOraxenId(item),
+                modifiers.mythic().getOriginalMythicId(item),
+                modifiers.nexo().getOriginalNexoId(item),
+                modifiers.armorImitation().getOriginalMaterial(item),
+                modifiers.trim().getOriginalTrim(item),
+                modifiers.trim().getOriginalTrimMaterial(item),
+                modifiers.equippable().getOriginalEquippableModel(item),
+                modifiers.equippable().getOriginalEquippableSlot(item),
+                modifiers.glintOverride().getOriginalGlint(item),
+                modifiers.itemModel().getOriginalItemModel(item)
+        );
     }
 
 }

@@ -58,8 +58,8 @@ public class GuiBuilder {
                     return;
                 }
                 var type = clicked.getType();
-                if (plugin.getWrapper().getWrap(clicked) != null && !plugin.getWrapper().getOriginalData(clicked).material().isEmpty()) {
-                    type = Material.valueOf(plugin.getWrapper().getOriginalData(clicked).material());
+                if (plugin.getWrapper().getWrap(clicked) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(clicked).isEmpty()) {
+                    type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(clicked));
                 }
                 if (plugin.getCollectionHelper().getItems(type).isEmpty()) {
                     if (!plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
@@ -128,8 +128,8 @@ public class GuiBuilder {
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui, int slot) {
         var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
         }
         var currentWrap = plugin.getWrapper().getWrap(item);
         if (currentWrap != null) {

@@ -374,8 +374,8 @@ public class DefaultActionRegister {
             return;
         }
         var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getOriginalData(item).material().isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getOriginalData(item).material());
+        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
         }
         if (!plugin.getCollectionHelper().getItems(type).isEmpty()
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {

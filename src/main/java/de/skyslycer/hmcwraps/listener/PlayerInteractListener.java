@@ -46,8 +46,8 @@ public class PlayerInteractListener implements Listener {
 
         var excludes = plugin.getConfiguration().getInventory().getShortcut().getExclude();
         var type = newItem.getType();
-        if (plugin.getWrapper().getWrap(newItem) != null && !plugin.getWrapper().getOriginalData(newItem).material().isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getOriginalData(newItem).material());
+        if (plugin.getWrapper().getWrap(newItem) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(newItem).isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(newItem));
         }
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
                 || plugin.getCollectionHelper().getItems(type).isEmpty() || !player.isSneaking()

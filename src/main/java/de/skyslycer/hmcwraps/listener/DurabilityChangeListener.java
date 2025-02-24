@@ -32,9 +32,9 @@ public class DurabilityChangeListener implements Listener {
     }
 
     private boolean updateDurability(ItemStack item, int changed) {
-        var durability = plugin.getWrapper().getFakeDurability(item);
-        var maxDurability = plugin.getWrapper().getFakeMaxDurability(item);
-        if (plugin.getWrapper().getWrap(item) == null || plugin.getWrapper().getFakeDurability(item) == -1 || durability == -1) {
+        var durability = plugin.getWrapper().getModifiers().armorImitation().getFakeDurability(item);
+        var maxDurability = plugin.getWrapper().getModifiers().armorImitation().getFakeMaxDurability(item);
+        if (plugin.getWrapper().getWrap(item) == null || plugin.getWrapper().getModifiers().armorImitation().getFakeDurability(item) == -1 || durability == -1) {
             return false;
         }
         var newDurability = Math.min(durability + changed, maxDurability);
@@ -42,7 +42,7 @@ public class DurabilityChangeListener implements Listener {
         if (modelDurability == 0 && newDurability > 0) {
             modelDurability = 1;
         }
-        plugin.getWrapper().setFakeDurability(item, newDurability);
+        plugin.getWrapper().getModifiers().armorImitation().setFakeDurability(item, newDurability);
         var meta = (Damageable) item.getItemMeta();
         meta.setDamage((int) (item.getType().getMaxDurability() - Math.round(modelDurability)));
         item.setItemMeta(meta);

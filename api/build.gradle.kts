@@ -18,6 +18,8 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://repo.bytecode.space/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.triumphteam.dev/snapshots")
     maven("https://repo.nexomc.com/snapshots/")
@@ -28,6 +30,10 @@ dependencies {
     compileOnly(depends.spigot)
     compileOnly(depends.annotations)
     compileOnly(depends.placeholderapi)
+    compileOnly(depends.itemsadder)
+    compileOnly(depends.oraxen)
+    compileOnly(depends.mythicmobs)
+    compileOnly(depends.nexo)
     compileOnly(libs.packets)
     compileOnly(libs.gui)
     compileOnly(libs.bundles.adventure)
@@ -49,7 +55,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 publishing {

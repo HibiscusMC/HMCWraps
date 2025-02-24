@@ -43,7 +43,8 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        if (VersionUtil.getOpenInventoryType(player) == InventoryType.SMITHING && (plugin.getWrapper().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().isTrimsUsed(event.getCursor()))) {
+        if (VersionUtil.getOpenInventoryType(player) == InventoryType.SMITHING &&
+                (plugin.getWrapper().getModifiers().trim().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().getModifiers().trim().isTrimsUsed(event.getCursor()))) {
             event.setCancelled(true);
             plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
             return;
@@ -125,8 +126,8 @@ public class InventoryClickListener implements Listener {
 
         var finalCursor = cursor;
         var type = target.getType();
-        if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getOriginalData(target).material().isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getOriginalData(target).material());
+        if (plugin.getWrapper().getWrap(target) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(target).isEmpty()) {
+            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(target));
         }
         var currentWrap = plugin.getWrapper().getWrap(target);
         if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
@@ -151,12 +152,12 @@ public class InventoryClickListener implements Listener {
 
     private boolean isImitatedArmor(ItemStack item) {
         return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
-                !plugin.getWrapper().getOriginalData(item).material().isBlank();
+                !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isBlank();
     }
 
     private boolean isFakeDurability(ItemStack item) {
         return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
-                plugin.getWrapper().getFakeDurability(item) != -1;
+                plugin.getWrapper().getModifiers().armorImitation().getFakeDurability(item) != -1;
     }
 
     private boolean isForbiddenInventory(InventoryClickEvent event) {
