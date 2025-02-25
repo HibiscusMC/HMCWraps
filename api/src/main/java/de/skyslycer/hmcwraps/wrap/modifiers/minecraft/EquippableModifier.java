@@ -101,19 +101,23 @@ public class EquippableModifier implements WrapModifier {
     }
 
     private void setOriginalEquippableSlot(ItemStack item, EquipmentSlot slot) {
+        var meta = item.getItemMeta();
         if (slot != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalEquippableSlotKey, PersistentDataType.STRING, slot.name());
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalEquippableSlotKey);
         }
+        item.setItemMeta(meta);
     }
 
     private void setOriginalEquippableModel(ItemStack item, NamespacedKey model) {
+        var meta = item.getItemMeta();
         if (model != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalEquippableModelKey, PersistentDataType.STRING, model.toString());
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalEquippableModelKey);
         }
+        item.setItemMeta(meta);
     }
 
 }

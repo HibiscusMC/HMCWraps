@@ -189,11 +189,13 @@ public class ArmorImitationModifier implements WrapModifier {
     }
 
     private void setOriginalMaterial(ItemStack item, String material) {
+        var meta = item.getItemMeta();
         if (material != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalMaterialKey, PersistentDataType.STRING, material);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalMaterialKey);
         }
+        item.setItemMeta(meta);
     }
 
 }

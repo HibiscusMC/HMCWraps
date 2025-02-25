@@ -46,11 +46,13 @@ public class GlintOverrideModifier implements WrapModifier {
     }
 
     private void setOriginalGlint(ItemStack item, Boolean glint) {
+        var meta = item.getItemMeta();
         if (glint != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalGlintKey, PersistentDataType.BOOLEAN, glint);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalGlintKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

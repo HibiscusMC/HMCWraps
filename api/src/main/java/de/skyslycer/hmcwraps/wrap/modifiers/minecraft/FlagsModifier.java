@@ -50,12 +50,14 @@ public class FlagsModifier implements WrapModifier {
     }
 
     private void setOriginalFlags(ItemStack item, List<ItemFlag> flags) {
+        var meta = item.getItemMeta();
         if (flags != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalFlagsKey, PersistentDataType.STRING,
                     flags.stream().map(ItemFlag::toString).collect(Collectors.joining(SEPARATOR)));
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalFlagsKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

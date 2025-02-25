@@ -44,11 +44,13 @@ public class NameModifier implements WrapModifier {
     }
 
     private void setOriginalName(ItemStack item, String name) {
+        var meta = item.getItemMeta();
         if (name != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalNameKey, PersistentDataType.STRING, name.replace("§", "&"));
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalNameKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

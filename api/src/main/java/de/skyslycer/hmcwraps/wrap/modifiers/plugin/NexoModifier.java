@@ -42,11 +42,13 @@ public class NexoModifier implements WrapModifier {
     }
 
     private void setOriginalNexoId(ItemStack item, String nexoId) {
+        var meta = item.getItemMeta();
         if (nexoId != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalNexoKey, PersistentDataType.STRING, nexoId);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalNexoKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

@@ -38,7 +38,11 @@ public class ModelDataModifier implements WrapModifier {
 
     private void setOriginalModelId(ItemStack item, Integer modelData) {
         var meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(originalModelIdKey, PersistentDataType.INTEGER, modelData);
+        if (modelData != null) {
+            meta.getPersistentDataContainer().set(originalModelIdKey, PersistentDataType.INTEGER, modelData);
+        } else {
+            meta.getPersistentDataContainer().remove(originalModelIdKey);
+        }
         item.setItemMeta(meta);
     }
 
@@ -50,7 +54,7 @@ public class ModelDataModifier implements WrapModifier {
      */
     public Integer getOriginalModelId(ItemStack item) {
         var meta = item.getItemMeta();
-        Integer modelData = null;
+        var modelData = -1;
         var modelDataSettings = plugin.getConfiguration().getPreservation().getModelId();
         if (modelDataSettings.isOriginalEnabled()) {
             var data = meta.getPersistentDataContainer().get(originalModelIdKey, PersistentDataType.INTEGER);

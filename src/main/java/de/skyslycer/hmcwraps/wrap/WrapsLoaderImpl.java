@@ -16,10 +16,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -28,9 +25,8 @@ public class WrapsLoaderImpl implements WrapsLoader {
     private final HMCWrapsPlugin plugin;
 
     private final Map<String, Wrap> wraps = new ConcurrentHashMap<>();
-    private final Map<String, List<String>> typeWraps = new ConcurrentHashMap<>();
-    private final Map<String, List<String>> collections = new ConcurrentHashMap<>();
-    private final Map<String, WrappableItem> wrappableItems = new ConcurrentHashMap<>();
+    private final Map<String, Set<String>> typeWraps = new ConcurrentHashMap<>();
+    private final Map<String, Set<String>> collections = new ConcurrentHashMap<>();
     private final Set<WrapFile> wrapFiles = new HashSet<>();
     private final Set<CollectionFile> collectionFiles = new HashSet<>();
 
@@ -48,16 +44,30 @@ public class WrapsLoaderImpl implements WrapsLoader {
     @Override
     public void unload() {
         wraps.clear();
+        collections.clear();
         wrapFiles.clear();
+        typeWraps.clear();
         collectionFiles.clear();
     }
 
     private void combineFiles() {
-        collections.putAll(plugin.getConfiguration().getCollections());
-        collectionFiles.stream().filter(Toggleable::isEnabled).forEach(collectionFile -> collections.putAll(collectionFile.getCollections()));
+        collections.putAll(listToSetMap(plugin.getConfiguration().getCollections()));
+        collectionFiles.stream().filter(Toggleable::isEnabled).forEach(collectionFile -> collections.putAll(listToSetMap(collectionFile.getCollections())));
         addWraps(plugin.getConfiguration().getItems());
         wrapFiles.forEach(it -> addWraps(it.getItems()));
         wraps.remove("-");
+    }
+
+    private Map<String, Set<String>> listToSetMap(Map<String, List<String>> config) {
+        Map<String, Set<String>> collections = new HashMap<>();
+        config.forEach((collection, items) -> collections.put(collection, new HashSet<>(items)));
+        return collections;
+    }
+
+    private Map<String, List<String>> setToListMap(Map<String, Set<String>> map) {
+        Map<String, List<String>> listMap = new HashMap<>();
+        map.forEach((key, value) -> listMap.put(key, new ArrayList<>(value)));
+        return listMap;
     }
 
     private void addWraps(Map<String, WrappableItem> items) {
@@ -74,9 +84,11 @@ public class WrapsLoaderImpl implements WrapsLoader {
                 }
                 wraps.put(wrap.getUuid(), wrap);
                 if (typeWraps.containsKey(type)) {
-                    typeWraps.get(type).add(wrap.getUuid());
+                    var current = typeWraps.get(type);
+                    current.add(wrap.getUuid());
+                    typeWraps.put(type, current);
                 } else {
-                    typeWraps.put(type, List.of(wrap.getUuid()));
+                    typeWraps.put(type, new HashSet<>(List.of(wrap.getUuid())));
                 }
             });
         });
@@ -131,7 +143,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
     @Override
     @NotNull
     public Map<String, List<String>> getCollections() {
-        return collections;
+        return setToListMap(collections);
     }
 
     @Override
@@ -153,7 +165,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
     @Override
     @NotNull
     public Map<String, List<String>> getTypeWraps() {
-        return typeWraps;
+        return setToListMap(typeWraps);
     }
 
 }

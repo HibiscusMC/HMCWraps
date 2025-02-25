@@ -72,11 +72,13 @@ public class ItemsAdderModifier implements WrapModifier {
     }
 
     private void setOriginalItemsAdderId(ItemStack item, String id) {
+        var meta = item.getItemMeta();
         if (id != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalItemsAdderKey, PersistentDataType.STRING, id);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalItemsAdderKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

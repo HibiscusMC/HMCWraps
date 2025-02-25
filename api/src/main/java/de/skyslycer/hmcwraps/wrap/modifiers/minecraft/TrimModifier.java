@@ -108,27 +108,30 @@ public class TrimModifier implements WrapModifier {
     }
 
     private void setOriginalTrim(ItemStack item, String trim) {
+        var meta = item.getItemMeta();
         if (trim != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalTrimKey, PersistentDataType.STRING, trim);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalTrimKey);
         }
+        item.setItemMeta(meta);
     }
 
     private void setOriginalTrimMaterial(ItemStack item, String trimMaterial) {
+        var meta = item.getItemMeta();
         if (trimMaterial != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalTrimMaterialKey, PersistentDataType.STRING, trimMaterial);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalTrimMaterialKey);
         }
+        item.setItemMeta(meta);
     }
 
-    private ItemStack setTrimsUsed(ItemStack item, boolean used) {
+    private void setTrimsUsed(ItemStack item, boolean used) {
         var editing = item.clone();
         var meta = editing.getItemMeta();
         meta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, used);
         editing.setItemMeta(meta);
-        return editing;
     }
 
     /**

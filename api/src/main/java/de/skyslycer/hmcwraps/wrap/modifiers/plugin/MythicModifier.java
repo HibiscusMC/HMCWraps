@@ -42,11 +42,13 @@ public class MythicModifier implements WrapModifier {
     }
 
     private void setOriginalMythicId(ItemStack item, String mythicId) {
+        var meta = item.getItemMeta();
         if (mythicId != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalMythicKey, PersistentDataType.STRING, mythicId);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalMythicKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**
