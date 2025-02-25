@@ -42,11 +42,13 @@ public class OraxenModifier implements WrapModifier {
     }
 
     private void setOriginalOraxenId(ItemStack item, String oraxenId) {
+        var meta = item.getItemMeta();
         if (oraxenId != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalOraxenKey, PersistentDataType.STRING, oraxenId);
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalOraxenKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

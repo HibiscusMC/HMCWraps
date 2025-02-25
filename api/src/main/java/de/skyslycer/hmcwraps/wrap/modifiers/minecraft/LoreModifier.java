@@ -32,7 +32,7 @@ public class LoreModifier implements WrapModifier {
         var meta = item.getItemMeta();
         var originalLore = getOriginalLore(item);
         var currentLore = meta.getLore();
-        if (currentWrap != null && currentWrap.getWrapLore() != null) {
+        if (currentWrap != null) {
             meta.setLore(originalLore);
         }
         if (wrap != null && wrap.getWrapLore() != null) {
@@ -46,12 +46,14 @@ public class LoreModifier implements WrapModifier {
     }
 
     private void setOriginalLore(ItemStack item, List<String> lore) {
+        var meta = item.getItemMeta();
         if (lore != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING,
                     lore.stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalLoreKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

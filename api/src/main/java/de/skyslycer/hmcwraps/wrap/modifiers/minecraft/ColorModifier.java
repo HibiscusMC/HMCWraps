@@ -77,11 +77,13 @@ public class ColorModifier implements WrapModifier {
     }
 
     private void setOriginalColor(ItemStack item, Color color) {
+        var meta = item.getItemMeta();
         if (color != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalColorKey, PersistentDataType.INTEGER, color.asRGB());
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalColorKey);
         }
+        item.setItemMeta(meta);
     }
 
     /**

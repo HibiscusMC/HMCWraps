@@ -61,11 +61,13 @@ public class ItemModelModifier implements WrapModifier {
     }
 
     private void setOriginalItemModel(ItemStack item, NamespacedKey itemModel) {
+        var meta = item.getItemMeta();
         if (itemModel != null) {
-            var meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(originalItemModelKey, PersistentDataType.STRING, itemModel.toString());
-            item.setItemMeta(meta);
+        } else {
+            meta.getPersistentDataContainer().remove(originalItemModelKey);
         }
+        item.setItemMeta(meta);
     }
 
 }

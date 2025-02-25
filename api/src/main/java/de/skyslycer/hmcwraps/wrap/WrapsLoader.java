@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps.wrap;
 
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,6 @@ public interface WrapsLoader {
      *
      * @return All wrap UUIDs mapped to a material or collection
      */
-    @NotNull
     Map<String, List<String>> getTypeWraps();
 
 }
