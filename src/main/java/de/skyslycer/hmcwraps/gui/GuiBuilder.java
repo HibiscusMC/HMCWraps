@@ -144,10 +144,8 @@ public class GuiBuilder {
                     wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player)));
                 });
 
-        System.out.println("Sorting items... " + wrapItemCombinations.size());
         ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);
-        System.out.println("Sorted items. " + wrapItemCombinations.size());
 
         var added = 0;
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
@@ -182,7 +180,6 @@ public class GuiBuilder {
             gui.addItem(guiItem);
             added++;
         }
-        System.out.println("Added " + added + " items to the GUI.");
     }
 
     private static void setItemToSlot(PaginatedGui gui, HMCWrapsPlugin plugin, ItemStack target) {
