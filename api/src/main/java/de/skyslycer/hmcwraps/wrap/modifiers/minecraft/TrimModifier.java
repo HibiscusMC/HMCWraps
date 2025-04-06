@@ -55,8 +55,8 @@ public class TrimModifier implements WrapModifier {
                         armorMeta.setTrim(new ArmorTrim(Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(wrap.getTrimMaterial())),
                                 Registry.TRIM_PATTERN.get(NamespacedKey.fromString(wrap.getTrim()))));
                         armorMeta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-                       setTrimsUsed(item, true);
                         item.setItemMeta(armorMeta);
+                        setTrimsUsed(item, true);
                     } catch (IllegalArgumentException exception) {
                         plugin.getLogger().warning("Failed to set trim for item " + wrap.getUuid() + " with trim " + wrap.getTrim()
                                 + " and material " + wrap.getTrimMaterial() + "! It seems to not be a valid trim. Please check your configuration!");
@@ -78,6 +78,7 @@ public class TrimModifier implements WrapModifier {
                             + originalTrimMaterial + "! It seems to not be a valid trim. This is being set while unwrapping to preserve the original trim, which has since been removed.");
                 }
             }
+            setTrimsUsed(item, false);
         }
         if (wrap != null && currentWrap == null) {
             setOriginalTrim(item, currentTrim);
@@ -128,10 +129,13 @@ public class TrimModifier implements WrapModifier {
     }
 
     private void setTrimsUsed(ItemStack item, boolean used) {
-        var editing = item.clone();
-        var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, used);
-        editing.setItemMeta(meta);
+        var meta = item.getItemMeta();
+        if (used) {
+            meta.getPersistentDataContainer().set(trimsUsedKey, PersistentDataType.BOOLEAN, true);
+        } else {
+            meta.getPersistentDataContainer().remove(trimsUsedKey);
+        }
+        item.setItemMeta(meta);
     }
 
     /**
