@@ -31,7 +31,7 @@ public class ContinuousUpdateChecker {
             var result = updater.check(plugin);
             lastResultTime = System.currentTimeMillis();
             lastResult = result;
-            if (result != null) {
+            if (result != null && !result.latest()) {
                 plugin.getLogger().warning(String.format(
                         """
                                                         

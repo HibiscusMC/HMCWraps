@@ -40,7 +40,7 @@ public class DebugCreator {
         var oraxenVersion = getVersionOfPlugin("Oraxen");
         var mythicMobsVersion = getVersionOfPlugin("MythicMobs");
         var crucibleVersion = getVersionOfPlugin("Crucible");
-        return new DebugInformation(plugin.getDescription().getVersion(), latest == null ? "Current" : latest.version(), protocolLib, serverVersion, serverSoftware, iaVersion, oraxenVersion, mythicMobsVersion, crucibleVersion);
+        return new DebugInformation(plugin.getDescription().getVersion(), latest == null ? "Failed" : latest.version(), protocolLib, serverVersion, serverSoftware, iaVersion, oraxenVersion, mythicMobsVersion, crucibleVersion);
     }
 
     private static String getVersionOfPlugin(String plugin) {
