@@ -1,7 +1,5 @@
 package de.skyslycer.hmcwraps.updater;
 
-import com.google.gson.JsonObject;
-
 public class PolymartPluginUpdater extends PluginUpdater {
 
     /**
@@ -14,8 +12,8 @@ public class PolymartPluginUpdater extends PluginUpdater {
     }
 
     @Override
-    public String parse(JsonObject object) {
-        return object.getAsJsonObject("response").getAsJsonObject("resource").getAsJsonObject("updates").getAsJsonObject("latest").get("version").getAsString();
+    public String parse(String body) {
+        return body;
     }
 
 }

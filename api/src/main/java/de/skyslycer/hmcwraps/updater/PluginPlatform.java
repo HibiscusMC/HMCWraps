@@ -9,7 +9,7 @@ public enum PluginPlatform {
     /**
      * The base for plugins on Polymart.
      */
-    POLYMART("Polymart", "https://polymart.org/resource/%d", "https://api.polymart.org/v1/getResourceInfo?resource_id=%d");
+    POLYMART("Polymart", "https://polymart.org/resource/%d", "https://api.polymart.org/v1/getResourceInfoSimple?resource_id=%d&key=version");
 
     private final String name;
     private final String url;
