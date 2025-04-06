@@ -72,7 +72,7 @@ public class ContinuousUpdateChecker {
         } else {
             result = getLatest();
         }
-        if (result == null) {
+        if (result == null || result.latest()) {
             return;
         }
         var component = StringUtil.parseComponent(player, String.format(

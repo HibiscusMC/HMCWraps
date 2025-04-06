@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
@@ -17,14 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class InventoryClickListener implements Listener {
-
-    private static final List<InventoryType> FORBIDDEN_INVENTORIES = List.of(
-            InventoryType.ANVIL,
-            InventoryType.WORKBENCH,
-            InventoryType.ENCHANTING,
-            InventoryType.GRINDSTONE,
-            InventoryType.SMITHING
-    );
 
     private final HMCWrapsPlugin plugin;
 
@@ -36,15 +29,20 @@ public class InventoryClickListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         var player = (Player) event.getWhoClicked();
 
-        if (isForbiddenInventory(event) && (isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem())
-                || isFakeDurability(event.getCursor()) || isFakeDurability(event.getCurrentItem()))) {
-            event.setCancelled(true);
-            plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
-            return;
+        var cancel = false;
+        if ((isImitatedArmor(event.getCursor()) || isImitatedArmor(event.getCurrentItem()))
+                && isForbiddenInventory(event, List.of(InventoryType.ENCHANTING, InventoryType.GRINDSTONE, InventoryType.ANVIL))) {
+            cancel = true;
         }
-
-        if (VersionUtil.getOpenInventoryType(player) == InventoryType.SMITHING &&
-                (plugin.getWrapper().getModifiers().trim().isTrimsUsed(event.getCurrentItem()) || plugin.getWrapper().getModifiers().trim().isTrimsUsed(event.getCursor()))) {
+        if ((isFakeDurability(event.getCursor()) || isFakeDurability(event.getCurrentItem()))
+                && isForbiddenInventory(event, List.of(InventoryType.ANVIL, InventoryType.GRINDSTONE))) {
+            cancel = true;
+        }
+        if ((isTrimsUsed(event.getCursor()) || isTrimsUsed(event.getCurrentItem()))
+                && isForbiddenInventory(event, List.of(InventoryType.SMITHING))) {
+            cancel = true;
+        }
+        if (cancel) {
             event.setCancelled(true);
             plugin.getMessageHandler().send(player, Messages.ARMOR_IMITATION_FORBIDDEN_INVENTORY);
             return;
@@ -160,10 +158,18 @@ public class InventoryClickListener implements Listener {
                 plugin.getWrapper().getModifiers().armorImitation().getFakeDurability(item) != -1;
     }
 
-    private boolean isForbiddenInventory(InventoryClickEvent event) {
+    private boolean isTrimsUsed(ItemStack item) {
+        return item != null && !item.getType().isAir() && plugin.getWrapper().getWrap(item) != null &&
+                plugin.getWrapper().getModifiers().trim().isTrimsUsed(item);
+    }
+
+    private boolean isForbiddenInventory(InventoryClickEvent event, List<InventoryType> forbiddenInventories) {
         var inventoryType = VersionUtil.getOpenInventoryType((Player) event.getWhoClicked());
-        return FORBIDDEN_INVENTORIES.contains(inventoryType)
-                || (event.getClickedInventory() != null && inventoryType == InventoryType.CRAFTING);
+        var clickedInventoryType = event.getClickedInventory() == null ? InventoryType.PLAYER : event.getClickedInventory().getType(); // Use PLAYER if null to avoid NPE
+        if (forbiddenInventories.contains(clickedInventoryType)) {
+            return true;
+        }
+        return (forbiddenInventories.contains(inventoryType)) && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY;
     }
 
 }
