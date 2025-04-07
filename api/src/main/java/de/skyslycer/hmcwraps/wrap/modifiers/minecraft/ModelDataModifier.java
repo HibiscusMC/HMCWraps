@@ -87,7 +87,9 @@ public class ModelDataModifier implements WrapModifier {
         if (plugin.getWrapper().getWrap(item) != null) {
             modelData = getOriginalModelId(item);
         } else if (item.getItemMeta().hasCustomModelData()) {
-            modelData = item.getItemMeta().getCustomModelData();
+            try { // Added to prevent error with racking datapack
+                modelData = item.getItemMeta().getCustomModelData();
+            } catch (Exception ignored) { }
         }
         return modelData;
     }
