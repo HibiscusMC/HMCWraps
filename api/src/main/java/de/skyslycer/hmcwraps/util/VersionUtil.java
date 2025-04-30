@@ -157,7 +157,7 @@ public class VersionUtil {
             if (item instanceof ItemStack) {
                 return (ItemStack) item;
             } else {
-                throw new IllegalStateException("The returned object is not an ItemStack");
+                return null;
             }
         } catch (Throwable t) {
             throw new RuntimeException("An error occurred while getting the item from the slot", t);
@@ -215,7 +215,7 @@ public class VersionUtil {
                 if (topInventory instanceof Inventory) {
                     return (Inventory) topInventory;
                 } else {
-                    throw new IllegalStateException("The returned object is not an Inventory");
+                    return null;
                 }
             } else {
                 return null;
@@ -250,7 +250,7 @@ public class VersionUtil {
                 if (bottomInventory instanceof Inventory) {
                     return (Inventory) bottomInventory;
                 } else {
-                    throw new IllegalStateException("The returned object is not an Inventory");
+                    return null;
                 }
             } else {
                 return null;
