@@ -147,10 +147,9 @@ public class GuiBuilder {
         ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);
 
-        var added = 0;
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
             var wrap = wrapItemCombination.wrap();
-            if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) {
+            if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) { // display equipped item if the item is wrapped with that wrap
                 var equippedItem = new GuiItem(wrap.getEquippedItem().toItem(plugin, player));
                 equippedItem.setAction(click -> {
                     if (wrap.getEquippedItem().getActions() != null) {
@@ -178,7 +177,6 @@ public class GuiBuilder {
                 }
             });
             gui.addItem(guiItem);
-            added++;
         }
     }
 

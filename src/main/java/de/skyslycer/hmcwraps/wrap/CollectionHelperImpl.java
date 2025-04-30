@@ -4,10 +4,7 @@ import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CollectionHelperImpl implements CollectionHelper {
 
@@ -19,7 +16,7 @@ public class CollectionHelperImpl implements CollectionHelper {
 
     @Override
     public List<Wrap> getItems(Material material) {
-        var list = new ArrayList<String>();
+        var list = new HashSet<String>();
         if (plugin.getWrapsLoader().getTypeWraps().containsKey(material.toString())) {
             list.addAll(plugin.getWrapsLoader().getTypeWraps().get(material.toString()));
         }
