@@ -57,6 +57,9 @@ public enum ArmorModifiers {
         VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.ARMOR_TOUGHNESS);
         VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.KNOCKBACK_RESISTANCE);
         VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.ARMOR);
+        if (!meta.hasAttributeModifiers() && VersionUtil.hasDataComponents()) {
+            meta.setAttributeModifiers(null);
+        }
         item.setItemMeta(meta);
         return item;
     }
