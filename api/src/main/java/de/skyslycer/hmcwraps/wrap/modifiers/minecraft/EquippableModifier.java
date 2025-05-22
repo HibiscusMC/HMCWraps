@@ -62,6 +62,8 @@ public class EquippableModifier implements WrapModifier {
                 } else {
                     newMeta.setEquippable(null);
                 }
+                newMeta.getPersistentDataContainer().remove(originalEquippableSlotKey);
+                newMeta.getPersistentDataContainer().remove(originalEquippableModelKey);
                 item.setItemMeta(newMeta);
             }
         }

@@ -43,6 +43,9 @@ public class FlagsModifier implements WrapModifier {
                 } catch (IllegalArgumentException ignored) { }
             }
         }
+        if (wrap == null) {
+            meta.getPersistentDataContainer().remove(originalFlagsKey);
+        }
         item.setItemMeta(meta);
         if (wrap != null && currentWrap == null) {
             setOriginalFlags(item, currentFlags);

@@ -37,6 +37,7 @@ public class GlintOverrideModifier implements WrapModifier {
                 }
             } else {
                 meta.setEnchantmentGlintOverride(originalGlint);
+                meta.getPersistentDataContainer().remove(originalGlintKey);
             }
         }
         item.setItemMeta(meta);

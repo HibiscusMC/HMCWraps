@@ -79,6 +79,10 @@ public class TrimModifier implements WrapModifier {
                 }
             }
             setTrimsUsed(item, false);
+            var newMeta = item.getItemMeta();
+            newMeta.getPersistentDataContainer().remove(originalTrimKey);
+            newMeta.getPersistentDataContainer().remove(originalTrimMaterialKey);
+            item.setItemMeta(newMeta);
         }
         if (wrap != null && currentWrap == null) {
             setOriginalTrim(item, currentTrim);

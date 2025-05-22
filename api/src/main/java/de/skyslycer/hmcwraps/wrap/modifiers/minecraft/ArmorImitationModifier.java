@@ -73,6 +73,10 @@ public class ArmorImitationModifier implements WrapModifier {
                 switchFromAlternative(item, originalMaterial);
             }
             resetFakeDurability(item);
+            var newMeta = item.getItemMeta();
+            newMeta.getPersistentDataContainer().remove(originalMaterialKey);
+            newMeta.getPersistentDataContainer().remove(customAttributesKey);
+            item.setItemMeta(newMeta);
         }
         if (wrap != null && currentWrap == null) {
             setOriginalMaterial(item, currentMaterial);
