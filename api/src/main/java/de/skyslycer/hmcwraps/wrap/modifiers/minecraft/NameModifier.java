@@ -36,6 +36,8 @@ public class NameModifier implements WrapModifier {
             if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
                 meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())).replace("%originalname%", originalActualName == null ? "" : originalActualName));
             }
+        } else {
+            meta.getPersistentDataContainer().remove(originalNameKey);
         }
         item.setItemMeta(meta);
         if (wrap != null && currentWrap == null) {

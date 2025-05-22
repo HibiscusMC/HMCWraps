@@ -37,6 +37,7 @@ public class ItemModelModifier implements WrapModifier {
                 }
             } else {
                 meta.setItemModel(originalItemModel);
+                meta.getPersistentDataContainer().remove(originalItemModelKey);
             }
             item.setItemMeta(meta);
         }

@@ -41,6 +41,9 @@ public class ColorModifier implements WrapModifier {
                 leatherMeta.setColor(originalColor);
                 item.setItemMeta(leatherMeta);
             }
+            var newMeta = item.getItemMeta();
+            newMeta.getPersistentDataContainer().remove(originalColorKey);
+            item.setItemMeta(newMeta);
         }
         if (wrap != null && currentWrap == null) {
             setOriginalColor(item, currentColor);
