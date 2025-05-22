@@ -52,6 +52,7 @@ dependencies {
     compileOnly(depends.oraxen)
     compileOnly(depends.itemsadder)
     compileOnly(depends.mythicmobs)
+    compileOnly(depends.executableitems)
 }
 
 java {

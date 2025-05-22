@@ -71,6 +71,7 @@ public class WrapperImpl implements Wrapper {
         getModifiers().itemsAdder().wrap(wrap, currentWrap, editing, player);
         getModifiers().oraxen().wrap(wrap, currentWrap, editing, player);
         getModifiers().mythic().wrap(wrap, currentWrap, editing, player);
+        getModifiers().executableItems().wrap(wrap, currentWrap, editing, player);
         getModifiers().nexo().wrap(wrap, currentWrap, editing, player);
 
         return setPhysical(editing.clone(), physical);
@@ -207,6 +208,7 @@ public class WrapperImpl implements Wrapper {
                 isValidType(wrap.getRange().getItemsAdder(), getModifiers().itemsAdder().getRealItemsAdderId(item))
                 && isValidType(wrap.getRange().getOraxen(), getModifiers().oraxen().getRealOraxenId(item))
                 && isValidType(wrap.getRange().getMythic(), getModifiers().mythic().getRealMythicId(item))
+                && isValidType(wrap.getRange().getExecutableItems(), getModifiers().executableItems().getRealEIId(item))
                 && isValidType(wrap.getRange().getNexo(), getModifiers().nexo().getRealNexoId(item)));
     }
 
@@ -259,6 +261,9 @@ public class WrapperImpl implements Wrapper {
             return true;
         }
         if (plugin.getConfiguration().getGlobalDisable().getNexoId().contains(getModifiers().nexo().getRealNexoId(item))) {
+            return true;
+        }
+        if (plugin.getConfiguration().getGlobalDisable().getExecutableItemsId().contains(getModifiers().executableItems().getRealEIId(item))) {
             return true;
         }
         return false;

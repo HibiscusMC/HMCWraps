@@ -13,6 +13,7 @@ public class GlobalDisable {
     private List<String> itemsadder;
     private List<String> mythic;
     private List<String> nexo;
+    private List<String> executableItems;
 
     public List<Integer> getModelId() {
         return modelId;
@@ -36,6 +37,10 @@ public class GlobalDisable {
 
     public List<String> getNexoId() {
         return nexo;
+    }
+
+    public List<String> getExecutableItemsId() {
+        return executableItems;
     }
 
 }

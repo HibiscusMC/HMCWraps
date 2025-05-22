@@ -11,6 +11,7 @@ dependencyResolutionManagement {
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
             library("mythicmobs", "io.lumine:Mythic-Dist:5.8.0")
             library("annotations", "org.jetbrains:annotations:26.0.1")
+            library("executableitems", "com.github.Ssomar-Developement:SCore:5.25.3.9")
         }
         create("libs") {
             library("packets", "com.github.retrooper:packetevents-spigot:2.8.0")

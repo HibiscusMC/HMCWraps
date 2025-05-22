@@ -34,6 +34,7 @@ dependencies {
     compileOnly(depends.oraxen)
     compileOnly(depends.mythicmobs)
     compileOnly(depends.nexo)
+    compileOnly(depends.executableitems)
     compileOnly(libs.packets)
     compileOnly(libs.gui)
     compileOnly(libs.bundles.adventure)
