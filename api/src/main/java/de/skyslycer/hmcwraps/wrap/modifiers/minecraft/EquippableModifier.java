@@ -43,6 +43,8 @@ public class EquippableModifier implements WrapModifier {
                 equippable.setSlot(wrap.getEquippableSlot());
                 if (wrap.getEquippableModel() != null) {
                     equippable.setModel(wrap.getEquippableModel());
+                } else {
+                    equippable.setModel(null);
                 }
                 newMeta.setEquippable(equippable);
                 item.setItemMeta(newMeta);
