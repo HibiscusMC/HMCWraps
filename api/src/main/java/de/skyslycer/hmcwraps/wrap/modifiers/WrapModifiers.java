@@ -2,10 +2,7 @@ package de.skyslycer.hmcwraps.wrap.modifiers;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.wrap.modifiers.minecraft.*;
-import de.skyslycer.hmcwraps.wrap.modifiers.plugin.ItemsAdderModifier;
-import de.skyslycer.hmcwraps.wrap.modifiers.plugin.MythicModifier;
-import de.skyslycer.hmcwraps.wrap.modifiers.plugin.NexoModifier;
-import de.skyslycer.hmcwraps.wrap.modifiers.plugin.OraxenModifier;
+import de.skyslycer.hmcwraps.wrap.modifiers.plugin.*;
 
 /**
  * This class contains instances of all available modifiers.
@@ -27,6 +24,7 @@ public class WrapModifiers {
     private final MythicModifier mythic;
     private final NexoModifier nexo;
     private final OraxenModifier oraxen;
+    private final ExecutableItemsModifier executableItems;
 
     public WrapModifiers(HMCWraps plugin) {
         this.modelData = new ModelDataModifier(plugin);
@@ -44,6 +42,7 @@ public class WrapModifiers {
         this.mythic = new MythicModifier(plugin);
         this.nexo = new NexoModifier(plugin);
         this.oraxen = new OraxenModifier(plugin);
+        this.executableItems = new ExecutableItemsModifier(plugin);
     }
 
     public ModelDataModifier modelData() {
@@ -104,6 +103,10 @@ public class WrapModifiers {
 
     public OraxenModifier oraxen() {
         return oraxen;
+    }
+
+    public ExecutableItemsModifier executableItems() {
+        return executableItems;
     }
 
 }

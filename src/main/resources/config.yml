@@ -52,6 +52,7 @@ global-disable:
   oraxen: [ ]
   itemsadder: [ ]
   mythic: []
+  executableitems: [ ]
 
 # The items with wraps
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
