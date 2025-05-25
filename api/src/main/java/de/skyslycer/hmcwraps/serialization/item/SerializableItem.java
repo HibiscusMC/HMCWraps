@@ -106,10 +106,11 @@ public class SerializableItem {
         }
 
         ItemBuilder builder = ItemBuilder.from(origin);
-        builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
-                .amount(getAmount() == null ? 1 : getAmount())
-                .model(getModelId());
-
+        if (getName() != null) {
+            builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
+                    .amount(getAmount() == null ? 1 : getAmount())
+                    .model(getModelId());
+        }
         if (getColor() != null) {
             builder.color(getColor());
         }
