@@ -143,8 +143,12 @@ public abstract class ItemHook {
     @Nullable
     public String getName(String id) {
         var stack = get(id);
-        if (stack != null && stack.getItemMeta().hasDisplayName()) {
-            return StringUtil.parsedLegacyToMiniMessage(stack.getItemMeta().getDisplayName());
+        if (stack != null) {
+            if (stack.getItemMeta().hasDisplayName()) {
+                return StringUtil.parsedLegacyToMiniMessage(stack.getItemMeta().getDisplayName());
+            } else if (stack.getItemMeta().hasItemName() && VersionUtil.hasDataComponents()) {
+                return StringUtil.parsedLegacyToMiniMessage(stack.getItemMeta().getItemName());
+            }
         }
         return null;
     }
