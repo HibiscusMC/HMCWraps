@@ -22,7 +22,7 @@ repositories {
     maven("https://mvn.lumine.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.triumphteam.dev/snapshots")
-    maven("https://repo.nexomc.com/snapshots/")
+    maven("https://repo.nexomc.com/releases/")
 }
 
 dependencies {
