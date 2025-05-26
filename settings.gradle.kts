@@ -22,7 +22,7 @@ dependencyResolutionManagement {
             library("configurate", "org.spongepowered:configurate-yaml:4.1.2")
             library("mclogs", "gs.mclo:java:2.2.1")
             library("nbtapi", "de.tr7zw:item-nbt-api:2.15.0")
-            library("folialib", "com.tcoded:FoliaLib:0.4.2")
+            library("folialib", "com.tcoded:FoliaLib:0.4.4")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
