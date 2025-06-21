@@ -45,6 +45,15 @@ public class VersionUtil {
     }
 
     /**
+     * Check if the current server version is supported.
+     *
+     * @return If the current server version is supported
+     */
+    public static boolean isSupported() {
+        return getMinorMinecraftVersion() >= 20 && getPatchMinecraftVersion() >= 4;
+    }
+
+    /**
      * Check if trims are supported.
      *
      * @return If trims are supported

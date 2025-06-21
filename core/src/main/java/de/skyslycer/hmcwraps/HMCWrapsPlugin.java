@@ -26,6 +26,7 @@ import de.skyslycer.hmcwraps.transformation.ConfigFileTransformations;
 import de.skyslycer.hmcwraps.updater.ContinuousUpdateChecker;
 import de.skyslycer.hmcwraps.updater.version.PluginVersion;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -135,6 +136,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new HMCWrapsPlaceholders(this).register();
         }
+
+        if (!VersionUtil.isSupported()) {
+            logSevere("Your server version is not supported by this plugin! Please update your server to a newer version. Expect decreased functionality!");
+        }
     }
 
     @Override
@@ -193,9 +198,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             if (Files.notExists(WRAP_FILES_PATH)) {
                 Files.createDirectory(WRAP_FILES_PATH);
                 Files.copy(getResource("silver_wraps.yml"), WRAP_FILES_PATH.resolve("silver_wraps.yml"));
-            }
-            if (Files.notExists(WRAP_FILES_PATH)) {
-                Files.createDirectory(WRAP_FILES_PATH);
                 Files.copy(getResource("emerald_wraps.yml"), WRAP_FILES_PATH.resolve("emerald_wraps.yml"));
             }
             if (Files.notExists(COLLECTION_FILES_PATH)) {
