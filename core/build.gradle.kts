@@ -11,7 +11,6 @@ val shadePattern = "$group.hmcwraps.shade"
 
 dependencies {
     implementation(project(":api"))
-    implementation(libs.packets)
     implementation(libs.bundles.adventure)
     implementation(libs.configupdater)
     implementation(libs.bundles.lamp)
@@ -46,8 +45,6 @@ tasks {
         relocate("revxrsal.commands", "$shadePattern.commands")
         relocate("dev.triumphteam.gui", "$shadePattern.gui")
         relocate("org.spongepowered.configurate", "$shadePattern.config")
-        relocate("com.github.retrooper.packetevents", "$shadePattern.packets")
-        relocate("io.github.retrooper.packetevents", "$shadePattern.packets.io")
         relocate("org.bstats", "$shadePattern.bstats")
         relocate("com.owen1212055.particlehelper", "$shadePattern.particlehelper")
         relocate("de.tr7zw.changeme.nbtapi", "$shadePattern.nbtapi")
@@ -59,9 +56,6 @@ tasks {
         relocate("com.tcoded.folialib", "$shadePattern.folialib")
 
         exclude("com/google/**")
-        //exclude("assets/mappings/block/**")
-        //exclude("assets/mappings/particle/**")
-        //exclude("assets/mappings/potion/**")
         exclude("lamp_pt.properties")
         exclude("lamp_it.properties")
         exclude("lamp_fr.properties")

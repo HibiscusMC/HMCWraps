@@ -1,7 +1,6 @@
 package de.skyslycer.hmcwraps;
 
 import com.bgsoftware.common.config.CommentedConfiguration;
-import com.github.retrooper.packetevents.PacketEvents;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.skyslycer.hmcwraps.actions.ActionHandler;
@@ -31,7 +30,6 @@ import de.skyslycer.hmcwraps.wrap.*;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -72,9 +70,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     public void onLoad() {
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().load();
-        PacketEvents.getAPI().getSettings().checkForUpdates(false);
         MinecraftVersion.replaceLogger(new NoInfoLogger("HMCWraps-NBT", null));
         VersionChecker.hideOk = true;
         new NBTContainer();
@@ -130,8 +125,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         Bukkit.getPluginManager().registerEvents(new PlayerOffHandSwitchListener(this), this);
         Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(this), this);
 
-        PacketEvents.getAPI().init();
-
         CommandRegister.registerCommands(this);
 
         new DefaultActionRegister(this).register();
@@ -148,7 +141,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     public void onDisable() {
         unload();
         hooks.clear();
-        PacketEvents.getAPI().terminate();
     }
 
     @Override

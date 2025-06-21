@@ -19,6 +19,7 @@ import revxrsal.commands.annotation.Description;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 @NoHelp
@@ -38,7 +39,8 @@ public class TestCommand {
     @AutoComplete("@players")
     @CommandPermission(DEBUG_PERMISSION)
     public void onTestReflection(CommandSender sender, Player player) {
-        StringUtil.send(sender, "<white>[TEST] <gray>Self testing reflection methods for functionality...");
+        StringUtil.send(sender, "<white>[TEST] Self testing reflection methods for functionality...");
+        StringUtil.send(sender, "<white>[TEST] Commencing with attribute tests...");
         try {
             VersionUtil.getOpenInventoryType(player);
             StringUtil.send(sender, "<green>[OK] <gray>Method getOpenInventoryType passed.");
@@ -92,7 +94,68 @@ public class TestCommand {
             StringUtil.send(sender, "<red>[FAIL] <gray>Method removeAttributeModifier failed.");
             plugin.getLogger().log(Level.SEVERE, "removeAttributeModifier test failed:", e);
         }
-        StringUtil.send(sender, "<white>[TEST] <gray>Tests concluded. Please check the console for any errors.");
+        StringUtil.send(sender, "<white>[TEST] Commencing with NMS packet tests...");
+        try {
+            VersionUtil.sendFakeItem(player, new ItemStack(Material.DIAMOND), 0);
+            StringUtil.send(sender, "<green>[OK] <gray>Method sendFakeItem passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendFakeItem failed.");
+            plugin.getLogger().log(Level.SEVERE, "sendFakeItem test failed:", e);
+        }
+        var entityId = ThreadLocalRandom.current().nextInt();
+        try {
+            entityId = VersionUtil.getNextEntityId();
+            StringUtil.send(sender, "<green>[OK] <gray>Method getNextEntityId passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method getNextEntityId failed.");
+            plugin.getLogger().log(Level.SEVERE, "getNextEntityId test failed:", e);
+        }
+        try {
+            VersionUtil.sendSpawnPacket(player, entityId, false);
+            StringUtil.send(sender, "<green>[OK] <gray>Method sendSpawnPacket passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendSpawnPacket failed.");
+            plugin.getLogger().log(Level.SEVERE, "sendSpawnPacket test failed:", e);
+        }
+        try {
+            VersionUtil.sendMetadataPacket(player, entityId, false);
+            StringUtil.send(sender, "<green>[OK] <gray>Method sendMetadataPacket passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendMetadataPacket failed.");
+            plugin.getLogger().log(Level.SEVERE, "sendMetadataPacket test failed:", e);
+        }
+        try {
+            VersionUtil.sendTeleportPacket(player, entityId, false);
+            StringUtil.send(sender, "<green>[OK] <gray>Method sendTeleportPacket passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendTeleportPacket failed.");
+            plugin.getLogger().log(Level.SEVERE, "sendTeleportPacket test failed:", e);
+        }
+        try {
+            VersionUtil.sendEquipPacket(player, entityId, new ItemStack(Material.DIAMOND_SWORD));
+            StringUtil.send(sender, "<green>[OK] <gray>Method sendEquipPacket passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendEquipPacket failed.");
+            plugin.getLogger().log(Level.SEVERE, "sendEquipPacket test failed:", e);
+        }
+        try {
+            VersionUtil.sendRelativeMoveAndRotatePacket(player, entityId, 1, 0);
+            StringUtil.send(sender, "<green>[OK] <gray>Method sendRelativeMoveAndRotatePacket passed.");
+        } catch (Exception e) {
+            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendRelativeMoveAndRotatePacket failed.");
+            plugin.getLogger().log(Level.SEVERE, "sendRelativeMoveAndRotatePacket test failed:", e);
+        }
+        int finalEntityId = entityId;
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
+            try {
+                VersionUtil.sendDestroyPacket(player, finalEntityId);
+                StringUtil.send(sender, "<green>[OK] <gray>Method sendDestroyPacket passed.");
+            } catch (Exception e) {
+                StringUtil.send(sender, "<red>[FAIL] <gray>Method sendDestroyPacket failed.");
+                plugin.getLogger().log(Level.SEVERE, "sendDestroyPacket test failed:", e);
+            }
+            StringUtil.send(sender, "<white>[TEST] Tests concluded. Please check the console for any errors.");
+        }, 20L);
     }
 
 }

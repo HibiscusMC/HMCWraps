@@ -1,9 +1,5 @@
 package de.skyslycer.hmcwraps.actions.register;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetTitleSubtitle;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetTitleText;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetTitleTimes;
 import com.owen1212055.particlehelper.api.particle.MultiParticle;
 import com.owen1212055.particlehelper.api.particle.Particle;
 import com.owen1212055.particlehelper.api.particle.types.*;
@@ -222,28 +218,19 @@ public class DefaultActionRegister {
     }
 
     private void registerTitle() {
-        plugin.getActionHandler().subscribe(Action.TITLE, (information -> {
-            var player = information.getPlayer();
-            var split = information.getArguments().split(" ");
-            if (checkSplit(split, 4, "title", "0.5 4.0 1.0 message")) return;
-            var message = String.join(" ", Arrays.copyOfRange(split, 3, split.length));
-            setTitleTimes(player, split);
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSetTitleText(StringUtil.parseComponent(player, parseMessage(information, message))));
-        }));
+        plugin.getActionHandler().subscribe(Action.TITLE, (information -> sendTitle(information, false)));
     }
 
     private void registerSubtitle() {
-        plugin.getActionHandler().subscribe(Action.SUBTITLE, (information -> {
-            var player = information.getPlayer();
-            var split = information.getArguments().split(" ");
-            if (checkSplit(split, 4, "title", "0.5 4.0 1.0")) return;
-            var message = String.join(" ", Arrays.copyOfRange(split, 3, split.length));
-            setTitleTimes(player, split);
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSetTitleSubtitle(StringUtil.parseComponent(player, parseMessage(information, message))));
-        }));
+        plugin.getActionHandler().subscribe(Action.SUBTITLE, (information -> sendTitle(information, true)));
     }
 
-    private void setTitleTimes(Player player, String[] split) {
+    private void sendTitle(ActionInformation information, boolean subtitle) {
+        var player = information.getPlayer();
+        var split = information.getArguments().split(" ");
+        if (checkSplit(split, 4, subtitle ? "subtitle" : "title", "0.5 4.0 1.0")) return;
+        var message = String.join(" ", Arrays.copyOfRange(split, 3, split.length));
+        var parsedMessage = StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, parseMessage(information, message)));
         var fadeIn = 5;
         var hold = 40;
         var fadeOut = 10;
@@ -254,7 +241,7 @@ public class DefaultActionRegister {
         } catch (NumberFormatException exception) {
             plugin.getLogger().warning("The title duration " + split[0] + " or " + split[1] + " or " + split[2] + " is not a valid float number! Example: 1.0 (HMCWraps action configuration)");
         }
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerSetTitleTimes(fadeIn, hold, fadeOut));
+        player.sendTitle(subtitle ? null : parsedMessage, subtitle ? parsedMessage : null, fadeIn, hold, fadeOut);
     }
 
     private void registerActionBar() {

@@ -1,3 +1,7 @@
+plugins {
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17" apply false
+}
+
 allprojects {
     group = "de.skyslycer"
     version = "1.6.3"

@@ -1,6 +1,13 @@
 rootProject.name = "HMCWraps"
 include("core", "api")
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("depends") {
@@ -14,7 +21,6 @@ dependencyResolutionManagement {
             library("executableitems", "com.github.Ssomar-Developement:SCore:5.25.3.9")
         }
         create("libs") {
-            library("packets", "com.github.retrooper:packetevents-spigot:2.8.0")
             library("particles", "com.owen1212055:particlehelper:1.5.0-SNAPSHOT")
             library("configupdater", "com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")
@@ -37,4 +43,3 @@ dependencyResolutionManagement {
         }
     }
 }
-include("core")
