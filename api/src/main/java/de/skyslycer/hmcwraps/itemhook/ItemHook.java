@@ -168,4 +168,19 @@ public abstract class ItemHook {
         return null;
     }
 
+    /**
+     * Get the tooltip style corresponding to the input.
+     *
+     * @param id The input
+     * @return The tooltip style
+     */
+    @Nullable
+    public NamespacedKey getTooltipStyle(String id) {
+        var stack = get(id);
+        if (VersionUtil.equippableSupported() && stack != null && stack.getItemMeta().hasTooltipStyle()) {
+            return stack.getItemMeta().getTooltipStyle();
+        }
+        return null;
+    }
+
 }

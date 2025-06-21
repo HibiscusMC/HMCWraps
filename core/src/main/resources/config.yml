@@ -182,7 +182,6 @@ preservation:
   model-id:
     # If the model id should be restored after it gets unwrapped from before the item got wrapped
     # NOTE: If there is an original model id stored on the item, that will get preferred over original model ids
-    # NOTE: Disabling both options will result in all items ending up with the model id '-1' when unwrapped
     original-enabled: true
     # If the model id should be set to the id below when the item is unwrapped
     default-enabled: false

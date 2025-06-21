@@ -48,12 +48,10 @@ public class SerializableItem {
     private @Nullable String equippableSlot;
     private @Nullable String equippableModel;
     private @Nullable String itemModel;
+    private @Nullable String tooltipStyle;
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
-                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount,
-                            @Nullable String color, @Nullable String nbt, @Nullable Integer durability, @Nullable String skullOwner,
-                            @Nullable String skullTexture, @Nullable String trim, @Nullable String trimMaterial,
-                            @Nullable String equippableSlot, @Nullable String equippableModel, @Nullable String itemModel) {
+                            @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount) {
         this.id = id;
         this.name = name;
         this.glow = glow;
@@ -62,16 +60,6 @@ public class SerializableItem {
         this.modelId = modelId;
         this.enchantments = enchantments;
         this.amount = amount;
-        this.color = color;
-        this.nbt = nbt;
-        this.durability = durability;
-        this.skullOwner = skullOwner;
-        this.skullTexture = skullTexture;
-        this.trim = trim;
-        this.trimMaterial = trimMaterial;
-        this.equippableSlot = equippableSlot;
-        this.equippableModel = equippableModel;
-        this.itemModel = itemModel;
     }
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
@@ -170,6 +158,11 @@ public class SerializableItem {
         if (VersionUtil.itemModelSupported() && getItemModel() != null) {
             var itemMeta = item.getItemMeta();
             itemMeta.setItemModel(getItemModel());
+            item.setItemMeta(itemMeta);
+        }
+        if (VersionUtil.equippableSupported() && getTooltipStyle() != null) {
+            var itemMeta = item.getItemMeta();
+            itemMeta.setTooltipStyle(getTooltipStyle());
             item.setItemMeta(itemMeta);
         }
         if (VersionUtil.hasDataComponents() && getFlags() != null && getFlags().contains("HIDE_ATTRIBUTES")) {
@@ -308,6 +301,14 @@ public class SerializableItem {
             return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getItemModelFromHook(getId());
         }
         return NamespacedKey.fromString(itemModel);
+    }
+
+    @Nullable
+    public NamespacedKey getTooltipStyle() {
+        if (tooltipStyle == null) {
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getTooltipStyleFromHook(getId());
+        }
+        return NamespacedKey.fromString(tooltipStyle);
     }
 
 }

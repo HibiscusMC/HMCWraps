@@ -8,9 +8,9 @@ public class RandomUtil {
     private static final java.util.Random RANDOM = ThreadLocalRandom.current();
 
     /**
-     * Generates a random alphanumeric ID of length 16.
+     * Generates a random ID of length 16 which follows the limitations for namespaced keys.
      *
-     * @return A random alphanumeric ID.
+     * @return A random ID
      */
     public static String generateRandomId() {
         StringBuilder sb = new StringBuilder(16);

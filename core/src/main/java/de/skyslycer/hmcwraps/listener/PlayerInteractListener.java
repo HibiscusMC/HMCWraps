@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
 import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.util.ListUtil;
@@ -12,8 +13,16 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
+import java.util.Map;
 
 public class PlayerInteractListener implements Listener {
+
+    private static final Map<Action, String> ACTIONS = Map.of(
+            Action.LEFT_CLICK_AIR, "interact-left-air",
+            Action.LEFT_CLICK_BLOCK, "interact-left-block",
+            Action.RIGHT_CLICK_AIR, "interact-right-air",
+            Action.RIGHT_CLICK_BLOCK, "interact-right-block"
+    );
 
     private final HMCWrapsPlugin plugin;
 
@@ -40,6 +49,9 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
+        runWrapActions(event);
+        runWrapperActions(event);
+
         if (plugin.getWrapper().isGloballyDisabled(newItem)) {
             return;
         }
@@ -63,4 +75,35 @@ public class PlayerInteractListener implements Listener {
         GuiBuilder.open(plugin, player, newItem, player.getInventory().getHeldItemSlot());
     }
 
+    private void runWrapActions(PlayerInteractEvent event) {
+        var player = event.getPlayer();
+        var item = player.getInventory().getItemInMainHand();
+        if (item.getType().isAir()) return;
+        var wrap = plugin.getWrapper().getWrap(item);
+        if (wrap == null) return;
+        if (wrap.getActions() == null) return;
+        if (wrap.getActions().get("interact") != null) {
+            plugin.getActionHandler().pushFromConfig(wrap.getActions().get("interact"), new WrapActionInformation(wrap, player, ""));;
+        }
+        if (wrap.getActions().get(ACTIONS.get(event.getAction())) != null) {
+            plugin.getActionHandler().pushFromConfig(wrap.getActions().get(ACTIONS.get(event.getAction())), new WrapActionInformation(wrap, player, ""));
+        }
+    }
+
+    private void runWrapperActions(PlayerInteractEvent event) {
+        var player = event.getPlayer();
+        var item = player.getInventory().getItemInMainHand();
+        if (item.getType().isAir()) return;
+        var wrapId = plugin.getWrapper().getPhysicalWrapper(item);
+        if (wrapId == null) return;
+        var wrap = plugin.getWrapsLoader().getWraps().get(wrapId);
+        if (wrap == null) return;
+        if (wrap.getPhysical() == null || wrap.getPhysical().getActions() == null) return;
+        if (wrap.getPhysical().getActions().get("interact") != null) {
+            plugin.getActionHandler().pushFromConfig(wrap.getPhysical().getActions().get("interact"), new WrapActionInformation(wrap, player, ""));
+        }
+        if (wrap.getPhysical().getActions().get(ACTIONS.get(event.getAction())) != null) {
+            plugin.getActionHandler().pushFromConfig(wrap.getPhysical().getActions().get(ACTIONS.get(event.getAction())), new WrapActionInformation(wrap, player, ""));
+        }
+    }
 }

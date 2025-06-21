@@ -103,4 +103,10 @@ public class HookAccessor {
         return possible.map(itemHook -> itemHook.getLore(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
+    @Nullable
+    public NamespacedKey getTooltipStyleFromHook(String id) {
+        var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
+        return possible.map(itemHook -> itemHook.getTooltipStyle(id.replace(possible.get().getPrefix(), ""))).orElse(null);
+    }
+
 }
