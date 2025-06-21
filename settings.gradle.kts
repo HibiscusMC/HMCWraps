@@ -1,5 +1,5 @@
 rootProject.name = "HMCWraps"
-include("api")
+include("core", "api")
 
 dependencyResolutionManagement {
     versionCatalogs {
@@ -37,3 +37,4 @@ dependencyResolutionManagement {
         }
     }
 }
+include("core")

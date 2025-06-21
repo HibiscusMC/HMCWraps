@@ -1,0 +1,338 @@
+# Settings on how permissions should be handled
+permissions:
+  # If the wrap inventory open permission should be checked on wraps inventory open
+  inventory-permission: false
+  # If the preview should be disabled if the player doesn't have the permission for the wrap
+  preview-permission: false
+  # If permission checks should be performed during usage for...
+  # ...physical wraps
+  check-permission-physical: false
+  # ...virtual wraps
+  check-permission-virtual: true
+  # If permissions should be checked on appliance for...
+  # ...physical wraps
+  permission-physical: false
+  # ...virtual wraps
+  permission-virtual: true
+  # The interval in minutes to check for wraps without permission, set to -1 to disable
+  inventory-check-interval: 10
+
+# Preview settings
+preview:
+  # The type of the preview, either 'FLOATING' or 'HAND', floating being the item turning in the air and
+  # item being the players item in hand turning into the wrap temporarily.
+  # When using 'HAND', rotation and bobbing will be ignored. (The preview item is client-side only)
+  type: 'FLOATING'
+  # Duration of the preview in seconds
+  duration: 5
+  # Rotation per tick (50ms)
+  rotation: 5
+  # Sneak to cancel preview settings
+  sneak-cancel:
+    # If the preview should be cancelled when sneaking
+    enabled: true
+    # If the configured message should be sent as an action bar while previewing
+    action-bar: true
+  # Lets the preview item move up and down
+  bobbing:
+    # If the item should bob while previewing
+    enabled: true
+    # How fast it should bob up and down
+    speed: 7
+    # How far it should bob up and down
+    intensity: 0.25
+
+# Items with these properties can't be wrapped
+global-disable:
+  # Any model id in this list can't be wrapped. If you want to disable items with no model id, use -1.
+  model-id: [ ]
+  # You can use hex or rgb, check the documentation. If you want to disable items with no color, use 'none'.
+  color: [ ]
+  nexo: [ ]
+  oraxen: [ ]
+  itemsadder: [ ]
+  mythic: []
+  executable-items: [ ]
+
+# The items with wraps
+# You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
+items:
+  # Wraps of every item in the 'SWORDS' collection
+  SWORDS:
+    # Wrap list
+    wraps:
+      1:
+        # The permission to virtually apply this wrap (inventory) (nullable)
+        permission: 'hmcwraps.fire_sword'
+        # The UUID (global identifier), has to be unique in ALL wraps!
+        uuid: 'fire_sword'
+        # Either custom model id or a hook to get the custom model id
+        id: '1'
+        # The color of the item (this won't do anything now because this isn't dye able) (nullable, just here for demonstration)
+        color: '#ffffff'
+        # The name in the wraps inventory
+        name: '<red>Fire <gray>Wrap'
+        # The name in the wraps inventory, if the player doesn't have the permission above (nullable)
+        locked-name: '<red><bold>Locked!'
+        # The lore in the wraps inventory (nullable)
+        lore:
+          - '<gray>Apply this wrap to make your sword look fire!'
+        # The lore in the wraps inventory, if the player doesn't have the permission above (nullable)
+        locked-lore:
+          - '<gray>You need to buy this item in our <red>store<gray>!'
+        # If it should glow in the wraps inventory (nullable)
+        glow: true
+        # The flags the item should have in the wraps inventory (nullable)
+        flags:
+          - 'HIDE_ATTRIBUTES'
+        # Item actions, most action triggers are listed below. For a full list of actions, see the wiki.
+        # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
+        # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
+        actions:
+          wrap: { }
+          wrap-virtual: { }
+          wrap-physical: { }
+          unwrap: { }
+          unwrap-virtual: { }
+          unwrap-physical: { }
+          preview: { }
+        # The physical wrap to apply (nullable)
+        physical:
+          # The Bukkit material or a hook
+          id: 'PAPER'
+          # Custom model id, automatically applies if you have set a hook in the id value
+          model-id: 2
+          # Name displayed
+          name: '<red>Fire <gray>Wrap for <red>swords'
+          # If the wrap should be given to the player after they unwrap the item or re wrap it
+          keep-after-unwrap: true
+          # Lore displayed
+          lore:
+            - '<green>Apply this to an item to wrap it!'
+  # Wraps of every item in the 'PICKAXES' collection
+  PICKAXES:
+    wraps:
+      1:
+        permission: 'hmcwraps.fire_pickaxe'
+        uuid: 'fire_pickaxe'
+        id: '1'
+        name: '<red>Fire <gray>Wrap'
+        lore:
+          - '<gray>Apply this wrap to make your pickaxe look fire!'
+        glow: true
+        flags:
+          - 'HIDE_ATTRIBUTES'
+        locked-item:
+          id: 'BARRIER'
+          name: '<red><bold>Locked!'
+          lore:
+            - '<gray>You need to buy this item in our <red>store!'
+        physical:
+          id: 'PAPER'
+          model-id: 3
+          name: '<red>Fire <gray>Wrap for <blue>Diamond Pickaxe'
+          keep-after-unwrap: true
+          lore:
+            - '<green>Apply this to an item to wrap it!'
+
+# A wrap with a collection as the id can be applied to all items in that collection.
+# All the items in the collection need to have the same custom model data for that wrap.
+collections:
+  SWORDS:
+    - 'NETHERITE_SWORD'
+    - 'DIAMOND_SWORD'
+    - 'IRON_SWORD'
+    - 'STONE_SWORD'
+  PICKAXES:
+    - 'NETHERITE_PICKAXE'
+    - 'DIAMOND_PICKAXE'
+    - 'IRON_PICKAXE'
+    - 'STONE_PICKAXE'
+
+# The unwrapper configuration
+unwrapper:
+  # The Bukkit material or a hook
+  id: 'PAPER'
+  # Name displayed
+  name: '<green><bold>Unwrapper'
+  # Custom model id, automatically applies if you have set a hook in the id value
+  model-id: 1
+  # Lore displayed
+  lore:
+    - '<green>Apply this to an item to unwrap it!'
+    - '<gray>You may get the physical wrap back.'
+
+# Store a players preference set using actions (SET_FAVORITE) and apply it on pick up and inventory move
+# This feature shouldn't do anything if you don't use the action, but if you have and don't want it anymore, disable this again
+favorites:
+  # If the feature should be enabled
+  enabled: false
+
+# The inventory filter configuration
+# This feature shouldn't do anything if you don't use the action, but if you have and don't want it anymore, disable this
+# If you want the inventory to only show wraps the player owns, enable this feature and set default to 'true' and don't change it using actions
+filter:
+  # If the feature should be enabled
+  enabled: true
+  # If the inventory should be filtered by default
+  default: false
+
+# Settings for model id & color preservation
+preservation:
+  model-id:
+    # If the model id should be restored after it gets unwrapped from before the item got wrapped
+    # NOTE: If there is an original model id stored on the item, that will get preferred over original model ids
+    # NOTE: Disabling both options will result in all items ending up with the model id '-1' when unwrapped
+    original-enabled: true
+    # If the model id should be set to the id below when the item is unwrapped
+    default-enabled: false
+    # The default model ids for items that get unwrapped
+    defaults:
+      # Every item in the 'PICKAXES' collection will end up with the model id 0 after getting unwrapped
+      PICKAXES: 0
+      # Iron shovels will end up with the model id 0 after getting unwrapped
+      IRON_SHOVEL: 0
+  # Basically the same as model-id preservation, but with the color
+  color:
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
+  # Still the same, but with the name
+  name:
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
+  # I think you get the idea
+  lore:
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
+  # Now with flags
+  flags:
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
+
+# The version checker configuration
+updater:
+  # If the version checker should be enabled
+  enabled: true
+  # How often the version checker should check for updates
+  frequency: '3h'
+  # Where the version checker should check for updates (POLYMART, SPIGOT_MC)
+  platform: 'POLYMART'
+
+# Settings related to wrapping
+wrapping:
+  # If wraps should be able to be rewrapped (wrapped again while wrapped)
+  rewrap:
+    # If rewrapping should be enabled for...
+    # ...virtual wrapping
+    virtual-enabled: true
+    # ...physical wrapping
+    physical-enabled: true
+    # If the player should be able to rewrap items that are already wrapped with the same wrap for...
+    # ...virtual wrapping
+    same-virtual-enabled: false
+    # ...physical wrapping
+    same-physical-enabled: false
+
+# The inventory (/wraps)
+inventory:
+  # The sort order by which the wraps in the inventory will be sorted
+  # PERMISSION: Sorts by permission, the player has access to first
+  # SORT_ID: Sorts by the sort id, lower numbers first. Example: sort: 3
+  # MODEL_ID: Sorts by model id, lower numbers first
+  sort-order:
+    - 'PERMISSION'
+    - 'SORT_ID'
+    - 'MODEL_ID'
+  # Shortcut settings
+  shortcut:
+    # If the shortcut to open the wrap inventory when shift & right-clicking should be enabled
+    enabled: true
+    # What items can't be used to open the inventory
+    exclude: [ ]
+  # If the player should be able to switch the wrapping item in the inventory.
+  # When enabled, the inventory won't close after wrapping or unwrapping.
+  item-change-enabled: true
+  # If the player should be able to open the wraps inventory with the command while not holding any item.
+  # The inventory won't be filled. If the option above is enabled, the player can then click the item to wrap.
+  open-without-item-enabled: false
+  # The title
+  title: '<red><bold>Wraps'
+  # Type of inventory, SCROLLING or PAGINATED
+  type: 'SCROLLING'
+  # How many rows the inventory should have
+  rows: 6
+  # Actions executed when clicking a wrap
+  actions:
+    left:
+      WRAP:
+        - ''
+    right:
+      PREVIEW:
+        - ''
+  # Executed when clicking a wrap the player doesn't have permission for
+  locked-actions:
+    right:
+      PREVIEW:
+        - ''
+  # The slot to set the item the player is holding to (-1 to disable)
+  target-item-slot: 49
+  # The set items in the inventory, every empty slot will be filled with wraps
+  items:
+    # Slots start from 0
+    45:
+      id: 'HOPPER'
+      name: '%hmcwraps_filter%'
+      lore:
+        - '<gray>Toggle to see all'
+        - '<gray>or only owned wraps.'
+      actions:
+        any:
+          TOGGLE_FILTER:
+            - ''
+    46:
+      # The Bukkit material or hook
+      id: 'GRAY_STAINED_GLASS_PANE'
+      # The name
+      name: '<gray> '
+      # What slots it should fill
+      fills:
+        - 48
+        - 50
+        - 52
+    47:
+      id: 'ARROW'
+      name: '<green>Previous'
+      # Actions, you can use all the above and more. It's the same format as the actions in the wraps.
+      # The action: Either 'SCROLL_BACK', 'SCROLL_FORTH', 'PREVIOUS_PAGE', 'NEXT_PAGE', 'UNWRAP' to unwrap the current item, 'CLOSE' to close the inventory
+      actions:
+        # On any click, but there is 'left' and 'right' too
+        any:
+          # Scroll back / previous page
+          SCROLL_BACK:
+            # No arguments are needed
+            - ''
+    51:
+      id: 'ARROW'
+      name: '<green>Next'
+      actions:
+        any:
+          SCROLL_FORTH:
+            - ''
+    53:
+      id: 'RED_CONCRETE'
+      name: '<red>Unwrap'
+      # The lore displayed
+      lore:
+        - '<gray>Unwrap your current item'
+      actions:
+        any:
+          UNWRAP:
+            - ''
+
+# DON'T TOUCH THIS
+config: 1
+# DON'T TOUCH THIS
