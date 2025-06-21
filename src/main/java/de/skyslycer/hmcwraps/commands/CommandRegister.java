@@ -8,6 +8,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.autocomplete.SuggestionProviderFactory;
@@ -21,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class CommandRegister {
 
@@ -32,16 +32,25 @@ public class CommandRegister {
             var uuid = context.pop();
             var wrap = plugin.getWrapsLoader().getWraps().get(uuid);
             if (wrap == null) {
-                plugin.getMessageHandler().send(context.actor().as(BukkitActor.class).getAsPlayer(), Messages.COMMAND_INVALID_WRAP,
+                plugin.getMessageHandler().send(context.actor().as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_WRAP,
                         Placeholder.parsed("uuid", uuid));
             }
             return wrap;
         });
+        commandHandler.registerValueResolver(World.class, context -> {
+           var name = context.pop();
+           var world = Bukkit.getWorld(name);
+           if (world == null) {
+               plugin.getMessageHandler().send(context.actor().as(BukkitActor.class).getSender(), Messages.COMMAND_INVALID_WORLD,
+                       Placeholder.parsed("world", name));
+           }
+           return world;
+        });
         commandHandler.registerPermissionReader(new AnyPermissionReader());
         commandHandler.getAutoCompleter().registerSuggestionFactory(0,
+                SuggestionProviderFactory.forType(World.class, SuggestionProvider.map(Bukkit::getWorlds, World::getName)));
+        commandHandler.getAutoCompleter().registerSuggestionFactory(0,
                 SuggestionProviderFactory.forType(Player.class, SuggestionProvider.map(Bukkit::getOnlinePlayers, Player::getName)));
-        commandHandler.getAutoCompleter().registerParameterSuggestions(Integer.class, SuggestionProvider.of(IntStream.range(1, 65).boxed().map(
-                Object::toString).sorted().toList()));
         commandHandler.getAutoCompleter().registerSuggestion("physicalWraps",
                 (args, sender, command) -> plugin.getWrapsLoader().getWraps().values().stream().filter(wrap -> wrap.getPhysical() != null).map(Wrap::getUuid).toList());
         commandHandler.getAutoCompleter()
@@ -94,7 +103,7 @@ public class CommandRegister {
                             .replace("<command>", command.getPath().toRealString())
                             .replace("<usage>", command.getUsage()).replace("<description>", command.getDescription()) : null;
                 });
-        commandHandler.register(new WrapCommand(plugin), new DebugCommand(plugin));
+        commandHandler.register(new WrapCommand(plugin), new WrapCreateCommand(plugin), new DebugCommand(plugin));
         if (isTestModeEnabled()) {
             commandHandler.register(new TestCommand(plugin));
         }

@@ -24,6 +24,8 @@ public enum Messages {
     COMMAND_INVALID_PHYSICAL("command.invalid-physical"),
     COMMAND_GIVEN_PHYSICAL("command.given-physical"),
     COMMAND_GIVEN_UNWRAPPER("command.given-unwrapper"),
+    COMMAND_INVALID_WORLD("command.invalid-world"),
+    COMMAND_DROPPED_PHYSICAL("command.dropped-physical"),
     COMMAND_RELOAD("command.reload"),
     COMMAND_NEED_ITEM("command.need-item"),
     COMMAND_ITEM_NOT_FOR_WRAP("command.item-not-for-wrap"),
