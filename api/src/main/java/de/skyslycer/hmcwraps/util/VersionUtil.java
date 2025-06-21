@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -351,7 +352,9 @@ public class VersionUtil {
             if (VersionUtil.equippableSupported()) {
                 var modernAttribute = (org.bukkit.attribute.Attribute) attributeObject;
                 try {
-                    meta.addAttributeModifier(modernAttribute, new AttributeModifier(modernAttribute.getKey(), amount, AttributeModifier.Operation.ADD_NUMBER, slot.getGroup()));
+                    meta.addAttributeModifier(modernAttribute, new AttributeModifier(
+                            NamespacedKey.minecraft(RandomUtil.generateRandomId()), amount,
+                            AttributeModifier.Operation.ADD_NUMBER, slot.getGroup()));
                 } catch (IllegalArgumentException exception) {
                     throw new IllegalArgumentException("Failed to add modern attribute: " + attribute.name(), exception);
                 }
