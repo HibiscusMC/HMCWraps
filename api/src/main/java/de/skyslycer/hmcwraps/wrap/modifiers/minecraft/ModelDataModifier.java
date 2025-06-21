@@ -29,7 +29,8 @@ public class ModelDataModifier implements WrapModifier {
         if (meta.hasCustomModelData()) {
             currentModelId = meta.getCustomModelData();
         }
-        meta.setCustomModelData(wrap == null ? originalModleId : wrap.getModelId());
+        var newModelId = wrap == null ? originalModleId : wrap.getModelId();
+        meta.setCustomModelData(newModelId == -1 ? null : newModelId);
         if (wrap == null) {
             meta.getPersistentDataContainer().remove(originalModelIdKey);
         }

@@ -53,7 +53,11 @@ public class WrapperImpl implements Wrapper {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
         var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap == null ? "-" : wrap.getUuid());
+        if (wrap != null) {
+            meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap.getUuid());
+        } else {
+            meta.getPersistentDataContainer().remove(wrapIdKey);
+        }
         meta.getPersistentDataContainer().remove(playerKey);
         editing.setItemMeta(meta);
 
@@ -196,7 +200,11 @@ public class WrapperImpl implements Wrapper {
     public ItemStack setPhysical(ItemStack item, boolean physical) {
         var editing = item.clone();
         var meta = editing.getItemMeta();
-        meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, physical ? (byte) 1 : (byte) 0);
+        if (physical) {
+            meta.getPersistentDataContainer().set(physicalKey, PersistentDataType.BYTE, (byte) 1);
+        } else {
+            meta.getPersistentDataContainer().remove(physicalKey);
+        }
         editing.setItemMeta(meta);
         return editing;
     }
