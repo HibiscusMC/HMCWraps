@@ -1,13 +1,11 @@
 package de.skyslycer.hmcwraps.preview.hand;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.preview.Preview;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
@@ -65,8 +63,7 @@ public class HandPreview implements Preview {
     }
 
     private void sendFakeItem(ItemStack item) {
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player,
-                new WrapperPlayServerSetSlot(0, -1, slot, SpigotReflectionUtil.decodeBukkitItemStack(item)));
+        VersionUtil.sendFakeItem(player, item, slot);
     }
 
 }

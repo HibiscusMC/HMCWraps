@@ -68,8 +68,8 @@ public abstract class ItemHook {
     @Nullable
     public String getTrimPattern(String id) {
         var stack = get(id);
-        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null) {
-            return meta.getTrim().getPattern().getKey().toString();
+        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null && meta.getTrim().getPattern().isRegistered()) {
+            return meta.getTrim().getPattern().getKeyOrThrow().toString();
         }
         return null;
     }
@@ -83,8 +83,8 @@ public abstract class ItemHook {
     @Nullable
     public String getTrimMaterial(String id) {
         var stack = get(id);
-        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null) {
-            return meta.getTrim().getMaterial().getKey().toString();
+        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null && meta.getTrim().getPattern().isRegistered()) {
+            return meta.getTrim().getPattern().getKeyOrThrow().toString();
         }
         return null;
     }
@@ -164,6 +164,21 @@ public abstract class ItemHook {
         var stack = get(id);
         if (stack != null && stack.getItemMeta().hasLore()) {
             return stack.getItemMeta().getLore().stream().map(StringUtil::parsedLegacyToMiniMessage).toList();
+        }
+        return null;
+    }
+
+    /**
+     * Get the tooltip style corresponding to the input.
+     *
+     * @param id The input
+     * @return The tooltip style
+     */
+    @Nullable
+    public NamespacedKey getTooltipStyle(String id) {
+        var stack = get(id);
+        if (VersionUtil.equippableSupported() && stack != null && stack.getItemMeta().hasTooltipStyle()) {
+            return stack.getItemMeta().getTooltipStyle();
         }
         return null;
     }

@@ -41,10 +41,10 @@ public enum ArmorModifiers {
 
     public static void applyAttributes(ItemStack item, EquipmentSlot slot, int toughness, int knockback, int defense) {
         var meta = item.getItemMeta();
-        VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.ARMOR_TOUGHNESS);
-        VersionUtil.Attribute.addAttributeModifier(meta, slot, VersionUtil.Attribute.ARMOR_TOUGHNESS, toughness);
         VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.ARMOR);
         VersionUtil.Attribute.addAttributeModifier(meta, slot, VersionUtil.Attribute.ARMOR, defense);
+        VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.ARMOR_TOUGHNESS);
+        VersionUtil.Attribute.addAttributeModifier(meta, slot, VersionUtil.Attribute.ARMOR_TOUGHNESS, toughness);
         if (knockback != 0) {
             VersionUtil.Attribute.removeAttributeModifier(meta, VersionUtil.Attribute.KNOCKBACK_RESISTANCE);
             VersionUtil.Attribute.addAttributeModifier(meta, slot, VersionUtil.Attribute.KNOCKBACK_RESISTANCE, knockback / 10d); // divided by 10 because Minecraft decided so

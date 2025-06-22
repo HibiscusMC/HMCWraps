@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.1.21"
     id("org.jetbrains.dokka") version ("2.0.0")
 }
 
@@ -35,7 +35,6 @@ dependencies {
     compileOnly(depends.mythicmobs)
     compileOnly(depends.nexo)
     compileOnly(depends.executableitems)
-    compileOnly(libs.packets)
     compileOnly(libs.gui)
     compileOnly(libs.bundles.adventure)
     compileOnly(libs.configurate)

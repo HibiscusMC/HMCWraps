@@ -32,7 +32,7 @@ public class LoreModifier implements WrapModifier {
         var meta = item.getItemMeta();
         var originalLore = getOriginalLore(item);
         var currentLore = meta.getLore();
-        if (currentWrap != null) {
+        if (currentWrap != null && originalLore != null) {
             meta.setLore(originalLore);
         }
         if (wrap != null && wrap.getWrapLore() != null) {
@@ -44,15 +44,19 @@ public class LoreModifier implements WrapModifier {
         }
         item.setItemMeta(meta);
         if (wrap != null && currentWrap == null) {
-            setOriginalLore(item, currentLore);
+            setOriginalLore(item, currentLore, wrap.getWrapLore() != null);
         }
     }
 
-    private void setOriginalLore(ItemStack item, List<String> lore) {
+    private void setOriginalLore(ItemStack item, List<String> lore, boolean changed) {
         var meta = item.getItemMeta();
-        if (lore != null) {
-            meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING,
-                    lore.stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
+        if (changed) {
+            if (lore == null) {
+                meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING, "");
+            } else {
+                meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING,
+                        lore.stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
+            }
         } else {
             meta.getPersistentDataContainer().remove(originalLoreKey);
         }
@@ -73,8 +77,10 @@ public class LoreModifier implements WrapModifier {
             var data = meta.getPersistentDataContainer().get(originalLoreKey, PersistentDataType.STRING);
             if (data != null) {
                 Arrays.stream(data.split(SEPARATOR)).map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
+                return lore;
+            } else {
+                return null;
             }
-            return lore;
         } else if (loreSettings.isDefaultEnabled()) {
             var map = loreSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {

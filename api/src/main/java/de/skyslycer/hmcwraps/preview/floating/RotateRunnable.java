@@ -1,12 +1,10 @@
 package de.skyslycer.hmcwraps.preview.floating;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.MathUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.entity.Player;
 
@@ -36,16 +34,13 @@ public class RotateRunnable implements Runnable {
                     .getIntensity();
             var difference = newHeight - oldHeight;
             oldHeight = newHeight;
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player,
-                    new WrapperPlayServerEntityRelativeMoveAndRotation(
-                            entityId, 0, difference, 0, currentAngle, 90f, false)
-            );
+            VersionUtil.sendRelativeMoveAndRotatePacket(player, entityId, difference, currentAngle);
             currentSinAngle += plugin.getConfiguration().getPreview().getBobbing().getSpeed();
             if (currentSinAngle > 360) {
                 currentSinAngle = 0;
             }
         } else {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerEntityRotation(entityId, currentAngle, 90f, false));
+            VersionUtil.sendRelativeMoveAndRotatePacket(player, entityId, 0, currentAngle);
         }
         currentAngle += plugin.getConfiguration().getPreview().getRotation();
     }
