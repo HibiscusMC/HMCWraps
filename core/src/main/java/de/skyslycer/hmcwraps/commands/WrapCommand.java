@@ -285,7 +285,7 @@ public class WrapCommand {
                 var wrap = plugin.getWrapsLoader().getWraps().get(wrapId);
                 var uuid = wrap.getUuid();
                 var placeholders = List.of(Placeholder.parsed("value", uuid), Placeholder.parsed("permission", wrap.getPermission() == null ? "None" : wrap.getPermission()),
-                        Placeholder.parsed("modelid", String.valueOf(wrap.getModelId())),
+                        Placeholder.parsed("modelid", String.valueOf(wrap.getModelId() >= 0 ? wrap.getModelId() : "None")),
                         Placeholder.parsed("player", sender instanceof Player player ? player.getName() : " "),
                         Placeholder.parsed("physical", String.valueOf(wrap.getPhysical() != null)),
                         Placeholder.parsed("preview", String.valueOf(wrap.isPreview())));

@@ -26,6 +26,7 @@ public class HookAccessor {
      */
     @Nullable
     public ItemStack getItemFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         if (possible.isEmpty()) {
             return this.defaultHook.get(id);
@@ -41,6 +42,7 @@ public class HookAccessor {
      * @return The model id, may return -1 when none is available
      */
     public int getModelIdFromHook(String id) {
+        if (id == null || id.isEmpty()) return -1;
         try {
             return Integer.parseInt(id);
         } catch (NumberFormatException ignored) {
@@ -57,54 +59,63 @@ public class HookAccessor {
      */
     @Nullable
     public Color getColorFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getColor(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public String getTrimPatternFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getTrimPattern(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public String getTrimMaterialFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getTrimMaterial(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public EquipmentSlot getEquippableSlotFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getEquippableSlot(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public NamespacedKey getEquippableModelFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getEquippableModel(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public NamespacedKey getItemModelFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getItemModel(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public String getNameFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getName(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public List<String> getLoreFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getLore(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
     @Nullable
     public NamespacedKey getTooltipStyleFromHook(String id) {
+        if (id == null || id.isEmpty()) return null;
         var possible = hooks.stream().filter(it -> id.startsWith(it.getPrefix())).findFirst();
         return possible.map(itemHook -> itemHook.getTooltipStyle(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }

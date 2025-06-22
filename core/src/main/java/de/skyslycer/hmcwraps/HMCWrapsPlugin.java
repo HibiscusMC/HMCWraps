@@ -204,9 +204,6 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                 Files.createDirectory(COLLECTION_FILES_PATH);
                 Files.copy(getResource("some_collections.yml"), COLLECTION_FILES_PATH.resolve("some_collections.yml"));
             }
-            if (Files.notExists(CONVERT_PATH)) {
-                Files.createDirectory(CONVERT_PATH);
-            }
             if (Files.notExists(CONFIG_PATH)) {
                 Files.copy(getResource("config.yml"), CONFIG_PATH);
             }

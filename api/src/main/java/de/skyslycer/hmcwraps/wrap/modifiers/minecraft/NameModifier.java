@@ -47,7 +47,7 @@ public class NameModifier implements WrapModifier {
 
     private void setOriginalName(ItemStack item, String name) {
         var meta = item.getItemMeta();
-        if (name != null) {
+        if (name != null && !name.isEmpty()) {
             meta.getPersistentDataContainer().set(originalNameKey, PersistentDataType.STRING, name.replace("§", "&"));
         } else {
             meta.getPersistentDataContainer().remove(originalNameKey);

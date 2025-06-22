@@ -61,11 +61,10 @@ items:
   SWORDS:
     # Wrap list
     wraps:
-      1:
+      # The UUID (global identifier), has to be unique in ALL wraps!
+      fire_sword:
         # The permission to virtually apply this wrap (inventory) (nullable)
         permission: 'hmcwraps.fire_sword'
-        # The UUID (global identifier), has to be unique in ALL wraps!
-        uuid: 'fire_sword'
         # Either custom model id or a hook to get the custom model id
         id: '1'
         # The color of the item (this won't do anything now because this isn't dye able) (nullable, just here for demonstration)
@@ -112,9 +111,8 @@ items:
   # Wraps of every item in the 'PICKAXES' collection
   PICKAXES:
     wraps:
-      1:
+      fire_pickaxe:
         permission: 'hmcwraps.fire_pickaxe'
-        uuid: 'fire_pickaxe'
         id: '1'
         name: '<red>Fire <gray>Wrap'
         lore:

@@ -9,9 +9,8 @@ enabled: true
 items:
   DIAMOND_SWORD:
     wraps:
-      1:
+      emerald_sword:
         permission: 'hmcwraps.emerald_sword'
-        uuid: 'emerald_sword'
         id: '3'
         name: '<green>Emerald <gray>Wrap'
         lore:
@@ -20,9 +19,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   DIAMOND_PICKAXE:
     wraps:
-      1:
+      emerald_pickaxe:
         permission: 'hmcwraps.emerald_pickaxe'
-        uuid: 'emerald_pickaxe'
         id: '3'
         name: '<green>Emerald <gray>Wrap'
         lore:
@@ -31,9 +29,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   DIAMOND_AXE:
     wraps:
-      1:
+      emerald_axe:
         permission: 'hmcwraps.emerald_axe'
-        uuid: 'emerald_axe'
         id: '2'
         name: '<green>Emerald <gray>Wrap'
         lore:
@@ -42,9 +39,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   DIAMOND_SHOVEL:
     wraps:
-      1:
+      emerald_shovel:
         permission: 'hmcwraps.emerald_shovel'
-        uuid: 'emerald_shovel'
         id: '2'
         name: '<green>Emerald <gray>Wrap'
         lore:
@@ -53,9 +49,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   DIAMOND_HOE:
     wraps:
-      1:
+      emerald_hoe:
         permission: 'hmcwraps.emerald_hoe'
-        uuid: 'emerald_hoe'
         id: '2'
         name: '<green>Emerald <gray>Wrap'
         lore:

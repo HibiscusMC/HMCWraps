@@ -9,9 +9,8 @@ enabled: true
 items:
   IRON_SWORD:
     wraps:
-      1:
+      silver_sword:
         permission: 'hmcwraps.silver_sword'
-        uuid: 'silver_sword'
         id: '2'
         name: '<aqua>Silver <gray>Wrap'
         lore:
@@ -20,9 +19,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   IRON_PICKAXE:
     wraps:
-      1:
+      silver_pickaxe:
         permission: 'hmcwraps.silver_pickaxe'
-        uuid: 'silver_pickaxe'
         id: '2'
         name: '<aqua>Silver <gray>Wrap'
         lore:
@@ -31,9 +29,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   IRON_AXE:
     wraps:
-      1:
+      silver_axe:
         permission: 'hmcwraps.silver_axe'
-        uuid: 'silver_axe'
         id: '1'
         name: '<aqua>Silver <gray>Wrap'
         lore:
@@ -42,9 +39,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   IRON_SHOVEL:
     wraps:
-      1:
+      silver_shovel:
         permission: 'hmcwraps.silver_shovel'
-        uuid: 'silver_shovel'
         id: '1'
         name: '<aqua>Silver <gray>Wrap'
         lore:
@@ -53,9 +49,8 @@ items:
           - 'HIDE_ATTRIBUTES'
   IRON_HOE:
     wraps:
-      1:
+      silver_hoe:
         permission: 'hmcwraps.silver_hoe'
-        uuid: 'silver_hoe'
         id: '1'
         name: '<aqua>Silver <gray>Wrap'
         lore:

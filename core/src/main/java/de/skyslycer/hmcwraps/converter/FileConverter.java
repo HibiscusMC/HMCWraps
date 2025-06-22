@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.converter;
 
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.serialization.files.CollectionFile;
 import de.skyslycer.hmcwraps.serialization.files.WrapFile;
@@ -31,6 +32,14 @@ public class FileConverter {
     }
 
     public boolean convertAll() {
+        if (Files.notExists(HMCWraps.CONVERT_PATH)) {
+            try {
+                Files.createDirectory(HMCWraps.CONVERT_PATH);
+            } catch (Exception exception) {
+                plugin.logSevere("Could not create the conversion folder! Please report this.", exception);
+                return false;
+            }
+        }
         var success = true;
         var collections = new HashMap<String, List<String>>();
         var wrapFiles = new HashMap<String, WrapFile>();

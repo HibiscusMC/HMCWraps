@@ -63,7 +63,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                     if (wrap == null) {
                         return null;
                     }
-                    return String.valueOf(wrap.getModelId());
+                    return String.valueOf(wrap.getModelId() >= 0 ? wrap.getModelId() : "None");
                 }
                 case "color" -> {
                     if (wrap == null || wrap.getColor() == null) {
