@@ -43,14 +43,12 @@ public class FileConverter {
                     collections.putAll(construct.collections);
                     wrapFiles.put(path.getFileName().toString(), construct.wrapFile);
                 } catch (RuntimeException exception) {
-                    plugin.getLogger().warning("An error occurred while converting the folder " + path.getFileName() + " to a wrap file!");
-                    exception.printStackTrace();
+                    plugin.logSevere("An error occurred whilst trying to convert the folder: " + path + "! Please report this.", exception);
                     success = false;
                 }
             }
         } catch (Exception exception) {
-            plugin.getLogger().warning("An error occurred whilst trying to load all folders to convert! Please report this.");
-            exception.printStackTrace();
+            plugin.logSevere("An error occurred whilst trying to load all folders to convert! Please report this.", exception);
             success = false;
         }
         var generatedPath = HMCWrapsPlugin.WRAP_FILES_PATH.resolve("generated");
@@ -65,9 +63,8 @@ public class FileConverter {
                         .nodeStyle(NodeStyle.BLOCK)
                         .build().save(BasicConfigurationNode.factory().createNode().set(entry.getValue()));
             } catch (Exception exception) {
-                plugin.getLogger().warning("Could not save generated wrap file! Please report this.\n"
-                        + "Your conversion may not have worked correctly. You are advised to delete the generated folders and try again.");
-                exception.printStackTrace();
+                plugin.logSevere("Could not save generated wrap file! Please report this.\n"
+                        + "Your conversion may not have worked correctly. You are advised to delete the generated folders and try again.", exception);
                 success = false;
             }
         }
@@ -83,9 +80,8 @@ public class FileConverter {
                         .nodeStyle(NodeStyle.BLOCK)
                         .build().save(BasicConfigurationNode.factory().createNode().set(new CollectionFile(collections, true)));
             } catch (Exception exception) {
-                plugin.getLogger().warning("Could not save generated collection file! Please report this.\n"
-                        + "Your conversion may not have worked correctly. You are advised to delete the generated folders and try again.");
-                exception.printStackTrace();
+                plugin.logSevere("Could not save generated collection file! Please report this.\n"
+                        + "Your conversion may not have worked correctly. You are advised to delete the generated folders and try again.", exception);
                 success = false;
             }
         }
@@ -107,7 +103,7 @@ public class FileConverter {
                 if (construct == null) continue;
                 var material = "MATERIAL_ERROR";
                 if (construct.materials.size() == 1) {
-                    material = construct.materials.get(0);
+                    material = construct.materials.getFirst();
                 } else {
                     var matchingCollections = plugin.getWrapsLoader().getCollections().entrySet().stream()
                             .filter(entry -> new HashSet<>(entry.getValue()).containsAll(construct.materials)).toList();

@@ -25,7 +25,7 @@ import java.util.Map;
 public class Wrap extends SerializableItem {
 
     private @Nullable Boolean preview;
-    private String uuid;
+    private @Nullable String uuid;
     private @Nullable PhysicalWrap physical;
     private @Nullable String permission;
     private @Nullable String lockedName;
@@ -75,6 +75,11 @@ public class Wrap extends SerializableItem {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        if (this.uuid != null) return;
+        this.uuid = uuid;
     }
 
     @Nullable

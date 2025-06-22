@@ -140,9 +140,8 @@ public class GuiBuilder {
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
         plugin.getCollectionHelper().getItems(type).stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
-                .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player)).forEach(wrap -> {
-                    wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player)));
-                });
+                .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
+                .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
 
         ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);

@@ -50,7 +50,7 @@ public class WrapCreateCommand {
     public void onCreate(Player player, String file, String uuid, @Optional String collection) {
         var path = HMCWraps.COMMAND_PATH.resolve(file + (file.endsWith(".yml") ? "" : ".yml"));
         var item = player.getInventory().getItemInMainHand();
-        if (item == null || item.getType().isAir()) {
+        if (item.getType().isAir()) {
             plugin.getMessageHandler().send(player, Messages.COMMAND_NEED_ITEM);
             return;
         }

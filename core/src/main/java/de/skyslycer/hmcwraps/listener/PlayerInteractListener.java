@@ -83,7 +83,7 @@ public class PlayerInteractListener implements Listener {
         if (wrap == null) return;
         if (wrap.getActions() == null) return;
         if (wrap.getActions().get("interact") != null) {
-            plugin.getActionHandler().pushFromConfig(wrap.getActions().get("interact"), new WrapActionInformation(wrap, player, ""));;
+            plugin.getActionHandler().pushFromConfig(wrap.getActions().get("interact"), new WrapActionInformation(wrap, player, ""));
         }
         if (wrap.getActions().get(ACTIONS.get(event.getAction())) != null) {
             plugin.getActionHandler().pushFromConfig(wrap.getActions().get(ACTIONS.get(event.getAction())), new WrapActionInformation(wrap, player, ""));

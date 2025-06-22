@@ -71,27 +71,30 @@ public class WrapsLoaderImpl implements WrapsLoader {
     }
 
     private void addWraps(Map<String, WrappableItem> items) {
-        items.forEach((type, wrappableItem) -> {
-            wrappableItem.getWraps().values().forEach(wrap -> {
-                if (wrap.getUuid() == null) {
+        items.forEach((type, wrappableItem) -> wrappableItem.getWraps().entrySet().forEach(entry -> {
+            var wrap = entry.getValue();
+            if (wrap.getUuid() == null) {
+                if (entry.getKey().length() >= 3) {
+                    wrap.setUuid(entry.getKey());
+                } else {
                     plugin.getLogger().warning("A wrap with the material/collection '" + type + "' doesn't have a " +
                             "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
                     return;
                 }
-                if (wraps.containsKey(wrap.getUuid())) {
-                    plugin.getLogger().warning("A wrap with the UUID " + wrap.getUuid() + " already exists! Skipping the wrap for type " + type + ". Please check your configuration files for duplicates.");
-                    return;
-                }
-                wraps.put(wrap.getUuid(), wrap);
-                if (typeWraps.containsKey(type)) {
-                    var current = typeWraps.get(type);
-                    current.add(wrap.getUuid());
-                    typeWraps.put(type, current);
-                } else {
-                    typeWraps.put(type, new HashSet<>(List.of(wrap.getUuid())));
-                }
-            });
-        });
+            }
+            if (wraps.containsKey(wrap.getUuid())) {
+                plugin.getLogger().warning("A wrap with the UUID " + wrap.getUuid() + " already exists! Skipping the wrap for type " + type + ". Please check your configuration files for duplicates.");
+                return;
+            }
+            wraps.put(wrap.getUuid(), wrap);
+            if (typeWraps.containsKey(type)) {
+                var current = typeWraps.get(type);
+                current.add(wrap.getUuid());
+                typeWraps.put(type, current);
+            } else {
+                typeWraps.put(type, new HashSet<>(List.of(wrap.getUuid())));
+            }
+        }));
     }
 
     private void loadWrapFiles() {

@@ -68,8 +68,8 @@ public abstract class ItemHook {
     @Nullable
     public String getTrimPattern(String id) {
         var stack = get(id);
-        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null) {
-            return meta.getTrim().getPattern().getKey().toString();
+        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null && meta.getTrim().getPattern().isRegistered()) {
+            return meta.getTrim().getPattern().getKeyOrThrow().toString();
         }
         return null;
     }
@@ -83,8 +83,8 @@ public abstract class ItemHook {
     @Nullable
     public String getTrimMaterial(String id) {
         var stack = get(id);
-        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null) {
-            return meta.getTrim().getMaterial().getKey().toString();
+        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null && meta.getTrim().getPattern().isRegistered()) {
+            return meta.getTrim().getPattern().getKeyOrThrow().toString();
         }
         return null;
     }

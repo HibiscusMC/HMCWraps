@@ -23,11 +23,11 @@ public class PlayerHitEntityListener implements Listener {
         if (plugin.getPreviewManager().isPreviewing(player)) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);
         }
-        var weapon = player.getInventory().getItemInMainHand();
-        if (weapon == null || weapon.getType().isAir()) {
+        var item = player.getInventory().getItemInMainHand();
+        if (item.getType().isAir()) {
             return;
         }
-        var wrap = plugin.getWrapper().getWrap(weapon);
+        var wrap = plugin.getWrapper().getWrap(item);
         if (wrap == null || wrap.getActions() == null) {
             return;
         }

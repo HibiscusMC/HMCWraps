@@ -34,7 +34,7 @@ public class ContinuousUpdateChecker {
             if (result != null && !result.latest()) {
                 plugin.getLogger().warning(String.format(
                         """
-                                                        
+                                
                                 ++++++++++++++++++++++++++++++
                                 + There is a new update for HMCWraps available!
                                 + Please download it as soon as possible for possible fixes and new features.
@@ -77,7 +77,7 @@ public class ContinuousUpdateChecker {
         }
         var component = StringUtil.parseComponent(player, String.format(
                 """
-                                        
+                        
                         <gray>There is a new version of <green><bold>HMCWraps</bold></green> available!
                         <gray>Current version: <red>%s</red> | Latest version: <green>%s</green>
                         <gray>Download it on <gold><hover:show_text:"<blue>Click to open!"><click:open_url:%s>SpigotMC</gold> or <gold><hover:show_text:"<blue>Click to open!"><click:open_url:%s>Polymart</gold>!
