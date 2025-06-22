@@ -19,6 +19,7 @@ import revxrsal.commands.annotation.Description;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
@@ -32,6 +33,18 @@ public class TestCommand {
 
     public TestCommand(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Subcommand("test invalidcolors")
+    @Description("Tests the invalid color codes in the plugin.")
+    @CommandPermission(DEBUG_PERMISSION)
+    public void onTestInvalidColors(Player player) {
+        var item = new ItemStack(Material.DIAMOND_SWORD);
+        var meta = item.getItemMeta();
+        meta.setLore(List.of("§zthere is a preceeding invalid color code"));
+        item.setItemMeta(meta);
+        player.getInventory().addItem(item);
+        StringUtil.send(player, "<white>[TEST] Received an item with an invalid color code in its lore.");
     }
 
     @Subcommand("test reflection")
