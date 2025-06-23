@@ -56,6 +56,7 @@ global-disable:
 
 # The items with wraps
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
+# If you want to entirely remove all items in this section, set items: {}
 items:
   # Wraps of every item in the 'SWORDS' collection
   SWORDS:
