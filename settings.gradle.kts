@@ -17,7 +17,7 @@ dependencyResolutionManagement {
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
             library("mythicmobs", "io.lumine:Mythic-Dist:5.9.1")
-            library("annotations", "org.jetbrains:annotations:26.0.1")
+            library("annotations", "org.jetbrains:annotations:26.0.2")
             library("executableitems", "com.github.Ssomar-Developement:SCore:5.25.3.9")
         }
         create("libs") {
