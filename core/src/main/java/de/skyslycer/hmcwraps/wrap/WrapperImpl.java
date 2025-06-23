@@ -71,6 +71,7 @@ public class WrapperImpl implements Wrapper {
         getModifiers().equippable().wrap(wrap, currentWrap, editing, player);
         getModifiers().itemModel().wrap(wrap, currentWrap, editing, player);
         getModifiers().glintOverride().wrap(wrap, currentWrap, editing, player);
+        getModifiers().tooltipStyle().wrap(wrap, currentWrap, editing, player);
         getModifiers().nbt().wrap(wrap, currentWrap, editing, player);
         getModifiers().itemsAdder().wrap(wrap, currentWrap, editing, player);
         getModifiers().oraxen().wrap(wrap, currentWrap, editing, player);

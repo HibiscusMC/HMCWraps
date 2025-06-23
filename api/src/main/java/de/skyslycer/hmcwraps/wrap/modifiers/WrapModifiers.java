@@ -25,6 +25,7 @@ public class WrapModifiers {
     private final NexoModifier nexo;
     private final OraxenModifier oraxen;
     private final ExecutableItemsModifier executableItems;
+    private final TooltipStyleModifier tooltipStyle;
 
     public WrapModifiers(HMCWraps plugin) {
         this.modelData = new ModelDataModifier(plugin);
@@ -43,6 +44,7 @@ public class WrapModifiers {
         this.nexo = new NexoModifier(plugin);
         this.oraxen = new OraxenModifier(plugin);
         this.executableItems = new ExecutableItemsModifier(plugin);
+        this.tooltipStyle = new TooltipStyleModifier(plugin);
     }
 
     public ModelDataModifier modelData() {
@@ -107,6 +109,10 @@ public class WrapModifiers {
 
     public ExecutableItemsModifier executableItems() {
         return executableItems;
+    }
+
+    public TooltipStyleModifier tooltipStyle() {
+        return tooltipStyle;
     }
 
 }

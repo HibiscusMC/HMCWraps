@@ -12,6 +12,7 @@ public class PreservationSettings {
     private ValuePreservationSettings<String> name;
     private ValuePreservationSettings<List<String>> lore;
     private ValuePreservationSettings<List<String>> flags;
+    private ValuePreservationSettings<String> tooltipStyle;
 
     public ValuePreservationSettings<Integer> getModelId() {
         return modelId;
@@ -31,6 +32,10 @@ public class PreservationSettings {
 
     public ValuePreservationSettings<List<String>> getFlags() {
         return flags;
+    }
+
+    public ValuePreservationSettings<String> getTooltipStyle() {
+        return tooltipStyle;
     }
 
 }

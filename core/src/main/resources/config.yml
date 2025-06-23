@@ -209,6 +209,10 @@ preservation:
     original-enabled: true
     default-enabled: false
     defaults: { }
+  tooltip-style:
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
 
 # The version checker configuration
 updater:

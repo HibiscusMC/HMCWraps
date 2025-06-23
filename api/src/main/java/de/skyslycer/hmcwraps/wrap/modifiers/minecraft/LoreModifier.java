@@ -67,7 +67,7 @@ public class LoreModifier implements WrapModifier {
      * Get the original lore of the item.
      *
      * @param item The item
-     * @return The original lore
+     * @return The original lore, null if it wasn't changed and an empty list if it was changed but originally had none
      */
     public List<String> getOriginalLore(ItemStack item) {
         var meta = item.getItemMeta();

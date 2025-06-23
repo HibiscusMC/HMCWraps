@@ -46,6 +46,7 @@ public class Wrap extends SerializableItem {
     private @Nullable Boolean applyNameOnlyEmpty;
     private @Nullable Boolean glintOverride;
     private @Nullable Boolean removeTrim;
+    private @Nullable String wrapTooltipStyle;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -193,6 +194,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public Boolean isRemoveTrim() {
         return removeTrim;
+    }
+
+    @Nullable
+    public String getWrapTooltipStyle() {
+        return wrapTooltipStyle;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
