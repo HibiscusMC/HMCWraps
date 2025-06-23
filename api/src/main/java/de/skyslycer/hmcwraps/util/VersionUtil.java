@@ -23,6 +23,10 @@ public class VersionUtil {
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
+    private static final String[] VERSION_SPLIT = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+    private static final int MINOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[1]);
+    private static final int PATCH_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT.length == 3 ? VERSION_SPLIT[2] : "0");
+
     /**
      * Get the minor Minecraft version.
      * 1.20.4 -> 20
@@ -30,8 +34,7 @@ public class VersionUtil {
      * @return The minor Minecraft version
      */
     public static int getMinorMinecraftVersion() {
-        var split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-        return Integer.parseInt(split[1]);
+        return MINOR_MINECRAFT_VERSION;
     }
 
     /**
@@ -41,8 +44,7 @@ public class VersionUtil {
      * @return The minor Minecraft version
      */
     public static int getPatchMinecraftVersion() {
-        var split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-        return Integer.parseInt(split.length == 3 ? split[2] : "0");
+        return PATCH_MINECRAFT_VERSION;
     }
 
     /**
@@ -51,7 +53,13 @@ public class VersionUtil {
      * @return If the current server version is supported
      */
     public static boolean isSupported() {
-        return getMinorMinecraftVersion() >= 20 && getPatchMinecraftVersion() >= 4;
+        if (getMinorMinecraftVersion() < 20) {
+            return false;
+        }
+        if (getMinorMinecraftVersion() > 20) {
+            return true;
+        }
+        return getPatchMinecraftVersion() >= 4;
     }
 
     /**
