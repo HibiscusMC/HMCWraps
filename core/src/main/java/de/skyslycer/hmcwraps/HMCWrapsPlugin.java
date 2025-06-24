@@ -7,6 +7,8 @@ import de.skyslycer.hmcwraps.actions.ActionHandler;
 import de.skyslycer.hmcwraps.actions.register.DefaultActionRegister;
 import de.skyslycer.hmcwraps.commands.CommandRegister;
 import de.skyslycer.hmcwraps.converter.FileConverter;
+import de.skyslycer.hmcwraps.integration.AllIntegrationsHandler;
+import de.skyslycer.hmcwraps.integration.IntegrationHandler;
 import de.skyslycer.hmcwraps.itemhook.*;
 import de.skyslycer.hmcwraps.listener.*;
 import de.skyslycer.hmcwraps.messages.MessageHandler;
@@ -62,6 +64,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private final Storage<Player, List<Wrap>> favoriteWrapStorage = new FavoriteWrapStorage(this);
     private final ContinuousUpdateChecker updateChecker = new ContinuousUpdateChecker(this);
     private final WrapsLoader wrapsLoader = new WrapsLoaderImpl(this);
+    private final IntegrationHandler integrationHandler = new AllIntegrationsHandler(this);
     private HookAccessor hookAccessor;
     private Config config;
     private MessageHandler messageHandler;
@@ -89,6 +92,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (checkDependency("Nexo", false)) {
             hooks.add(new NexoItemHook());
         }
+        checkDependency("zAuctionHouseV3", false);
         if (checkDependency("MythicCrucible", false)) {
             var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
             if (mythicMobs != null) {
@@ -164,6 +168,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (!loadMessages()) {
             return false;
         }
+        integrationHandler.load();
         getPreviewManager().removeAll(true);
         getUpdateChecker().check();
         startCheckTask();
@@ -172,6 +177,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     public void unload() {
+        integrationHandler.unload();
         getWrapsLoader().unload();
         if (checkTask != null) {
             checkTask.cancel();

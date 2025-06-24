@@ -215,6 +215,19 @@ preservation:
     default-enabled: false
     defaults: { }
 
+# Integrations with other plugins
+integrations:
+  # zAuctionHouse integration
+  z-auction-house:
+    # If the integration should be enabled
+    enabled: false
+    # If virtually wrapped items should be blacklisted from being listed in the auction house
+    blacklist-virtual: true
+    # If physically wrapped items should be blacklisted from being listed in the auction house
+    blacklist-physical: false
+    # Add the UUIDs of the wraps that should be blacklisted from being listed in the auction house
+    blacklisted-wraps: []
+
 # The version checker configuration
 updater:
   # If the version checker should be enabled

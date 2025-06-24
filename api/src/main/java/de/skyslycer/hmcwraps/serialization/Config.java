@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.serialization;
 
 import de.skyslycer.hmcwraps.serialization.filter.FilterSettings;
 import de.skyslycer.hmcwraps.serialization.globaldisable.GlobalDisable;
+import de.skyslycer.hmcwraps.serialization.integration.PluginIntegrations;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.serialization.permission.PermissionSettings;
@@ -31,6 +32,7 @@ public class Config {
     private GlobalDisable globalDisable;
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
+    private PluginIntegrations integrations;
     private Integer config = 1;
 
     public Config(UpdaterSettings updater, PermissionSettings permissions, PreviewSettings preview, Toggleable favorites,
@@ -98,6 +100,10 @@ public class Config {
 
     public GlobalDisable getGlobalDisable() {
         return globalDisable;
+    }
+
+    public PluginIntegrations getPluginIntegrations() {
+        return integrations;
     }
 
 }
