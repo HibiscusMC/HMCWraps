@@ -12,7 +12,7 @@ import java.util.Map;
 public class InventoryItem extends SerializableItem {
 
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
-    private @Nullable List<Integer> fills;
+    private @Nullable List<String> fills;
 
     public InventoryItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount) {
@@ -28,7 +28,7 @@ public class InventoryItem extends SerializableItem {
     }
 
     @Nullable
-    public List<Integer> getFills() {
+    public List<String> getFills() {
         return fills;
     }
 

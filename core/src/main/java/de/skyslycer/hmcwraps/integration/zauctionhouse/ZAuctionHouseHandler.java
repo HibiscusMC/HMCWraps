@@ -8,7 +8,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class ZAuctionHouseHandler implements IntegrationHandler {
 
-    private static final String PLUGIN_NAME = "zAuctionHouseV3";
+
 
     private final HMCWraps plugin;
     private final WrapBlacklist wrapBlacklist;
@@ -20,9 +20,6 @@ public class ZAuctionHouseHandler implements IntegrationHandler {
 
     @Override
     public void load() {
-        if (!Bukkit.getPluginManager().isPluginEnabled(PLUGIN_NAME)) {
-            return;
-        }
         if (!plugin.getConfiguration().getPluginIntegrations().getzAuctionHouse().isEnabled()) {
             return;
         }
@@ -36,9 +33,6 @@ public class ZAuctionHouseHandler implements IntegrationHandler {
 
     @Override
     public void unload() {
-        if (!Bukkit.getPluginManager().isPluginEnabled(PLUGIN_NAME)) {
-            return;
-        }
         var blacklistManager = getProvider(IBlacklistManager.class);
         if (blacklistManager != null) {
             blacklistManager.unregisterBlacklist(wrapBlacklist);

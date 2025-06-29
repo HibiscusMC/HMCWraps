@@ -25,6 +25,10 @@ import java.util.List;
 public class GuiBuilder {
 
     public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot) {
+        open(plugin, player, item, slot, 1);
+    }
+
+    public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot, int page) {
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         var inventory = plugin.getConfiguration().getInventory();
@@ -71,7 +75,7 @@ public class GuiBuilder {
             }
         });
         gui.setCloseGuiAction(close -> plugin.getWrapGui().remove(player.getUniqueId()));
-        gui.open(player);
+        gui.open(player, page);
     }
 
     private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui, int slot, boolean noItem) {
@@ -90,7 +94,28 @@ public class GuiBuilder {
                 return;
             }
             if (serializableItem.getFills() != null) {
-                fills.addAll(serializableItem.getFills());
+                serializableItem.getFills().forEach(
+                        fill -> {
+                            try {
+                                fills.add(Integer.parseInt(fill));
+                            } catch (NumberFormatException exception) {
+                                String[] split = fill.split("-");
+                                if (split.length == 2) {
+                                    try {
+                                        int start = Integer.parseInt(split[0]);
+                                        int end = Integer.parseInt(split[1]);
+                                        for (int i = start; i <= end; i++) {
+                                            fills.add(i);
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        plugin.getLogger().severe("Couldn't parse '" + fill + "' in the inventory config as a valid numerical slot! Please change the value to a number or a range like 1-20.");
+                                    }
+                                } else {
+                                    plugin.getLogger().severe("Couldn't parse '" + fill + "' in the inventory config as a valid numerical slot! Please change the value to a number or a range like 1-20.");
+                                }
+                            }
+                        }
+                );
             }
             if (serializableItem.getId().equals("AIR") || serializableItem.getId().equals("EMPTY")) {
                 gui.setItem(fills, new GuiItem(Material.AIR));

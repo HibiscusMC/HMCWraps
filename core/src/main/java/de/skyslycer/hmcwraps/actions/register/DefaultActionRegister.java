@@ -366,7 +366,13 @@ public class DefaultActionRegister {
         }
         if (!plugin.getCollectionHelper().getItems(type).isEmpty()
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
-            GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
+            var page = 1;
+            if (information instanceof GuiActionInformation guiInformation) {
+                page = guiInformation.getGui().getCurrentPageNum();
+            } else {
+                page = ((WrapGuiActionInformation) information).getGui().getCurrentPageNum();
+            }
+            GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot, page);
         }
     }
 
