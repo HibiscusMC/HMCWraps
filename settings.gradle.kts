@@ -13,7 +13,7 @@ dependencyResolutionManagement {
         create("depends") {
             library("spigot", "org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
             library("placeholderapi", "me.clip:placeholderapi:2.11.6")
-            library("nexo", "com.nexomc:nexo:1.6.0")
+            library("nexo", "com.nexomc:nexo:1.9.0")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
             library("mythicmobs", "io.lumine:Mythic-Dist:5.9.1")
