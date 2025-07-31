@@ -28,12 +28,12 @@ dependencyResolutionManagement {
             library("gui", "dev.triumphteam:triumph-gui:3.2.0-SNAPSHOT")
             library("configurate", "org.spongepowered:configurate-yaml:4.2.0")
             library("mclogs", "gs.mclo:java:2.2.1")
-            library("nbtapi", "de.tr7zw:item-nbt-api:2.15.0")
+            library("nbtapi", "de.tr7zw:item-nbt-api:2.15.1")
             library("folialib", "com.tcoded:FoliaLib:0.4.4")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
-            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.4.0")
+            library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.4.1-granny-SNAPSHOT")
             version("adventure", "4.23.0")
             bundle("adventure", listOf("adventure-api", "minimessage", "adventure-bukkit"))
 

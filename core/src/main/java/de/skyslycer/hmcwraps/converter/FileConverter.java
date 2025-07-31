@@ -196,28 +196,8 @@ public class FileConverter {
         return file;
     }
 
-    static private class ConvertConstruct {
+    private record ConvertConstruct(Wrap wrap, List<String> materials) { }
 
-        private final Wrap wrap;
-        private final List<String> materials;
-
-        private ConvertConstruct(Wrap wrap, List<String> materials) {
-            this.wrap = wrap;
-            this.materials = materials;
-        }
-
-    }
-
-    static private class FolderConstruct {
-
-        private final WrapFile wrapFile;
-        private final Map<String, List<String>> collections;
-
-        private FolderConstruct(WrapFile wrapFile, Map<String, List<String>> collections) {
-            this.wrapFile = wrapFile;
-            this.collections = collections;
-        }
-
-    }
+    private record FolderConstruct(WrapFile wrapFile, Map<String, List<String>> collections) { }
 
 }
