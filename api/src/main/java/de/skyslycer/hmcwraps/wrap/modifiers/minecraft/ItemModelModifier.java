@@ -31,10 +31,8 @@ public class ItemModelModifier implements WrapModifier {
         }
         if (VersionUtil.itemModelSupported()) {
             var meta = item.getItemMeta();
-            if (wrap != null) {
-                if (wrap.getItemModel() != null) {
-                    meta.setItemModel(wrap.getItemModel());
-                }
+            if (wrap != null && wrap.getItemModel() != null) {
+                meta.setItemModel(wrap.getItemModel());
             } else {
                 meta.setItemModel(originalItemModel);
                 meta.getPersistentDataContainer().remove(originalItemModelKey);

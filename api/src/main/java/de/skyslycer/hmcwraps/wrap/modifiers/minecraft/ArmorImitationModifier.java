@@ -3,6 +3,7 @@ package de.skyslycer.hmcwraps.wrap.modifiers.minecraft;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.MaterialUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import de.skyslycer.hmcwraps.wrap.ArmorModifiers;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
 import org.bukkit.Material;
@@ -21,6 +22,7 @@ public class ArmorImitationModifier implements WrapModifier {
 
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
+    private final NamespacedKey originalNativeMaxDurabilityKey;
     private final NamespacedKey customAttributesKey;
     private final NamespacedKey originalMaterialKey;
 
@@ -28,6 +30,7 @@ public class ArmorImitationModifier implements WrapModifier {
         this.plugin = plugin;
         this.fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         this.fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
+        this.originalNativeMaxDurabilityKey = new NamespacedKey(plugin, "original-native-max-durability");
         this.customAttributesKey = new NamespacedKey(plugin, "custom-attributes");
         this.originalMaterialKey = new NamespacedKey(plugin, "original-material");
     }
@@ -47,26 +50,38 @@ public class ArmorImitationModifier implements WrapModifier {
                 var temp = item.getType().toString();
                 var attributeModifiers = item.getItemMeta().getAttributeModifiers();
                 if (switchToAlternative(item, wrap.getArmorImitationType())) {
-                    int newDurability = item.getType().getMaxDurability();
-                    var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
                     var newMeta = ((Damageable) item.getItemMeta());
-                    newMeta.setDamage(newDurability - (int) modelDurability);
-                    newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
-                    newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
+                    if (wrap.getWrapDurability() != null && wrap.getWrapDurability() == -1) { // skip durability conversion
+                        int newDurability = item.getType().getMaxDurability();
+                        var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
+                        newMeta.setDamage(newDurability - (int) modelDurability);
+                        if (VersionUtil.hasDataComponents()) {
+                            setNativeDurability(item, maxDurability, maxDurability);
+                            newMeta = (Damageable) item.getItemMeta();
+                        } else {
+                            newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, currentDurability);
+                            newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, (int) maxDurability);
+                        }
+                    }
                     newMeta.getPersistentDataContainer().set(customAttributesKey, PersistentDataType.BOOLEAN, attributeModifiers != null);
                     item.setItemMeta(newMeta);
                     currentMaterial = temp;
                 }
             }
             if (wrap.getWrapDurability() != null && wrap.getWrapDurability() > 0) {
-                var maxDurability = item.getType().getMaxDurability();
-                var currentDurability = maxDurability - ((Damageable) item.getItemMeta()).getDamage();
-                var modelDurability = ((double) currentDurability / maxDurability) * wrap.getWrapDurability();
-                var newMeta = ((Damageable) item.getItemMeta());
-                newMeta.setDamage(maxDurability - currentDurability);
-                newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, (int) modelDurability);
-                newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, wrap.getWrapDurability());
-                item.setItemMeta(newMeta);
+                if (VersionUtil.hasDataComponents()) {
+                    System.out.println(wrap.getWrapDurability());
+                    setNativeDurability(item, wrap.getWrapDurability(), item.getType().getMaxDurability());
+                } else {
+                    var maxDurability = item.getType().getMaxDurability();
+                    var currentDurability = maxDurability - ((Damageable) item.getItemMeta()).getDamage();
+                    var modelDurability = ((double) currentDurability / maxDurability) * wrap.getWrapDurability();
+                    var newMeta = ((Damageable) item.getItemMeta());
+                    newMeta.setDamage(maxDurability - currentDurability);
+                    newMeta.getPersistentDataContainer().set(fakeDurabilityKey, PersistentDataType.INTEGER, (int) modelDurability);
+                    newMeta.getPersistentDataContainer().set(fakeMaxDurabilityKey, PersistentDataType.INTEGER, wrap.getWrapDurability());
+                    item.setItemMeta(newMeta);
+                }
             }
         } else {
             if (!originalMaterial.isBlank()) {
@@ -121,19 +136,55 @@ public class ArmorImitationModifier implements WrapModifier {
     }
 
     private void resetFakeDurability(ItemStack item) {
-        if (getFakeDurability(item) != -1) {
-            var newMeta = (Damageable) item.getItemMeta();
-            if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
-                var currentDurability = getFakeDurability(item);
-                var oldMaxDurability = getFakeMaxDurability(item);
-                var newMaxDurability = item.getType().getMaxDurability();
-                var newDurability = ((double) currentDurability / oldMaxDurability) * newMaxDurability;
-                newMeta.setDamage(item.getType().getMaxDurability() - (int) newDurability);
-                newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
-                newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
-                item.setItemMeta(newMeta);
-            }
+        var newMeta = (Damageable) item.getItemMeta();
+        if (newMeta.getPersistentDataContainer().has(fakeDurabilityKey, PersistentDataType.INTEGER)) {
+            var currentDurability = getFakeDurability(item);
+            var oldMaxDurability = getFakeMaxDurability(item);
+            var newMaxDurability = item.getType().getMaxDurability();
+            var newDurability = ((double) currentDurability / oldMaxDurability) * newMaxDurability;
+            newMeta.setDamage(item.getType().getMaxDurability() - (int) newDurability);
+            newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+            newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
+            item.setItemMeta(newMeta);
         }
+        if (VersionUtil.hasDataComponents()) {
+            resetNativeDurability(item);
+        }
+    }
+
+    private void setNativeDurability(ItemStack item, int wrapDurability, int typeDurability) {
+        var newMeta = (Damageable) item.getItemMeta();
+        var container = newMeta.getPersistentDataContainer();
+        container.set(originalNativeMaxDurabilityKey, PersistentDataType.INTEGER, newMeta.hasMaxDamage() ? newMeta.getMaxDamage() : 0);
+        var currentMaxDurability = newMeta.hasMaxDamage() ? newMeta.getMaxDamage() : typeDurability;
+        var currentDurability = Math.max(0, currentMaxDurability - newMeta.getDamage());
+        var modelDurability = ((double) currentDurability / currentMaxDurability) * wrapDurability;
+        newMeta.setMaxDamage(wrapDurability);
+        newMeta.setDamage((int) (wrapDurability - Math.round(modelDurability)));
+        newMeta.getPersistentDataContainer().remove(fakeDurabilityKey);
+        newMeta.getPersistentDataContainer().remove(fakeMaxDurabilityKey);
+        item.setItemMeta(newMeta);
+    }
+
+    private void resetNativeDurability(ItemStack item) {
+        var newMeta = (Damageable) item.getItemMeta();
+        var container = newMeta.getPersistentDataContainer();
+        var oldMaxDurability = container.get(originalNativeMaxDurabilityKey, PersistentDataType.INTEGER);
+        if (oldMaxDurability == null) {
+            return;
+        }
+        var currentMaxDurability = newMeta.hasMaxDamage() ? newMeta.getMaxDamage() : item.getType().getMaxDurability();
+        var currentDurability = Math.max(0, currentMaxDurability - newMeta.getDamage());
+        var newMaxDurability = oldMaxDurability > 0 ? oldMaxDurability : item.getType().getMaxDurability();
+        var newDurability = ((double) currentDurability / currentMaxDurability) * newMaxDurability;
+        if (oldMaxDurability > 0) {
+            newMeta.setMaxDamage(oldMaxDurability);
+        } else {
+            newMeta.setMaxDamage(null);
+        }
+        newMeta.setDamage(newMaxDurability - (int) Math.round(newDurability));
+        container.remove(originalNativeMaxDurabilityKey);
+        item.setItemMeta(newMeta);
     }
 
     /**
