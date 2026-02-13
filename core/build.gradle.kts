@@ -38,6 +38,7 @@ dependencies {
     compileOnly(depends.bundles.craftengine)
     compileOnly(depends.auctionguiplus)
     compileOnly(depends.axauctions)
+    compileOnly(depends.axtrade)
 }
 
 java {
@@ -96,7 +97,7 @@ bukkit {
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "zAuctionHouseV3", "CraftEngine",
-        "AuctionGUIPlus", "Nexo", "AxAuctions")
+        "AuctionGUIPlus", "Nexo", "AxAuctions", "AxTrade")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {

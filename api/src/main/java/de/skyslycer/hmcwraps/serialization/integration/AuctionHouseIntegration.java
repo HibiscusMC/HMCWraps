@@ -10,9 +10,14 @@ import java.util.List;
 @ConfigSerializable
 public class AuctionHouseIntegration extends Toggleable {
 
+    private boolean tradeEnabled;
     private boolean blacklistVirtual;
     private boolean blacklistPhysical;
     private List<String> blacklistedWraps;
+
+    public boolean isTradeEnabled() {
+        return tradeEnabled;
+    }
 
     public boolean isBlacklistVirtual() {
         return blacklistVirtual;
@@ -27,7 +32,14 @@ public class AuctionHouseIntegration extends Toggleable {
     }
 
     public boolean isBlacklisted(HMCWraps plugin, ItemStack itemStack) {
-        if (!this.isEnabled()) {
+        return this.isBlacklisted(plugin, itemStack, false);
+    }
+
+    public boolean isBlacklisted(HMCWraps plugin, ItemStack itemStack, boolean trade) {
+        if (trade && !this.isTradeEnabled()) {
+            return false;
+        }
+        if (!trade && !this.isEnabled()) {
             return false;
         }
         var wrap = plugin.getWrapper().getWrap(itemStack);
