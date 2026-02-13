@@ -37,6 +37,7 @@ dependencies {
     compileOnly(depends.zauctionhouse)
     compileOnly(depends.bundles.craftengine)
     compileOnly(depends.auctionguiplus)
+    compileOnly(depends.axauctions)
 }
 
 java {
@@ -94,9 +95,8 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport",
-        "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot", "zAuctionHouseV3", "CraftEngine",
-        "AuctionGUIPlus", "Nexo")
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "zAuctionHouseV3", "CraftEngine",
+        "AuctionGUIPlus", "Nexo", "AxAuctions")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {
