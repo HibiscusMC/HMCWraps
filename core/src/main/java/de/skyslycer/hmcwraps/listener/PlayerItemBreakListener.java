@@ -20,7 +20,7 @@ public class PlayerItemBreakListener implements Listener {
             return;
         }
         var wrap = plugin.getWrapper().getWrap(event.getBrokenItem());
-        if (wrap == null || wrap.getPhysical() == null) {
+        if (wrap == null || wrap.getPhysical() == null || !plugin.getWrapper().isPhysical(event.getBrokenItem())) {
             return;
         }
         PlayerUtil.give(event.getPlayer(), plugin.getWrapper()

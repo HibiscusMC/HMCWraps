@@ -171,5 +171,9 @@ bukkit {
             description = "Gives access to open the wrap inventory for another player."
             children = listOf("hmcwraps.management", "hmcwraps.admin")
         }
+        register("hmcwraps.commands.drop") {
+            description = "Gives access to drop a wrap on the ground."
+            children = listOf("hmcwraps.admin")
+        }
     }
 }
