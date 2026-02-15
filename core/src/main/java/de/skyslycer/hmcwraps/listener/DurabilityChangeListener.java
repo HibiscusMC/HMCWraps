@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +20,16 @@ public class DurabilityChangeListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemDamage(PlayerItemDamageEvent event) {
+        var originalMaterial = plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(event.getItem());
+        var lastDamageCause = event.getPlayer().getLastDamageCause();
+        if (originalMaterial != null
+                && !originalMaterial.isBlank()
+                && originalMaterial.contains("NETHERITE")
+                && lastDamageCause != null
+                && isFireDamage(lastDamageCause.getCause())) {
+            event.setCancelled(true);
+            return;
+        }
         if (updateDurability(event.getItem(), -event.getDamage())) {
             event.setDamage(0);
         }
@@ -50,6 +61,13 @@ public class DurabilityChangeListener implements Listener {
             item.setAmount(0);
         }
         return true;
+    }
+
+    private boolean isFireDamage(EntityDamageEvent.DamageCause cause) {
+        return cause == EntityDamageEvent.DamageCause.LAVA
+                || cause == EntityDamageEvent.DamageCause.FIRE
+                || cause == EntityDamageEvent.DamageCause.FIRE_TICK
+                || cause == EntityDamageEvent.DamageCause.HOT_FLOOR;
     }
 
 }
