@@ -51,7 +51,7 @@ public class ArmorImitationModifier implements WrapModifier {
                 var attributeModifiers = item.getItemMeta().getAttributeModifiers();
                 if (switchToAlternative(item, wrap.getArmorImitationType())) {
                     var newMeta = ((Damageable) item.getItemMeta());
-                    if (wrap.getWrapDurability() != null && wrap.getWrapDurability() == -1) { // skip durability conversion
+                    if (wrap.getWrapDurability() == null || wrap.getWrapDurability() != -1) { // skip durability conversion
                         int newDurability = item.getType().getMaxDurability();
                         var modelDurability = ((double) currentDurability / maxDurability) * newDurability;
                         newMeta.setDamage(newDurability - (int) modelDurability);
