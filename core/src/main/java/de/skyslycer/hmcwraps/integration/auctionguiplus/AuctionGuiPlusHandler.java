@@ -2,8 +2,8 @@ package de.skyslycer.hmcwraps.integration.auctionguiplus;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.integration.IntegrationHandler;
-import net.brcdev.auctiongui.event.AuctionPreStartEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 
 public class AuctionGuiPlusHandler implements IntegrationHandler {
 
@@ -27,7 +27,7 @@ public class AuctionGuiPlusHandler implements IntegrationHandler {
     @Override
     public void unload() {
         if (listener != null) {
-            AuctionPreStartEvent.getHandlerList().unregister(listener);
+            HandlerList.unregisterAll(listener);
         }
     }
 
