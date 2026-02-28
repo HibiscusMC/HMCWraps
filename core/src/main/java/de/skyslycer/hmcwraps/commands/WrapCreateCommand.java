@@ -73,7 +73,7 @@ public class WrapCreateCommand {
         if (meta instanceof LeatherArmorMeta leatherArmorMeta) {
             color = ColorUtil.colorToHex(leatherArmorMeta.getColor());
         }
-        String id = getHookId(item);
+        String id = plugin.getHookAccessor().getIdFromHook(item);
         String name = StringUtil.legacyToMiniMessage(meta.hasDisplayName() ? meta.getDisplayName().replace("§", "&") : StringUtil.convertToTitleCase(item.getType().name()));
         List<String> lore = extractLore(meta);
         int amount = item.getAmount();
@@ -160,20 +160,6 @@ public class WrapCreateCommand {
             id++;
         }
         return id;
-    }
-
-    private String getHookId(ItemStack item) {
-        if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder") && CustomStack.byItemStack(item) != null) {
-            return "itemsadder:" + CustomStack.byItemStack(item).getNamespacedID();
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("Oraxen") && OraxenItems.getIdByItem(item) != null) {
-            return "oraxen:" + OraxenItems.getIdByItem(item);
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs") && MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item) != null) {
-            return "mythic:" + MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-        }
-        var meta = item.getItemMeta();
-        return String.valueOf(meta.hasCustomModelData() ? meta.getCustomModelData() : -1);
     }
 
 }

@@ -11,12 +11,23 @@ public class OraxenItemHook extends ItemHook {
         return "oraxen:";
     }
 
+    @Nullable
     @Override
     public ItemStack get(String id) {
         if (OraxenItems.getItemById(id) == null) {
             return null;
         }
         return OraxenItems.getItemById(id).build();
+    }
+
+    @Nullable
+    @Override
+    public String get(ItemStack stack) {
+        var item = OraxenItems.getIdByItem(stack);
+        if (item == null) {
+            return null;
+        }
+        return getPrefix() + item;
     }
 
     @Override

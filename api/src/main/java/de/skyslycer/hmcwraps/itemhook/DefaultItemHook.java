@@ -21,4 +21,13 @@ public class DefaultItemHook extends ItemHook {
         return null;
     }
 
+    @Override
+    @Nullable
+    public String get(ItemStack stack) {
+        if (stack.hasItemMeta() && stack.getItemMeta().hasCustomModelData()) {
+            return stack.getItemMeta().getCustomModelData() + "";
+        }
+        return null;
+    }
+
 }
