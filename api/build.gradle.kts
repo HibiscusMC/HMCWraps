@@ -26,11 +26,11 @@ dependencies {
     compileOnly(libs.folialib)
 }
 
-tasks {
-    dokkaHtml {
-        moduleName.set("HMCWraps API")
-    }
+dokka {
+    moduleName.set("HMCWraps API")
+}
 
+tasks {
     compileJava {
         options.compilerArgs.add("-parameters")
         options.encoding = "UTF-8"
