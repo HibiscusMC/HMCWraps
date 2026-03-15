@@ -27,7 +27,7 @@ jobs:
           java-version: 17
       - uses: gradle/gradle-build-action@v2
       - name: Build HTML
-        run: ./gradlew api:generateDokkaHtml --no-daemon --stacktrace
+        run: ./gradlew api:dokkaGeneratePublicationHtml --no-daemon --stacktrace
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
