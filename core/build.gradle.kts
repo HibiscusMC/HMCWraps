@@ -3,8 +3,8 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("io.github.goooler.shadow") version "8.1.8"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.gradleup.shadow") version "9.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 val shadePattern = "$group.hmcwraps.shade"
@@ -37,6 +37,8 @@ dependencies {
     compileOnly(depends.zauctionhouse)
     compileOnly(depends.bundles.craftengine)
     compileOnly(depends.auctionguiplus)
+    compileOnly(depends.axauctions)
+    compileOnly(depends.axtrade)
 }
 
 java {
@@ -94,9 +96,8 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport",
-        "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot", "zAuctionHouseV3", "CraftEngine",
-        "AuctionGUIPlus", "Nexo")
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "zAuctionHouseV3", "CraftEngine",
+        "AuctionGUIPlus", "Nexo", "AxAuctions", "AxTrade")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {
@@ -169,6 +170,10 @@ bukkit {
         register("hmcwraps.commands.open") {
             description = "Gives access to open the wrap inventory for another player."
             children = listOf("hmcwraps.management", "hmcwraps.admin")
+        }
+        register("hmcwraps.commands.drop") {
+            description = "Gives access to drop a wrap on the ground."
+            children = listOf("hmcwraps.admin")
         }
     }
 }

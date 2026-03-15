@@ -120,4 +120,17 @@ public class HookAccessor {
         return possible.map(itemHook -> itemHook.getTooltipStyle(id.replace(possible.get().getPrefix(), ""))).orElse(null);
     }
 
+    @Nullable
+    public String getIdFromHook(ItemStack item) {
+        if (item == null) return null;
+        var hooksWithPrefix = hooks.stream().filter(it -> it.getPrefix() != null).toList(); // prefer hooks from plugins over custom model data
+        for (var hook : hooksWithPrefix) {
+            var id = hook.get(item);
+            if (id != null) {
+                return id;
+            }
+        }
+        return defaultHook.get(item);
+    }
+
 }

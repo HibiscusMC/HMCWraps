@@ -19,7 +19,8 @@ public abstract class ItemHook {
      *
      * @return The hook prefix
      */
-    abstract String getPrefix();
+    @Nullable
+    public abstract String getPrefix();
 
     /**
      * Get an item stack based on the input.
@@ -28,7 +29,16 @@ public abstract class ItemHook {
      * @return The item stack
      */
     @Nullable
-    abstract ItemStack get(String id);
+    public abstract ItemStack get(String id);
+
+    /**
+     * Get the id based on the item provided.
+     *
+     * @param stack The item stack
+     * @return The id, may return null when none is available
+     */
+    @Nullable
+    public abstract String get(ItemStack stack);
 
     /**
      * Get the model id corresponding to the input.

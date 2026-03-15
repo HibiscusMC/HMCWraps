@@ -1,17 +1,17 @@
-package de.skyslycer.hmcwraps.integration.auctionguiplus;
+package de.skyslycer.hmcwraps.integration.axauctions;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.integration.IntegrationHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 
-public class AuctionGuiPlusHandler implements IntegrationHandler {
+public class AxAuctionsHandler implements IntegrationHandler {
 
     private final HMCWraps plugin;
 
-    private AuctionPreStartListener listener = null;
+    private AxAuctionsPreSellListener listener = null;
 
-    public AuctionGuiPlusHandler(HMCWraps plugin) {
+    public AxAuctionsHandler(HMCWraps plugin) {
         this.plugin = plugin;
     }
 
@@ -20,7 +20,7 @@ public class AuctionGuiPlusHandler implements IntegrationHandler {
         if (!plugin.getConfiguration().getPluginIntegrations().getAuctionHouse().isEnabled()) {
             return;
         }
-        listener = new AuctionPreStartListener(plugin);
+        listener = new AxAuctionsPreSellListener(plugin);
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 

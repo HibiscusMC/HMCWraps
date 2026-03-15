@@ -7,6 +7,7 @@ public class WrappingSettings {
 
     private RewrapSettings rewrap;
     private boolean makeWrappersUnstackable;
+    private boolean giveWrapperAfterBreaking;
 
     public RewrapSettings getRewrap() {
         return rewrap;
@@ -14,6 +15,10 @@ public class WrappingSettings {
 
     public boolean isMakeWrappersUnstackable() {
         return makeWrappersUnstackable;
+    }
+
+    public boolean isGiveWrapperAfterBreaking() {
+        return giveWrapperAfterBreaking;
     }
 
 }

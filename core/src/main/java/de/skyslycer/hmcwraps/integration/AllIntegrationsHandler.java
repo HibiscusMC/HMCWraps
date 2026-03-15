@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps.integration;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.integration.auctionguiplus.AuctionGuiPlusHandler;
+import de.skyslycer.hmcwraps.integration.axauctions.AxAuctionsHandler;
+import de.skyslycer.hmcwraps.integration.axtrade.AxTradeHandler;
 import de.skyslycer.hmcwraps.integration.nexo.NexoHandler;
 import de.skyslycer.hmcwraps.integration.zauctionhouse.ZAuctionHouseHandler;
 import org.bukkit.Bukkit;
@@ -17,7 +19,9 @@ public class AllIntegrationsHandler implements IntegrationHandler {
     private final Map<String, Class<? extends IntegrationHandler>> integrations = Map.of(
             "zAuctionHouseV3", ZAuctionHouseHandler.class,
             "AuctionGUIPlus", AuctionGuiPlusHandler.class,
-            "Nexo", NexoHandler.class
+            "Nexo", NexoHandler.class,
+            "AxAuctions", AxAuctionsHandler.class,
+            "AxTrade", AxTradeHandler.class
     );
 
     private final Map<String, IntegrationHandler> loadedIntegrations = new HashMap<>();

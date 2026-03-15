@@ -1,6 +1,6 @@
 allprojects {
     group = "de.skyslycer"
-    version = "1.8.0"
+    version = "1.8.1"
 
     repositories {
         mavenCentral()
@@ -20,6 +20,7 @@ allprojects {
         maven("https://repo.momirealms.net/releases/")
         // Temp repository until Kyori updates their stuff (nothing is more permanent than a temporary solution)
         maven("https://repo.granny.dev/snapshots/")
+        maven("https://repo.artillex-studios.com/releases/") // AxAuctions
     }
 }
 

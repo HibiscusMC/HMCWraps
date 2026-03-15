@@ -52,7 +52,7 @@ steps:
         cp "$JAR" "$JAR_WITH_HASH"
 
         # generate changelog
-        if git rev-parse "$CI_PREV_COMMIT_SHA" >/dev/null 2>&1; then
+        if git merge-base --is-ancestor "$CI_PREV_COMMIT_SHA" "$CI_COMMIT_SHA" 2>/dev/null; then
           git log --no-merges --pretty=format:'- `%h` _%s_' \
             "$CI_PREV_COMMIT_SHA..$CI_COMMIT_SHA" > changelog.txt
         else
