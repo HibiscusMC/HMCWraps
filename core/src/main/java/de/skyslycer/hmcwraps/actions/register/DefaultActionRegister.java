@@ -266,14 +266,15 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "command", "say HMCWraps")) return;
             var player = information.getPlayer();
-            player.chat(parseCommand(information));
+            plugin.getFoliaLib().getScheduler().runAtEntity(player, (task) -> player.chat(parseCommand(information)));
         });
     }
 
     private void registerConsoleCommand() {
         plugin.getActionHandler().subscribe(Action.CONSOLE_COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "console command", "kill <player>")) return;
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information).substring(1));
+            plugin.getFoliaLib().getScheduler().runNextTick((task) ->
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information).substring(1)));
         });
     }
 
