@@ -24,6 +24,7 @@ public class Inventory {
     private Map<String, InventoryItem> items;
     private @Nullable HashMap<String, HashMap<String, List<String>>> actions;
     private @Nullable HashMap<String, HashMap<String, List<String>>> lockedActions;
+    private List<String> treatAsNoItem;
 
     public String getTitle() {
         return title;
@@ -82,6 +83,10 @@ public class Inventory {
 
     public String getFavoritePrefix() {
         return favoritePrefix;
+    }
+
+    public List<String> getTreatAsNoItem() {
+        return treatAsNoItem;
     }
 
     public enum Type {

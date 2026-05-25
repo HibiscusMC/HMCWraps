@@ -278,6 +278,11 @@ inventory:
   # If the player opens the inventory while holding an item (instead of empty hand), only wraps for that item will be shown.
   # This also means that items that have no wrap will show an empty inventory.
   show-all-without-item: false
+  # Which materials should be treated as if the player isn't holding any item.
+  # For example, add your menu item and enable the option above to show all wraps when opening the inventory
+  # while holding the menu item through the /wraps command.
+  treat-as-no-item:
+    - BARRIER
   # The prefix to be shown in the GUI on wraps marked as favorite
   # Leave empty to disable
   favorite-prefix: ''

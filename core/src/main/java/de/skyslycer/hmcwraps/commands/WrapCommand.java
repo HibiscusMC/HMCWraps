@@ -69,7 +69,7 @@ public class WrapCommand {
     private void openWrapsInventory(Player player) {
         var item = player.getInventory().getItemInMainHand();
         var slot = player.getInventory().getHeldItemSlot();
-        if (item.getType().isAir()) {
+        if (PlayerUtil.filterNoItem(item, plugin) == null) {
             if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
                 GuiBuilder.open(plugin, player, null, -1);
             } else {

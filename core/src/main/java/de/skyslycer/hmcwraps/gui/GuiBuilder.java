@@ -8,6 +8,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.MaterialUtil;
+import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import dev.triumphteam.gui.components.ScrollType;
@@ -33,6 +34,7 @@ public class GuiBuilder {
     public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot, int page) {
         var itemSelectedButNoWraps = slot == -2; // little hack to check if the inventory was opened by selecting an item without wraps instead of an empty slot
         if (slot == -2) slot = -1;
+        item = PlayerUtil.filterNoItem(item, plugin);
 
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 

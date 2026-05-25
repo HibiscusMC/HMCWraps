@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
+import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,7 @@ public class PlayerInteractListener implements Listener {
         if (event.getAction() == Action.LEFT_CLICK_BLOCK && plugin.getPreviewManager().isPreviewing(player)) {
             plugin.getPreviewManager().remove(player.getUniqueId(), false);
         }
-        if (player.getInventory().getItemInMainHand().getType().isAir()) {
+        if (PlayerUtil.filterNoItem(player.getInventory().getItemInMainHand(), plugin) == null) {
             return;
         }
         var currentItem = player.getInventory().getItemInMainHand();

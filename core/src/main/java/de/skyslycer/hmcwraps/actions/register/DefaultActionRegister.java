@@ -21,6 +21,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.ListUtil;
+import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
@@ -369,11 +370,11 @@ public class DefaultActionRegister {
 
     private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
         var slot = getSlot(information);
-        if ((slot == -1 || player.getInventory().getItem(slot) == null) && !plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
+        var item = slot != -1 ? PlayerUtil.filterNoItem(player.getInventory().getItem(slot), plugin) : null;
+        if (item == null && !plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
             player.closeInventory();
             return;
         }
-        var item = slot == -1 ? null : player.getInventory().getItem(slot);
         Material type = null;
         if (item != null && !item.getType().isAir()) {
             type = item.getType();

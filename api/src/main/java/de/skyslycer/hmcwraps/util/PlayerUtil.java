@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.util;
 
+import de.skyslycer.hmcwraps.HMCWraps;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -59,6 +60,22 @@ public class PlayerUtil {
     private static Location fixLocation(Location location, Player player) {
         location.setY(player.getLocation().getY() + 1);
         return location;
+    }
+
+    /**
+     * Shortcut for the implementation of the treat-as-no-item mechanic. Quickly filters out the specified materials.
+     * Used as it's much shorter than the inline version.
+     *
+     * @param item The item to filter
+     * @param plugin The plugin instance to access the configuration
+     * @return The filtered item (if the material is contained in the list, returns null)
+     */
+    public static ItemStack filterNoItem(ItemStack item, HMCWraps plugin) {
+        if (item == null || item.getType().isAir()) return null;
+        var excluded = plugin.getConfiguration().getInventory().getTreatAsNoItem();
+        if (excluded == null) return item;
+        if (excluded.contains(item.getType().toString())) return null;
+        return item;
     }
 
 }
