@@ -49,6 +49,7 @@ public class SerializableItem {
     private @Nullable String equippableModel;
     private @Nullable String itemModel;
     private @Nullable String tooltipStyle;
+    // NOTE: DON'T FORGET TO UPDATE THE hasExplicitProperties()
 
     public SerializableItem(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore, @Nullable List<String> flags,
                             @Nullable Integer modelId, @Nullable Map<String, Integer> enchantments, @Nullable Integer amount) {
@@ -90,6 +91,9 @@ public class SerializableItem {
             origin = new ItemStack(newType == null ? Material.STRUCTURE_VOID : newType);
         }
         if (origin.getType().isAir()) {
+            return origin;
+        }
+        if (!hasExplicitProperties()) {
             return origin;
         }
         ItemBuilder builder = ItemBuilder.from(origin);
@@ -183,6 +187,28 @@ public class SerializableItem {
             item = itemNbt.getItem();
         }
         return item;
+    }
+
+    // Check if anything should be changed, if not, pass the clean item from hook through
+    private boolean hasExplicitProperties() {
+        return name != null
+                || glow != null
+                || lore != null
+                || flags != null
+                || modelId != null
+                || enchantments != null
+                || amount != null
+                || color != null
+                || nbt != null
+                || durability != null
+                || skullOwner != null
+                || skullTexture != null
+                || trim != null
+                || trimMaterial != null
+                || equippableSlot != null
+                || equippableModel != null
+                || itemModel != null
+                || tooltipStyle != null;
     }
 
     public String getId() {
