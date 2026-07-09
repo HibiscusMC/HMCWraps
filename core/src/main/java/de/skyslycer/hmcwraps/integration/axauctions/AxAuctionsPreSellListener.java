@@ -15,8 +15,7 @@ public class AxAuctionsPreSellListener implements Listener {
 
     @EventHandler
     public void onPreSell(AxAuctionsPreSellEvent event) {
-        var stack = event.getFinalItem().getItemStack();
-        if (plugin.getConfiguration().getPluginIntegrations().getAuctionHouse().isBlacklisted(plugin, stack)) {
+        if (plugin.getConfiguration().getPluginIntegrations().getAuctionHouse().isBlacklisted(plugin, event.getItem())) {
             event.setCancelled(true);
         }
     }

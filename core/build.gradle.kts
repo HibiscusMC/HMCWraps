@@ -92,7 +92,7 @@ tasks {
 
     runServer {
         javaLauncher.set(serverLauncher)
-        minecraftVersion("26.1.2")
+        minecraftVersion("26.2")
     }
 }
 

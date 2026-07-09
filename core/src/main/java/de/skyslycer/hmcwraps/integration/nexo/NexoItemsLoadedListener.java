@@ -21,8 +21,7 @@ public class NexoItemsLoadedListener implements Listener {
     @EventHandler
     public void onNexoItemsLoaded(NexoItemsLoadedEvent event) {
         try {
-            registerNexoCallbackReflective(
-                    "hmcwraps:nexo-modifier",
+            registerNexoCallbackReflective("hmcwraps:nexo-modifier",
                     new UpdateCallback() {
                         @Override
                         public @Nullable ItemStack preUpdate(@NonNull ItemStack itemStack) {
@@ -31,11 +30,6 @@ public class NexoItemsLoadedListener implements Listener {
                             } else {
                                 return itemStack;
                             }
-                        }
-                        @Override
-                        public @NonNull ItemStack postUpdate(@NonNull ItemStack itemStack) {
-                            // do nothing
-                            return itemStack;
                         }
                     }
             );

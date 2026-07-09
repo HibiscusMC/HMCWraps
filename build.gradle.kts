@@ -23,6 +23,7 @@ allprojects {
         maven("https://repo.artillex-studios.com/releases/") // AxAuctions
         maven("https://repo.tcoded.com/releases/") // FoliaLib
         maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // MMOItems
+        maven("https://repo.oraxen.com/releases/") // Oraxen
     }
 }
 
