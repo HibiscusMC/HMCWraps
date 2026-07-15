@@ -222,7 +222,8 @@ public class WrapperImpl implements Wrapper {
                 && isValidType(wrap.getRange().getMythic(), getModifiers().mythic().getRealId(item))
                 && isValidType(wrap.getRange().getExecutableItems(), getModifiers().executableItems().getRealId(item))
                 && isValidType(wrap.getRange().getNexo(), getModifiers().nexo().getRealId(item))
-                && isValidType(wrap.getRange().getMmoItems(), getModifiers().mmoItems().getRealId(item)));
+                && isValidType(wrap.getRange().getMmoItems(), getModifiers().mmoItems().getRealId(item))
+                && isValidType(wrap.getRange().getMmoItemsType(), getModifiers().mmoItems().getRealType(item)));
     }
 
     private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
