@@ -312,7 +312,7 @@ public class DefaultActionRegister {
                         || !isSameRange(range.getOraxen(), currentRange.getOraxen()) || !isSameRange(range.getItemsAdder(), currentRange.getItemsAdder())
                         || !isSameRange(range.getMythic(), currentRange.getMythic()) || isSameRange(range.getNexo(), currentRange.getNexo())
                         || !isSameRange(range.getExecutableItems(), currentRange.getExecutableItems()) || !isSameRange(range.getCraftEngine(), currentRange.getCraftEngine())
-                        || !isSameRange(range.getMmoItems(), currentRange.getMmoItems())) {
+                        || !isSameRange(range.getMmoItems(), currentRange.getMmoItems()) || !isSameRange(range.getMmoItemsType(), currentRange.getMmoItemsType())) {
                     return;
                 }
                 current.remove(currentWrap);

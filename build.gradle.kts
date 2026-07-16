@@ -4,6 +4,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven("https://jitpack.io")
         maven("https://repo.skyslycer.de/jitpack")
         maven("https://repo.skyslycer.de/mirrors")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
