@@ -40,6 +40,8 @@ public class WrapCommand {
     private static final String WRAP_SELF_PERMISSION = "hmcwraps.commands.wrap.self";
     private static final String UNWRAP_PERMISSION = "hmcwraps.commands.unwrap";
     private static final String UNWRAP_SELF_PERMISSION = "hmcwraps.commands.unwrap.self";
+    private static final String REPAIR_PERMISSION = "hmcwraps.commands.repair";
+    private static final String REPAIR_SELF_PERMISSION = "hmcwraps.commands.repair.self";
     private static final String GIVE_WRAPPER_PERMISSION = "hmcwraps.commands.give.wrapper";
     private static final String GIVE_UNWRAPPER_PERMISSION = "hmcwraps.commands.give.unwrapper";
     private static final String PREVIEW_PERMISSION = "hmcwraps.commands.preview";
@@ -305,6 +307,32 @@ public class WrapCommand {
         var item = wrap.getPhysical().toItem(plugin, null);
         item.setAmount(amount == null ? 1 : amount);
         return item;
+    }
+
+    @Subcommand("repair")
+    @Description("Repair a wrapped item by rewrapping it with the same wrap.")
+    @AnyPermission({REPAIR_PERMISSION, REPAIR_SELF_PERMISSION})
+    public void onRepair(CommandSender sender, @Default("@s") @Optional Player target) {
+        if ((target != sender && !sender.hasPermission(REPAIR_PERMISSION)) ||
+                (!sender.hasPermission(REPAIR_PERMISSION) && !sender.hasPermission(REPAIR_SELF_PERMISSION))) {
+            plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
+            return;
+        }
+        var item = target.getInventory().getItemInMainHand().clone();
+        if (item.getType().isAir()) {
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
+            return;
+        }
+        var wrap = plugin.getWrapper().getWrap(item);
+        if (wrap == null) {
+            plugin.getMessageHandler().send(sender, target == sender ? Messages.COMMAND_ITEM_NOT_WRAPPED_SELF : Messages.COMMAND_ITEM_NOT_WRAPPED);
+            return;
+        }
+        var physical = plugin.getWrapper().isPhysical(item);
+        var repaired = plugin.getWrapper().removeWrap(item, target);
+        repaired = plugin.getWrapper().setWrap(wrap, repaired, physical, target);
+        target.getInventory().setItemInMainHand(repaired);
+        plugin.getMessageHandler().send(sender, Messages.COMMAND_REPAIR);
     }
 
     @Subcommand("help")

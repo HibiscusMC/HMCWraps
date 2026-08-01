@@ -141,6 +141,13 @@ bukkit {
         register("hmcwraps.commands.unwrap.self") {
             description = "Gives access to unwrap an item using commands (virtual). The player can only unwrap his own tools, not the tools from others."
         }
+        register("hmcwraps.commands.repair") {
+            description = "Gives access to repair command."
+            children = listOf("hmcwraps.admin", "hmcwraps.management", "hmcwraps.commands.virtual")
+        }
+        register("hmcwraps.commands.repair.self") {
+            description = "Gives access to repair command. The player can only unwrap his own tools, not the tools from others."
+        }
         register("hmcwraps.commands.give.wrapper") {
             description = "Gives access to giving physical wrappers to players."
             children = listOf("hmcwraps.management", "hmcwraps.admin", "hmcwraps.commands.physical")
