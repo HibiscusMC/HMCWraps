@@ -259,16 +259,29 @@ public class WrapperImpl implements Wrapper {
     @Override
     public boolean isGloballyDisabled(ItemStack item) {
         var globalDisable = plugin.getConfiguration().getGlobalDisable();
-        if (globalDisable.getModelId().contains(getModifiers().modelData().getRealModelId(item))) return true;
-        if (globalDisable.getColor().stream().map(StringUtil::colorFromString).toList()
-                .contains(getModifiers().color().getRealColor(item))) return true;
-        if (globalDisable.getItemsAdderId().contains(getModifiers().itemsAdder().getRealId(item))) return true;
-        if (globalDisable.getOraxenId().contains(getModifiers().oraxen().getRealId(item))) return true;
-        if (globalDisable.getMythicId().contains(getModifiers().mythic().getRealId(item))) return true;
-        if (globalDisable.getNexoId().contains(getModifiers().nexo().getRealId(item))) return true;
-        if (globalDisable.getExecutableItemsId().contains(getModifiers().executableItems().getRealId(item))) return true;
-        if (globalDisable.getCraftEngine().contains(getModifiers().craftEngine().getRealId(item))) return true;
-        if (globalDisable.getMmoItems().contains(getModifiers().mmoItems().getRealId(item))) return true;
+        var modelIds = globalDisable.getModelId();
+        if (!modelIds.isEmpty() && modelIds.contains(getModifiers().modelData().getRealModelId(item))) return true;
+        var colors = globalDisable.getColor();
+        if (!colors.isEmpty()) {
+            var realColor = getModifiers().color().getRealColor(item);
+            for (String color : colors) {
+                if (Objects.equals(StringUtil.colorFromString(color), realColor)) return true;
+            }
+        }
+        var itemsAdderIds = globalDisable.getItemsAdderId();
+        if (!itemsAdderIds.isEmpty() && itemsAdderIds.contains(getModifiers().itemsAdder().getRealId(item))) return true;
+        var oraxenIds = globalDisable.getOraxenId();
+        if (!oraxenIds.isEmpty() && oraxenIds.contains(getModifiers().oraxen().getRealId(item))) return true;
+        var mythicIds = globalDisable.getMythicId();
+        if (!mythicIds.isEmpty() && mythicIds.contains(getModifiers().mythic().getRealId(item))) return true;
+        var nexoIds = globalDisable.getNexoId();
+        if (!nexoIds.isEmpty() && nexoIds.contains(getModifiers().nexo().getRealId(item))) return true;
+        var executableItemsIds = globalDisable.getExecutableItemsId();
+        if (!executableItemsIds.isEmpty() && executableItemsIds.contains(getModifiers().executableItems().getRealId(item))) return true;
+        var craftEngineIds = globalDisable.getCraftEngine();
+        if (!craftEngineIds.isEmpty() && craftEngineIds.contains(getModifiers().craftEngine().getRealId(item))) return true;
+        var mmoItemsIds = globalDisable.getMmoItems();
+        if (!mmoItemsIds.isEmpty() && mmoItemsIds.contains(getModifiers().mmoItems().getRealId(item))) return true;
         return false;
     }
 

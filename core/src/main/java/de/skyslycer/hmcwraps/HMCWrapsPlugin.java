@@ -57,7 +57,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private final Set<String> loadedHooks = new HashSet<>();
     private final Wrapper wrapper = new WrapperImpl(this);
     private final PreviewManager previewManager = new PreviewManager(this);
-    private final CollectionHelper collectionHelper = new CollectionHelperImpl(this);
+    private final CollectionHelperImpl collectionHelper = new CollectionHelperImpl(this);
     private final ActionHandler actionHandler = new ActionHandler();
     private final FileConverter fileConverter = new FileConverter(this);
     private final Storage<Player, Boolean> filterStorage = new PlayerFilterStorage(this);
@@ -183,6 +183,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     @Override
     public void unload() {
         integrationHandler.unload();
+        collectionHelper.clear();
         getWrapsLoader().unload();
         if (checkTask != null) {
             checkTask.cancel();
@@ -223,6 +224,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
                    "items", "inventory.items", "collections", "unwrapper", "inventory.actions");
             config = LOADER.load().get(Config.class);
             getWrapsLoader().load();
+            collectionHelper.refresh();
         } catch (IOException exception) {
             logSevere("Could not load the configuration (please report this to the developers)! The plugin will shut down now.", exception);
             return false;
@@ -261,7 +263,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     }
 
     private void checkInventory(Player player) {
-        for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
+        for (int i = 0; i < player.getInventory().getSize() - 1; i++) {
             var item = player.getInventory().getItem(i);
             if (item == null || item.getType().isAir()) {
                 continue;

@@ -9,6 +9,7 @@ import java.util.*;
 public class CollectionHelperImpl implements CollectionHelper {
 
     private final HMCWrapsPlugin plugin;
+    private volatile Map<Material, List<Wrap>> itemsByMaterial = Map.of();
 
     public CollectionHelperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -16,16 +17,53 @@ public class CollectionHelperImpl implements CollectionHelper {
 
     @Override
     public List<Wrap> getItems(Material material) {
-        var list = new HashSet<String>();
-        if (plugin.getWrapsLoader().getTypeWraps().containsKey(material.toString())) {
-            list.addAll(plugin.getWrapsLoader().getTypeWraps().get(material.toString()));
-        }
-        plugin.getWrapsLoader().getCollections().entrySet().stream().filter(items -> items.getValue().contains(material.toString())).forEach(it -> {
-            if (plugin.getWrapsLoader().getTypeWraps().containsKey(it.getKey())) {
-                list.addAll(plugin.getWrapsLoader().getTypeWraps().get(it.getKey()));
+        return itemsByMaterial.getOrDefault(material, List.of());
+    }
+
+    public void refresh() {
+        var loader = plugin.getWrapsLoader();
+        var typeWraps = loader.getTypeWraps();
+        var collections = loader.getCollections();
+        var wraps = loader.getWraps();
+        var wrapIdsByMaterial = new EnumMap<Material, Set<String>>(Material.class);
+
+        for (var entry : typeWraps.entrySet()) {
+            var material = Material.getMaterial(entry.getKey());
+            if (material != null) {
+                addWrapIds(wrapIdsByMaterial, material, entry.getValue());
             }
-        });
-        return list.stream().map(plugin.getWrapsLoader().getWraps()::get).filter(Objects::nonNull).toList();
+            var collection = collections.get(entry.getKey());
+            if (collection == null) {
+                continue;
+            }
+            for (String materialName : collection) {
+                var collectionMaterial = Material.getMaterial(materialName);
+                if (collectionMaterial != null) {
+                    addWrapIds(wrapIdsByMaterial, collectionMaterial, entry.getValue());
+                }
+            }
+        }
+
+        var snapshot = new EnumMap<Material, List<Wrap>>(Material.class);
+        for (var entry : wrapIdsByMaterial.entrySet()) {
+            var materialWraps = new ArrayList<Wrap>();
+            for (String wrapId : entry.getValue()) {
+                var wrap = wraps.get(wrapId);
+                if (wrap != null) {
+                    materialWraps.add(wrap);
+                }
+            }
+            snapshot.put(entry.getKey(), List.copyOf(materialWraps));
+        }
+        itemsByMaterial = Map.copyOf(snapshot);
+    }
+
+    public void clear() {
+        itemsByMaterial = Map.of();
+    }
+
+    private void addWrapIds(Map<Material, Set<String>> wrapIdsByMaterial, Material material, Collection<String> wrapIds) {
+        wrapIdsByMaterial.computeIfAbsent(material, ignored -> new HashSet<>()).addAll(wrapIds);
     }
 
     @Override

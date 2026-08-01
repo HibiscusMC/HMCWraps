@@ -8,9 +8,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class PlayerPickupListener implements Listener {
 
     private final HMCWrapsPlugin plugin;
+    private final Set<UUID> pendingInventoryChecks = ConcurrentHashMap.newKeySet();
 
     public PlayerPickupListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -21,7 +26,17 @@ public class PlayerPickupListener implements Listener {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
+        var uuid = player.getUniqueId();
+        if (!pendingInventoryChecks.add(uuid)) {
+            return;
+        }
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
+            try {
+                PermissionUtil.loopThroughInventory(plugin, player, player.getInventory());
+            } finally { // remove even if exception is thrown
+                pendingInventoryChecks.remove(uuid);
+            }
+        }, () -> pendingInventoryChecks.remove(uuid), 2L);
     }
 
 }

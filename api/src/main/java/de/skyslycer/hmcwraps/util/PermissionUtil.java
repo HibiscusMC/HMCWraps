@@ -20,11 +20,12 @@ public class PermissionUtil {
      */
     public static boolean hasPermission(HMCWraps plugin, Wrap wrap, ItemStack item, Player player) {
         var wrapper = plugin.getWrapper();
-        if (wrapper.isPhysical(item) && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
+        var physical = wrapper.isPhysical(item);
+        if (physical && plugin.getConfiguration().getPermissions().isCheckPermissionPhysical() && !wrap.hasPermission(player)
                 && !wrapper.isOwningPlayer(item, player)) {
             return false;
         }
-        return wrapper.isPhysical(item) || !plugin.getConfiguration().getPermissions().isCheckPermissionVirtual() || wrap.hasPermission(player)
+        return physical || !plugin.getConfiguration().getPermissions().isCheckPermissionVirtual() || wrap.hasPermission(player)
                 || wrapper.isOwningPlayer(item, player);
     }
 
@@ -60,7 +61,7 @@ public class PermissionUtil {
      * @param inventory The inventory
      */
     public static void loopThroughInventory(HMCWraps plugin, Player player, Inventory inventory) {
-        for (int i = 0; i < inventory.getContents().length - 1; i++) {
+        for (int i = 0; i < inventory.getSize() - 1; i++) {
             var item = inventory.getItem(i);
             if (item == null || item.getType().isAir()) {
                 continue;
@@ -101,13 +102,15 @@ public class PermissionUtil {
         if (item == null || item.getType().isAir()) {
             return item;
         }
+        var wrapper = plugin.getWrapper();
         var itemInHand = item;
-        if (plugin.getWrapper().getWrap(item) == null && plugin.getConfiguration().getFavorites().isEnabled()) {
+        var wrap = wrapper.getWrap(itemInHand);
+        if (wrap == null && plugin.getConfiguration().getFavorites().isEnabled()) {
             itemInHand = PermissionUtil.applyFavorite(plugin, player, item);
+            wrap = wrapper.getWrap(itemInHand);
         }
-        var newItem = PermissionUtil.hasPermission(plugin, itemInHand, player);
-        if (newItem != null) {
-            return newItem;
+        if (wrap != null && !PermissionUtil.hasPermission(plugin, wrap, itemInHand, player)) {
+            return wrapper.removeWrap(itemInHand, player);
         }
         return itemInHand;
     }
