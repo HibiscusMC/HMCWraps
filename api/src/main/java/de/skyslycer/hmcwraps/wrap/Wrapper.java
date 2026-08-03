@@ -59,14 +59,23 @@ public interface Wrapper {
     ItemStack setWrap(Wrap wrap, ItemStack target, boolean physical, Player player);
 
     /**
-     * Remove a wrap. If giveBack is true, the item is currently physically wrapped and the physical wrap was configured to give it back, it will also
-     * give the player the wrapper of the old wrap.
+     * Remove a wrap.
      *
      * @param itemStack The item to remove the wrap from
      * @param player    The player
      * @return The newly unwrapped item
      */
     ItemStack removeWrap(ItemStack itemStack, Player player);
+
+    /**
+     * Remove a wrap. When noGiveBack is true, the player will not get the wrapper of the old wrap.
+     *
+     * @param itemStack  The item to remove the wrap from
+     * @param player     The player
+     * @param noGiveBack If the player should not get the wrapper of the old wrap
+     * @return The newly unwrapped item
+     */
+    ItemStack removeWrap(ItemStack itemStack, Player player, boolean noGiveBack);
 
     /**
      * Check if the item is an unwrapper.

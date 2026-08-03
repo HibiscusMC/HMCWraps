@@ -329,7 +329,7 @@ public class WrapCommand {
             return;
         }
         var physical = plugin.getWrapper().isPhysical(item);
-        var repaired = plugin.getWrapper().removeWrap(item, target);
+        var repaired = plugin.getWrapper().removeWrap(item, target, true);
         repaired = plugin.getWrapper().setWrap(wrap, repaired, physical, target);
         target.getInventory().setItemInMainHand(repaired);
         plugin.getMessageHandler().send(sender, Messages.COMMAND_REPAIR);

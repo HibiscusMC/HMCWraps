@@ -43,13 +43,13 @@ public class WrapperImpl implements Wrapper {
         this.physicalWrapperKey = new NamespacedKey(plugin, "wrapper");
     }
 
-    private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player) {
+    private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player, boolean noGiveBack) {
         if (item == null || item.getType().isAir()) {
             return item;
         }
         var editing = item.clone();
         var currentWrap = getWrap(editing);
-        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()) {
+        if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap() && !noGiveBack) {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
 
@@ -104,25 +104,30 @@ public class WrapperImpl implements Wrapper {
         if (event.isCancelled()) {
             return item;
         }
-        return setWrapPrivate(event.getWrap(), event.getItem(), event.isPhysical(), event.getPlayer());
+        return setWrapPrivate(event.getWrap(), event.getItem(), event.isPhysical(), event.getPlayer(), false);
     }
 
     @Override
     public ItemStack removeWrap(ItemStack target, Player player) {
+        return removeWrap(target, player, false);
+    }
+
+    @Override
+    public ItemStack removeWrap(ItemStack target, Player player, boolean noGiveBack) {
         var event = new ItemUnwrapEvent(target, player, getWrap(target));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return target;
         }
-        return removeWrapPrivate(event.getItem(), event.getPlayer());
+        return removeWrapPrivate(event.getItem(), event.getPlayer(), noGiveBack);
     }
 
-    private ItemStack removeWrapPrivate(ItemStack item, Player player) {
+    private ItemStack removeWrapPrivate(ItemStack item, Player player, boolean noGiveBack) {
         var currentWrap = getWrap(item);
         if (currentWrap == null) {
             return item;
         }
-        return setWrapPrivate(null, item, false, player);
+        return setWrapPrivate(null, item, false, player, noGiveBack);
     }
 
     @Override
