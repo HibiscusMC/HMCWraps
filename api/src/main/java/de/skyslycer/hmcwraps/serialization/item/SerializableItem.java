@@ -5,8 +5,6 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NbtApiException;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.*;
@@ -120,7 +118,7 @@ public class SerializableItem {
         }
         if (getEnchantments() != null) {
             getEnchantments().forEach((name, level) -> {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
+                Enchantment enchantment = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(name.toLowerCase()));
                 if (enchantment != null) {
                     builder.enchant(enchantment, level);
                 }
@@ -177,14 +175,14 @@ public class SerializableItem {
         }
         if (getNbt() != null) {
             try {
-                new NBTContainer(getNbt());
+                NBT.parseNBT(getNbt());
             } catch (NbtApiException e) {
                 Bukkit.getLogger().warning("A provided NBT data is invalid in an item!");
             }
-            var itemNbt = new NBTItem(item);
+            var itemNbt = NBT.itemStackToNBT(item);
             var newNbt = NBT.parseNBT(getNbt());
             itemNbt.mergeCompound(newNbt);
-            item = itemNbt.getItem();
+            item = NBT.itemStackFromNBT(itemNbt);
         }
         return item;
     }

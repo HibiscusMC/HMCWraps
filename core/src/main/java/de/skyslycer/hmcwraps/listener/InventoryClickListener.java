@@ -70,6 +70,9 @@ public class InventoryClickListener implements Listener {
                     PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getBottomInventory(player));
                 }
             }, 1);
+            case UNKNOWN, DROP_ALL_SLOT, PICKUP_ALL, DROP_ONE_CURSOR, DROP_ALL_CURSOR,
+                 HOTBAR_SWAP, CLONE_STACK, NOTHING, HOTBAR_MOVE_AND_READD, PICKUP_ONE,
+                 DROP_ONE_SLOT, PICKUP_HALF, COLLECT_TO_CURSOR, PICKUP_SOME -> { } // no op
         }
 
         if (event.getClick() == ClickType.NUMBER_KEY) {

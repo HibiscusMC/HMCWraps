@@ -4,17 +4,12 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 public class NameModifier implements WrapModifier {
 
@@ -53,7 +48,7 @@ public class NameModifier implements WrapModifier {
 
     private String parseName(HMCWraps plugin, Player player, Wrap wrap, ItemStack item, String namePlaceholder) {
         return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName(),
-                StringUtil.wrapPlaceholders(plugin, wrap, player, item)
+                StringUtil.wrapPlaceholders(plugin, wrap, item)
         )).replace("%originalname%", namePlaceholder);
     }
 

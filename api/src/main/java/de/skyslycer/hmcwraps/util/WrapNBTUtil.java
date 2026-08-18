@@ -1,6 +1,9 @@
 package de.skyslycer.hmcwraps.util;
 
-import de.tr7zw.changeme.nbtapi.*;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTCompoundList;
+import de.tr7zw.changeme.nbtapi.NBTType;
+import de.tr7zw.changeme.nbtapi.NbtApiException;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import org.bukkit.Bukkit;
@@ -18,7 +21,7 @@ public class WrapNBTUtil {
      */
     public static void wrap(ItemStack stack, String nbt) {
         try {
-            new NBTContainer(nbt);
+            NBT.parseNBT(nbt);
         } catch (NbtApiException e) {
             Bukkit.getLogger().warning("A provided NBT data is invalid in a HMCWraps wrap!");
         }
@@ -88,6 +91,7 @@ public class WrapNBTUtil {
     private static void set(ReadableNBT source, String key, ReadWriteNBT target) {
         var type = source.getType(key);
         switch (type) {
+            case NBTTagEnd -> { } // no op
             case NBTTagByte -> target.setByte(key, source.getByte(key));
             case NBTTagShort -> target.setShort(key, source.getShort(key));
             case NBTTagInt -> target.setInteger(key, source.getInteger(key));
@@ -96,7 +100,9 @@ public class WrapNBTUtil {
             case NBTTagDouble -> target.setDouble(key, source.getDouble(key));
             case NBTTagByteArray -> target.setByteArray(key, source.getByteArray(key));
             case NBTTagIntArray -> target.setIntArray(key, source.getIntArray(key));
+            case NBTTagLongArray -> target.setLongArray(key, source.getLongArray(key));
             case NBTTagString -> target.setString(key, source.getString(key));
+            case NBTTagCompound -> target.getOrCreateCompound(key).mergeCompound(source.getCompound(key));
             case NBTTagList -> setList(source, key, target);
         }
     }
@@ -111,6 +117,8 @@ public class WrapNBTUtil {
             case NBTTagString -> target.getStringList(key).addAll(source.getStringList(key).toListCopy());
             case NBTTagCompound -> ((NBTCompoundList) target.getCompoundList(key)).addAll(source.getCompoundList(key).toListCopy());
             case NBTTagLong -> target.getLongList(key).addAll(source.getLongList(key).toListCopy());
+            case NBTTagEnd, NBTTagByte, NBTTagShort, NBTTagByteArray, NBTTagList, NBTTagLongArray -> { } // no op
+            case null -> { }
         }
     }
 

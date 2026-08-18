@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class ArmorImitationModifier implements WrapModifier {
 
-    private final HMCWraps plugin;
-
     private final NamespacedKey fakeDurabilityKey;
     private final NamespacedKey fakeMaxDurabilityKey;
     private final NamespacedKey originalNativeMaxDurabilityKey;
@@ -27,7 +25,6 @@ public class ArmorImitationModifier implements WrapModifier {
     private final NamespacedKey originalMaterialKey;
 
     public ArmorImitationModifier(HMCWraps plugin) {
-        this.plugin = plugin;
         this.fakeDurabilityKey = new NamespacedKey(plugin, "fake-durability");
         this.fakeMaxDurabilityKey = new NamespacedKey(plugin, "fake-max-durability");
         this.originalNativeMaxDurabilityKey = new NamespacedKey(plugin, "original-native-max-durability");

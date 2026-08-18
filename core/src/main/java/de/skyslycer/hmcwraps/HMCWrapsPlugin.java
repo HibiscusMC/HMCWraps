@@ -30,7 +30,7 @@ import de.skyslycer.hmcwraps.updater.version.PluginVersion;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import de.skyslycer.hmcwraps.wrap.*;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.kyori.adventure.text.Component;
@@ -74,9 +74,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     public void onLoad() {
-        MinecraftVersion.replaceLogger(new NoInfoLogger("HMCWraps-NBT", null));
-        VersionChecker.hideOk = true;
-        new NBTContainer();
+        MinecraftVersion.replaceLogger(new NoInfoLogger("HMCWraps-NBT", null)); // hide NBT-API logs
+        VersionChecker.hideOk = true; // no NBT-API version updates
+        NBT.createNBTObject(); // run first initializations
     }
 
     @Override

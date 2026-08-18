@@ -17,7 +17,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -209,15 +208,14 @@ public class StringUtil {
      *
      * @param plugin The plugin instance
      * @param wrap The wrap
-     * @param player The player
      * @param item The item
      * @return The placeholders as listed below
      */
-    public static TagResolver[] wrapPlaceholders(HMCWraps plugin, Wrap wrap, Player player, ItemStack item) {
+    public static TagResolver[] wrapPlaceholders(HMCWraps plugin, Wrap wrap, ItemStack item) {
         var originalMaterialString = plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item);
         return new TagResolver[] {
                 Placeholder.parsed("original_material", convertToTitleCase(originalMaterialString)),
-                Placeholder.parsed("wrap_uuid", wrap.getUuid().toString()),
+                Placeholder.parsed("wrap_uuid", wrap.getUuid()),
         };
     }
 

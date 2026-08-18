@@ -15,10 +15,7 @@ public class GlintOverrideModifier implements WrapModifier {
 
     private final NamespacedKey originalGlintKey;
 
-    private final HMCWraps plugin;
-
     public GlintOverrideModifier(HMCWraps plugin) {
-        this.plugin = plugin;
         this.originalGlintKey = new NamespacedKey(plugin, "original-glint");
     }
 

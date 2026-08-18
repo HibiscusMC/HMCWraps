@@ -2,12 +2,13 @@ package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.commands.annotation.*;
+import de.skyslycer.hmcwraps.commands.annotation.AnyPermissionFactory;
+import de.skyslycer.hmcwraps.commands.annotation.LogFiles;
+import de.skyslycer.hmcwraps.commands.annotation.PhysicalWraps;
+import de.skyslycer.hmcwraps.commands.annotation.PluginFiles;
 import de.skyslycer.hmcwraps.commands.exception.CustomExceptionHandler;
 import de.skyslycer.hmcwraps.commands.parameter.WrapParameterType;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import revxrsal.commands.Lamp;
 import revxrsal.commands.bukkit.BukkitLamp;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
@@ -21,9 +22,7 @@ public class CommandRegister {
 
     public static void registerCommands(HMCWrapsPlugin plugin) {
         Lamp<BukkitCommandActor> commandHandler = BukkitLamp.builder(plugin)
-                .parameterTypes(types -> {
-                    types.addParameterType(Wrap.class, new WrapParameterType(plugin));
-                })
+                .parameterTypes(types -> types.addParameterType(Wrap.class, new WrapParameterType(plugin)))
                 .suggestionProviders(providers -> {
                     providers.addProviderForAnnotation(PhysicalWraps.class, physicalWraps ->
                             executionContext -> plugin.getWrapsLoader().getWraps()
@@ -46,7 +45,7 @@ public class CommandRegister {
         List<String> fileList;
         try (var files = Files.list(Path.of("logs"))) {
             fileList = files.filter(path -> !Files.isDirectory(path)).map(Path::getFileName).map(Path::toString)
-                    .filter(name -> current.isEmpty() || name.startsWith(current)).toList();
+                    .filter(name -> name.startsWith(current)).toList();
         } catch (Exception exception) {
             return Collections.emptyList();
         }
@@ -67,7 +66,7 @@ public class CommandRegister {
         List<String> fileList;
         try (var files = Files.list(path)) {
             var additional = HMCWraps.PLUGIN_PATH.relativize(path);
-            var additionalText = additional.toString().equals("") ? "" : additional + "/";
+            var additionalText = additional.toString().isEmpty() ? "" : additional + "/";
             fileList = files.map(filePath -> Files.isDirectory(filePath) ? additionalText + filePath.getFileName() + "/" : additionalText + filePath.getFileName()).toList();
         } catch (Exception exception) {
             return Collections.emptyList();

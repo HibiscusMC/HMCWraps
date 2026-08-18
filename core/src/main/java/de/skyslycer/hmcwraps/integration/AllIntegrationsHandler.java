@@ -8,7 +8,6 @@ import de.skyslycer.hmcwraps.integration.nexo.NexoHandler;
 import de.skyslycer.hmcwraps.integration.zauctionhouse.ZAuctionHouseHandler;
 import org.bukkit.Bukkit;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

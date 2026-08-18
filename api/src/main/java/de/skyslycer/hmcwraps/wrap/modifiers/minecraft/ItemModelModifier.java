@@ -13,12 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class ItemModelModifier implements WrapModifier {
 
-    private final HMCWraps plugin;
-
     private final NamespacedKey originalItemModelKey;
 
     public ItemModelModifier(HMCWraps plugin) {
-        this.plugin = plugin;
         this.originalItemModelKey = new NamespacedKey(plugin, "original-item-model");
     }
 

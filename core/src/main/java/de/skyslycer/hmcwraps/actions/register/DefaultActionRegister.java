@@ -153,9 +153,9 @@ public class DefaultActionRegister {
         }
     }
 
-    private Particle addParticleValues(Particle particle, String[] split) {
+    private Particle<?> addParticleValues(Particle<?> particle, String[] split) {
         var counter = 1;
-        if (particle instanceof MultiParticle multiParticle) {
+        if (particle instanceof MultiParticle<?> multiParticle) {
             multiParticle.count(getBigInteger(split[counter]).intValue());
             counter++;
             multiParticle.xOffset(getBigInteger(split[counter]).floatValue());
@@ -169,31 +169,31 @@ public class DefaultActionRegister {
                 counter++;
             }
         }
-        if (particle instanceof ColorableParticle colorableParticle && StringUtil.colorFromString(split[counter]) != null) {
+        if (particle instanceof ColorableParticle<?> colorableParticle && StringUtil.colorFromString(split[counter]) != null) {
             colorableParticle.color(StringUtil.colorFromString(split[counter]));
             counter++;
         }
-        if (particle instanceof TransitionDustParticle transitionDustParticle && StringUtil.colorFromString(split[counter]) != null) {
+        if (particle instanceof TransitionDustParticle<?> transitionDustParticle && StringUtil.colorFromString(split[counter]) != null) {
             transitionDustParticle.fadeColor(StringUtil.colorFromString(split[counter]));
             counter++;
         }
-        if (particle instanceof ItemStackParticle materialParticle && Material.getMaterial(split[counter]) != null) {
+        if (particle instanceof ItemStackParticle<?> materialParticle && Material.getMaterial(split[counter]) != null) {
             materialParticle.itemStack(new ItemStack(Material.getMaterial(split[counter])));
             counter++;
         }
-        if (particle instanceof SpeedModifiableParticle speedModifiableParticle) {
+        if (particle instanceof SpeedModifiableParticle<?> speedModifiableParticle) {
             speedModifiableParticle.speed(getBigInteger(split[counter]).floatValue());
             counter++;
         }
-        if (particle instanceof DelayableParticle delayableParticle) {
+        if (particle instanceof DelayableParticle<?> delayableParticle) {
             delayableParticle.delay(getBigInteger(split[counter]).intValue());
             counter++;
         }
-        if (particle instanceof SizeableParticle sizeableParticle) {
+        if (particle instanceof SizeableParticle<?> sizeableParticle) {
             sizeableParticle.size(getBigInteger(split[counter]).floatValue());
             counter++;
         }
-        if (particle instanceof RollableParticle rollableParticle) {
+        if (particle instanceof RollableParticle<?> rollableParticle) {
             rollableParticle.roll(getBigInteger(split[counter]).floatValue());
         }
         return particle;

@@ -14,13 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class EquippableModifier implements WrapModifier {
 
-    private final HMCWraps plugin;
-
     private final NamespacedKey originalEquippableSlotKey;
     private final NamespacedKey originalEquippableModelKey;
 
     public EquippableModifier(HMCWraps plugin) {
-        this.plugin = plugin;
         this.originalEquippableSlotKey = new NamespacedKey(plugin, "original-equippable-slot");
         this.originalEquippableModelKey = new NamespacedKey(plugin, "original-equippable-model");
     }

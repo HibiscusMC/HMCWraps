@@ -8,11 +8,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import dev.lone.itemsadder.api.CustomStack;
-import io.lumine.mythic.bukkit.MythicBukkit;
-import io.th0rgal.oraxen.api.OraxenItems;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -59,9 +55,9 @@ public class WrapCreateCommand {
 
         WrapFile wrapFile;
         if (Files.exists(path)) {
-            wrapFile = updateExistingWrapFile(player, path, item, newWrap, checkedCollection);
+            wrapFile = updateExistingWrapFile(player, path, newWrap, checkedCollection);
         } else {
-            wrapFile = createNewWrapFile(item, newWrap, checkedCollection);
+            wrapFile = createNewWrapFile(newWrap, checkedCollection);
         }
 
         saveWrapFile(path, wrapFile, player);
@@ -102,7 +98,7 @@ public class WrapCreateCommand {
         return enchantments;
     }
 
-    private WrapFile updateExistingWrapFile(Player player, Path path, ItemStack item, Wrap newWrap, String collection) {
+    private WrapFile updateExistingWrapFile(Player player, Path path, Wrap newWrap, String collection) {
         try {
             var existingFile = YamlConfigurationLoader.builder()
                     .defaultOptions(ConfigurationOptions.defaults().implicitInitialization(false))
@@ -126,7 +122,7 @@ public class WrapCreateCommand {
         }
     }
 
-    private WrapFile createNewWrapFile(ItemStack item, Wrap newWrap, String collection) {
+    private WrapFile createNewWrapFile(Wrap newWrap, String collection) {
         var wraps = new HashMap<String, Wrap>();
         wraps.put("1", newWrap);
         var wrappableItem = new WrappableItem(wraps);

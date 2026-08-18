@@ -5,7 +5,6 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.preview.Preview;
 import de.skyslycer.hmcwraps.util.StringUtil;
-import de.skyslycer.hmcwraps.util.VersionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;

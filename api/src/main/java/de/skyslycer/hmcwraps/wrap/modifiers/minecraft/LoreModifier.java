@@ -51,7 +51,7 @@ public class LoreModifier implements WrapModifier {
             var type = wrap.getWrapLoreType();
             var wrapLore = wrap.getWrapLore().stream()
                     .map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry,
-                            StringUtil.wrapPlaceholders(plugin, wrap, player, item))))
+                            StringUtil.wrapPlaceholders(plugin, wrap, item))))
                     .toList();
             if (type == null) {
                 meta.setLore(wrapLore.isEmpty() ? null : wrapLore);

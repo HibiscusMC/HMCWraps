@@ -1,6 +1,5 @@
 package de.skyslycer.hmcwraps.integration.axtrade;
 
-import com.artillexstudios.axauctions.api.events.AxAuctionsPreSellEvent;
 import com.artillexstudios.axtrade.api.events.AxTradeCompleteEvent;
 import de.skyslycer.hmcwraps.HMCWraps;
 import org.bukkit.event.EventHandler;

@@ -59,9 +59,9 @@ public class MessageHandlerImpl implements MessageHandler {
 
     @Override
     public void update(Path path) {
-        try {
-            var stream = HMCWrapsPlugin.class.getClassLoader().getResource("messages.properties").openStream();
-            var lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines();
+        try (var reader = new BufferedReader(new InputStreamReader(
+                HMCWrapsPlugin.class.getClassLoader().getResource("messages.properties").openStream(), StandardCharsets.UTF_8))) {
+            var lines = reader.lines();
             var checkLines = Files.readAllLines(path);
             lines.forEach(line -> {
                 var split = line.split("=");
