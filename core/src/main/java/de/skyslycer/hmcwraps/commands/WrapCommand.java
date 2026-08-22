@@ -4,6 +4,7 @@ import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.commands.annotation.AnyPermission;
 import de.skyslycer.hmcwraps.commands.annotation.NoHelp;
 import de.skyslycer.hmcwraps.commands.annotation.PhysicalWraps;
+import de.skyslycer.hmcwraps.commands.annotation.WrapCategories;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -65,15 +66,15 @@ public class WrapCommand {
             plugin.getMessageHandler().send(player, Messages.NO_PERMISSION);
             return;
         }
-        openWrapsInventory(player);
+        openWrapsInventory(player, null);
     }
 
-    private void openWrapsInventory(Player player) {
+    private void openWrapsInventory(Player player, String category) {
         var item = player.getInventory().getItemInMainHand();
         var slot = player.getInventory().getHeldItemSlot();
         if (PlayerUtil.filterNoItem(item, plugin) == null) {
             if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
-                GuiBuilder.open(plugin, player, null, -1);
+                GuiBuilder.open(plugin, player, null, -1, 1, category);
             } else {
                 plugin.getMessageHandler().send(player, Messages.NO_ITEM);
             }
@@ -85,20 +86,24 @@ public class WrapCommand {
         }
         if (plugin.getCollectionHelper().getItems(type).isEmpty() || plugin.getWrapper().isGloballyDisabled(item)) {
             if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
-                GuiBuilder.open(plugin, player, null, -2);
+                GuiBuilder.open(plugin, player, null, -2, 1, category);
             } else {
                 plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             }
             return;
         }
-        GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
+        GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot, 1, category);
     }
 
     @Subcommand("open")
     @CommandPermission(WRAPS_OPEN_PERMISSION)
     @Description("Open the wraps inventory for another player.")
-    public void onOpen(CommandSender sender, Player player) {
-        openWrapsInventory(player);
+    public void onOpen(CommandSender sender, Player player, @Optional @WrapCategories String category) {
+        if (category != null && !category.isBlank() && !plugin.getWrapsLoader().getTypeWraps().containsKey(category)) {
+            plugin.getMessageHandler().send(sender, Messages.COMMAND_INVALID_CATEGORY, Placeholder.unparsed("category", category));
+            return;
+        }
+        openWrapsInventory(player, category);
         plugin.getMessageHandler().send(sender, Messages.COMMAND_OPEN, Placeholder.parsed("player", player.getName()));
     }
 

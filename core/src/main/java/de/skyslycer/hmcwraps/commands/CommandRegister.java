@@ -33,6 +33,8 @@ public class CommandRegister {
                             executionContext -> suggestPluginFiles(executionContext.input().peekString()));
                     providers.addProviderForAnnotation(JsonFiles.class, jsonFiles ->
                             executionContext -> suggestJsonFiles(executionContext.input().peekString()));
+                    providers.addProviderForAnnotation(WrapCategories.class, wrapCategories ->
+                            executionContext -> suggestWrapCategories(executionContext.input().peekString(), plugin));
                 })
                 .permissionFactory(new AnyPermissionFactory())
                 .exceptionHandler(new CustomExceptionHandler(plugin))
@@ -44,6 +46,10 @@ public class CommandRegister {
         if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
             commandHandler.register(new PermissionCommand(plugin));
         }
+    }
+
+    private static List<String> suggestWrapCategories(String current, HMCWraps plugin) {
+        return plugin.getWrapsLoader().getTypeWraps().keySet().stream().toList();
     }
 
     private static List<String> suggestLogFiles(String current) {

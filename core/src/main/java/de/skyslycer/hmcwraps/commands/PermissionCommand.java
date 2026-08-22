@@ -197,12 +197,12 @@ public class PermissionCommand {
                 var base = HMCWraps.PLUGIN_PATH.toAbsolutePath().normalize().toRealPath();
                 var path = base.resolve(file).normalize();
                 if (!path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".json") || !Files.isRegularFile(path)) {
-                    plugin.getMessageHandler().send(sender, Messages.NO_FILE);
+                    plugin.getMessageHandler().send(sender, Messages.COMMAND_NO_FILE);
                     return null;
                 }
                 path = path.toRealPath();
                 if (!path.startsWith(base)) {
-                    plugin.getMessageHandler().send(sender, Messages.BAD_FOLDER);
+                    plugin.getMessageHandler().send(sender, Messages.COMMAND_BAD_FOLDER);
                     return null;
                 }
                 var deserialized = GSON.fromJson(Files.readString(path, StandardCharsets.UTF_8), ExportFile.class);

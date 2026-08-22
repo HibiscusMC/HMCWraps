@@ -3,28 +3,17 @@ package de.skyslycer.hmcwraps.actions.information;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 
-public class GuiActionInformation implements ActionInformation {
+public class GuiActionInformation extends BasicActionInformation implements GuiInformation {
 
     private PaginatedGui gui;
-    private Player player;
-    private String arguments;
     private int slot;
+    private String category;
 
-    public GuiActionInformation(Player player, String arguments, PaginatedGui gui, int slot) {
-        this.player = player;
-        this.arguments = arguments;
+    public GuiActionInformation(Player player, String arguments, PaginatedGui gui, int slot, String category) {
+        super(player, arguments);
         this.gui = gui;
         this.slot = slot;
-    }
-
-    @Override
-    public Player getPlayer() {
-        return player;
-    }
-
-    @Override
-    public String getArguments() {
-        return arguments;
+        this.category = category;
     }
 
     public PaginatedGui getGui() {
@@ -35,22 +24,20 @@ public class GuiActionInformation implements ActionInformation {
         return slot;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
     public void setSlot(int slot) {
         this.slot = slot;
     }
 
-    @Override
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    @Override
-    public void setArguments(String arguments) {
-        this.arguments = arguments;
-    }
-
     public void setGui(PaginatedGui gui) {
         this.gui = gui;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 }

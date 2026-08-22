@@ -13,8 +13,8 @@ import de.skyslycer.hmcwraps.actions.Action;
 import de.skyslycer.hmcwraps.actions.ActionMethod;
 import de.skyslycer.hmcwraps.actions.information.ActionInformation;
 import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
-import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
-import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
+import de.skyslycer.hmcwraps.actions.information.GuiInformation;
+import de.skyslycer.hmcwraps.actions.information.WrapInformation;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -28,7 +28,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
@@ -68,7 +67,7 @@ public class DefaultActionRegister {
 
     private void registerScrollForth() {
         ActionMethod consumer = (actionInformation) -> {
-            if (actionInformation instanceof GuiActionInformation guiActionInformation) {
+            if (actionInformation instanceof GuiInformation guiActionInformation) {
                 guiActionInformation.getGui().next();
             }
         };
@@ -78,7 +77,7 @@ public class DefaultActionRegister {
 
     private void registerScrollBack() {
         ActionMethod consumer = (actionInformation) -> {
-            if (actionInformation instanceof GuiActionInformation guiActionInformation) {
+            if (actionInformation instanceof GuiInformation guiActionInformation) {
                 guiActionInformation.getGui().previous();
             }
         };
@@ -102,7 +101,7 @@ public class DefaultActionRegister {
                 plugin.getActionHandler().pushVirtualUnwrap(wrap, player);
             }
             if (plugin.getConfiguration().getInventory().isItemChangeEnabled()) {
-                openIfPossible(plugin, actionInformation, player);
+                openIfPossible(plugin, actionInformation);
             } else {
                 player.closeInventory();
             }
@@ -111,7 +110,7 @@ public class DefaultActionRegister {
 
     private void registerClose() {
         plugin.getActionHandler().subscribe(Action.CLOSE_INVENTORY, (actionInformation) -> {
-            if (actionInformation instanceof GuiActionInformation guiActionInformation) {
+            if (actionInformation instanceof GuiInformation guiActionInformation) {
                 guiActionInformation.getGui().close(actionInformation.getPlayer());
             }
         });
@@ -282,7 +281,7 @@ public class DefaultActionRegister {
     private void registerFilterToggle() {
         plugin.getActionHandler().subscribe(Action.TOGGLE_FILTER, information -> {
             plugin.getFilterStorage().set(information.getPlayer(), !plugin.getFilterStorage().get(information.getPlayer()));
-            openIfPossible(plugin, information, information.getPlayer());
+            openIfPossible(plugin, information);
         });
     }
 
@@ -295,7 +294,7 @@ public class DefaultActionRegister {
             if (current.removeIf(it -> it.getUuid().equals(wrap.getUuid()))) {
                 plugin.getFavoriteWrapStorage().set(player, current);
                 plugin.getMessageHandler().send(player, Messages.FAVORITES_UNSET);
-                openIfPossible(plugin, information, information.getPlayer());
+                openIfPossible(plugin, information);
                 return;
             }
 
@@ -321,7 +320,7 @@ public class DefaultActionRegister {
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
             plugin.getMessageHandler().send(player, Messages.FAVORITES_SET);
-            openIfPossible(plugin, information, information.getPlayer());
+            openIfPossible(plugin, information);
         }));
     }
 
@@ -346,7 +345,7 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
             plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
             plugin.getMessageHandler().send(information.getPlayer(), Messages.FAVORITES_CLEAR);
-            openIfPossible(plugin, information, information.getPlayer());
+            openIfPossible(plugin, information);
         }));
     }
 
@@ -363,12 +362,13 @@ public class DefaultActionRegister {
                 plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
                 return;
             }
-            plugin.getPreviewManager().create(player, (ignored) -> openIfPossible(plugin, information, player), wrap);
+            plugin.getPreviewManager().create(player, (ignored) -> openIfPossible(plugin, information), wrap);
             plugin.getActionHandler().pushPreview(wrap, player);
         }));
     }
 
-    private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
+    private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information) {
+        var player = information.getPlayer();
         var slot = getSlot(information);
         var item = slot != -1 ? PlayerUtil.filterNoItem(player.getInventory().getItem(slot), plugin) : null;
         if (item == null && !plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
@@ -382,15 +382,12 @@ public class DefaultActionRegister {
                 type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
             }
         }
-        if ((plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled() || !plugin.getCollectionHelper().getItems(type).isEmpty())
-                && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
+        if ((plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled() ||
+                !plugin.getCollectionHelper().getItems(type).isEmpty())
+                && information instanceof GuiActionInformation guiInformation) {
             var page = 1;
-            if (information instanceof GuiActionInformation guiInformation) {
-                page = guiInformation.getGui().getCurrentPageNum();
-            } else {
-                page = ((WrapGuiActionInformation) information).getGui().getCurrentPageNum();
-            }
-            GuiBuilder.open(plugin, player, item, slot, page);
+            page = guiInformation.getGui().getCurrentPageNum();
+            GuiBuilder.open(plugin, player, item, slot, page, guiInformation.getCategory());
         }
     }
 
@@ -423,7 +420,7 @@ public class DefaultActionRegister {
             plugin.getActionHandler().pushWrap(wrap, player);
             plugin.getActionHandler().pushVirtualWrap(wrap, player);
             if (plugin.getConfiguration().getInventory().isItemChangeEnabled()) {
-                openIfPossible(plugin, information, player);
+                openIfPossible(plugin, information);
             } else {
                 player.closeInventory();
             }
@@ -449,7 +446,7 @@ public class DefaultActionRegister {
     private String parseMessage(ActionInformation information, String message) {
         var player = information.getPlayer();
         var string = StringUtil.replacePlaceholders(player, message.replace("<player>", player.getName()));
-        if (information instanceof WrapActionInformation wrapInformation) {
+        if (information instanceof WrapInformation wrapInformation) {
             string = string.replace("<wrap_id>", wrapInformation.getWrap().getUuid()).replace("<wrap>", wrapInformation.getWrap().getName());
         }
         return string;
@@ -460,9 +457,7 @@ public class DefaultActionRegister {
         Wrap wrap = null;
         if (split.length == 1 && plugin.getWrapsLoader().getWraps().get(split[0]) != null) {
             wrap = plugin.getWrapsLoader().getWraps().get(split[0]);
-        } else if (information instanceof WrapActionInformation wrapInformation) {
-            wrap = wrapInformation.getWrap();
-        } else if (information instanceof WrapGuiActionInformation wrapInformation) {
+        } else if (information instanceof WrapInformation wrapInformation) {
             wrap = wrapInformation.getWrap();
         }
         return wrap;
@@ -470,10 +465,8 @@ public class DefaultActionRegister {
 
     private int getSlot(ActionInformation information) {
         int slot;
-        if (information instanceof GuiActionInformation guiInformation) {
+        if (information instanceof GuiInformation guiInformation) {
             slot = guiInformation.getSlot();
-        } else if (information instanceof WrapGuiActionInformation wrapInformation) {
-            slot = wrapInformation.getSlot();
         } else {
             slot = information.getPlayer().getInventory().getHeldItemSlot();
         }
