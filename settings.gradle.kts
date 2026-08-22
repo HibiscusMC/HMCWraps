@@ -24,6 +24,7 @@ dependencyResolutionManagement {
             library("axauctions", "com.artillexstudios:AxAuctionsAPI:6")
             library("axtrade", "com.artillexstudios:AxTrade:1.24.2")
             library("mmoitems", "net.Indyuce:MMOItems-API:6.10.1-SNAPSHOT")
+            library("luckperms", "net.luckperms:api:5.5")
 
             library("craftengine-core", "net.momirealms", "craft-engine-core").versionRef("craftengine")
             library("craftengine-bukkit", "net.momirealms", "craft-engine-bukkit").versionRef("craftengine")

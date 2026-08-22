@@ -82,21 +82,26 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     @Override
     public void onEnable() {
         foliaLib = new FoliaLib(this);
-        checkDependency("PlaceholderAPI", false);
-        if (checkDependency("ItemsAdder", false)) {
+        checkDependency("PlaceholderAPI");
+        if (checkDependency("ItemsAdder")) {
             hooks.add(new ItemsAdderItemHook());
         }
-        if (checkDependency("Oraxen", false)) {
+        if (checkDependency("Oraxen")) {
             hooks.add(new OraxenItemHook());
         }
-        if (checkDependency("Nexo", false)) {
+        if (checkDependency("Nexo")) {
             hooks.add(new NexoItemHook());
         }
-        if (checkDependency("CraftEngine", false)) {
+        if (checkDependency("CraftEngine")) {
             hooks.add(new CraftEngineItemHook());
         }
-        checkDependency("zAuctionHouseV3", false);
-        if (checkDependency("MythicCrucible", false)) {
+        checkDependency("zAuctionHouseV3");
+        checkDependency("AuctionGUIPlus");
+        checkDependency("AxAuctions");
+        checkDependency("AxTrade");
+        checkDependency("MMOItems");
+        checkDependency("LuckPerms");
+        if (checkDependency("MythicCrucible")) {
             var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
             if (mythicMobs != null) {
                 var version = mythicMobs.getDescription().getVersion();
@@ -230,6 +235,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             return false;
         }
         return true;
+    }
+
+    private boolean checkDependency(String name) {
+        return checkDependency(name, false);
     }
 
     private boolean checkDependency(String name, boolean needed) {
