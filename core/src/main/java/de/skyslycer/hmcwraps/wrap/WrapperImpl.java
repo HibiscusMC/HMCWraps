@@ -32,6 +32,7 @@ public class WrapperImpl implements Wrapper {
     private final NamespacedKey playerKey;
     private final NamespacedKey physicalUnwrapperKey;
     private final NamespacedKey physicalWrapperKey;
+    private final NamespacedKey revisionKey;
 
     public WrapperImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -41,6 +42,7 @@ public class WrapperImpl implements Wrapper {
         this.playerKey = new NamespacedKey(plugin, "wrap-player");
         this.physicalUnwrapperKey = new NamespacedKey(plugin, "unwrapper");
         this.physicalWrapperKey = new NamespacedKey(plugin, "wrapper");
+        this.revisionKey = new NamespacedKey(plugin, "revision");
     }
 
     private ItemStack setWrapPrivate(@Nullable Wrap wrap, ItemStack item, boolean physical, Player player, boolean noGiveBack) {
@@ -73,12 +75,15 @@ public class WrapperImpl implements Wrapper {
         getModifiers().nbt().wrap(wrap, currentWrap, editing, player);
 
         var meta = editing.getItemMeta();
+        meta.getPersistentDataContainer().remove(wrapIdKey);
+        meta.getPersistentDataContainer().remove(playerKey);
+        meta.getPersistentDataContainer().remove(revisionKey);
         if (wrap != null) {
             meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap.getUuid());
-        } else {
-            meta.getPersistentDataContainer().remove(wrapIdKey);
         }
-        meta.getPersistentDataContainer().remove(playerKey);
+        if (wrap != null && wrap.getRevision() != null && !wrap.getRevision().isBlank()) {
+            meta.getPersistentDataContainer().set(revisionKey, PersistentDataType.STRING, wrap.getRevision());
+        }
         editing.setItemMeta(meta);
 
         return setPhysical(editing.clone(), physical);
@@ -215,6 +220,14 @@ public class WrapperImpl implements Wrapper {
         }
         editing.setItemMeta(meta);
         return editing;
+    }
+
+    @Override
+    @Nullable
+    public String getRevision(ItemStack item) {
+        var meta = item.getItemMeta();
+        if (meta == null) return null;
+        return meta.getPersistentDataContainer().get(revisionKey, PersistentDataType.STRING);
     }
 
     @Override

@@ -30,6 +30,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
     private final Map<String, Set<String>> collections = new ConcurrentHashMap<>();
     private final Set<WrapFile> wrapFiles = new HashSet<>();
     private final Set<CollectionFile> collectionFiles = new HashSet<>();
+    private final Map<String, String> wrapRevisions =  new ConcurrentHashMap<>();
 
     public WrapsLoaderImpl(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
@@ -49,6 +50,7 @@ public class WrapsLoaderImpl implements WrapsLoader {
         wrapFiles.clear();
         typeWraps.clear();
         collectionFiles.clear();
+        wrapRevisions.clear();
     }
 
     private void combineFiles() {
@@ -94,6 +96,9 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     return;
                 }
                 wraps.put(wrap.getUuid(), wrap);
+                if (wrap.getRevision() != null && !wrap.getRevision().isBlank()) {
+                    wrapRevisions.put(wrap.getUuid(), wrap.getRevision());
+                }
                 if (typeWraps.containsKey(finalType)) {
                     var current = typeWraps.get(finalType);
                     current.add(wrap.getUuid());
@@ -189,6 +194,12 @@ public class WrapsLoaderImpl implements WrapsLoader {
     @NotNull
     public Map<String, List<String>> getTypeWraps() {
         return setToListMap(typeWraps);
+    }
+
+    @NotNull
+    @Override
+    public Map<String, String> getWrapRevisions() {
+        return wrapRevisions;
     }
 
 }

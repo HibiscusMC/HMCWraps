@@ -7,6 +7,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class PermissionUtil {
 
     /**
@@ -61,7 +63,7 @@ public class PermissionUtil {
      * @param inventory The inventory
      */
     public static void loopThroughInventory(HMCWraps plugin, Player player, Inventory inventory) {
-        for (int i = 0; i < inventory.getSize() - 1; i++) {
+        for (int i = 0; i < inventory.getSize(); i++) {
             var item = inventory.getItem(i);
             if (item == null || item.getType().isAir()) {
                 continue;
@@ -111,6 +113,12 @@ public class PermissionUtil {
         }
         if (wrap != null && !PermissionUtil.hasPermission(plugin, wrap, itemInHand, player)) {
             return wrapper.removeWrap(itemInHand, player);
+        }
+        if (wrap != null
+                && !Objects.equals(wrapper.getRevision(itemInHand), plugin.getWrapsLoader().getWrapRevisions().get(wrap.getUuid()))) {
+            var physical = plugin.getWrapper().isPhysical(itemInHand);
+            var repaired = plugin.getWrapper().removeWrap(itemInHand, player, true);
+            itemInHand = plugin.getWrapper().setWrap(wrap, repaired, physical, player);
         }
         return itemInHand;
     }

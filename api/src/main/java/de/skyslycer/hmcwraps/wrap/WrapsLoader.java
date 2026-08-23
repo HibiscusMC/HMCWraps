@@ -52,4 +52,12 @@ public interface WrapsLoader {
      */
     Map<String, List<String>> getTypeWraps();
 
+    /**
+     * Get all wraps with their corresponding permission used for wrap updates.
+     * If a certain wrap is not present in this map, then no revision has been set in the config.
+     *
+     * @return Map of wrap UUIDs (key) to the corresponding revision (value)
+     */
+    Map<String, String> getWrapRevisions();
+
 }

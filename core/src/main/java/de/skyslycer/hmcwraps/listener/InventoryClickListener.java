@@ -131,8 +131,7 @@ public class InventoryClickListener implements Listener {
             type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(target));
         }
         var currentWrap = plugin.getWrapper().getWrap(target);
-        if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions()
-                .isPermissionPhysical())) {
+        if (wrap.getPhysical() != null && (wrap.hasPermission(player) || !plugin.getConfiguration().getPermissions().isPermissionPhysical())) {
             var anyMatch = plugin.getCollectionHelper().getItems(type).stream().anyMatch(wrap::equals);
             if (anyMatch) {
                 if (!plugin.getConfiguration().getWrapping().getRewrap().isPhysicalEnabled() && currentWrap != null) {

@@ -129,6 +129,15 @@ public interface Wrapper {
     boolean isPhysical(ItemStack item);
 
     /**
+     * Return the revision stored on the item used to update wrapped items.
+     *
+     * @param item The item
+     * @return The revision stored
+     */
+    @Nullable
+    String getRevision(ItemStack item);
+
+    /**
      * Check if the items model id is valid for the wrap.
      *
      * @param item The item

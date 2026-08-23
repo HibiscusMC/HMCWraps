@@ -50,6 +50,7 @@ public class Wrap extends SerializableItem {
     private @Nullable String wrapTooltipStyle;
     private @Nullable LoreModifier.Type wrapLoreType;
     private boolean useOriginalMechanic = false;
+    private @Nullable String revision;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -211,6 +212,11 @@ public class Wrap extends SerializableItem {
     @Nullable
     public LoreModifier.Type getWrapLoreType() {
         return wrapLoreType;
+    }
+
+    @Nullable
+    public String getRevision() {
+        return revision;
     }
 
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
