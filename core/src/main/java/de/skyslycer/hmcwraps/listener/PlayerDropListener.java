@@ -19,8 +19,9 @@ public class PlayerDropListener implements Listener {
         if (plugin.getPreviewManager().isPreviewing(event.getPlayer())) {
             plugin.getPreviewManager().remove(event.getPlayer().getUniqueId(), false);
         }
-        var result = PermissionUtil.hasPermission(plugin, event.getItemDrop().getItemStack(), event.getPlayer());
-        if (result != null) {
+        var item = event.getItemDrop().getItemStack();
+        var result = PermissionUtil.check(plugin, event.getPlayer(), item);
+        if (result != null && !result.equals(item)) {
             event.getItemDrop().setItemStack(result);
         }
     }

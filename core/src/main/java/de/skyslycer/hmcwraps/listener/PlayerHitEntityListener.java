@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.listener;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.actions.information.WrapActionInformation;
+import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,6 +27,11 @@ public class PlayerHitEntityListener implements Listener {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType().isAir()) {
             return;
+        }
+        var updatedItem = PermissionUtil.check(plugin, player, item);
+        if (!updatedItem.equals(item)) {
+            player.getInventory().setItemInMainHand(updatedItem);
+            item = updatedItem;
         }
         var wrap = plugin.getWrapper().getWrap(item);
         if (wrap == null || wrap.getActions() == null) {
