@@ -34,10 +34,8 @@ public class ItemsAdderModifier implements WrapModifier {
             if (wrap.getId() != null && wrap.getId().startsWith("itemsadder:")) {
                 setItemsAdderNBT(item, wrap.getId().substring(11));
             }
-        } else {
-            if (originalItemsAdderId != null || (currentWrap != null && currentWrap.getId() != null && currentWrap.getId().startsWith("itemsadder:"))) {
-                setItemsAdderNBT(item, originalItemsAdderId);
-            }
+        } else if (currentWrap != null) {
+            setItemsAdderNBT(item, originalItemsAdderId);
         }
     }
 

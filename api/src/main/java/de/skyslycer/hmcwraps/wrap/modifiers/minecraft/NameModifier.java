@@ -29,8 +29,9 @@ public class NameModifier implements WrapModifier {
         var currentName = meta.getDisplayName();
         var originalActualName = currentWrap == null ? currentName : originalName;
         var namePlaceholder = originalActualName == null ? "" : originalActualName;
-        if (currentWrap != null && (currentWrap.getWrapName() != null && (!Boolean.TRUE.equals(currentWrap.isApplyNameOnlyEmpty()) ||
-                parseName(plugin, player, currentWrap, item, namePlaceholder).equals(meta.getDisplayName())))) {
+        if (currentWrap != null && ((wrap == null && currentWrap.getWrapName() == null) || (currentWrap.getWrapName() != null &&
+                (!Boolean.TRUE.equals(currentWrap.isApplyNameOnlyEmpty()) ||
+                        parseName(plugin, player, currentWrap, item, namePlaceholder).equals(meta.getDisplayName()))))) {
             meta.setDisplayName(originalName);
         }
         if (wrap != null) {
