@@ -106,7 +106,7 @@ public class TestCommand {
         StringUtil.send(sender, "<white>[TEST] Commencing with NMS packet tests...");
         var entityId = ThreadLocalRandom.current().nextInt();
         try {
-            entityId = VersionUtil.getNextEntityId();
+            entityId = VersionUtil.getNextEntityId(player.getWorld());
             StringUtil.send(sender, "<green>[OK] <gray>Method getNextEntityId passed.");
         } catch (Exception e) {
             StringUtil.send(sender, "<red>[FAIL] <gray>Method getNextEntityId failed.");

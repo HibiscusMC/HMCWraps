@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public class FloatingPreview implements Preview {
 
-    private final int entityId = VersionUtil.getNextEntityId();
+    private final int entityId;
     private final Player player;
     private final ItemStack item;
     private final Consumer<Player> onClose;
@@ -24,6 +24,7 @@ public class FloatingPreview implements Preview {
     private WrappedTask cancelTask;
 
     public FloatingPreview(Player player, ItemStack item, boolean upsideDown, Consumer<Player> onClose, HMCWraps plugin) {
+        this.entityId = VersionUtil.getNextEntityId(player.getWorld());
         this.player = player;
         this.item = item;
         this.upsideDown = item.getType().toString().contains("_HELMET") ? !upsideDown : upsideDown;

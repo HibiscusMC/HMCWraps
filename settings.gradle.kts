@@ -38,7 +38,7 @@ dependencyResolutionManagement {
             library("gui", "dev.triumphteam:triumph-gui:3.2.0-SNAPSHOT")
             library("configurate", "org.spongepowered:configurate-yaml:4.2.0")
             library("mclogs", "gs.mclo:java:2.2.1")
-            library("nbtapi", "de.tr7zw:item-nbt-api:2.15.7")
+            library("nbtapi", "de.tr7zw:item-nbt-api:2.16.1")
             library("folialib", "com.tcoded:FoliaLib:0.5.2")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")

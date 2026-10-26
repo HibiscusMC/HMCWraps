@@ -2,6 +2,8 @@ package de.skyslycer.hmcwraps.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.UnsafeValues;
+import org.bukkit.World;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -464,7 +466,12 @@ public class VersionUtil {
             var packetClass = Class.forName(packetClassName);
             var entityTypeClass = Class.forName(entityTypeClassName);
             var vec3Class = Class.forName(vec3ClassName);
-            var armorStandType = entityTypeClass.getField(entityTypeName).get(null);
+            Object armorStandType;
+            try {
+                armorStandType = entityTypeClass.getField(entityTypeName).get(null);
+            } catch (NoSuchFieldException exception) {
+                armorStandType = Class.forName("net.minecraft.world.entity.EntityTypes").getField(entityTypeName).get(null);
+            }
             var zeroVec3 = vec3Class.getField(vec3ZeroName).get(null);
             var constructor = packetClass.getConstructor(
                     int.class,            // entity ID
@@ -693,17 +700,28 @@ public class VersionUtil {
                 : "net.minecraft.network.protocol.game.PacketPlayOutEntity$PacketPlayOutRelEntityMoveLook";
         try {
             Class<?> posRotClass = Class.forName(posRotClassName);
-            Constructor<?> constructor = posRotClass.getConstructor(
-                    int.class,    // entityId
-                    short.class,  // deltaX
-                    short.class,  // deltaY
-                    short.class,  // deltaZ
-                    byte.class,   // yaw
-                    byte.class,   // pitch
-                    boolean.class // onGround
-            );
-            Object packet = constructor.newInstance(entityId, (short) 0, (short) (yDiff * 4096.0), (short) 0,
-                    (byte) (currentAngle * 0.7111111F), (byte) (90f * 0.7111111F), false);
+            Object packet;
+            try {
+                Constructor<?> constructor = posRotClass.getConstructor(
+                        int.class,    // entityId
+                        short.class,  // deltaX
+                        short.class,  // deltaY
+                        short.class,  // deltaZ
+                        byte.class,   // yaw
+                        byte.class,   // pitch
+                        boolean.class // onGround
+                );
+                packet = constructor.newInstance(entityId, (short) 0, (short) (yDiff * 4096.0), (short) 0,
+                        (byte) (currentAngle * 0.7111111F), (byte) (90f * 0.7111111F), false);
+            } catch (NoSuchMethodException exception) {
+                Class<?> vecDeltaClass = Class.forName("net.minecraft.network.protocol.game.VecDelta");
+                Class<?> linearClass = Class.forName("net.minecraft.network.protocol.game.VecDelta$Linear");
+                Object delta = linearClass.getConstructor(short.class, short.class, short.class)
+                        .newInstance((short) 0, (short) (yDiff * 4096.0), (short) 0);
+                Constructor<?> constructor = posRotClass.getConstructor(int.class, vecDeltaClass, byte.class, byte.class, boolean.class);
+                packet = constructor.newInstance(entityId, delta,
+                        (byte) (currentAngle * 0.7111111F), (byte) (90f * 0.7111111F), false);
+            }
             sendPacket(player, packet);
         } catch (Exception exception) {
             throw new RuntimeException("Failed to send relative move and rotate packet", exception);
@@ -712,16 +730,31 @@ public class VersionUtil {
 
     /**
      * Get the next entity ID for spawning entities.
-     * This method uses reflection to access the nextEntityId method.
+     * Uses the first loaded world when the server requires a world for allocation.
      *
      * @return The next entity ID
      */
     public static int getNextEntityId() {
+        return getNextEntityId(Bukkit.getWorlds().getFirst());
+    }
+
+    /**
+     * Get the next entity ID for spawning entities in a world.
+     *
+     * @param world The world used for allocation
+     * @return The next entity ID
+     */
+    public static int getNextEntityId(World world) {
         try {
             var entityClass = Class.forName("net.minecraft.world.entity.Entity");
-            var nextEntityIdMethod = entityClass.getMethod("nextEntityId");
-            var result = nextEntityIdMethod.invoke(null);
-            return (int) result;
+            try {
+                var nextEntityIdMethod = entityClass.getMethod("nextEntityId");
+                var result = nextEntityIdMethod.invoke(null);
+                return (int) result;
+            } catch (NoSuchMethodException exception) {
+                var nextEntityIdMethod = UnsafeValues.class.getMethod("nextEntityId", World.class);
+                return (int) nextEntityIdMethod.invoke(Bukkit.getUnsafe(), world);
+            }
         } catch (Exception exception) {
             throw new RuntimeException("Failed to get next entity ID", exception);
         }
