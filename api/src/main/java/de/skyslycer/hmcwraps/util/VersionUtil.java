@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Server;
 import org.bukkit.UnsafeValues;
 import org.bukkit.World;
 import org.bukkit.attribute.AttributeModifier;
@@ -20,15 +21,38 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class VersionUtil {
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-    private static final String[] VERSION_SPLIT = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile("^\\d+(?:\\.\\d+)*");
+    private static final String[] VERSION_SPLIT = getMinecraftVersion().split("\\.");
     private static final int MAJOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[0]);
     private static final int MINOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[1]);
     private static final int PATCH_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT.length == 3 ? VERSION_SPLIT[2] : "0");
+
+    private static String getMinecraftVersion() {
+        try {
+            Class<?> buildInfoClass = Class.forName("io.papermc.paper.ServerBuildInfo");
+            Object buildInfo = buildInfoClass.getMethod("buildInfo").invoke(null);
+            return (String) buildInfoClass.getMethod("minecraftVersionId").invoke(buildInfo);
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+            // Older Paper versions may not expose ServerBuildInfo, try Server access
+        }
+
+        try {
+            return (String) Server.class.getMethod("getMinecraftVersion").invoke(Bukkit.getServer());
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+            // Spigot does not expose the Minecraft version directly, use original method and split
+        }
+
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(bukkitVersion);
+        return matcher.find() ? matcher.group() : bukkitVersion;
+    }
 
     /**
      * Get the major Minecraft version.
