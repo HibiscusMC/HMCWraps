@@ -32,7 +32,7 @@ public class ItemComparator implements Comparator<WrapItemCombination> {
                     }
                 }
                 case "PERMISSION" -> {
-                    var permissionCompare = Boolean.compare(wrap2.wrap().hasPermission(player), wrap1.wrap().hasPermission(player));
+                    var permissionCompare = Boolean.compare(wrap2.permission(), wrap1.permission());
                     if (permissionCompare != 0) {
                         return permissionCompare;
                     }
@@ -46,8 +46,8 @@ public class ItemComparator implements Comparator<WrapItemCombination> {
                     }
                 }
                 case "MODEL_ID" -> {
-                    int modelData1 = wrap1.item().getItemMeta().hasCustomModelData() ? wrap1.item().getItemMeta().getCustomModelData() : Integer.MAX_VALUE;
-                    int modelData2 = wrap2.item().getItemMeta().hasCustomModelData() ? wrap2.item().getItemMeta().getCustomModelData() : Integer.MAX_VALUE;
+                    int modelData1 = wrap1.modelId() >= 0 ? wrap1.modelId() : Integer.MAX_VALUE;
+                    int modelData2 = wrap2.modelId() >= 0 ? wrap2.modelId() : Integer.MAX_VALUE;
                     var modelComapre = Integer.compare(modelData1, modelData2);
                     if (modelComapre != 0) {
                         return modelComapre;

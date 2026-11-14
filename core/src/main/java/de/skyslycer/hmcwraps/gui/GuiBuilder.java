@@ -197,9 +197,13 @@ public class GuiBuilder {
         }
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
-        wraps.stream().filter(wrap -> item == null || plugin.getWrapper().isValid(item, wrap))
-                .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
-                .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
+        boolean filtered = plugin.getFilterStorage().get(player);
+        for (Wrap wrap : wraps) {
+            if (item != null && !plugin.getWrapper().isValid(item, wrap)) continue;
+            boolean permission = wrap.hasPermission(player);
+            if (filtered && !permission) continue;
+            wrapItemCombinations.add(new WrapItemCombination(wrap, permission, wrap.getModelId()));
+        }
 
         ItemComparator comparator = new ItemComparator(plugin, plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);
@@ -216,12 +220,15 @@ public class GuiBuilder {
                 gui.addItem(equippedItem);
                 continue;
             }
-            var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
-            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type == null ? wrapType : type), player);
-            if (plugin.getFavoriteWrapStorage().get(player).contains(wrap)) {
-                applyFavoritePrefix(plugin, player, wrapItem);
-            }
-            var guiItem = new GuiItem(wrapItem);
+            var itemType = type;
+            var guiItem = new LazyGuiItem(() -> {
+                var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
+                var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), itemType == null ? wrapType : itemType), player);
+                if (plugin.getFavoriteWrapStorage().get(player).contains(wrap)) {
+                    applyFavoritePrefix(plugin, player, wrapItem);
+                }
+                return wrapItem;
+            });
             guiItem.setAction(click -> {
                 if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {
                     if (plugin.getConfiguration().getInventory().getActions() != null) {
