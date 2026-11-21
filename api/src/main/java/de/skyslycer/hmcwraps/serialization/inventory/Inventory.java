@@ -16,6 +16,7 @@ public class Inventory {
     private boolean itemChangeEnabled;
     private boolean openWithoutItemEnabled;
     private boolean showAllWithoutItem;
+    private boolean forceOpenCategory;
     private String title;
     private @Nullable String noItemTitle;
     private Type type;
@@ -70,6 +71,10 @@ public class Inventory {
 
     public boolean isShowAllWithoutItem() {
         return showAllWithoutItem;
+    }
+
+    public boolean isForceOpenCategory() {
+        return forceOpenCategory;
     }
 
     @Nullable

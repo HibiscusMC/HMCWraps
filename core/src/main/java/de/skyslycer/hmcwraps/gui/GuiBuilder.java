@@ -21,10 +21,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class GuiBuilder {
 
@@ -40,6 +37,7 @@ public class GuiBuilder {
         var itemSelectedButNoWraps = slot == -2; // little hack to check if the inventory was opened by selecting an item without wraps instead of an empty slot
         if (slot == -2) slot = -1;
         item = PlayerUtil.filterNoItem(item, plugin);
+        var forceCategory = plugin.getConfiguration().getInventory().isForceOpenCategory() && category != null && !category.isBlank();
 
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
@@ -59,7 +57,7 @@ public class GuiBuilder {
                     .create();
         }
 
-        if (item != null || (plugin.getConfiguration().getInventory().isShowAllWithoutItem() && !itemSelectedButNoWraps)) {
+        if (forceCategory || item != null || (plugin.getConfiguration().getInventory().isShowAllWithoutItem() && !itemSelectedButNoWraps)) {
             populate(plugin, item, player, gui, item != null ? slot : -1, category);
         }
         populateStatic(plugin, player, inventory, gui, slot, item == null, category);
@@ -83,7 +81,7 @@ public class GuiBuilder {
                     }
                     return;
                 }
-                GuiBuilder.open(plugin, player, click.getCurrentItem(), click.getSlot());
+                GuiBuilder.open(plugin, player, click.getCurrentItem(), click.getSlot(), 1, forceCategory ? category : null);
             }
         });
         gui.setCloseGuiAction(close -> plugin.getWrapGui().remove(player.getUniqueId()));
@@ -169,6 +167,7 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui, int slot, String category) {
+        var forceCategory = plugin.getConfiguration().getInventory().isForceOpenCategory() && category != null && !category.isBlank();
         List<Wrap> wraps;
         Wrap currentWrap = null;
         Material type = null;
@@ -183,6 +182,8 @@ public class GuiBuilder {
             } else {
                 plugin.getWrapGui().remove(player.getUniqueId());
             }
+        }
+        if (item != null && !forceCategory) {
             wraps = plugin.getCollectionHelper().getItems(type);
         } else {
             var allWraps = plugin.getWrapsLoader().getWraps();
@@ -197,7 +198,7 @@ public class GuiBuilder {
         }
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
-        wraps.stream().filter(wrap -> item == null || plugin.getWrapper().isValid(item, wrap))
+        wraps.stream().filter(wrap -> forceCategory || item == null || plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
                 .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
 
@@ -217,7 +218,8 @@ public class GuiBuilder {
                 continue;
             }
             var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
-            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type == null ? wrapType : type), player);
+            var displayType = forceCategory && wrapType != null ? wrapType : type == null ? wrapType : type;
+            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), displayType), player);
             if (plugin.getFavoriteWrapStorage().get(player).contains(wrap)) {
                 applyFavoritePrefix(plugin, player, wrapItem);
             }

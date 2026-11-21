@@ -406,6 +406,18 @@ public class DefaultActionRegister {
                 return;
             }
             var item = player.getInventory().getItem(slot);
+            if (plugin.getConfiguration().getInventory().isForceOpenCategory()
+                    && information instanceof GuiActionInformation guiInformation
+                    && guiInformation.getCategory() != null && !guiInformation.getCategory().isBlank()) {
+                item = PlayerUtil.filterNoItem(item, plugin);
+                if (item == null || plugin.getWrapper().isGloballyDisabled(item)) return;
+                var type = item.getType();
+                var originalMaterial = plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item);
+                if (plugin.getWrapper().getWrap(item) != null && !originalMaterial.isEmpty()) {
+                    type = Material.valueOf(originalMaterial);
+                }
+                if (!plugin.getCollectionHelper().getItems(type).contains(wrap) || !plugin.getWrapper().isValid(item, wrap)) return;
+            }
             var currentWrap = plugin.getWrapper().getWrap(item);
             if (!plugin.getConfiguration().getWrapping().getRewrap().isVirtualEnabled() && plugin.getWrapper().getWrap(item) != null) {
                 plugin.getMessageHandler().send(player, Messages.NO_REWRAP);
